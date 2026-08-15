@@ -21,6 +21,6 @@ Ein Anstellgut ist keine exakte Wissenschaft. Es reagiert auf Raumtemperatur, Me
 
 Ein Anstellgut, das regelmäßig gefüttert und nicht zu kalt gelagert wird, braucht selten Rettung. Die meisten der genannten Signale sind normale Reaktionen auf Hunger oder Kälte — keine Krise, nur ein Hinweis, den Rhythmus kurz anzupassen.
 
-Am wichtigsten ist die Beobachtung über mehrere Tage, nicht die Momentaufnahme. Ein einzelner Geruch, eine einzelne schwache Fütterung sagt wenig aus — erst wenn sich ein Muster zeigt, lohnt es sich, an Fütterungsmenge, Temperatur oder Mehlsorte zu drehen.
+Entscheidend ist die Beobachtung über mehrere Tage, nicht die Momentaufnahme. Ein einzelner Geruch, eine einzelne schwache Fütterung sagt wenig aus — erst wenn sich ein Muster zeigt, lohnt es sich, an Fütterungsmenge, Temperatur oder Mehlsorte zu drehen.
 
 Wer noch kein eigenes Anstellgut hat, aber gern eins hätte: In unserem Workshop „Sauerteig für Anfänger" bekommst du ein eigenes Glas mit nach Hause, dazu die Grundlagen, wie du es über die ersten Wochen bringst, in denen die meisten Fragen aufkommen.

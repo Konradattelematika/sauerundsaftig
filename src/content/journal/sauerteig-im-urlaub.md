@@ -9,7 +9,7 @@ order: 40
 
 Ein Anstellgut braucht Aufmerksamkeit — aber nicht täglich, und schon gar nicht während des Urlaubs. Die Sorge, dass ein unbeaufsichtigtes Glas nach zwei Wochen tot ist, hält viele davon ab, überhaupt erst eines anzusetzen. Zu Unrecht: Ein gesunder Ansatz ist widerstandsfähiger, als man denkt, wenn man ihn vor der Abreise richtig vorbereitet. Vier Wege, wie er zwei bis drei Wochen ohne dich durchhält.
 
-**Kühlschrank, unverändert.** Die einfachste Lösung: kurz vor der Abreise füttern, Deckel locker auflegen, ins kühlste Fach stellen. Bei 4 bis 6 Grad verlangsamt sich die Aktivität stark. Bis zu zwei Wochen übersteht ein gesunder Ansatz so problemlos. Nach der Rückkehr braucht er meist zwei, drei Fütterungen im gewohnten Rhythmus, bevor er wieder zuverlässig aufgeht.
+**Kühlschrank, unverändert.** Ohne Umwege: kurz vor der Abreise füttern, Deckel locker auflegen, ins kalte Fach ganz hinten stellen. Bei 4 bis 6 Grad verlangsamt sich die Aktivität stark. Bis zu zwei Wochen übersteht ein gesunder Ansatz so problemlos. Nach der Rückkehr braucht er meist zwei, drei Fütterungen im gewohnten Rhythmus, bevor er wieder zuverlässig aufgeht.
 
 **Dick anfüttern, dann kalt stellen.** Für längere Abwesenheit hilft eine deutlich festere Konsistenz — mehr Mehl, weniger Wasser als sonst. Ein dickerer Teig hat mehr Reserven und trocknet im Kühlschrank langsamer aus. Diese Methode trägt auch drei bis vier Wochen.
 

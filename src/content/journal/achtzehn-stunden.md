@@ -31,4 +31,4 @@ Ein Laib Sauerteigbrot hat, bis er in unserem Regal liegt, schon einen ganzen Ar
 
 Dazwischen liegen keine Abkürzungen — nur Zeit, Temperatur und ein paar feste Handgriffe zur richtigen Uhrzeit. Wer früh genug bei uns ist, riecht die letzten Laibe noch, bevor er sie sieht: warmes Getreide, ein Hauch Säure, dazu der scharfe Geruch frisch gebackener Kruste. Das Rezept dahinter ist keins, das sich abkürzen lässt — wer weniger Zeit gibt, bekommt weniger Geschmack zurück.
 
-Für uns ist diese Zeitleiste kein Sonderfall, sondern der Alltag hinter jedem Laib, den wir verkaufen. Deshalb gibt es bei uns auch keinen Laib, der schneller geht als 18 Stunden — Mehl, Wasser, Salz und Zeit sind die einzigen Zutaten, und an der letzten lässt sich am wenigsten rütteln.
+Für uns ist diese Zeitleiste kein Sonderfall, sondern der Alltag hinter jedem Laib, den wir verkaufen. Deshalb gibt es bei uns auch keinen Laib, der schneller geht als 18 Stunden — Mehl, Wasser, Salz und Zeit sind die einzigen Zutaten, und an der letzten lässt sich kaum rütteln.

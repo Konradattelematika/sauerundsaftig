@@ -20,5 +20,9 @@ Orchestrator-Prüfprotokoll. Ein Eintrag je Schritt: Datum, Prüfung, Abweichung
 
 ## Schritt 2 — Islands & Content (15.08.2026)
 - Delegiert an 2 parallele Executor (Islands: PreorderFlow/Voucher/WorkshopBooking/Newsletter;
-  Content: Karte/Workshops/Journal/FAQ/Testimonials). Prüfung folgt unten.
-- Status: IN ARBEIT.
+  Content: Karte/Workshops/Journal/FAQ/Testimonials).
+- Content-Review (Orchestrator): 28 Dateien vollständig, Zod-Validierung grün, Stichproben
+  (schnecken.json, achtzehn-stunden.md, zahlungsmittel.md) gegen Fakten-/Tonalitätsregeln geprüft —
+  keine Floskeln (grep-Check), TODO(kunde)-Punkte korrekt vorsichtig formuliert, Zeitleiste konsistent.
+  Executor meldete 4 selbst korrigierte Superlativ-Verstöße nach GPT-Review. Status Content: DONE.
+- Islands: IN ARBEIT.

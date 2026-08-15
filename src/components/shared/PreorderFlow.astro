@@ -292,10 +292,9 @@ const btnSecondary =
       nextBtn.disabled = total < 1;
     }
 
-    function computeEarliestOffsetDays(): number {
-      const hasLongLead = getCartItems().some((i) => i.leadDays > 0);
+    /** Frühester Abholtag als Tages-Offset — `minutes`/`hasLongLead` stammen aus einem gemeinsamen `now`, damit Countdown und Tagesliste nie auseinanderlaufen (z. B. bei Mitternacht/18-Uhr-Grenze). */
+    function computeEarliestOffsetDays(minutes: number, hasLongLead: boolean): number {
       if (hasLongLead) return 5;
-      const { minutes } = berlinParts(new Date());
       return minutes < CUTOFF_MINUTES ? 1 : 2;
     }
 
@@ -303,7 +302,8 @@ const btnSecondary =
       const hasLongLead = getCartItems().some((i) => i.leadDays > 0);
       leadNoteEl.hidden = !hasLongLead;
 
-      const { dateISO: todayISO, minutes } = berlinParts(new Date());
+      const now = new Date();
+      const { dateISO: todayISO, minutes } = berlinParts(now);
       if (!hasLongLead && minutes < CUTOFF_MINUTES) {
         const left = CUTOFF_MINUTES - minutes;
         const h = Math.floor(left / 60);
@@ -314,7 +314,7 @@ const btnSecondary =
         countdownEl.hidden = true;
       }
 
-      const offset = computeEarliestOffsetDays();
+      const offset = computeEarliestOffsetDays(minutes, hasLongLead);
       dayGrid.innerHTML = '';
       let stillValid = false;
       for (let i = 0; i < 7; i++) {
