@@ -1,23 +1,130 @@
 ---
-// Temporäre Test-Route — wird in Schritt 5 durch den Variantenwähler ersetzt.
-import '../styles/a.css';
+/**
+ * Variantenwähler — Präsentationsseite für die Kundenentscheidung (Master-Prompt §12 Schritt 9).
+ * Bewusst themenneutral gehalten (keine Varianten-Tokens), damit keine Richtung bevorzugt wirkt.
+ * Lädt nur die drei Display-Schriften für die Typo-Proben.
+ */
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource-variable/bricolage-grotesque/standard.css';
 import SeoHead from '../components/shared/SeoHead.astro';
-import Logo from '../components/shared/Logo.astro';
-import OpeningStatus from '../components/shared/OpeningStatus.astro';
-import Motion from '../components/shared/Motion.astro';
-import { localBusiness } from '../lib/schema-org';
+import { VARIANTS } from '../lib/variants';
+
+const variants = Object.values(VARIANTS);
+const displayFont: Record<string, string> = {
+  a: "'Fraunces Variable', Georgia, serif",
+  b: "'Instrument Serif', Georgia, serif",
+  c: "'Bricolage Grotesque Variable', Arial, sans-serif",
+};
+const sample: Record<string, string> = {
+  a: 'Sauer macht saftig.',
+  b: 'Sauer macht saftig.',
+  c: 'SAUER MACHT SAFTIG.',
+};
+const personas: Record<string, string> = {
+  a: 'Breiteste Zielgruppe · die sichere Wahl',
+  b: 'Urban, Instagram-affin · Premium durch Ruhe',
+  c: 'Maximale Wiedererkennung · bewusst mutig',
+};
+const stand = new Date().toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' });
 ---
+
 <!doctype html>
 <html lang="de">
   <head>
-    <SeoHead title="Sauer & Saftig — im Aufbau" description="Café und Backstube in Ostseebad Rerik." jsonLd={[localBusiness(String(Astro.site))]} noindex />
+    <SeoHead
+      title="Sauer & Saftig — drei Design-Richtungen zur Auswahl"
+      description="Interne Präsentationsseite: drei gestalterische Varianten der neuen Website für das Café Sauer & Saftig in Ostseebad Rerik."
+      noindex
+    />
   </head>
   <body>
-    <main class="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-8 p-8 text-center">
-      <Logo width={280} loading="eager" />
-      <h1 class="text-4xl">Hier entsteht etwas mit 18 Stunden Gare.</h1>
-      <OpeningStatus size="lg" />
+    <main>
+      <header class="intro">
+        <img src="/brand/logo-lockup-ink-640.png" alt="Sauer & Saftig — Brot und Kuchen" width="200" height="144" />
+        <h1>Eine Website, drei Richtungen.</h1>
+        <p>
+          Gleicher Inhalt, gleiche Struktur, gleiche Funktionen — dreimal anders gestaltet.
+          Tippe dich in jede Variante hinein; alles ist klickbar, vom Frühstück bis zum Gutschein.
+        </p>
+        <p class="note">Alle Fotos sind markierte Platzhalter (Shooting folgt), alle Preise Beispielwerte.</p>
+      </header>
+
+      <section class="cards" aria-label="Die drei Design-Varianten">
+        {variants.map((v) => (
+          <a class="card" href={v.base} data-variant={v.key}>
+            <p class="kicker">Variante {v.key.toUpperCase()} · {v.workingTitle}</p>
+            <h2 style={`font-family:${displayFont[v.key]}`}>{v.name}</h2>
+            <p class="specimen" style={`font-family:${displayFont[v.key]}`}>{sample[v.key]}</p>
+            <p class="stance">{v.stance}</p>
+            <ul class="swatches" role="img" aria-label={`Farbpalette Variante ${v.name}`}>
+              {v.swatches.map((s) => (
+                <li style={`background:${s}`}></li>
+              ))}
+            </ul>
+            <dl class="meta">
+              <div><dt>Schrift</dt><dd>{v.typeSample.display} + {v.typeSample.body}</dd></div>
+              <div><dt>Bewegung</dt><dd>{v.motion}</dd></div>
+              <div><dt>Für wen</dt><dd>{personas[v.key]}</dd></div>
+            </dl>
+            <span class="cta">Variante ansehen →</span>
+          </a>
+        ))}
+      </section>
+
+      <footer class="outro">
+        <p>Sauer &amp; Saftig · Dünenstraße 1 · 18230 Ostseebad Rerik — Entwurfsstand {stand}</p>
+      </footer>
     </main>
-    <Motion />
+
+    <style>
+      :root {
+        --paper: #faf8f4;
+        --ink: #1c1917;
+        --line: #e2ddd3;
+      }
+      * { box-sizing: border-box; margin: 0; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        line-height: 1.6;
+      }
+      main { max-width: 1360px; margin: 0 auto; padding: clamp(24px, 4vw, 64px); }
+      .intro { text-align: center; max-width: 62ch; margin: 0 auto clamp(32px, 5vw, 72px); }
+      .intro img { margin: 0 auto 24px; height: auto; }
+      .intro h1 { font-size: clamp(1.9rem, 4.5vw, 3.4rem); line-height: 1.15; margin-bottom: 16px; letter-spacing: -0.01em; }
+      .intro p { font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
+      .intro .note { margin-top: 12px; font-size: 0.95rem; color: #6d675e; }
+      .cards { display: grid; gap: clamp(16px, 2.5vw, 32px); grid-template-columns: 1fr; }
+      @media (min-width: 900px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+      .card {
+        display: flex; flex-direction: column; gap: 14px;
+        background: #fff; border: 1px solid var(--line); border-radius: 10px;
+        padding: clamp(20px, 2.5vw, 36px);
+        text-decoration: none; color: inherit;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      .card:hover, .card:focus-visible { transform: translateY(-4px); box-shadow: 0 12px 32px rgb(28 25 23 / 0.10); }
+      .card:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
+      @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+      .kicker { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: #6d675e; }
+      .card h2 { font-size: clamp(2rem, 3.2vw, 2.9rem); line-height: 1.05; }
+      .specimen { font-size: clamp(1.3rem, 2vw, 1.8rem); line-height: 1.2; border-block: 1px solid var(--line); padding: 14px 0; }
+      .stance { font-size: 1.02rem; min-height: 3.2em; }
+      .swatches { display: flex; gap: 6px; list-style: none; padding: 0; }
+      .swatches li { width: 44px; height: 28px; border-radius: 5px; border: 1px solid rgb(0 0 0 / 0.08); }
+      .meta { display: grid; gap: 6px; font-size: 0.92rem; }
+      .meta div { display: grid; grid-template-columns: 86px 1fr; gap: 8px; }
+      .meta dt { color: #6d675e; }
+      .cta {
+        margin-top: auto; align-self: flex-start;
+        background: var(--ink); color: var(--paper);
+        padding: 12px 20px; border-radius: 6px; font-size: 1rem; min-height: 44px;
+        display: inline-flex; align-items: center;
+      }
+      .outro { margin-top: clamp(40px, 6vw, 80px); text-align: center; color: #6d675e; font-size: 0.9rem; }
+    </style>
   </body>
 </html>
