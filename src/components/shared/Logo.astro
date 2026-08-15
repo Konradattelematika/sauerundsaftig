@@ -1,0 +1,34 @@
+---
+/**
+ * Logo-System (Master-Prompt §6). Das Logo liegt als Wortmarken-Lockup vor
+ * („sauer&saftig" + Subline „BROT·KUCHEN"). Ein separates Bildzeichen existiert
+ * nicht — `variant="mark"` fällt deshalb dokumentiert auf das Lockup zurück.
+ * Form/Proportion unverändert; nur Ton (ink/light) und Größe variieren.
+ */
+interface Props {
+  variant?: 'mark' | 'wordmark' | 'lockup';
+  tone?: 'light' | 'dark' | 'brand';
+  /** Anzeigebreite in px (Layout-Stabilität/CLS) */
+  width?: number;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+}
+const { variant = 'lockup', tone = 'dark', width = 160, class: cls = '', loading = 'eager' } = Astro.props;
+
+const kind = variant === 'wordmark' ? 'wordmark' : 'lockup';
+const toneFile = tone === 'light' ? 'light' : 'ink'; // 'brand' = Originalton (ink)
+// Seitenverhältnisse der generierten Assets (s. scripts/generate-brand.mjs)
+const ratio = kind === 'lockup' ? 1280 / 1776 : 1110 / 1776;
+const height = Math.round(width * ratio);
+const src = `/brand/logo-${kind}-${toneFile}${width <= 640 ? '-640' : ''}.png`;
+---
+
+<img
+  src={src}
+  alt="Sauer & Saftig — Brot und Kuchen"
+  width={width}
+  height={height}
+  loading={loading}
+  decoding="async"
+  class={cls}
+/>

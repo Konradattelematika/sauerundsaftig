@@ -1,0 +1,56 @@
+---
+/**
+ * Karte als Klick-to-Load (kein iFrame ohne Interaktion — Master-Prompt §5 Verbote).
+ * Vor dem Klick: gestaltete Fläche mit Adresse + Routen-Link.
+ * Nach Klick: OpenStreetMap-Embed (datensparsamer als Google).
+ */
+import site from '../../data/site.json';
+import { routeHref } from '../../lib/format';
+
+const { lat, lng } = site.geo;
+const bbox = `${lng - 0.012},${lat - 0.006},${lng + 0.012},${lat + 0.006}`;
+const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat},${lng}`;
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+---
+
+<div class="map-loader relative aspect-[4/3] overflow-hidden rounded-[--radius-card] bg-bg-alt md:aspect-[16/9]" data-map data-embed={embed}>
+  <div class="map-cover absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center">
+    <p class="font-mono text-sm uppercase tracking-widest text-ink-soft">Anfahrt</p>
+    <p class="text-xl">{site.address.street} · {site.address.zip} {site.address.city}</p>
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <button
+        type="button"
+        class="map-load-btn min-h-[44px] cursor-pointer rounded-[--radius-card] border-2 border-ink px-5 py-2.5 font-mono text-sm"
+      >
+        Karte laden
+      </button>
+      <a
+        href={route}
+        target="_blank"
+        rel="noopener"
+        class="min-h-[44px] rounded-[--radius-card] bg-ink px-5 py-2.5 font-mono text-sm text-bg inline-flex items-center"
+      >
+        Route in Maps starten
+      </a>
+    </div>
+    <p class="max-w-[42ch] text-sm text-ink-soft">
+      Erst nach dem Klick wird Kartenmaterial von OpenStreetMap geladen.
+    </p>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.map-load-btn');
+    if (!btn) return;
+    const wrap = btn.closest<HTMLElement>('[data-map]');
+    if (!wrap) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = wrap.dataset.embed ?? '';
+    iframe.title = 'Karte: Sauer & Saftig, Dünenstraße 1, Ostseebad Rerik';
+    iframe.className = 'absolute inset-0 h-full w-full border-0';
+    iframe.loading = 'lazy';
+    wrap.querySelector('.map-cover')?.remove();
+    wrap.appendChild(iframe);
+  });
+</script>

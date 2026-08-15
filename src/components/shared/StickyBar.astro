@@ -1,0 +1,51 @@
+---
+/**
+ * Mobile Sticky-Bar (immer sichtbar, <768px): Karte · Anrufen · Route · Vorbestellen.
+ * Touch-Targets ≥44 px, Safe-Area-Inset. Seiten mit dieser Bar tragen
+ * die Klasse `has-sticky-bar` auf <body> (Platz am Seitenende).
+ */
+import site from '../../data/site.json';
+import { routeHref, telHref } from '../../lib/format';
+
+interface Props {
+  base: string; // "/a" | "/b" | "/c"
+}
+const { base } = Astro.props;
+const items = [
+  { label: 'Karte', href: `${base}/karte`, icon: 'menu' },
+  { label: 'Anrufen', href: telHref(site.phone), icon: 'phone' },
+  { label: 'Route', href: routeHref(site.address.street, site.address.zip, site.address.city), icon: 'map', external: true },
+  { label: 'Vorbestellen', href: `${base}/vorbestellen`, icon: 'bag', cta: true },
+];
+const icons: Record<string, string> = {
+  menu: 'M3 5h18M3 12h18M3 19h12',
+  phone: 'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z',
+  map: 'M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z',
+  bag: 'M6 7h12l1 14H5L6 7Zm3 0a3 3 0 0 1 6 0',
+};
+---
+
+<nav
+  class="sticky-bar fixed inset-x-0 bottom-0 z-50 border-t border-ink/10 bg-paper pb-safe md:hidden"
+  aria-label="Schnellzugriff"
+>
+  <ul class="grid grid-cols-4">
+    {items.map((it) => (
+      <li>
+        <a
+          href={it.href}
+          {...it.external ? { target: '_blank', rel: 'noopener' } : {}}
+          class:list={[
+            'flex min-h-[60px] flex-col items-center justify-center gap-1 px-1 py-2 text-[13px] font-mono',
+            it.cta ? 'bg-accent text-white' : 'text-ink',
+          ]}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d={icons[it.icon]} />
+          </svg>
+          {it.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

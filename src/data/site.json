@@ -1,0 +1,43 @@
+{
+  "name": "Sauer & Saftig",
+  "shortName": "Sauer & Saftig",
+  "claim": "Sauer macht saftig.",
+  "subline": "Café und Backstube in der Dünenstraße 1, Ostseebad Rerik.",
+  "type": "Café mit eigener Backstube",
+  "address": {
+    "street": "Dünenstraße 1",
+    "zip": "18230",
+    "city": "Ostseebad Rerik",
+    "region": "Mecklenburg-Vorpommern",
+    "country": "DE"
+  },
+  "geo": {
+    "lat": 54.1101,
+    "lng": 11.6043,
+    "todoKunde": "Koordinaten approximiert (Ortsmitte Rerik) — vor Launch exakt setzen"
+  },
+  "phone": "+49 38296 769924",
+  "phoneDisplay": "038296 769924",
+  "instagram": "sauerundsaftig",
+  "rating": { "value": 4.6, "count": 152, "source": "Google" },
+  "priceRange": "€€",
+  "tooGoodToGo": { "partner": true, "bagValue": 12, "bagPrice": 4 },
+  "openingHours": {
+    "todoKunde": "Google und Instagram widersprechen sich — bis zur Klärung gilt der Google-Stand (Mo 8–16, Di+Mi Ruhetag, Do–So 8–16)",
+    "week": {
+      "mon": [["08:00", "16:00"]],
+      "tue": [],
+      "wed": [],
+      "thu": [["08:00", "16:00"]],
+      "fri": [["08:00", "16:00"]],
+      "sat": [["08:00", "16:00"]],
+      "sun": [["08:00", "16:00"]]
+    },
+    "exceptions": [
+      { "date": "2026-12-24", "hours": [], "label": "Heiligabend" },
+      { "date": "2026-12-25", "hours": [], "label": "1. Weihnachtstag" }
+    ]
+  },
+  "breakfastUntil": "12:00",
+  "paymentTodoKunde": "Zahlungsmittel unbestätigt — Kartenzahlung bitte bestätigen, dann prominent kommunizieren"
+}

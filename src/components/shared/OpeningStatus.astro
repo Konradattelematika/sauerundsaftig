@@ -1,0 +1,47 @@
+---
+/**
+ * Live-Öffnungsstatus — wichtigste Einzelkomponente (Master-Prompt §9.1).
+ * Serverseitig: kompakte Wochenzusammenfassung (No-JS-Fallback).
+ * Clientseitig: Live-Berechnung in Europe/Berlin, Update jede Minute, aria-live.
+ * Punktfarbe/Töne kommen aus den Varianten-Tokens.
+ */
+import site from '../../data/site.json';
+
+interface Props {
+  class?: string;
+  /** kompakt (Header) oder ausführlich (Hero/Besuch) */
+  size?: 'sm' | 'lg';
+}
+const { class: cls = '', size = 'sm' } = Astro.props;
+const schedule = site.openingHours;
+---
+
+<span
+  class:list={['opening-status inline-flex items-center gap-2', size === 'lg' ? 'text-xl' : 'text-[0.95rem]', cls]}
+  data-opening-status
+  data-schedule={JSON.stringify({ week: schedule.week, exceptions: schedule.exceptions })}
+>
+  <span class="status-dot inline-block size-2.5 rounded-full bg-ink-soft" aria-hidden="true"></span>
+  <span class="status-text font-mono tabular" aria-live="polite">Di + Mi Ruhetag · sonst 8–16 Uhr</span>
+</span>
+
+<script>
+  import { getOpeningStatus, type Schedule } from '../../lib/opening-hours';
+
+  function paint() {
+    document.querySelectorAll<HTMLElement>('[data-opening-status]').forEach((el) => {
+      const schedule = JSON.parse(el.dataset.schedule ?? '{}') as Schedule;
+      const s = getOpeningStatus(schedule);
+      const dot = el.querySelector<HTMLElement>('.status-dot');
+      const text = el.querySelector<HTMLElement>('.status-text');
+      if (!dot || !text) return;
+      text.textContent = s.text;
+      dot.style.backgroundColor = s.state === 'open'
+        ? (s.closingSoon ? 'var(--color-accent)' : 'var(--color-open)')
+        : 'var(--color-closed)';
+    });
+  }
+  paint();
+  setInterval(paint, 60_000);
+  document.addEventListener('astro:page-load', paint);
+</script>

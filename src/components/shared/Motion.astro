@@ -1,0 +1,59 @@
+---
+/**
+ * Motion-Bootstrap: aktiviert [data-reveal]-Animationen per IntersectionObserver
+ * und Count-up für [data-countup]. Respektiert prefers-reduced-motion vollständig
+ * (Klasse js-motion wird dann gar nicht erst gesetzt). Einmal pro Layout einbinden.
+ * Gewicht: <2 KB — Motion-Budget §10 wird nicht angetastet.
+ */
+---
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function init() {
+    if (reduced.matches) {
+      document.documentElement.classList.remove('js-motion');
+      return;
+    }
+    document.documentElement.classList.add('js-motion');
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.1 },
+    );
+    document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach((el) => io.observe(el));
+
+    // Count-up für Zahlen („18 Stunden") — einmalig beim Eintritt in den Viewport
+    const cu = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          cu.unobserve(e.target);
+          const el = e.target as HTMLElement;
+          const target = Number(el.dataset.countup ?? '0');
+          const dur = 900;
+          const t0 = performance.now();
+          const step = (t: number) => {
+            const p = Math.min(1, (t - t0) / dur);
+            el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { threshold: 0.6 },
+    );
+    document.querySelectorAll('[data-countup]').forEach((el) => cu.observe(el));
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+  reduced.addEventListener('change', init);
+</script>

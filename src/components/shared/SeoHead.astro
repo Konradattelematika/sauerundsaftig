@@ -1,0 +1,50 @@
+---
+/** SEO-/Meta-Layer: Canonical, OG, Favicons, JSON-LD, hreflang-Vorbereitung. */
+interface Props {
+  title: string;
+  description: string;
+  /** JSON-LD-Objekte (bereits gebaut, s. lib/schema-org.ts) */
+  jsonLd?: object[];
+  ogImage?: string;
+  noindex?: boolean;
+}
+const { title, description, jsonLd = [], ogImage, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImg = ogImage ? new URL(ogImage, Astro.site) : new URL('/brand/favicon-512.png', Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+
+<link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/brand/favicon-16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/brand/favicon-180.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Sauer & Saftig" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImg} />
+<meta property="og:locale" content="de_DE" />
+<meta name="twitter:card" content="summary_large_image" />
+
+{/* hreflang-Vorbereitung: EN-Version ist spätere Phase (Master-Prompt §10) */}
+<link rel="alternate" hreflang="de" href={canonical} />
+
+<meta name="theme-color" content="#F7F2E8" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+{jsonLd.map((obj) => (
+  <script type="application/ld+json" set:html={JSON.stringify(obj)} />
+))}
+
+{/* Cookie-freier Analytics-Hook: Plausible, standardmäßig AUS (BRAND-TODO #11) */}
+{import.meta.env.PUBLIC_PLAUSIBLE === '1' && (
+  <script defer data-domain="sauerundsaftig.jawollja.gmbh" src="https://plausible.io/js/script.js" />
+)}

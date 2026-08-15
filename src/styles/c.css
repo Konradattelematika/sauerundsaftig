@@ -1,0 +1,59 @@
+/* Variante C — „Backstube" · Craft Bold */
+@import 'tailwindcss';
+@import './shared.css';
+@import './fonts-satoshi.css';
+
+@theme {
+  --color-*: initial;
+  --color-bg: #f4efe2; /* Papier */
+  --color-bg-alt: #eadfc8;
+  --color-ink: #241505; /* auf Papier, 13:1 */
+  --color-ink-soft: #5c4426;
+  --color-primary: #6b3a1c; /* Kruste-Vollton */
+  --color-primary-deep: #4e2913;
+  --color-secondary: #2f4a50; /* Salzhaff-Tiefe */
+  --color-secondary-soft: #b9c6c2;
+  --color-accent: #e0761f; /* Sanddorn-Vollton (Flächen) */
+  --color-accent-ink: #953f00; /* für Text auf Papier */
+  --color-open: #3f6a28;
+  --color-closed: #a6402f;
+  --color-paper: #fdf9f0; /* Text auf Vollton */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+
+  --font-display: 'Bricolage Grotesque Variable', 'Arial Black', sans-serif;
+  --font-body: 'Satoshi', 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+
+  /* Motion-Profil „Ofen": kräftig, spürbarer Anschlag, leichter Overshoot */
+  --ease-brand: cubic-bezier(0.34, 1.4, 0.44, 1);
+  --dur-fast: 200ms;
+  --dur-base: 300ms;
+  --dur-slow: 400ms;
+
+  --radius-card: 0;
+}
+
+.font-display,
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
+/* Marquee („Heute frisch"-Ticker) — läuft nur mit JS-Klasse und ohne reduced-motion */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none !important; }
+}

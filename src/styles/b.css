@@ -1,0 +1,43 @@
+/* Variante B — „Salzhaff" · Nordic Quiet */
+@import 'tailwindcss';
+@import './shared.css';
+
+@theme {
+  --color-*: initial;
+  --color-bg: #fbfaf8; /* fast weiß */
+  --color-bg-alt: #e8e9e6; /* Nebel */
+  --color-ink: #151a1c; /* Tiefsee */
+  --color-ink-soft: #47525a; /* Kontrast auf bg 7,9:1 */
+  --color-primary: #3e5c63; /* Salzhaff */
+  --color-primary-deep: #2b4148;
+  --color-secondary: #a8b392; /* Dünengras */
+  --color-secondary-soft: #d9ded0;
+  --color-accent: #d9641a; /* Sanddorn minimal — NUR CTA */
+  --color-accent-ink: #a94a0d;
+  --color-open: #3f6a28;
+  --color-closed: #a6402f;
+  --color-paper: #ffffff;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+
+  --font-display: 'Instrument Serif', 'Georgia', serif;
+  --font-body: 'Inter Tight Variable', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'Courier New', monospace;
+
+  /* Motion-Profil „Wasser": gleitend, linear-weich */
+  --ease-brand: cubic-bezier(0.33, 0.9, 0.4, 1);
+  --dur-fast: 250ms;
+  --dur-base: 350ms;
+  --dur-slow: 450ms;
+
+  --radius-card: 0;
+}
+
+/* Sehr große Headlines, enges Tracking; Schriftgrößen für 62+ trotzdem streng ≥17 px */
+.font-display,
+h1, h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+  font-weight: 400;
+}

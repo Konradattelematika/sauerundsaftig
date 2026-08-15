@@ -1,17 +1,23 @@
 ---
-
+// Temporäre Test-Route — wird in Schritt 5 durch den Variantenwähler ersetzt.
+import '../styles/a.css';
+import SeoHead from '../components/shared/SeoHead.astro';
+import Logo from '../components/shared/Logo.astro';
+import OpeningStatus from '../components/shared/OpeningStatus.astro';
+import Motion from '../components/shared/Motion.astro';
+import { localBusiness } from '../lib/schema-org';
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<!doctype html>
+<html lang="de">
+  <head>
+    <SeoHead title="Sauer & Saftig — im Aufbau" description="Café und Backstube in Ostseebad Rerik." jsonLd={[localBusiness(String(Astro.site))]} noindex />
+  </head>
+  <body>
+    <main class="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-8 p-8 text-center">
+      <Logo width={280} loading="eager" />
+      <h1 class="text-4xl">Hier entsteht etwas mit 18 Stunden Gare.</h1>
+      <OpeningStatus size="lg" />
+    </main>
+    <Motion />
+  </body>
 </html>

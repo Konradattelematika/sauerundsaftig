@@ -1,0 +1,44 @@
+/* Variante A — „Krume" · Editorial Warm */
+@import 'tailwindcss';
+@import './shared.css';
+@import './fonts-general-sans.css';
+
+@theme {
+  --color-*: initial;
+  --color-bg: #f7f2e8; /* Krume */
+  --color-bg-alt: #ede5d6; /* Mehlstaub */
+  --color-ink: #241b14; /* Röstkern */
+  --color-ink-soft: #55463a; /* abgeleitet, Kontrast auf bg 7,6:1 */
+  --color-primary: #7a4a26; /* Kruste */
+  --color-primary-deep: #4a2c16; /* Ofenschluss */
+  --color-secondary: #3e5c63; /* Salzhaff */
+  --color-secondary-soft: #a8b392; /* Dünengras */
+  --color-accent: #e07a1f; /* Sanddorn — nur CTA/Verknappung, max. 2×/Seite */
+  --color-accent-ink: #9a4d0b; /* Sanddorn abgedunkelt für Text auf hell */
+  --color-open: #3f6a28; /* Signal geöffnet (AA-fest auf Krume) */
+  --color-closed: #a6402f; /* Signal Ruhetag/ausverkauft */
+  --color-paper: #fdf9f0;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+
+  --font-display: 'Fraunces Variable', 'Georgia', serif;
+  --font-body: 'General Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+
+  /* Motion-Profil „Teig": langsam, weich */
+  --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 300ms;
+  --dur-base: 500ms;
+  --dur-slow: 650ms;
+
+  --radius-card: 0.375rem;
+}
+
+/* Fraunces: SOFT 40, WONK aktiv (Master-Prompt §7A) */
+.font-display,
+h1, h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'SOFT' 40, 'WONK' 1, 'opsz' 72;
+  letter-spacing: -0.02em;
+}

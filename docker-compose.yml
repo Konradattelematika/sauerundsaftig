@@ -1,0 +1,9 @@
+# Für Coolify: Docker-Compose-Deployment (oder direkt Dockerfile-Buildpack nutzen)
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    # Coolify/Traefik übernimmt Routing + TLS für sauerundsaftig.jawollja.gmbh;
+    # der Container exponiert nur Port 80.
+    expose:
+      - "80"
