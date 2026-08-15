@@ -25,4 +25,7 @@ Orchestrator-Prüfprotokoll. Ein Eintrag je Schritt: Datum, Prüfung, Abweichung
   (schnecken.json, achtzehn-stunden.md, zahlungsmittel.md) gegen Fakten-/Tonalitätsregeln geprüft —
   keine Floskeln (grep-Check), TODO(kunde)-Punkte korrekt vorsichtig formuliert, Zeitleiste konsistent.
   Executor meldete 4 selbst korrigierte Superlativ-Verstöße nach GPT-Review. Status Content: DONE.
-- Islands: IN ARBEIT.
+- Islands-Review (Orchestrator): 4 Komponenten + /dev/islands; Screenshot 390 px geprüft (Stepper,
+  °-Preislegende, Badges ≤3/ausgebucht, Gutschein-Vorschau mit Wortmarke, Consent + Honeypot). Kein
+  localStorage, keine Hexfarben (grep). Executor fixte selbst: Astro-Compiler-Falle mit `<=` im
+  Template, Date-Konsistenz-Bug in der Abholtagslogik (GPT-Review). Status: DONE.
