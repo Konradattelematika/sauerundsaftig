@@ -1,0 +1,52 @@
+---
+// Interne Testseite für die vier Bestell-/Formular-Komponenten (kein Produktiv-Content, noindex).
+import '../../styles/a.css';
+import SeoHead from '../../components/shared/SeoHead.astro';
+import PreorderFlow from '../../components/shared/PreorderFlow.astro';
+import VoucherConfigurator from '../../components/shared/VoucherConfigurator.astro';
+import WorkshopBooking from '../../components/shared/WorkshopBooking.astro';
+import NewsletterForm from '../../components/shared/NewsletterForm.astro';
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <SeoHead title="Dev: Islands" description="Interne Testseite für interaktive Komponenten." noindex />
+  </head>
+  <body>
+    <main class="mx-auto flex max-w-3xl flex-col gap-16 p-6 py-12 md:p-10">
+      <h1 class="font-display text-3xl">Dev: Islands</h1>
+
+      <section>
+        <h2 class="mb-4 font-display text-2xl">PreorderFlow</h2>
+        <PreorderFlow base="/a" />
+      </section>
+
+      <section>
+        <h2 class="mb-4 font-display text-2xl">VoucherConfigurator</h2>
+        <VoucherConfigurator base="/a" />
+      </section>
+
+      <section>
+        <h2 class="mb-4 font-display text-2xl">WorkshopBooking</h2>
+        <WorkshopBooking
+          title="Sauerteig für Anfänger"
+          price={129}
+          isDraft={true}
+          duration="3 Std"
+          capacity={8}
+          dates={[
+            { date: '2026-09-05', time: '10:00', seatsLeft: 12 },
+            { date: '2026-09-12', time: '10:00', seatsLeft: 3 },
+            { date: '2026-09-19', time: '10:00', seatsLeft: 1 },
+            { date: '2026-09-26', time: '10:00', seatsLeft: 0 },
+          ]}
+        />
+      </section>
+
+      <section>
+        <h2 class="mb-4 font-display text-2xl">NewsletterForm</h2>
+        <NewsletterForm base="/a" />
+      </section>
+    </main>
+  </body>
+</html>

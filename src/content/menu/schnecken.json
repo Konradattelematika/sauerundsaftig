@@ -1,0 +1,40 @@
+{
+  "title": "Sauerteigschnecken",
+  "slug": "schnecken",
+  "order": 40,
+  "intro": "Unsere Signature: Sauerteig statt Hefeteig, dreimal gefüllt, jeden Morgen frisch gedreht.",
+  "note": "Ofenfrisch am Vormittag — solange der Vorrat reicht.",
+  "items": [
+    {
+      "name": "Pistazie",
+      "description": "Pistaziencreme, satt eingerollt, mit gehackten Kernen bestreut.",
+      "price": 4.5,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Nüsse", "Ei"],
+      "motif": "schnecke-pistazie",
+      "highlight": true
+    },
+    {
+      "name": "Lotus",
+      "description": "Karamellisierte Lotuscreme, die beim ersten Biss noch warm zieht.",
+      "price": 4.3,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"],
+      "motif": "schnecke-lotus"
+    },
+    {
+      "name": "Haselnuss",
+      "description": "Geröstete Haselnusscreme, dicht gerollt, außen leicht knusprig.",
+      "price": 4.3,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Nüsse", "Ei"],
+      "motif": "schnecke-haselnuss"
+    }
+  ]
+}

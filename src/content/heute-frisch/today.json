@@ -1,0 +1,29 @@
+{
+  "date": "2026-08-15",
+  "items": [
+    {
+      "name": "Pistazienschnecke",
+      "note": "ofenfrisch ab 9:30",
+      "motif": "schnecke-pistazie",
+      "soldOut": false
+    },
+    {
+      "name": "Sauerteigbrot Klassik",
+      "note": "im Ofen seit 6 Uhr",
+      "motif": "brot-laib",
+      "soldOut": false
+    },
+    {
+      "name": "Käsekuchen",
+      "note": "stückweise, solange der Vorrat reicht",
+      "motif": "kaesekuchen",
+      "soldOut": false
+    },
+    {
+      "name": "Obsttorte der Saison",
+      "note": "heute schon vergriffen",
+      "motif": "obsttorte",
+      "soldOut": true
+    }
+  ]
+}

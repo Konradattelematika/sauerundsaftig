@@ -1,0 +1,66 @@
+{
+  "title": "Kaffee & Getränke",
+  "slug": "kaffee",
+  "order": 50,
+  "intro": "Filterkaffee, Espresso aus der Siebträgermaschine, Tee lose aufgegossen.",
+  "items": [
+    {
+      "name": "Filterkaffee",
+      "description": "Frisch aufgebrüht, Kanne oder Tasse.",
+      "price": 2.8,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": true,
+      "allergens": [],
+      "motif": "kaffee"
+    },
+    {
+      "name": "Espresso",
+      "price": 2.5,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": true,
+      "allergens": [],
+      "motif": "kaffee"
+    },
+    {
+      "name": "Cappuccino",
+      "price": 3.5,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Milch"],
+      "motif": "kaffee"
+    },
+    {
+      "name": "Hafermilch",
+      "description": "Aufpreis für Hafermilch statt Kuhmilch, bei jedem Milchkaffee.",
+      "price": 0.4,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "Aufpreis",
+      "veggie": true,
+      "vegan": true,
+      "allergens": [],
+      "motif": "kaffee"
+    },
+    {
+      "name": "Tee",
+      "description": "Lose aufgegossen, mehrere Sorten zur Wahl.",
+      "price": 3.2,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": true,
+      "allergens": [],
+      "motif": "kaffee"
+    },
+    {
+      "name": "Kakao",
+      "price": 3.8,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Milch"],
+      "motif": "kaffee"
+    }
+  ]
+}

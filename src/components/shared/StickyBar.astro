@@ -36,7 +36,7 @@ const icons: Record<string, string> = {
           href={it.href}
           {...it.external ? { target: '_blank', rel: 'noopener' } : {}}
           class:list={[
-            'flex min-h-[60px] flex-col items-center justify-center gap-1 px-1 py-2 text-[13px] font-mono',
+            'flex min-h-[60px] flex-col items-center justify-center gap-1 px-1 py-2 font-mono text-[13px]',
             it.cta ? 'bg-accent text-white' : 'text-ink',
           ]}
         >

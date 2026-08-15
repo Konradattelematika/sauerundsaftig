@@ -13,14 +13,14 @@ const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIC
 const route = routeHref(site.address.street, site.address.zip, site.address.city);
 ---
 
-<div class="map-loader relative aspect-[4/3] overflow-hidden rounded-[--radius-card] bg-bg-alt md:aspect-[16/9]" data-map data-embed={embed}>
+<div class="map-loader relative aspect-[4/3] overflow-hidden rounded-card bg-bg-alt md:aspect-[16/9]" data-map data-embed={embed}>
   <div class="map-cover absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center">
     <p class="font-mono text-sm uppercase tracking-widest text-ink-soft">Anfahrt</p>
     <p class="text-xl">{site.address.street} · {site.address.zip} {site.address.city}</p>
     <div class="flex flex-wrap items-center justify-center gap-3">
       <button
         type="button"
-        class="map-load-btn min-h-[44px] cursor-pointer rounded-[--radius-card] border-2 border-ink px-5 py-2.5 font-mono text-sm"
+        class="map-load-btn min-h-[44px] cursor-pointer rounded-card border-2 border-ink px-5 py-2.5 font-mono text-sm"
       >
         Karte laden
       </button>
@@ -28,7 +28,7 @@ const route = routeHref(site.address.street, site.address.zip, site.address.city
         href={route}
         target="_blank"
         rel="noopener"
-        class="min-h-[44px] rounded-[--radius-card] bg-ink px-5 py-2.5 font-mono text-sm text-bg inline-flex items-center"
+        class="min-h-[44px] rounded-card bg-ink px-5 py-2.5 font-mono text-sm text-bg inline-flex items-center"
       >
         Route in Maps starten
       </a>

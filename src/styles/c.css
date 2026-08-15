@@ -1,9 +1,12 @@
 /* Variante C — „Backstube" · Craft Bold */
 @import 'tailwindcss';
+@import '@fontsource-variable/bricolage-grotesque/standard.css'; /* wght + wdth + opsz */
+@import '@fontsource/space-mono/400.css';
+@import '@fontsource/space-mono/700.css';
 @import './shared.css';
 @import './fonts-satoshi.css';
 
-@theme {
+@theme static {
   --color-*: initial;
   --color-bg: #f4efe2; /* Papier */
   --color-bg-alt: #eadfc8;

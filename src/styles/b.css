@@ -1,8 +1,11 @@
 /* Variante B — „Salzhaff" · Nordic Quiet */
 @import 'tailwindcss';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource-variable/inter-tight/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
 @import './shared.css';
 
-@theme {
+@theme static {
   --color-*: initial;
   --color-bg: #fbfaf8; /* fast weiß */
   --color-bg-alt: #e8e9e6; /* Nebel */

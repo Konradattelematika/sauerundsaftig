@@ -1,0 +1,190 @@
+---
+/**
+ * Workshop-Platzreservierung (Master-Prompt §9.7). Terminliste als
+ * Radio-Kacheln mit Restplatz-Badges, danach Kontaktdaten. Reine
+ * Mock-Datenschicht — nichts wird übertragen, kein echtes Payment.
+ * Zustand nur im Browser-Speicher des Scripts.
+ */
+import site from '../../data/site.json';
+import { formatDateShort, formatMenuPrice } from '../../lib/format';
+
+interface WorkshopDate {
+  date: string;
+  time: string;
+  seatsLeft: number;
+}
+
+interface Props {
+  title: string;
+  price: number;
+  isDraft: boolean;
+  duration: string;
+  capacity: number;
+  dates: WorkshopDate[];
+}
+const { title, price, isDraft, duration, capacity, dates } = Astro.props;
+
+function badgeClass(seatsLeft: number): string {
+  if (seatsLeft <= 0) return 'text-closed';
+  if (seatsLeft <= 3) return 'bg-accent text-white rounded-card px-2 py-0.5';
+  return 'text-ink-soft';
+}
+function badgeText(seatsLeft: number): string {
+  if (seatsLeft <= 0) return 'Ausgebucht';
+  if (seatsLeft <= 3) return `Nur noch ${seatsLeft} Plätze`;
+  return `${seatsLeft} Plätze frei`;
+}
+
+const btnPrimary =
+  'inline-flex min-h-[44px] items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-sm text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] disabled:cursor-not-allowed disabled:bg-ink/30 disabled:text-bg/70';
+---
+
+<div class="workshop-booking rounded-card border border-ink/10 bg-paper p-5 md:p-7" data-workshop-booking>
+  <h3 class="font-display text-2xl">{title}</h3>
+  <p class="mt-1 text-sm text-ink-soft">Dauer: {duration} · Kursgröße: bis zu {capacity} Personen</p>
+
+  <form data-workshop-form novalidate>
+    <fieldset class="mt-5">
+      <legend class="font-mono text-sm uppercase tracking-widest text-ink-soft">Termin wählen</legend>
+      <div class="mt-3 flex flex-col gap-3">
+        {dates.map((d, i) => {
+          const soldOut = d.seatsLeft <= 0;
+          return (
+            <label
+              class:list={[
+                'workshop-date-tile relative flex min-h-[44px] flex-wrap items-center justify-between gap-2 rounded-card border-2 px-4 py-3 transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)]',
+                soldOut
+                  ? 'cursor-not-allowed border-ink/10 bg-bg-alt text-ink-soft'
+                  : 'cursor-pointer border-ink/20 has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg',
+              ]}
+            >
+              <input
+                type="radio"
+                name="workshop-date"
+                value={`${d.date}_${d.time}`}
+                class="sr-only"
+                disabled={soldOut}
+                data-seats-left={d.seatsLeft}
+              />
+              <span class="font-mono text-sm">
+                {formatDateShort(d.date)} · {d.time} Uhr · {duration} · {formatMenuPrice(price, isDraft)}
+              </span>
+              <span class:list={['font-mono text-xs', badgeClass(d.seatsLeft)]}>{badgeText(d.seatsLeft)}</span>
+            </label>
+          );
+        })}
+      </div>
+      <p id="workshop-date-error" class="mt-2 text-sm text-closed" data-error-for="date" aria-live="polite" hidden></p>
+    </fieldset>
+
+    <div class="mt-6 flex flex-col gap-4">
+      <div>
+        <label for="workshop-name" class="block text-sm text-ink-soft">Name*</label>
+        <input
+          id="workshop-name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          class="mt-1 min-h-[44px] w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+          aria-describedby="workshop-name-error"
+        />
+        <p id="workshop-name-error" class="mt-1 text-sm text-closed" data-error-for="name" aria-live="polite" hidden></p>
+      </div>
+      <div>
+        <label for="workshop-email" class="block text-sm text-ink-soft">E-Mail*</label>
+        <input
+          id="workshop-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          class="mt-1 min-h-[44px] w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+          aria-describedby="workshop-email-error"
+        />
+        <p id="workshop-email-error" class="mt-1 text-sm text-closed" data-error-for="email" aria-live="polite" hidden></p>
+      </div>
+      <div>
+        <label for="workshop-phone" class="block text-sm text-ink-soft">Telefon (optional)</label>
+        <input
+          id="workshop-phone"
+          name="phone"
+          type="tel"
+          autocomplete="tel"
+          class="mt-1 min-h-[44px] w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+        />
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <button type="submit" class={btnPrimary}>Platz reservieren (Demo)</button>
+    </div>
+  </form>
+
+  <div class="success-panel mt-6" data-success hidden tabindex="-1" aria-live="polite">
+    <p class="text-xl">Dein Platz ist vorgemerkt.</p>
+    <p class="mt-2 text-base">
+      Demo — die Reservierung wurde nicht übertragen. Ruf uns an: <a class="underline" href={`tel:${site.phone.replace(/[^+\d]/g, '')}`}>{site.phoneDisplay}</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  function init() {
+    const root = document.querySelector<HTMLElement>('[data-workshop-booking]');
+    if (!root || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const form = root.querySelector<HTMLFormElement>('[data-workshop-form]')!;
+    const successEl = root.querySelector<HTMLElement>('[data-success]')!;
+    const dateError = root.querySelector<HTMLElement>('[data-error-for="date"]')!;
+    const nameError = root.querySelector<HTMLElement>('[data-error-for="name"]')!;
+    const emailError = root.querySelector<HTMLElement>('[data-error-for="email"]')!;
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let valid = true;
+
+      const dateChecked = form.querySelector<HTMLInputElement>('input[name="workshop-date"]:checked');
+      dateError.hidden = true;
+      if (!dateChecked) {
+        dateError.textContent = 'Wähl einen Termin aus, bevor du reservierst.';
+        dateError.hidden = false;
+        valid = false;
+      }
+
+      const nameInput = form.querySelector<HTMLInputElement>('#workshop-name')!;
+      nameError.hidden = true;
+      nameInput.removeAttribute('aria-invalid');
+      if (!nameInput.value.trim()) {
+        nameError.textContent = 'Da fehlt noch dein Name.';
+        nameError.hidden = false;
+        nameInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      }
+
+      const emailInput = form.querySelector<HTMLInputElement>('#workshop-email')!;
+      emailError.hidden = true;
+      emailInput.removeAttribute('aria-invalid');
+      const emailValue = emailInput.value.trim();
+      if (!emailValue) {
+        emailError.textContent = 'Da fehlt noch eine E-Mail — sonst können wir dir nicht antworten.';
+        emailError.hidden = false;
+        emailInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+        emailError.textContent = 'Das sieht noch nicht nach einer E-Mail-Adresse aus.';
+        emailError.hidden = false;
+        emailInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      form.hidden = true;
+      successEl.hidden = false;
+      successEl.focus();
+    });
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

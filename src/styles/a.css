@@ -1,9 +1,12 @@
 /* Variante A — „Krume" · Editorial Warm */
 @import 'tailwindcss';
+@import '@fontsource-variable/fraunces/full.css'; /* inkl. SOFT/WONK-Achsen */
+@import '@fontsource/space-mono/400.css';
+@import '@fontsource/space-mono/700.css';
 @import './shared.css';
 @import './fonts-general-sans.css';
 
-@theme {
+@theme static {
   --color-*: initial;
   --color-bg: #f7f2e8; /* Krume */
   --color-bg-alt: #ede5d6; /* Mehlstaub */

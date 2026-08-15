@@ -1,0 +1,65 @@
+{
+  "title": "Kuchen",
+  "slug": "kuchen",
+  "order": 20,
+  "intro": "Käsekuchen, Obsttorte, ein paar feste Größen dazwischen. Stückweise, solange der Vorrat reicht.",
+  "items": [
+    {
+      "name": "Käsekuchen",
+      "description": "Der Boden entsteht aus Sauerteigresten, die sonst im Abfall landen würden. Cremig oben, würzig unten.",
+      "price": 4.8,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Stück",
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"],
+      "motif": "kaesekuchen",
+      "highlight": true
+    },
+    {
+      "name": "Obsttorte der Saison",
+      "description": "Was der Markt gerade hergibt, kommt oben drauf.",
+      "price": 5.2,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Stück",
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"],
+      "seasonal": "nach Jahreszeit",
+      "motif": "obsttorte"
+    },
+    {
+      "name": "Schokoladenkuchen",
+      "description": "Dunkel, dicht, ohne Chichi.",
+      "price": 4.5,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Stück",
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"],
+      "motif": "kaesekuchen"
+    },
+    {
+      "name": "Möhrenkuchen mit Walnuss",
+      "description": "Fein gerieben, mit Frischkäsecreme und gehackten Walnüssen.",
+      "price": 5.0,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Stück",
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei", "Nüsse"],
+      "motif": "kaesekuchen"
+    },
+    {
+      "name": "Zitronenkuchen",
+      "description": "Saftig, mit Zitronenglasur, die beim ersten Bissen aufreißt.",
+      "price": 4.6,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Stück",
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"],
+      "motif": "obsttorte"
+    }
+  ]
+}

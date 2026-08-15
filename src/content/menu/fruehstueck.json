@@ -1,0 +1,60 @@
+{
+  "title": "Frühstück",
+  "slug": "fruehstueck",
+  "order": 10,
+  "intro": "Sauerteigbrot vom Vortag, Rührei aus der Pfanne, ein Kaffee dazu. Frühstück bis 12 Uhr.",
+  "note": "Frühstück gibt es bis 12 Uhr.",
+  "items": [
+    {
+      "name": "Frühstücksbrett mit Sauerteigbrot",
+      "description": "Zwei Scheiben vom Klassiker, Butter, Aufstrich, Käse und Ei nach Wahl.",
+      "price": 14.5,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"],
+      "motif": "fruehstueck",
+      "highlight": true
+    },
+    {
+      "name": "Süßes Frühstück mit Schnecke",
+      "description": "Sauerteigschnecke nach Wahl, Joghurt, Obst der Saison.",
+      "price": 12.5,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Nüsse"],
+      "motif": "schnecke-pistazie"
+    },
+    {
+      "name": "Porridge mit Fruchtkompott",
+      "description": "Haferflocken, langsam gequollen, dazu Kompott der Saison.",
+      "price": 8.5,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": true,
+      "allergens": [],
+      "motif": "fruehstueck"
+    },
+    {
+      "name": "Rührei auf Sauerteigtoast",
+      "description": "Drei Eier, cremig gerührt, auf geröstetem Sauerteigbrot.",
+      "price": 11.0,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Ei", "Milch"],
+      "motif": "fruehstueck"
+    },
+    {
+      "name": "Kinderfrühstück",
+      "description": "Kleines Brett, Ei, ein Getränk nach Wahl.",
+      "price": 8.0,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"],
+      "motif": "fruehstueck"
+    }
+  ]
+}

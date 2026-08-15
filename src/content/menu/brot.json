@@ -1,0 +1,54 @@
+{
+  "title": "Brot",
+  "slug": "brot",
+  "order": 30,
+  "intro": "Vier Laibe, ein Teig als Basis. Zum Mitnehmen ganz oder als Scheibe zum Frühstück.",
+  "items": [
+    {
+      "name": "Sauerteigbrot Klassik",
+      "description": "18 Stunden Gare, kräftige Kruste, offene Krume.",
+      "price": 7.0,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Laib",
+      "veggie": true,
+      "vegan": true,
+      "allergens": ["Gluten"],
+      "motif": "brot-laib",
+      "highlight": true
+    },
+    {
+      "name": "Roggen pur",
+      "description": "Nur Roggen, nur Zeit. Kräftig im Geschmack, hält sich lang.",
+      "price": 7.5,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Laib",
+      "veggie": true,
+      "vegan": true,
+      "allergens": ["Gluten"],
+      "motif": "brot-laib"
+    },
+    {
+      "name": "Walnussbrot",
+      "description": "Mit ganzen Walnüssen im Teig, leicht süßlicher Abgang.",
+      "price": 8.0,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Laib",
+      "veggie": true,
+      "vegan": true,
+      "allergens": ["Gluten", "Nüsse"],
+      "seasonal": "nur samstags",
+      "motif": "brot-laib"
+    },
+    {
+      "name": "Dinkel-Vollkorn",
+      "description": "Vollwertig gemahlen, mild in der Säure.",
+      "price": 7.2,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Laib",
+      "veggie": true,
+      "vegan": true,
+      "allergens": ["Gluten"],
+      "motif": "brot-laib"
+    }
+  ]
+}

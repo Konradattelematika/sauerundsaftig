@@ -1,0 +1,124 @@
+---
+/**
+ * Newsletter-Anmeldung „Brotbrief" (Master-Prompt §9.12). Reine Mock-
+ * Datenschicht — der Versand ist noch nicht angeschlossen (TODO(kunde):
+ * Anbindung Brevo/Resend). Überschrift ist Sache des Aufrufers, diese
+ * Komponente rendert nur Formular + Microcopy.
+ */
+interface Props {
+  /** Varianten-Basispfad, z. B. "/a" — für den Datenschutz-Link. */
+  base: string;
+}
+const { base } = Astro.props;
+
+const btnPrimary =
+  'inline-flex min-h-[44px] items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-sm text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] disabled:cursor-not-allowed disabled:bg-ink/30 disabled:text-bg/70';
+---
+
+<div class="newsletter-form" data-newsletter-form-wrap>
+  <p class="text-base text-ink-soft">
+    Einmal im Monat: ein Rezept, ein Termin, ein Küstenbild. Als Dankeschön gibt's den Sauerteig-Spickzettel als PDF.
+  </p>
+
+  <form data-newsletter-form novalidate class="mt-4">
+    {/* Honeypot — für Menschen unsichtbar, Bots füllen es oft trotzdem aus. */}
+    <div class="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+      <label for="newsletter-website">Website</label>
+      <input id="newsletter-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div>
+      <label for="newsletter-email" class="block text-sm text-ink-soft">E-Mail*</label>
+      <input
+        id="newsletter-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        class="mt-1 min-h-[44px] w-full max-w-sm rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+        aria-describedby="newsletter-email-error"
+      />
+      <p id="newsletter-email-error" class="mt-1 text-sm text-closed" data-error-for="email" aria-live="polite" hidden></p>
+    </div>
+
+    <div class="mt-4">
+      <label class="flex items-start gap-3 text-sm text-ink-soft">
+        <input type="checkbox" id="newsletter-consent" name="consent" class="mt-0.5 size-5 shrink-0" aria-describedby="newsletter-consent-error" />
+        <span>
+          Ich bin einverstanden, dass ihr mir monatlich den Brotbrief schickt. Abmelden geht jederzeit.
+          Mehr dazu in der <a href={`${base}/datenschutz`} class="underline">Datenschutzerklärung</a>.
+        </span>
+      </label>
+      <p id="newsletter-consent-error" class="mt-1 text-sm text-closed" data-error-for="consent" aria-live="polite" hidden></p>
+    </div>
+
+    <div class="mt-5">
+      <button type="submit" class={btnPrimary}>Brotbrief abonnieren</button>
+    </div>
+  </form>
+
+  <div class="success-panel mt-4" data-success hidden tabindex="-1" aria-live="polite">
+    <p class="text-base">Fast geschafft — Demo: Der Versand ist noch nicht angeschlossen.</p>
+  </div>
+</div>
+
+<script>
+  function init() {
+    const root = document.querySelector<HTMLElement>('[data-newsletter-form-wrap]');
+    if (!root || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const form = root.querySelector<HTMLFormElement>('[data-newsletter-form]')!;
+    const successEl = root.querySelector<HTMLElement>('[data-success]')!;
+    const emailError = root.querySelector<HTMLElement>('[data-error-for="email"]')!;
+    const consentError = root.querySelector<HTMLElement>('[data-error-for="consent"]')!;
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Honeypot ausgefüllt ⇒ vermutlich Bot: so tun, als wäre alles gut, nichts weiter tun.
+      const honeypot = form.querySelector<HTMLInputElement>('#newsletter-website')!;
+      if (honeypot.value.trim()) {
+        form.hidden = true;
+        successEl.hidden = false;
+        successEl.focus();
+        return;
+      }
+
+      let valid = true;
+
+      const emailInput = form.querySelector<HTMLInputElement>('#newsletter-email')!;
+      emailError.hidden = true;
+      emailInput.removeAttribute('aria-invalid');
+      const emailValue = emailInput.value.trim();
+      if (!emailValue) {
+        emailError.textContent = 'Da fehlt noch eine E-Mail — sonst können wir dir nicht schreiben.';
+        emailError.hidden = false;
+        emailInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+        emailError.textContent = 'Das sieht noch nicht nach einer E-Mail-Adresse aus.';
+        emailError.hidden = false;
+        emailInput.setAttribute('aria-invalid', 'true');
+        valid = false;
+      }
+
+      const consentInput = form.querySelector<HTMLInputElement>('#newsletter-consent')!;
+      consentError.hidden = true;
+      if (!consentInput.checked) {
+        consentError.textContent = 'Ohne dein Einverständnis dürfen wir dir leider nicht schreiben.';
+        consentError.hidden = false;
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      // TODO(kunde): Anbindung Brevo/Resend — aktuell nur Demo-Erfolgsmeldung.
+      form.hidden = true;
+      successEl.hidden = false;
+      successEl.focus();
+    });
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>
