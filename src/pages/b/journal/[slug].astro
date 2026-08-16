@@ -1,0 +1,76 @@
+---
+/**
+ * /journal/[slug] — Artikel, Scroll-Fortschrittsbalken (2px, nur hier),
+ * article-JSON-LD (VARIANT-BRIEF Routen).
+ */
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../variants/b-salzhaff/Layout.astro';
+import MaskImage from '../../../variants/b-salzhaff/components/MaskImage.astro';
+import { formatDate } from '../../../lib/format';
+import { article, breadcrumbs } from '../../../lib/schema-org';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('journal');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { title, description, date, category, motif } = entry.data;
+const { Content } = await render(entry);
+const base = '/b';
+
+const CATEGORY_LABELS: Record<string, string> = {
+  backstube: 'Backstube',
+  sauerteig: 'Sauerteig',
+  rerik: 'Rerik',
+};
+
+const jsonLd = [
+  article({ title, description, date, url: `${Astro.site}${base}/journal/${entry.id}` }),
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Journal', url: `${Astro.site}${base}/journal` },
+    { name: title, url: `${Astro.site}${base}/journal/${entry.id}` },
+  ]),
+];
+---
+
+<Layout title={`${title} — Journal — Sauer & Saftig`} description={description} jsonLd={jsonLd}>
+  <div class="scroll-progress fixed inset-x-0 top-0 z-[60] h-[2px] bg-primary" data-scroll-progress style="width: 0%"></div>
+
+  <article class="mx-auto max-w-[900px] px-4 pt-10 md:px-8 md:pt-16">
+    <a href={`${base}/journal`} class="inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink-soft hover:text-ink">
+      ← Journal
+    </a>
+    <p class="mt-6 font-mono text-[15px] uppercase tracking-widest text-ink-soft">
+      {CATEGORY_LABELS[category] ?? category} · {formatDate(date)}
+    </p>
+    <h1 class="mt-4 font-display text-[clamp(2.4rem,6vw,5rem)] leading-[0.98]">{title}</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">{description}</p>
+  </article>
+
+  <section class="mt-10 md:mt-16">
+    <MaskImage motif={motif} class="aspect-[16/9] w-full" />
+  </section>
+
+  <article class="prose-measure mx-auto flex max-w-[900px] flex-col gap-5 px-4 py-16 text-ink md:px-8 md:py-24">
+    <Content />
+  </article>
+</Layout>
+
+<script>
+  function initScrollProgress() {
+    const bar = document.querySelector<HTMLElement>('[data-scroll-progress]');
+    if (!bar) return;
+    const update = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      bar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+  }
+  initScrollProgress();
+  document.addEventListener('astro:page-load', initScrollProgress);
+</script>

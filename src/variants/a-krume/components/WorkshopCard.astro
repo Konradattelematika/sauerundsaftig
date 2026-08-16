@@ -1,0 +1,70 @@
+---
+/** Workshop-Karte für /workshops: Titel, nächster Termin, Dauer, Preis, Restplatz-Badge. */
+import Figure from './Figure.astro';
+import { formatDateShort, formatMenuPrice } from '../../../lib/format';
+
+interface Props {
+  base: string;
+  slug: string;
+  title: string;
+  subtitle: string;
+  duration: string;
+  price: number;
+  isDraft: boolean;
+  motif: string;
+  nextDate?: { date: string; time: string; seatsLeft: number };
+  revealDelay?: 0 | 100 | 200;
+}
+const { base, slug, title, subtitle, duration, price, isDraft, motif, nextDate, revealDelay = 0 } = Astro.props;
+
+function badgeClass(seatsLeft: number): string {
+  if (seatsLeft <= 0) return 'border-closed text-closed';
+  if (seatsLeft <= 3) return 'border-accent bg-accent text-white';
+  return 'border-ink/25 text-ink-soft';
+}
+function badgeText(seatsLeft: number): string {
+  if (seatsLeft <= 0) return 'Ausgebucht';
+  if (seatsLeft <= 3) return `Nur noch ${seatsLeft} Plätze`;
+  return `${seatsLeft} Plätze frei`;
+}
+---
+
+<article
+  class="grid grid-cols-1 gap-5 border-b border-ink/10 py-8 md:grid-cols-12 md:items-center md:gap-8"
+  data-reveal
+  style={`--reveal-delay:${revealDelay}ms`}
+>
+  <div class="md:col-span-4">
+    <Figure motif={motif} aspect="aspect-[4/3]" sizes="(min-width: 1024px) 30vw, 90vw" />
+  </div>
+  <div class="md:col-span-8">
+    <h3 class="text-2xl md:text-3xl">{title}</h3>
+    <p class="prose-measure mt-2 text-ink-soft">{subtitle}</p>
+    <dl class="mt-4 flex flex-wrap gap-x-8 gap-y-2 font-mono text-sm text-ink-soft">
+      <div class="flex items-center gap-2">
+        <dt class="uppercase tracking-widest">Dauer</dt>
+        <dd class="text-ink">{duration}</dd>
+      </div>
+      <div class="flex items-center gap-2">
+        <dt class="uppercase tracking-widest">Preis</dt>
+        <dd class="text-ink">{nextDate ? formatMenuPrice(price, isDraft) : 'auf Anfrage'}</dd>
+      </div>
+      {nextDate && (
+        <div class="flex items-center gap-2">
+          <dt class="uppercase tracking-widest">Nächster Termin</dt>
+          <dd class="text-ink">{formatDateShort(nextDate.date)} · {nextDate.time} Uhr</dd>
+        </div>
+      )}
+    </dl>
+    <div class="mt-4 flex flex-wrap items-center gap-4">
+      {nextDate && (
+        <span class:list={['rounded-full border px-3 py-1 font-mono text-xs uppercase tracking-wide', badgeClass(nextDate.seatsLeft)]}>
+          {badgeText(nextDate.seatsLeft)}
+        </span>
+      )}
+      <a href={`${base}/workshops/${slug}`} class="inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink">
+        Details ansehen
+      </a>
+    </div>
+  </div>
+</article>

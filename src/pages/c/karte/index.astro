@@ -1,0 +1,60 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/c-backstube/Layout.astro';
+import MenuSectionBlock from '../../../variants/c-backstube/components/MenuSectionBlock.astro';
+import { MENU_SECTIONS } from '../../../lib/variants';
+import { menuSchema, breadcrumbs } from '../../../lib/schema-org';
+import { label, navLink } from '../../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+
+const entries = await getCollection('menu');
+const bySlug = new Map(entries.map((e) => [e.data.slug, e.data]));
+const sections = MENU_SECTIONS.map((slug) => bySlug.get(slug)!).filter(Boolean);
+
+const tones = ['bg-bg', 'bg-secondary', 'bg-primary', 'bg-accent', 'bg-bg-alt'] as const;
+
+const jsonLd = [
+  menuSchema(
+    sections.map((s) => ({ title: s.title, items: s.items })),
+    new URL(base, Astro.site).toString(),
+  ),
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Karte', url: new URL(`${base}/karte`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Karte — Sauer & Saftig"
+  description="Frühstück, Kuchen, Brot, Sauerteigschnecken, Kaffee — die Karte von Sauer & Saftig in Rerik. Beispielpreise bis zum Küchen-Update."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Sauer &amp; Saftig</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold uppercase leading-[0.88] text-ink">Die Karte.</h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+        Fünf Sektionen, ein Sauerteig als Basis. Preise mit ° sind Beispielpreise — die echte Karte kommt mit dem Küchen-Update.
+      </p>
+
+      <nav aria-label="Sprung zu Karten-Sektionen" class="mt-8 flex flex-wrap gap-3">
+        {sections.map((s) => (
+          <a href={`#${s.slug}`} class={`${navLink} min-h-[44px] border-2 border-ink px-4 py-2 inline-flex items-center`}>
+            {s.title}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  {sections.map((s, i) => (
+    <MenuSectionBlock
+      section={s}
+      tone={tones[i % tones.length]}
+      id={s.slug}
+      signatureHref={s.slug === 'schnecken' ? `${base}/karte/schnecken` : undefined}
+    />
+  ))}
+</Layout>

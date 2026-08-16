@@ -1,0 +1,91 @@
+---
+/**
+ * /journal — reduzierte Liste (Datum mono + Titel serif), kein Kachel-Grid.
+ * Kategoriefilter statisch über CSS :has() (kein JS nötig), VARIANT-BRIEF §Journal.
+ */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/b-salzhaff/Layout.astro';
+import NewsletterForm from '../../../components/shared/NewsletterForm.astro';
+import SectionLabel from '../../../variants/b-salzhaff/components/SectionLabel.astro';
+import { formatDate } from '../../../lib/format';
+import { breadcrumbs } from '../../../lib/schema-org';
+
+const base = '/b';
+const entries = (await getCollection('journal')).sort((a, b) => a.data.order - b.data.order);
+
+const CATEGORY_LABELS: Record<string, string> = {
+  backstube: 'Backstube',
+  sauerteig: 'Sauerteig',
+  rerik: 'Rerik',
+};
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Journal', url: `${Astro.site}${base}/journal` },
+  ]),
+];
+---
+
+<Layout title="Journal — Sauer & Saftig" description="Notizen aus der Backstube: Sauerteig, Rerik und was gerade passiert." jsonLd={jsonLd}>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Journal</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Notizen aus der Backstube</h1>
+  </section>
+
+  <section class="mx-auto max-w-[900px] px-4 py-16 md:px-8 md:py-24" id="journal-root">
+    <fieldset class="filter-tabs flex flex-wrap gap-3 border-0 p-0">
+      <legend class="mb-3 font-mono text-[15px] uppercase tracking-widest text-ink-soft">Kategorie</legend>
+      <label class="cat-label min-h-[44px] cursor-pointer rounded-card border border-ink/25 px-4 py-2 font-mono text-[15px]">
+        <input type="radio" name="journal-cat" value="all" checked class="cat-radio" /> Alle
+      </label>
+      {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+        <label class="cat-label min-h-[44px] cursor-pointer rounded-card border border-ink/25 px-4 py-2 font-mono text-[15px]">
+          <input type="radio" name="journal-cat" value={key} class="cat-radio" /> {label}
+        </label>
+      ))}
+    </fieldset>
+
+    <ul class="journal-list mt-10">
+      {entries.map((entry) => (
+        <li data-category={entry.data.category} class="journal-item border-t border-ink/20 py-6 last:border-b">
+          <a href={`${base}/journal/${entry.id}`} class="group flex flex-col gap-2 md:flex-row md:items-baseline md:gap-8">
+            <span class="shrink-0 font-mono text-[15px] tabular text-ink-soft md:w-[14ch]">{formatDate(entry.data.date)}</span>
+            <span class="font-display text-2xl text-ink group-hover:text-primary md:text-3xl">{entry.data.title}</span>
+          </a>
+          <p class="mt-2 max-w-[60ch] text-ink-soft md:ml-[calc(14ch+2rem)]">{entry.data.description}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="mx-auto max-w-[900px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="01" label="Newsletter" />
+    <div class="mt-8 max-w-[52ch]">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Neues aus der Backstube</h2>
+      <p class="mt-3 text-ink-soft">Ein paar Mal im Monat: was gerade frisch ist, neue Workshops, Journal-Notizen.</p>
+      <div class="mt-8">
+        <NewsletterForm base={base} />
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .cat-label:has(.cat-radio:checked) {
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+  .cat-radio {
+    margin-right: 0.4em;
+  }
+  #journal-root:has(input[value="backstube"]:checked) .journal-item:not([data-category="backstube"]) {
+    display: none;
+  }
+  #journal-root:has(input[value="sauerteig"]:checked) .journal-item:not([data-category="sauerteig"]) {
+    display: none;
+  }
+  #journal-root:has(input[value="rerik"]:checked) .journal-item:not([data-category="rerik"]) {
+    display: none;
+  }
+</style>

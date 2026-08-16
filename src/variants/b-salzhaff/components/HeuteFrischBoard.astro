@@ -1,0 +1,44 @@
+---
+/** „Heute frisch"-Board aus der heuteFrisch-Collection (VARIANT-BRIEF §4.3). */
+import { getCollection } from 'astro:content';
+import { formatDate } from '../../../lib/format';
+import SectionLabel from './SectionLabel.astro';
+
+const [today] = await getCollection('heuteFrisch');
+---
+
+<section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+  <SectionLabel number="01" label="Heute frisch" />
+  {today && (
+    <div class="mt-8 flex items-baseline justify-between gap-4">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Was heute aus dem Ofen kommt</h2>
+      <p class="hidden font-mono text-[15px] text-ink-soft sm:block">{formatDate(today.data.date)}</p>
+    </div>
+  )}
+  {today && (
+    <ul class="mt-10 grid grid-cols-1 gap-x-8 gap-y-0 md:grid-cols-2">
+      {today.data.items.map((item, i) => (
+        <li
+          class="flex min-h-[44px] items-center justify-between gap-4 border-t border-ink/20 py-5"
+          data-reveal
+          style={`--reveal-delay: ${i * 80}ms`}
+        >
+          <span>
+            <span class:list={['text-xl', item.soldOut ? 'text-ink-soft line-through decoration-2' : 'text-ink']}>
+              {item.name}
+            </span>
+            {item.note && <span class="ml-3 font-mono text-[15px] text-ink-soft">{item.note}</span>}
+          </span>
+          {item.soldOut && (
+            <span class="shrink-0 rounded-card border border-ink/30 px-2.5 py-1 font-mono text-[15px] text-ink-soft">
+              vergriffen
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+  )}
+  {!today && (
+    <p class="mt-8 text-ink-soft">Die heutige Auswahl wird gerade aktualisiert — ruf uns kurz an.</p>
+  )}
+</section>

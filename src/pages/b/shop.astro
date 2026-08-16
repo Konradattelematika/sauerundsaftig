@@ -1,0 +1,52 @@
+---
+/** /shop — Gutscheine (VoucherConfigurator) + Ausblick Anstellgut-Glas/Merch (VARIANT-BRIEF Routen). */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import VoucherConfigurator from '../../components/shared/VoucherConfigurator.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Shop & Gutscheine', url: `${Astro.site}${base}/shop` },
+  ]),
+];
+---
+
+<Layout
+  title="Shop & Gutscheine — Sauer & Saftig"
+  description="Gutscheine für Café und Backstube — als Betrag oder für einen Workshop."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Shop</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Gutscheine</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">
+      Ein Betrag frei wählbar oder direkt für einen Workshop — als Gastgeschenk oder für dich selbst.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="01" label="Gutschein konfigurieren" />
+    <div class="mt-8 max-w-2xl">
+      <VoucherConfigurator base={base} />
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="02" label="Demnächst" />
+    <div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div class="rounded-card border border-ink/15 bg-paper p-6">
+        <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Bald</p>
+        <p class="mt-2 text-xl">Anstellgut im Glas</p>
+        <p class="mt-2 text-ink-soft">Ein eigenes Glas Anstellgut zum Mitnehmen ist geplant, aktuell aber noch nicht einzeln erhältlich.</p>
+      </div>
+      <div class="rounded-card border border-ink/15 bg-paper p-6">
+        <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Bald</p>
+        <p class="mt-2 text-xl">Merch</p>
+        <p class="mt-2 text-ink-soft">Ein kleines Sortiment ist in Planung — mehr dazu, sobald es so weit ist.</p>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,93 @@
+---
+/**
+ * /besuch — Öffnungszeiten GROSS, Telefon riesig, ClickToLoadMap,
+ * Anreise/Parken/Barrierefreiheit (VARIANT-BRIEF Routen + §Besuch-Modul).
+ */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import ClickToLoadMap from '../../components/shared/ClickToLoadMap.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import WeekTable from '../../variants/b-salzhaff/components/WeekTable.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { localBusiness, breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+const jsonLd = [
+  localBusiness(String(Astro.site)),
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Besuch', url: `${Astro.site}${base}/besuch` },
+  ]),
+];
+---
+
+<Layout
+  title="Besuch — Öffnungszeiten, Anfahrt, Kontakt — Sauer & Saftig"
+  description="Öffnungszeiten, Adresse und Anreise nach Rerik, Dünenstraße 1."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Besuch</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Dünenstraße 1, Ostseebad Rerik</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">
+      Dienstag und Mittwoch backen wir nicht — plan deinen Besuch drumherum. Donnerstag bis Montag sind wir da.
+    </p>
+    <a href={telHref(site.phone)} class="mt-8 block min-h-[44px] w-fit font-mono text-[clamp(2rem,7vw,3.5rem)] tabular text-ink">
+      {site.phoneDisplay}
+    </a>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="01" label="Öffnungszeiten" />
+    <div class="mt-8 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20">
+      <WeekTable />
+      <div class="flex flex-col gap-6">
+        <p class="text-xl text-ink-soft">
+          Google und Instagram widersprechen sich manchmal — verlässlich ist der Stand hier auf der Website.
+        </p>
+        <p class="text-xl">
+          Zu Feiertagen wie Heiligabend und dem 1. Weihnachtstag bleibt bei uns geschlossen.
+        </p>
+        <div class="rounded-card border border-ink/15 bg-paper p-6">
+          <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Too Good To Go</p>
+          <p class="mt-2 text-xl">
+            Überraschungstüte, rund {site.tooGoodToGo.bagValue} € Warenwert für {site.tooGoodToGo.bagPrice} €.
+          </p>
+          <p class="mt-1 text-ink-soft">Verfügbarkeit und Abholzeit siehst du direkt in der App.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="02" label="Anfahrt" />
+    <div class="mt-8">
+      <ClickToLoadMap />
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="03" label="Vor Ort" />
+    <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-3">
+      <div>
+        <h2 class="text-xl">Parken</h2>
+        <p class="mt-2 text-ink-soft">
+          Parkmöglichkeiten in der Nähe sind uns noch nicht abschließend bestätigt — ruf kurz an unter{' '}
+          <a href={telHref(site.phone)} class="text-ink underline decoration-ink/30 underline-offset-4">{site.phoneDisplay}</a>, dann sagen wir dir, wo du am besten stehst.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-xl">Barrierefreiheit</h2>
+        <p class="mt-2 text-ink-soft">
+          Ob Café und Zugang barrierefrei sind, klären wir aktuell noch. Am sichersten fragst du kurz vorher telefonisch nach.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-xl">Hunde</h2>
+        <p class="mt-2 text-ink-soft">
+          Das prüfen wir gerade noch — ruf kurz an, bevor du mit Hund vorbeikommst.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>

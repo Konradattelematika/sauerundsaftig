@@ -1,0 +1,59 @@
+---
+/**
+ * Menü-Sektion als Zeilen-Tabelle: Position, Preis rechtsbündig Mono,
+ * Veggie/Vegan als Text-Badge, Allergene dezent, seasonal-Hinweis.
+ * VARIANT-BRIEF §Zusätzliche B-Akzente: „tabellenhafte Präzision".
+ */
+import type { CollectionEntry } from 'astro:content';
+import { formatMenuPrice } from '../../../lib/format';
+import SectionLabel from './SectionLabel.astro';
+
+interface Props {
+  section: CollectionEntry<'menu'>;
+  number: string;
+  headingLevel?: 'h2' | 'h3';
+}
+const { section, number, headingLevel = 'h2' } = Astro.props;
+const { title, intro, note, items } = section.data;
+const Heading = headingLevel;
+---
+
+<section id={section.data.slug} class="scroll-mt-24">
+  <SectionLabel number={number} label={title} />
+  <div class="mt-8">
+    <Heading class="font-display text-[clamp(2rem,5vw,3.5rem)]">{title}</Heading>
+    <p class="mt-3 max-w-[60ch] text-ink-soft">{intro}</p>
+    {note && <p class="mt-1 max-w-[60ch] text-ink-soft">{note}</p>}
+  </div>
+
+  <ul class="mt-8">
+    {items.map((item, i) => (
+      <li class="border-t border-ink/20 py-6 last:border-b" data-reveal style={`--reveal-delay: ${Math.min(i, 5) * 60}ms`}>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <p class="text-xl">
+            {item.name}
+            {item.highlight && <span class="ml-2 font-mono text-[15px] uppercase tracking-widest text-ink-soft">Signature</span>}
+          </p>
+          {item.price !== undefined && (
+            <p class="font-mono text-xl tabular text-ink">{formatMenuPrice(item.price, item.priceIsPlaceholder, item.priceSuffix)}</p>
+          )}
+        </div>
+        {item.description && <p class="mt-1 max-w-[60ch] text-ink-soft">{item.description}</p>}
+        <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+          {item.veggie && !item.vegan && (
+            <span class="rounded-card border border-ink/25 px-2 py-0.5 font-mono text-[15px] text-ink-soft">Vegetarisch</span>
+          )}
+          {item.vegan && (
+            <span class="rounded-card border border-ink/25 px-2 py-0.5 font-mono text-[15px] text-ink-soft">Vegan</span>
+          )}
+          {item.seasonal && (
+            <span class="font-mono text-[15px] text-ink-soft">{item.seasonal}</span>
+          )}
+          {item.allergens.length > 0 && (
+            <span class="font-mono text-[15px] text-ink-soft">Allergene: {item.allergens.join(', ')}</span>
+          )}
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>

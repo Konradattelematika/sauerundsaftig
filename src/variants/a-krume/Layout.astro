@@ -1,0 +1,42 @@
+---
+/**
+ * Basis-Layout Variante A „Krume" — Editorial Warm.
+ * Bindet Tokens (a.css), Header/Footer, Sticky-Bar, Motion und View-Transitions.
+ * Jede Seite unter /a nutzt dieses Layout.
+ */
+import '../../styles/a.css';
+import { ClientRouter } from 'astro:transitions';
+import SeoHead from '../../components/shared/SeoHead.astro';
+import StickyBar from '../../components/shared/StickyBar.astro';
+import Motion from '../../components/shared/Motion.astro';
+import Header from './components/Header.astro';
+import Footer from './components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: object[];
+  ogImage?: string;
+  noindex?: boolean;
+}
+const { title, description, jsonLd = [], ogImage, noindex = false } = Astro.props;
+const base = '/a';
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <SeoHead title={title} description={description} jsonLd={jsonLd} ogImage={ogImage} noindex={noindex} />
+    <ClientRouter />
+  </head>
+  <body class="has-sticky-bar">
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <Header base={base} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer base={base} />
+    <StickyBar base={base} />
+    <Motion />
+  </body>
+</html>

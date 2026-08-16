@@ -1,0 +1,66 @@
+---
+/**
+ * Bild-Baustein: astro:assets Picture in einem Seitenverhältnis-Rahmen (CLS-sicher),
+ * optional mit data-reveal. Motiv-Keys s. lib/images.ts.
+ */
+import { Picture } from 'astro:assets';
+import { getImage, getAlt, WIDTHS } from '../../../lib/images';
+import { safeWidths } from '../lib/picture';
+
+interface Props {
+  motif: string;
+  alt?: string;
+  /** Tailwind-Aspect-Klasse, z. B. "aspect-[4/5]" */
+  aspect?: string;
+  sizes: string;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  reveal?: boolean;
+  revealDelay?: 0 | 100 | 200;
+  class?: string;
+  imgClass?: string;
+}
+const {
+  motif,
+  alt,
+  aspect = 'aspect-[4/5]',
+  sizes,
+  loading = 'lazy',
+  fetchpriority = 'auto',
+  reveal = false,
+  revealDelay,
+  class: cls = '',
+  imgClass = '',
+} = Astro.props;
+const image = getImage('a', motif);
+const widths = safeWidths(image, WIDTHS);
+const style = revealDelay ? `--reveal-delay:${revealDelay}ms` : undefined;
+---
+
+{reveal ? (
+  <div class:list={['overflow-hidden rounded-card bg-bg-alt', aspect, cls]} data-reveal style={style}>
+    <Picture
+      src={image}
+      formats={['avif', 'webp']}
+      widths={widths}
+      sizes={sizes}
+      alt={alt ?? getAlt(motif)}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      class:list={['h-full w-full object-cover', imgClass]}
+    />
+  </div>
+) : (
+  <div class:list={['overflow-hidden rounded-card bg-bg-alt', aspect, cls]}>
+    <Picture
+      src={image}
+      formats={['avif', 'webp']}
+      widths={widths}
+      sizes={sizes}
+      alt={alt ?? getAlt(motif)}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      class:list={['h-full w-full object-cover', imgClass]}
+    />
+  </div>
+)}

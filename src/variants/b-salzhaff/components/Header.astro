@@ -1,0 +1,96 @@
+---
+/**
+ * Header Variante B „Salzhaff" — reduziert, linksbündig, klare Linie unten.
+ * Mobil: <details>-Drawer (nativ fokussierbar/ARIA-fähig, kein eigenes JS nötig).
+ */
+import Logo from '../../../components/shared/Logo.astro';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import { NAV_MAIN, NAV_CTA } from '../../../lib/variants';
+
+interface Props {
+  base: string;
+}
+const { base } = Astro.props;
+const path = Astro.url.pathname;
+
+function isActive(itemPath: string): boolean {
+  const href = `${base}${itemPath}`;
+  return path === href || path.startsWith(`${href}/`);
+}
+---
+
+<header class="border-b border-ink/20 bg-bg">
+  <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-4 md:px-8">
+    <a href={base} class="shrink-0">
+      <Logo variant="lockup" tone="dark" width={150} loading="eager" />
+    </a>
+
+    <nav class="hidden items-center gap-8 md:flex" aria-label="Hauptnavigation">
+      {NAV_MAIN.map((item) => (
+        <a
+          href={`${base}${item.path}`}
+          aria-current={isActive(item.path) ? 'page' : undefined}
+          class:list={[
+            'font-mono text-[15px] uppercase tracking-wide transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)]',
+            isActive(item.path) ? 'text-ink' : 'text-ink-soft hover:text-ink',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="hidden items-center gap-6 md:flex">
+      <OpeningStatus size="sm" />
+      <a
+        href={`${base}${NAV_CTA.path}`}
+        class="inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-5 py-2.5 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
+      >
+        {NAV_CTA.label}
+      </a>
+    </div>
+
+    <details class="nav-drawer relative md:hidden">
+      <summary
+        class="flex min-h-[44px] min-w-[44px] cursor-pointer list-none items-center justify-center gap-2 rounded-card border border-ink/20 px-3 font-mono text-[15px] uppercase tracking-wide"
+        aria-label="Menü öffnen"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+        Menü
+      </summary>
+      <div class="fixed inset-x-0 top-[65px] z-40 max-h-[calc(100vh-65px)] overflow-y-auto border-t border-ink/20 bg-bg px-4 pb-8 pt-6 shadow-[0_8px_24px_rgba(21,26,28,0.08)]">
+        <nav class="flex flex-col gap-1" aria-label="Hauptnavigation mobil">
+          {NAV_MAIN.map((item) => (
+            <a
+              href={`${base}${item.path}`}
+              aria-current={isActive(item.path) ? 'page' : undefined}
+              class:list={[
+                'min-h-[44px] border-b border-ink/10 py-3 font-display text-2xl',
+                isActive(item.path) ? 'text-primary' : 'text-ink',
+              ]}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        <div class="mt-6 flex flex-col gap-4">
+          <OpeningStatus size="sm" />
+          <a
+            href={`${base}${NAV_CTA.path}`}
+            class="inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-5 py-2.5 font-mono text-[15px] text-white"
+          >
+            {NAV_CTA.label}
+          </a>
+        </div>
+      </div>
+    </details>
+  </div>
+</header>
+
+<style>
+  /* Details/Summary: Browser-Standardpfeil entfernen, Fokus-Ring via globalem :focus-visible */
+  .nav-drawer summary::-webkit-details-marker { display: none; }
+  .nav-drawer[open] summary svg { transform: rotate(90deg); }
+</style>

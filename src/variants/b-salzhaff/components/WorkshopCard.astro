@@ -1,0 +1,52 @@
+---
+/** Workshop-Karte (Übersicht): Titel, nächster Termin, Dauer, Preis, Restplatz-Badge. */
+import type { CollectionEntry } from 'astro:content';
+import { formatDateShort, formatMenuPrice } from '../../../lib/format';
+
+interface Props {
+  workshop: CollectionEntry<'workshops'>;
+  base: string;
+}
+const { workshop, base } = Astro.props;
+const { title, subtitle, duration, price, isDraft, dates } = workshop.data;
+const next = dates[0];
+
+function badgeText(seatsLeft: number): string {
+  if (seatsLeft <= 0) return 'Ausgebucht';
+  if (seatsLeft <= 3) return `Nur noch ${seatsLeft} Plätze`;
+  return `${seatsLeft} Plätze frei`;
+}
+---
+
+<a
+  href={`${base}/workshops/${workshop.id}`}
+  class="group block border-t border-ink/20 py-8 transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] last:border-b"
+  data-reveal
+>
+  <div class="flex flex-col gap-4 md:flex-row md:items-baseline md:justify-between md:gap-8">
+    <div>
+      <h3 class="font-display text-3xl">{title}</h3>
+      <p class="mt-2 max-w-[52ch] text-ink-soft">{subtitle}</p>
+      <p class="mt-3 font-mono text-[15px] text-ink-soft">
+        {next ? `Nächster Termin: ${formatDateShort(next.date)} · ${next.time} Uhr` : 'Termin auf Anfrage'} · {duration}
+      </p>
+    </div>
+    <div class="flex shrink-0 flex-col items-start gap-2 md:items-end">
+      <p class="font-mono text-xl tabular text-ink">{price > 0 ? formatMenuPrice(price, isDraft) : 'Preis auf Anfrage'}</p>
+      {next && (
+        <span
+          class:list={[
+            'font-mono text-[15px]',
+            next.seatsLeft <= 0 ? 'text-closed' : next.seatsLeft <= 3 ? 'rounded-card bg-accent px-2 py-0.5 text-white' : 'text-ink-soft',
+          ]}
+        >
+          {badgeText(next.seatsLeft)}
+        </span>
+      )}
+      <span class="inline-flex items-center gap-2 font-mono text-[15px] text-ink">
+        Details
+        <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+      </span>
+    </div>
+  </div>
+</a>

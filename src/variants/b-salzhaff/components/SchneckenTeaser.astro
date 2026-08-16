@@ -1,0 +1,45 @@
+---
+/** Signature-Block Schnecke auf der Startseite — Verweis auf /karte/schnecken. */
+import { getEntry } from 'astro:content';
+import SectionLabel from './SectionLabel.astro';
+import MaskImage from './MaskImage.astro';
+import { SIZES_THIRD } from '../../../lib/images';
+
+interface Props {
+  base: string;
+}
+const { base } = Astro.props;
+const schnecken = await getEntry('menu', 'schnecken');
+const items = schnecken?.data.items ?? [];
+---
+
+<section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+  <SectionLabel number="02" label="Signature" />
+  <div class="mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+    <h2 class="font-display text-[clamp(2.2rem,6vw,4.5rem)] leading-[0.98]">
+      Sauerteig statt Hefe.<br />18 Stunden Ruhe.
+    </h2>
+    <a
+      href={`${base}/karte/schnecken`}
+      class="group inline-flex min-h-[44px] w-fit items-center gap-2 font-mono text-[15px] text-ink"
+    >
+      Zur Schnecken-Seite
+      <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+    </a>
+  </div>
+
+  <div class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3">
+    {items.map((item, i) => (
+      <a href={`${base}/karte/schnecken`} class="block">
+        <MaskImage
+          motif={item.motif ?? 'schnecke-blech'}
+          alt={item.name}
+          sizes={SIZES_THIRD}
+          class="aspect-[4/5]"
+          delay={i * 80}
+        />
+        <p class="mt-4 text-xl">{item.name}</p>
+      </a>
+    ))}
+  </div>
+</section>

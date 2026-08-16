@@ -1,0 +1,37 @@
+---
+/**
+ * Bildbehandlung „Duotone" (VARIANT-BRIEF): Wrapper trägt die Sektions-Volltonfarbe,
+ * das Bild bekommt mix-blend-luminosity + reduzierte Deckkraft → eingefärbte Fläche.
+ * NIE Text direkt auf dieses Bild legen (Kontrast) — der Aufrufer platziert Text daneben/darüber
+ * nur auf eigens dafür vorgesehenen Flächen (bg-ink/60-Backdrop o. Ä.).
+ */
+import { Picture } from 'astro:assets';
+import { getImage, getAlt, SIZES_THIRD } from '../../../lib/images';
+import { widthsFor } from '../lib/media';
+
+interface Props {
+  motif: string;
+  alt?: string;
+  /** Volltonfarbe des Wrappers, z. B. "bg-accent" | "bg-primary" | "bg-secondary" */
+  tone: string;
+  class?: string;
+  sizes?: string;
+  priority?: boolean;
+}
+const { motif, alt, tone, class: cls = '', sizes = SIZES_THIRD, priority = false } = Astro.props;
+const img = getImage('c', motif);
+const widths = widthsFor(img);
+---
+
+<div class:list={['duotone-frame relative overflow-hidden', tone, cls]}>
+  <Picture
+    src={img}
+    formats={['avif', 'webp']}
+    widths={widths}
+    sizes={sizes}
+    alt={alt ?? getAlt(motif)}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : undefined}
+    class="h-full w-full mix-blend-luminosity opacity-90 object-cover"
+  />
+</div>

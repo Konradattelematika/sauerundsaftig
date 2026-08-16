@@ -1,0 +1,67 @@
+---
+/**
+ * Eine komplette Karten-Sektion (Frühstück/Kuchen/Brot/Kaffee, Schnecken-Kurzfassung) als
+ * Vollton-Block. Auf bg-accent wandert die Positionsliste in eine Papier-Karte (Kleintext-Regel).
+ */
+import MenuItemRow from './MenuItemRow.astro';
+import { label, labelOnDark, btnOnDark, btnSecondary } from '../lib/ui';
+
+interface Item {
+  name: string;
+  description?: string;
+  price?: number;
+  priceIsPlaceholder: boolean;
+  priceSuffix?: string;
+  veggie: boolean;
+  vegan: boolean;
+  allergens: string[];
+  seasonal?: string;
+  highlight: boolean;
+}
+interface Section {
+  title: string;
+  intro: string;
+  note?: string;
+  items: Item[];
+}
+type Tone = 'bg-bg' | 'bg-bg-alt' | 'bg-primary' | 'bg-secondary' | 'bg-accent';
+
+interface Props {
+  section: Section;
+  tone: Tone;
+  id: string;
+  signatureHref?: string;
+}
+const { section, tone, id, signatureHref } = Astro.props;
+const onDark = tone === 'bg-primary' || tone === 'bg-secondary';
+const onAccent = tone === 'bg-accent';
+const textTone = onDark || onAccent ? 'text-paper' : 'text-ink';
+const introTone = onDark ? 'text-paper/90' : onAccent ? 'text-paper/90' : 'text-ink-soft';
+---
+
+<section id={id} class:list={[tone, 'scroll-mt-24 py-16 md:py-24', textTone]} data-reveal>
+  <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+    <p class={onDark ? labelOnDark : onAccent ? 'font-mono text-[15px] uppercase tracking-[0.15em] text-paper/85' : label}>Karte</p>
+    <h2 class="mt-2 font-display text-[clamp(2.25rem,7vw,5rem)] font-extrabold uppercase leading-[0.92]">{section.title}</h2>
+    <p class={`prose-measure mt-4 text-lg md:text-xl ${introTone}`}>{section.intro}</p>
+    {section.note && <p class={`mt-2 font-mono text-[15px] ${introTone}`}>{section.note}</p>}
+
+    {onAccent ? (
+      <div class="mt-10 border-2 border-ink bg-paper p-5 text-ink md:p-8">
+        <ul>
+          {section.items.map((item) => <MenuItemRow item={item} />)}
+        </ul>
+      </div>
+    ) : (
+      <ul class="mt-10 max-w-[900px]">
+        {section.items.map((item) => <MenuItemRow item={item} onDark={onDark} />)}
+      </ul>
+    )}
+
+    {signatureHref && (
+      <a href={signatureHref} class={onDark || onAccent ? btnOnDark : btnSecondary} style="margin-top:2.5rem">
+        Zur Schnecken-Signature-Seite
+      </a>
+    )}
+  </div>
+</section>

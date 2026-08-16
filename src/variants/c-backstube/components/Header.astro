@@ -1,0 +1,77 @@
+---
+/** Header: Logo, Hauptnav, CTA, OpeningStatus. Mobil: <details>-Drawer (CSS-first, ARIA-sauber). */
+import Logo from '../../../components/shared/Logo.astro';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import { NAV_MAIN, NAV_CTA, VARIANTS } from '../../../lib/variants';
+import { btnPrimary, navLink } from '../lib/ui';
+
+const base = VARIANTS.c.base;
+const path = Astro.url.pathname;
+function isCurrent(itemPath: string): boolean {
+  const full = `${base}${itemPath}`;
+  return path === full || path.startsWith(`${full}/`);
+}
+---
+
+<header class="sticky top-0 z-40 border-b-2 border-ink bg-bg">
+  <div class="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 md:px-8">
+    <a href={base} class="shrink-0" aria-label="Sauer & Saftig — zur Startseite">
+      <Logo variant="lockup" tone="dark" width={150} class="h-auto w-[124px] md:w-[150px]" />
+    </a>
+
+    <nav class="hidden items-center gap-7 lg:flex" aria-label="Hauptnavigation">
+      {NAV_MAIN.map((item) => (
+        <a href={`${base}${item.path}`} class={navLink} aria-current={isCurrent(item.path) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="hidden items-center gap-5 lg:flex">
+      <OpeningStatus size="sm" />
+      <a href={`${base}${NAV_CTA.path}`} class={btnPrimary}>{NAV_CTA.label}</a>
+    </div>
+
+    <details class="header-drawer lg:hidden" data-mobile-nav>
+      <summary
+        class="grid size-11 cursor-pointer list-none place-items-center border-2 border-ink bg-bg [&::-webkit-details-marker]:hidden"
+        aria-label="Menü öffnen"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+      </summary>
+      <div class="fixed inset-0 top-[57px] z-30 overflow-y-auto border-t-2 border-ink bg-bg p-6">
+        <nav aria-label="Hauptnavigation (mobil)">
+          <ul class="flex flex-col gap-1">
+            {NAV_MAIN.map((item) => (
+              <li>
+                <a
+                  href={`${base}${item.path}`}
+                  class="flex min-h-[44px] items-center border-b border-ink/10 font-display text-2xl font-extrabold"
+                  aria-current={isCurrent(item.path) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div class="mt-6 flex flex-col gap-5">
+          <OpeningStatus size="lg" />
+          <a href={`${base}${NAV_CTA.path}`} class={`${btnPrimary} w-full`}>{NAV_CTA.label}</a>
+        </div>
+      </div>
+    </details>
+  </div>
+</header>
+
+<script>
+  // Mobiles Menü schließen, sobald ein Link darin geklickt wird (Seitenwechsel).
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest('.header-drawer a');
+    if (!link) return;
+    const details = link.closest('details');
+    if (details) details.open = false;
+  });
+</script>

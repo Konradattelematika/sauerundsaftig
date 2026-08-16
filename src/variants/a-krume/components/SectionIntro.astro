@@ -1,0 +1,20 @@
+---
+/** Editoriale Sektions-Einleitung: Mono-Eyebrow + große Fraunces-Zeile + optionaler Text. */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  as?: 'h1' | 'h2';
+  size?: 'md' | 'lg';
+  class?: string;
+}
+const { eyebrow, title, intro, as = 'h2', size = 'md', class: cls = '' } = Astro.props;
+const Tag = as;
+const titleClass = size === 'lg' ? 'text-[clamp(2.5rem,6vw,4.5rem)]' : 'text-[clamp(2rem,5vw,3.5rem)]';
+---
+
+<div class:list={['max-w-3xl', cls]} data-reveal>
+  {eyebrow && <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">{eyebrow}</p>}
+  <Tag class:list={['mt-3', titleClass]}>{title}</Tag>
+  {intro && <p class="prose-measure mt-4 text-lg text-ink-soft md:text-xl">{intro}</p>}
+</div>

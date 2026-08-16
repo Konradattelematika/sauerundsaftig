@@ -1,0 +1,103 @@
+---
+/**
+ * /sauerteig — Handwerksseite mit 18-Stunden-Zeitleiste. Uhrzeiten/Temperaturen
+ * 1:1 aus dem Journal-Artikel „achtzehn-stunden" übernommen (keine erfundenen Fakten).
+ */
+import Layout from '../../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import Timeline from '../../../variants/a-krume/components/Timeline.astro';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { breadcrumbs } from '../../../lib/schema-org';
+
+const base = '/a';
+
+const stages = [
+  { time: '14:00', title: 'Ansetzen', text: 'Der Sauerteig kommt aus dem Glas, wird mit Mehl und Wasser aufgefrischt. Parallel ruht das Mehl für den Hauptteig eine Stunde im Wasser — Autolyse.' },
+  { time: '15:30', title: 'Kneten', text: 'Sauerteig und Salz kommen dazu. Kurz kneten, dann Pause — der Teig arbeitet die nächsten Stunden vor allem selbst.' },
+  { time: '17:00–19:00', title: 'Dehnen & Falten', text: 'Vier Runden im Halbstundentakt. Bei rund 24 Grad Raumtemperatur baut der Teig so Spannung auf, ohne zu reißen.' },
+  { time: '21:00', title: 'Formen', text: 'Der Teig wird zum Laib geformt und kopfüber in den bemehlten Gärkorb gelegt — die Naht zeigt nach oben.' },
+  { time: '21:30', title: 'Kalte Gare', text: 'Ab in den Kühlschrank, bei rund 4 Grad. Über Nacht entsteht hier ein guter Teil der Säure, die den Laib später trägt.' },
+  { time: '06:00–06:30', title: 'Ofen & Einschuss', text: 'Der Ofen heizt auf 250 Grad mit Schwaden vor. Ein Schnitt mit der Klinge, dann Dampf für die ersten Minuten.' },
+  { time: '07:15', title: 'Auskühlen', text: 'Die Kruste ist dunkel und knackt beim Abkühlen hörbar — die letzte halbe Stunde gehört dem Brot allein.' },
+  { time: '08:00', title: 'Theke', text: '18 Stunden nach dem ersten Handgriff steht der Laib bei uns im Regal, bereit für den ersten Schnitt des Tages.' },
+];
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Sauerteig', url: new URL(`${base}/sauerteig`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="18 Stunden Sauerteig — vom Ansetzen bis zur Theke | Sauer & Saftig"
+  description="Kein Schritt lässt sich abkürzen: 18 Stunden von Mehl, Wasser und Zeit bis zum fertigen Sauerteiglaib — Etappe für Etappe."
+  jsonLd={jsonLd}
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Sauerteig', href: `${base}/sauerteig` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro
+        as="h1"
+        size="lg"
+        eyebrow="Handwerk"
+        title="18 Stunden, keine Abkürzung"
+        intro="Ein Laib Sauerteigbrot hat, bis er im Regal liegt, schon einen ganzen Arbeitstag und eine Nacht hinter sich. Mehl, Wasser, Salz und Zeit — an der letzten Zutat lässt sich kaum rütteln."
+      />
+
+      <dl class="mt-10 grid grid-cols-3 gap-4 border-t border-ink/10 pt-8 md:mt-16 md:gap-8" data-reveal style="--reveal-delay:100ms">
+        <div>
+          <dt class="font-mono text-xs uppercase tracking-widest text-ink-soft">Stunden gesamt</dt>
+          <dd class="mt-1 font-display text-4xl md:text-5xl">
+            <span data-countup="18">18</span>
+          </dd>
+        </div>
+        <div>
+          <dt class="font-mono text-xs uppercase tracking-widest text-ink-soft">Falt-Runden</dt>
+          <dd class="mt-1 font-display text-4xl md:text-5xl">
+            <span data-countup="4">4</span>
+          </dd>
+        </div>
+        <div>
+          <dt class="font-mono text-xs uppercase tracking-widest text-ink-soft">Grad im Ofen</dt>
+          <dd class="mt-1 font-display text-4xl md:text-5xl">
+            <span data-countup="250">250</span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <Timeline stages={stages} />
+    </div>
+  </section>
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
+        <div class="md:col-span-6" data-reveal>
+          <Figure motif="haende-teig" aspect="aspect-[4/5]" sizes="(min-width: 768px) 45vw, 100vw" />
+        </div>
+        <div class="md:col-span-5 md:col-start-8" data-reveal style="--reveal-delay:100ms">
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Warum so lange</p>
+          <h2 class="mt-3 text-[clamp(2rem,4vw,2.75rem)]">Zeit statt Abkürzung</h2>
+          <p class="prose-measure mt-4 text-lg text-ink-soft">
+            Kein Schritt lässt sich beschleunigen, ohne dass Krume oder Kruste darunter leiden. Wer weniger Zeit gibt,
+            bekommt weniger Geschmack zurück — deshalb gibt es bei uns keinen Laib, der schneller geht als 18 Stunden.
+          </p>
+          <a
+            href={`${base}/karte/brot`}
+            class="mt-6 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+          >
+            Unsere Brote in der Karte
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

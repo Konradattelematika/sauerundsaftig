@@ -1,0 +1,17 @@
+---
+/**
+ * Sektionstrenner: dünne Linie + Mono-Label ("01 — Heute frisch").
+ * Gestaltungs-DNA Variante B (VARIANT-BRIEF §Layout).
+ */
+interface Props {
+  number: string;
+  label: string;
+  id?: string;
+  class?: string;
+}
+const { number, label, id, class: cls = '' } = Astro.props;
+---
+
+<div id={id} class:list={['border-t border-ink/20 pt-4', cls]} data-reveal>
+  <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">{number} — {label}</p>
+</div>

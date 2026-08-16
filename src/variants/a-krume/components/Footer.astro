@@ -1,0 +1,78 @@
+---
+/**
+ * Footer Variante A: dunkler Abschluss (bg-ink), NAV_FOOTER/NAV_LEGAL,
+ * Öffnungszeiten kompakt, Instagram, TGTG-Zeile, Claim.
+ */
+import Logo from '../../../components/shared/Logo.astro';
+import site from '../../../data/site.json';
+import { NAV_FOOTER, NAV_LEGAL } from '../../../lib/variants';
+import { weekOverview } from '../../../lib/opening-hours';
+import { telHref } from '../../../lib/format';
+
+interface Props {
+  base: string;
+}
+const { base } = Astro.props;
+const week = weekOverview(site.openingHours);
+const phoneHref = telHref(site.phone);
+---
+
+<footer class="bg-ink text-bg">
+  <div class="mx-auto grid max-w-[1440px] gap-10 px-4 py-16 md:grid-cols-12 md:gap-8 md:px-8 md:py-24">
+    <div class="md:col-span-4">
+      <Logo variant="lockup" tone="light" width={170} loading="lazy" />
+      <p class="mt-5 font-display text-2xl">{site.claim}</p>
+      <p class="mt-3 max-w-[32ch] text-bg/70">{site.subline}</p>
+      <a
+        href={`https://www.instagram.com/${site.instagram}/`}
+        target="_blank"
+        rel="noopener"
+        class="mt-5 inline-flex min-h-11 items-center font-mono text-sm underline decoration-bg/40 underline-offset-4 hover:decoration-bg"
+      >
+        @{site.instagram} auf Instagram
+      </a>
+    </div>
+
+    <nav aria-label="Footer-Navigation" class="md:col-span-3">
+      <p class="font-mono text-xs uppercase tracking-widest text-bg/60">Mehr</p>
+      <ul class="mt-4 flex flex-col gap-3">
+        {NAV_FOOTER.map((item) => (
+          <li>
+            <a href={`${base}${item.path}`} class="inline-flex min-h-8 items-center text-bg/90 hover:text-bg">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="md:col-span-5">
+      <p class="font-mono text-xs uppercase tracking-widest text-bg/60">Öffnungszeiten</p>
+      <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 font-mono text-xl text-bg/90">
+        {week.map((d) => (
+          <>
+            <dt class="text-bg/60">{d.short}</dt>
+            <dd class="tabular">{d.hours}</dd>
+          </>
+        ))}
+      </dl>
+      <a href={phoneHref} class="mt-5 inline-flex min-h-11 items-center font-mono text-xl underline decoration-bg/40 underline-offset-4 hover:decoration-bg">
+        {site.phoneDisplay}
+      </a>
+      <p class="mt-4 max-w-[38ch] text-sm text-bg/70">
+        Bei Too Good To Go dabei: Überraschungstüte für {site.tooGoodToGo.bagPrice} € statt rund {site.tooGoodToGo.bagValue} € Warenwert, solange Vorrat reicht.
+      </p>
+    </div>
+  </div>
+
+  <div class="border-t border-bg/15">
+    <div class="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-6 font-mono text-xs uppercase tracking-widest text-bg/60 md:px-8">
+      <p>© {new Date().getFullYear()} {site.name} · Dünenstraße 1, {site.address.city}</p>
+      <ul class="flex flex-wrap items-center gap-5">
+        {NAV_LEGAL.map((item) => (
+          <li><a href={`${base}${item.path}`} class="inline-flex min-h-8 items-center hover:text-bg">{item.label}</a></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</footer>

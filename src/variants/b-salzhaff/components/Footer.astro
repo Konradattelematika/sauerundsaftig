@@ -1,0 +1,68 @@
+---
+/** Footer Variante B — nüchtern, Zeilen statt Kacheln. */
+import Logo from '../../../components/shared/Logo.astro';
+import site from '../../../data/site.json';
+import { NAV_FOOTER, NAV_LEGAL } from '../../../lib/variants';
+import { weekOverview } from '../../../lib/opening-hours';
+import { telHref } from '../../../lib/format';
+import type { Schedule } from '../../../lib/opening-hours';
+
+interface Props {
+  base: string;
+}
+const { base } = Astro.props;
+const week = weekOverview(site.openingHours as unknown as Schedule);
+---
+
+<footer class="border-t border-ink/20 bg-bg-alt">
+  <div class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-20">
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-[1.2fr_1fr_1fr]">
+      <div class="flex flex-col gap-4">
+        <Logo variant="lockup" tone="dark" width={170} />
+        <p class="max-w-[32ch] text-ink-soft">{site.claim}</p>
+        <p class="text-ink-soft">{site.subline}</p>
+        <a
+          href={`https://www.instagram.com/${site.instagram}/`}
+          target="_blank"
+          rel="noopener"
+          class="font-mono text-[15px] text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+        >
+          @{site.instagram}
+        </a>
+      </div>
+
+      <nav aria-label="Weitere Seiten" class="flex flex-col gap-2">
+        <p class="mb-2 font-mono text-[15px] uppercase tracking-widest text-ink-soft">Mehr</p>
+        {NAV_FOOTER.map((item) => (
+          <a href={`${base}${item.path}`} class="w-fit min-h-[44px] py-1.5 text-ink hover:text-primary flex items-center">
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="flex flex-col gap-3">
+        <p class="mb-1 font-mono text-[15px] uppercase tracking-widest text-ink-soft">Öffnungszeiten</p>
+        <ul class="flex flex-col gap-1 font-mono text-[15px] text-ink">
+          {week.map((d) => (
+            <li class="flex justify-between gap-4"><span>{d.short}</span><span class="tabular">{d.hours}</span></li>
+          ))}
+        </ul>
+        <a href={telHref(site.phone)} class="mt-2 min-h-[44px] py-1 text-xl text-ink flex items-center">
+          {site.phoneDisplay}
+        </a>
+        <p class="text-ink-soft">TGTG-Partner · Überraschungstüte in der App</p>
+      </div>
+    </div>
+
+    <div class="mt-14 flex flex-col gap-4 border-t border-ink/20 pt-8 md:flex-row md:items-center md:justify-between">
+      <p class="font-display text-2xl text-ink">{site.claim}</p>
+      <nav aria-label="Rechtliches" class="flex flex-wrap gap-x-6 gap-y-2">
+        {NAV_LEGAL.map((item) => (
+          <a href={`${base}${item.path}`} class="font-mono text-[15px] text-ink-soft hover:text-ink">
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+</footer>

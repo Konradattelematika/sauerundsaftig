@@ -1,0 +1,75 @@
+---
+/**
+ * /sauerteig — Handwerksseite mit 18-Stunden-Zeitleiste, streng vertikal,
+ * Uhrzeit als große Mono-Ziffer (VARIANT-BRIEF §4.7 + „Zusätzliche B-Akzente").
+ * Uhrzeiten/Temperaturen aus dem Journal-Artikel „achtzehn-stunden" übernommen.
+ */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import RevealHeadline from '../../variants/b-salzhaff/components/RevealHeadline.astro';
+import MaskImage from '../../variants/b-salzhaff/components/MaskImage.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+
+const STAGES = [
+  { time: '14:00', title: 'Ansetzen', desc: 'Sauerteig wird mit Mehl und Wasser aufgefrischt, während das Mehl für den Hauptteig in Autolyse ruht.' },
+  { time: '15:30', title: 'Kneten', desc: 'Sauerteig und Salz kommen dazu. Kurz kneten, dann arbeitet der Teig allein weiter.' },
+  { time: '17:00–19:00', title: 'Dehnen & Falten', desc: 'Vier Runden im Halbstundentakt, bei rund 24 Grad. Der Teig wird mit jeder Runde straffer.' },
+  { time: '21:00', title: 'Formen', desc: 'Zur Kugel gezogen, zum Laib geformt, kopfüber in den bemehlten Gärkorb.' },
+  { time: '21:30', title: 'Kalte Gare', desc: 'Ab in den Kühlschrank bei rund 4 Grad — hier entsteht ein guter Teil der Säure.' },
+  { time: '06:00', title: 'Ofen heizt vor', desc: 'Auf 250 Grad, mit Schwaden. Die Laibe kommen kalt und straff aus dem Kühlschrank.' },
+  { time: '06:30', title: 'Einschießen', desc: 'Ein Schnitt mit der Klinge, dann Dampf für die ersten Minuten — er hält die Kruste dehnbar.' },
+  { time: '08:00', title: 'Theke', desc: '18 Stunden nach dem ersten Handgriff steht der Laib im Regal, bereit für den ersten Schnitt.' },
+];
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Sauerteig', url: `${Astro.site}${base}/sauerteig` },
+  ]),
+];
+---
+
+<Layout
+  title="Sauerteig — die 18-Stunden-Zeitleiste — Sauer & Saftig"
+  description="Von 14 Uhr bis 8 Uhr: wie aus Mehl, Wasser und Zeit ein Sauerteigbrot wird, Etappe für Etappe."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Handwerk</p>
+    <RevealHeadline
+      as="h1"
+      class="mt-4 text-[clamp(2.6rem,8vw,6.5rem)]"
+      lines={['18 Stunden für einen Laib.']}
+    />
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">
+      Kein Schritt lässt sich beschleunigen, ohne dass Krume oder Kruste darunter leiden — also zählen wir mit.
+      <span data-countup="18">0</span> Stunden, von der Auffrischung bis zur Theke.
+    </p>
+  </section>
+
+  <section class="mt-12 md:mt-20">
+    <MaskImage motif="ofen" alt="Ofeneinschuss in der Backstube am frühen Morgen (Platzhalterbild)" class="aspect-[16/9] w-full" />
+  </section>
+
+  <section class="mx-auto max-w-[900px] px-4 py-16 md:px-8 md:py-28">
+    <SectionLabel number="01" label="Zeitleiste" />
+    <ol class="mt-8">
+      {STAGES.map((s, i) => (
+        <li class="border-t border-ink/20 py-8 last:border-b" data-reveal style={`--reveal-delay: ${Math.min(i, 6) * 70}ms`}>
+          <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:gap-8">
+            <p class="w-full shrink-0 font-mono text-3xl tabular text-ink md:w-[9ch]">{s.time}</p>
+            <div>
+              <p class="text-xl">{s.title}</p>
+              <p class="mt-2 max-w-[52ch] text-ink-soft">{s.desc}</p>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ol>
+    <p class="mt-8 text-ink-soft">
+      Ausführlich nachlesen: <a href={`${base}/journal/achtzehn-stunden`} class="text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink">Journal — 18 Stunden, die Zeitleiste eines Laibs</a>.
+    </p>
+  </section>
+</Layout>

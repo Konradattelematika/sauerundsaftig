@@ -1,0 +1,136 @@
+---
+/** Signature-Seite — höchster Gestaltungsanspruch der Variante (VARIANT-BRIEF §3, §Zusätzliche Akzente). */
+import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import Layout from '../../../variants/c-backstube/Layout.astro';
+import DuotoneImage from '../../../variants/c-backstube/components/DuotoneImage.astro';
+import { getImage, getAlt } from '../../../lib/images';
+import { widthsFor } from '../../../variants/c-backstube/lib/media';
+import { formatMenuPrice } from '../../../lib/format';
+import { breadcrumbs } from '../../../lib/schema-org';
+import { btnPrimary, btnSecondary, stamp, labelOnDark } from '../../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+
+const entries = await getCollection('menu');
+const schnecken = entries.find((e) => e.data.slug === 'schnecken')!.data;
+
+const openerImg = getImage('c', 'schnecke-querschnitt');
+const openerWidths = widthsFor(openerImg);
+
+const TONES = [
+  { bg: 'bg-accent', name: 'Sanddorn' },
+  { bg: 'bg-primary', name: 'Kruste' },
+  { bg: 'bg-secondary', name: 'Salzhaff' },
+] as const;
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Karte', url: new URL(`${base}/karte`, Astro.site).toString() },
+    { name: 'Schnecken', url: new URL(`${base}/karte/schnecken`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Sauerteigschnecken — Sauer & Saftig"
+  description="Pistazie, Lotus, Haselnuss: unsere Sauerteigschnecken. Sauerteig statt Hefe, 18 Stunden Reifezeit, jeden Morgen frisch gedreht."
+  jsonLd={jsonLd}
+>
+  {/* ============ AUFMACHER: QUERSCHNITT-MOTIV ============ */}
+  <section class="relative overflow-hidden bg-ink">
+    <div class="relative aspect-[4/3] w-full sm:aspect-[16/9] md:aspect-[21/9]">
+      <Picture
+        src={openerImg}
+        formats={['avif', 'webp']}
+        widths={openerWidths}
+        sizes="100vw"
+        alt={getAlt('schnecke-querschnitt')}
+        loading="eager"
+        fetchpriority="high"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+      <div class="absolute inset-0 bg-ink/60"></div>
+      <div class="absolute inset-0 flex flex-col justify-end px-4 pb-10 md:px-8 md:pb-14">
+        <div class="mx-auto w-full max-w-[1400px]">
+          <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/90">Signature</p>
+          <h1 class="mt-2 font-display text-[clamp(3rem,12vw,8rem)] font-extrabold uppercase leading-[0.86] text-paper">
+            Die Schnecke.
+          </h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ============ PROZESS ============ */}
+  <section class="bg-bg py-14 md:py-20" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class="prose-measure text-lg text-ink-soft md:text-xl">
+        {schnecken.intro} Sauerteig statt Hefeteig heißt: 18 Stunden Reifezeit statt einer Stunde Gehzeit — mehr Aroma, mehr
+        Bekömmlichkeit, mehr Aufwand. Ofenfrisch am Vormittag, solange der Vorrat reicht.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <span class={stamp}>Sauerteig statt Hefe</span>
+        <span class={stamp}>18 Stunden Reifezeit</span>
+        <span class={stamp}>Solange der Vorrat reicht</span>
+      </div>
+    </div>
+  </section>
+
+  {/* ============ DREI SORTEN ALS VOLLTON-BLÖCKE ============ */}
+  {schnecken.items.map((item, i) => {
+    const tone = TONES[i % TONES.length];
+    const onAccent = tone.bg === 'bg-accent';
+    return (
+      <section class:list={[tone.bg, 'py-16 text-paper md:py-24']} data-reveal>
+        <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+          <div class:list={['grid items-center gap-8 md:gap-14', i % 2 === 0 ? 'md:grid-cols-[1fr_1.1fr]' : 'md:grid-cols-[1.1fr_1fr] md:[&>*:first-child]:order-2']}>
+            <DuotoneImage
+              motif={item.motif ?? 'schnecke-pistazie'}
+              tone={tone.bg}
+              class="aspect-[4/3] border-2 border-ink"
+              alt={getAlt(item.motif ?? 'schnecke-pistazie')}
+              priority={i === 0}
+            />
+            <div>
+              <p class={labelOnDark}>{tone.name}</p>
+              <h2 class="mt-2 font-display text-[clamp(3rem,9vw,6.5rem)] font-extrabold uppercase leading-[0.88]">
+                {item.name}
+              </h2>
+
+              {onAccent ? (
+                <div class="mt-6 max-w-[52ch] border-2 border-ink bg-paper p-5 text-ink md:p-6">
+                  <p class="text-lg">{item.description}</p>
+                </div>
+              ) : (
+                <p class="prose-measure mt-6 text-lg text-paper/90 md:text-xl">{item.description}</p>
+              )}
+
+              <div class="mt-6 flex flex-wrap items-center gap-4">
+                <p class="font-mono text-2xl tabular">{formatMenuPrice(item.price, item.priceIsPlaceholder)}</p>
+                {item.veggie && <span class={stamp}>Veggie</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  })}
+
+  {/* ============ CTA VORBESTELLEN ============ */}
+  <section class="bg-bg py-16 md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 text-center md:px-8">
+      <h2 class="font-display text-[clamp(2.25rem,6vw,4.5rem)] font-extrabold uppercase leading-[0.92] text-ink">
+        Schon heute sichern.
+      </h2>
+      <p class="prose-measure mx-auto mt-4 text-lg text-ink-soft md:text-xl">
+        Bestellschluss ist 18 Uhr am Vortag. Für Torten planen wir 5 Tage Vorlauf ein.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <a href={`${base}/vorbestellen`} class={btnPrimary}>Jetzt vorbestellen</a>
+        <a href={`${base}/karte`} class={btnSecondary}>Zur ganzen Karte</a>
+      </div>
+    </div>
+  </section>
+</Layout>

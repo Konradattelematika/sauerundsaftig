@@ -1,0 +1,55 @@
+---
+/**
+ * Zweispaltige Karten-Liste: Name+Beschreibung links, Preis rechts in Space Mono
+ * mit Punktlinie dazwischen. Preis-Platzhalter über formatMenuPrice (°).
+ */
+import { formatMenuPrice } from '../../../lib/format';
+
+interface MenuItem {
+  name: string;
+  description?: string;
+  price?: number;
+  priceIsPlaceholder: boolean;
+  priceSuffix?: string;
+  veggie: boolean;
+  vegan: boolean;
+  allergens: string[];
+  seasonal?: string;
+  highlight: boolean;
+}
+interface Props {
+  items: MenuItem[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="flex flex-col">
+  {items.map((item, i) => (
+    <li class:list={['border-b border-ink/10 py-5', i === 0 && 'pt-0']} data-reveal style={`--reveal-delay:${(i % 3) * 100}ms`}>
+      <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <p class="flex flex-wrap items-center gap-2 text-lg md:text-xl">
+          <span>{item.name}</span>
+          {item.highlight && (
+            <span class="rounded-full border border-primary px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-primary-deep">Signature</span>
+          )}
+          {item.veggie && (
+            <span class="rounded-full border border-ink/25 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-ink-soft">Veggie</span>
+          )}
+          {item.vegan && (
+            <span class="rounded-full border border-ink/25 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-ink-soft">Vegan</span>
+          )}
+        </p>
+        <span class="dotted-leader hidden flex-1 translate-y-[-3px] border-b border-dotted border-ink/25 sm:block" aria-hidden="true"></span>
+        <p class="shrink-0 font-mono text-base tabular">{formatMenuPrice(item.price, item.priceIsPlaceholder, item.priceSuffix)}</p>
+      </div>
+      {item.description && <p class="prose-measure mt-1.5 text-ink-soft">{item.description}</p>}
+      {(item.allergens.length > 0 || item.seasonal) && (
+        <p class="mt-1.5 font-mono text-[13px] text-ink-soft">
+          {item.seasonal && <span>{item.seasonal}</span>}
+          {item.seasonal && item.allergens.length > 0 && <span> · </span>}
+          {item.allergens.length > 0 && <span>Allergene: {item.allergens.join(', ')}</span>}
+        </p>
+      )}
+    </li>
+  ))}
+</ul>

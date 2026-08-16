@@ -1,0 +1,77 @@
+---
+/**
+ * Besuch-Modul: kompakt (Startseite) oder voll (/besuch). Öffnungszeiten-Tabelle
+ * und Telefon immer ≥20px (§6-Prüfliste, Persona 62+).
+ */
+import site from '../../../data/site.json';
+import { weekOverview } from '../../../lib/opening-hours';
+import { telHref, routeHref } from '../../../lib/format';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+
+interface Props {
+  base: string;
+  variant?: 'compact' | 'full';
+}
+const { base, variant = 'compact' } = Astro.props;
+const full = variant === 'full';
+const week = weekOverview(site.openingHours);
+const phoneHref = telHref(site.phone);
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+---
+
+<section class:list={['bg-bg-alt', full ? 'py-14 md:py-24' : 'py-14 md:py-20']}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+      <div class="md:col-span-5" data-reveal>
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Besuch</p>
+        <h2 class:list={['mt-3', full ? 'text-[clamp(2rem,5vw,3.5rem)]' : 'text-[clamp(1.75rem,4vw,2.5rem)]']}>
+          Wann du uns findest
+        </h2>
+        <div class="mt-5"><OpeningStatus size="lg" /></div>
+        <p class="prose-measure mt-4 text-lg text-ink-soft">
+          Dienstag und Mittwoch backen wir nicht — plan deinen Besuch drumherum.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-4">
+          <a
+            href={phoneHref}
+            class="inline-flex min-h-11 items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-xl text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep md:text-2xl"
+          >
+            {site.phoneDisplay}
+          </a>
+          {!full && (
+            <a
+              href={`${base}/besuch`}
+              class="inline-flex min-h-11 items-center justify-center rounded-card border-2 border-ink px-5 py-2.5 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
+            >
+              Alle Infos zum Besuch
+            </a>
+          )}
+          <a
+            href={route}
+            target="_blank"
+            rel="noopener"
+            class="inline-flex min-h-11 items-center justify-center rounded-card border-2 border-ink px-5 py-2.5 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
+          >
+            Route
+          </a>
+        </div>
+      </div>
+      <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
+        <table class="w-full border-collapse font-mono text-xl md:text-2xl">
+          <caption class="sr-only">Wochenübersicht Öffnungszeiten</caption>
+          <tbody>
+            {week.map((d) => (
+              <tr class="border-b border-ink/10">
+                <th scope="row" class="py-3 pr-4 text-left font-normal text-ink-soft">{d.day}</th>
+                <td class:list={['py-3 text-right tabular', d.hours === 'Ruhetag' && 'text-closed']}>{d.hours}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="mt-4 font-mono text-sm text-ink-soft">
+          Über Too Good To Go: Überraschungstüte für {site.tooGoodToGo.bagPrice} € (rund {site.tooGoodToGo.bagValue} € Warenwert), solange Vorrat reicht.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

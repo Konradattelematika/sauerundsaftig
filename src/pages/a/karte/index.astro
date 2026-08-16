@@ -1,0 +1,98 @@
+---
+/** /karte — Übersicht mit Ankernavigation zu allen 5 Sektionen. */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import MenuItemsList from '../../../variants/a-krume/components/MenuItemsList.astro';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { MENU_SECTIONS } from '../../../lib/variants';
+import { menuSchema } from '../../../lib/schema-org';
+
+const base = '/a';
+const allSections = await getCollection('menu');
+const sections = MENU_SECTIONS.map((slug) => allSections.find((s) => s.data.slug === slug)).filter(
+  (s): s is NonNullable<typeof s> => Boolean(s),
+);
+
+const jsonLd = [
+  menuSchema(
+    sections.map((s) => ({ title: s.data.title, items: s.data.items })),
+    String(Astro.site),
+  ),
+];
+---
+
+<Layout
+  title="Karte — Frühstück, Kuchen, Brot, Schnecken, Kaffee | Sauer & Saftig"
+  description="Die ganze Karte von Sauer & Saftig: Frühstück, Kuchen, Brot, Sauerteigschnecken und Kaffee — alles aus der eigenen Backstube."
+  jsonLd={jsonLd}
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Karte', href: `${base}/karte` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro
+        as="h1"
+        size="lg"
+        eyebrow="Die Karte"
+        title="Fünf Sektionen, ein Teig als Basis"
+        intro="Frühstück, Kuchen, Brot, Schnecken, Kaffee — fast überall steckt derselbe Sauerteig drin, nur anders verarbeitet."
+      />
+      <nav aria-label="Sektionen der Karte" class="mt-8 flex flex-wrap gap-3" data-reveal style="--reveal-delay:100ms">
+        {sections.map((s) => (
+          <a
+            href={`#${s.data.slug}`}
+            class="inline-flex min-h-11 items-center rounded-card border-2 border-ink/20 px-4 py-2 font-mono text-sm uppercase tracking-widest text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:border-ink"
+          >
+            {s.data.title}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  {sections.map((section, i) => (
+    <section id={section.data.slug} class:list={['scroll-mt-24 py-14 md:py-24', i % 2 === 1 ? 'bg-bg-alt' : 'bg-bg']}>
+      <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+        <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+          <div class="md:col-span-4">
+            <SectionIntro eyebrow={`0${i + 1} · Sektion`} title={section.data.title} intro={section.data.intro} />
+            {section.data.note && (
+              <p class="prose-measure mt-4 font-mono text-sm text-ink-soft">{section.data.note}</p>
+            )}
+            <a
+              href={`${base}/karte/${section.data.slug}`}
+              class="mt-6 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+            >
+              {section.data.slug === 'schnecken' ? 'Zur Signature-Seite' : `${section.data.title} als eigene Seite`}
+            </a>
+          </div>
+          <div class="md:col-span-8">
+            {section.data.slug === 'schnecken' ? (
+              <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                {section.data.items.map((item, idx) => (
+                  <div data-reveal style={`--reveal-delay:${(idx % 3) * 100}ms`}>
+                    {item.motif && <Figure motif={item.motif} aspect="aspect-square" sizes="(min-width: 1024px) 25vw, 45vw" />}
+                    <p class="mt-3 text-lg">{item.name}</p>
+                    {item.description && <p class="mt-1 text-sm text-ink-soft">{item.description}</p>}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <MenuItemsList items={section.data.items} />
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="bg-bg py-10">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <p class="font-mono text-sm text-ink-soft">
+        ° Beispielpreise — die echte Karte kommt mit dem Küchen-Update.
+      </p>
+    </div>
+  </section>
+</Layout>

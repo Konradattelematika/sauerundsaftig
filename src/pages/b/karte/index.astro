@@ -1,0 +1,47 @@
+---
+/** Karte Übersicht — Ankernavigation zu allen 5 Sektionen (VARIANT-BRIEF Routen). */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/b-salzhaff/Layout.astro';
+import MenuSection from '../../../variants/b-salzhaff/components/MenuSection.astro';
+import MenuLegend from '../../../variants/b-salzhaff/components/MenuLegend.astro';
+import { MENU_SECTIONS } from '../../../lib/variants';
+import { menuSchema, breadcrumbs } from '../../../lib/schema-org';
+
+const base = '/b';
+const all = await getCollection('menu');
+const sections = MENU_SECTIONS.map((slug) => all.find((s) => s.data.slug === slug)).filter(
+  (s): s is NonNullable<typeof s> => Boolean(s),
+);
+
+const jsonLd = [
+  menuSchema(sections.map((s) => ({ title: s.data.title, items: s.data.items })), String(Astro.site)),
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Karte', url: `${Astro.site}${base}/karte` },
+  ]),
+];
+---
+
+<Layout title="Karte — Sauer & Saftig" description="Frühstück, Kuchen, Brot, Sauerteigschnecken und Kaffee — die Karte im Überblick." jsonLd={jsonLd}>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Karte</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Was bei uns auf den Tisch kommt</h1>
+    <div class="mt-8">
+      <MenuLegend />
+    </div>
+
+    <nav aria-label="Sprung zu Sektionen" class="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+      {sections.map((s) => (
+        <a href={`#${s.data.slug}`} class="min-h-[44px] font-mono text-[15px] text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink flex items-center">
+          {s.data.title}
+        </a>
+      ))}
+    </nav>
+  </section>
+
+  <div class="mx-auto flex max-w-[1440px] flex-col gap-16 px-4 py-16 md:gap-24 md:px-8 md:py-24">
+    {sections.map((s, i) => (
+      <MenuSection section={s} number={String(i + 1).padStart(2, '0')} />
+    ))}
+  </div>
+</Layout>

@@ -1,0 +1,35 @@
+---
+/** Besuch-Modul kompakt für die Startseite (voller Umfang: /besuch). */
+import site from '../../../data/site.json';
+import { telHref } from '../../../lib/format';
+import SectionLabel from './SectionLabel.astro';
+import WeekTable from './WeekTable.astro';
+
+interface Props {
+  base: string;
+}
+const { base } = Astro.props;
+---
+
+<section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+  <SectionLabel number="04" label="Besuch" />
+  <div class="mt-8 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20">
+    <div>
+      <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Dünenstraße 1, Ostseebad Rerik</h2>
+      <p class="mt-4 max-w-[42ch] text-ink-soft">
+        Dienstag und Mittwoch backen wir nicht — plan deinen Besuch drumherum.
+      </p>
+      <a href={telHref(site.phone)} class="mt-6 block min-h-[44px] w-fit text-2xl text-ink">
+        {site.phoneDisplay}
+      </a>
+      <a
+        href={`${base}/besuch`}
+        class="group mt-6 inline-flex min-h-[44px] w-fit items-center gap-2 font-mono text-[15px] text-ink"
+      >
+        Alle Details zum Besuch
+        <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <WeekTable />
+  </div>
+</section>

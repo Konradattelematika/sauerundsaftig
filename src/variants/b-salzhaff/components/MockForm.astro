@@ -1,0 +1,86 @@
+---
+/**
+ * Formular-Mock (Kontakt/Gastgeber-Anfrage): reine Demo-UI, nichts wird übertragen.
+ * Zustand lebt nur im Browser-Speicher des Scripts, kein localStorage.
+ */
+interface Field {
+  id: string;
+  label: string;
+  type: 'text' | 'email' | 'tel' | 'textarea';
+  autocomplete?: string;
+  required?: boolean;
+}
+interface Props {
+  formId: string;
+  fields: Field[];
+  submitLabel: string;
+  successText: string;
+}
+const { formId, fields, submitLabel, successText } = Astro.props;
+---
+
+<div class="mock-form rounded-card border border-ink/15 bg-paper p-6 md:p-8" data-mock-form={formId}>
+  <form data-mock-form-el novalidate>
+    <div class="flex flex-col gap-5">
+      {fields.map((f) => (
+        <div>
+          <label for={`${formId}-${f.id}`} class="block text-base text-ink-soft">
+            {f.label}{f.required !== false ? '*' : ''}
+          </label>
+          {f.type === 'textarea' ? (
+            <textarea
+              id={`${formId}-${f.id}`}
+              name={f.id}
+              rows={5}
+              required={f.required !== false}
+              class="mt-1 w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+            />
+          ) : (
+            <input
+              id={`${formId}-${f.id}`}
+              name={f.id}
+              type={f.type}
+              autocomplete={f.autocomplete}
+              required={f.required !== false}
+              class="mt-1 min-h-[44px] w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+    <p class="mt-4 text-ink-soft">Demo-Formular — es wird nichts versendet. Ruf uns lieber direkt an.</p>
+    <button
+      type="submit"
+      class="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-card bg-ink px-6 py-3 font-mono text-[15px] text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)]"
+    >
+      {submitLabel}
+    </button>
+  </form>
+  <div class="success-panel" data-mock-form-success hidden tabindex="-1" aria-live="polite">
+    <p class="text-xl">{successText}</p>
+  </div>
+</div>
+
+<script>
+  function init() {
+    document.querySelectorAll<HTMLElement>('[data-mock-form]').forEach((root) => {
+      if (root.dataset.bound === 'true') return;
+      root.dataset.bound = 'true';
+      const form = root.querySelector<HTMLFormElement>('[data-mock-form-el]');
+      const success = root.querySelector<HTMLElement>('[data-mock-form-success]');
+      if (!form || !success) return;
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        form.hidden = true;
+        success.hidden = false;
+        success.focus();
+      });
+    });
+  }
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

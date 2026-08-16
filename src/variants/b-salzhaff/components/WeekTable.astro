@@ -1,0 +1,26 @@
+---
+/** Wochenübersicht als Zeilen-Tabelle, Öffnungszeiten GROSS (VARIANT-BRIEF §Besuch-Modul). */
+import site from '../../../data/site.json';
+import { weekOverview } from '../../../lib/opening-hours';
+import type { Schedule } from '../../../lib/opening-hours';
+
+interface Props {
+  class?: string;
+}
+const { class: cls = '' } = Astro.props;
+const week = weekOverview(site.openingHours as unknown as Schedule);
+---
+
+<table class:list={['w-full border-collapse', cls]}>
+  <caption class="sr-only">Öffnungszeiten je Wochentag</caption>
+  <tbody>
+    {week.map((d) => (
+      <tr class="border-t border-ink/20 last:border-b">
+        <th scope="row" class="py-4 pr-4 text-left text-xl font-normal">{d.day}</th>
+        <td class:list={['py-4 text-right font-mono text-xl tabular', d.hours === 'Ruhetag' ? 'text-ink-soft' : 'text-ink']}>
+          {d.hours}
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>

@@ -1,0 +1,36 @@
+---
+/** Ein Etappen-Block der 18-Stunden-Zeitleiste: riesige Mono-Uhrzeit + Titel + Text, harter Farbwechsel. */
+import { labelOnDark, label } from '../lib/ui';
+
+type Tone = 'bg-bg' | 'bg-bg-alt' | 'bg-primary' | 'bg-secondary' | 'bg-accent';
+interface Props {
+  time: string;
+  title: string;
+  text: string;
+  tone: Tone;
+  index: number;
+}
+const { time, title, text, tone, index } = Astro.props;
+const onDark = tone === 'bg-primary' || tone === 'bg-secondary';
+const onAccent = tone === 'bg-accent';
+const ink = onDark || onAccent ? 'text-paper' : 'text-ink';
+---
+
+<div class:list={[tone, 'py-12 md:py-16', ink]} data-reveal style={`--reveal-delay:${(index % 6) * 80}ms`}>
+  <div class="mx-auto grid max-w-[1400px] gap-4 px-4 md:grid-cols-[minmax(0,280px)_1fr] md:gap-10 md:px-8">
+    <p class="font-mono text-[clamp(2.5rem,9vw,5rem)] font-bold leading-none tabular">{time}</p>
+    <div>
+      <p class={onDark ? labelOnDark : onAccent ? 'font-mono text-[15px] uppercase tracking-[0.15em] text-paper/85' : label}>
+        Etappe {index + 1}
+      </p>
+      <h3 class="mt-1 font-display text-2xl font-extrabold uppercase md:text-3xl">{title}</h3>
+      {onAccent ? (
+        <div class="mt-4 max-w-[60ch] border-2 border-ink bg-paper p-4 text-ink">
+          <p class="text-lg">{text}</p>
+        </div>
+      ) : (
+        <p class={`prose-measure mt-3 text-lg ${onDark ? 'text-paper/90' : 'text-ink-soft'}`}>{text}</p>
+      )}
+    </div>
+  </div>
+</div>

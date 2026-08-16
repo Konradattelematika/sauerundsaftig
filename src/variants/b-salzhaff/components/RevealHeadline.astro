@@ -1,0 +1,28 @@
+---
+/**
+ * Große Instrument-Serif-Headline, zeilenweise als data-reveal-Spans mit
+ * 80ms-Staffelung eingeblendet (VARIANT-BRIEF: Bewegung „Wasser").
+ * `accent` markiert Wörter, die in text-primary eingefärbt werden (Ersatz
+ * für den nicht geladenen Italic-Schnitt).
+ */
+interface Props {
+  lines: string[];
+  as?: 'h1' | 'h2';
+  class?: string;
+  accentLines?: number[]; // Indizes der Zeilen, die in text-primary erscheinen
+}
+const { lines, as = 'h1', class: cls = '', accentLines = [] } = Astro.props;
+const Tag = as;
+---
+
+<Tag class:list={['font-display leading-[0.98]', cls]}>
+  {lines.map((line: string, i: number) => (
+    <span
+      class:list={['block', accentLines.includes(i) ? 'text-primary' : '']}
+      data-reveal
+      style={`--reveal-delay: ${i * 80}ms`}
+    >
+      {line}
+    </span>
+  ))}
+</Tag>

@@ -1,0 +1,76 @@
+---
+/** Footer: NAV_FOOTER, NAV_LEGAL, Öffnungszeiten kompakt, Instagram, TGTG, Claim. */
+import Logo from '../../../components/shared/Logo.astro';
+import site from '../../../data/site.json';
+import { NAV_FOOTER, NAV_LEGAL, VARIANTS } from '../../../lib/variants';
+import { weekOverview } from '../../../lib/opening-hours';
+import { telHref } from '../../../lib/format';
+
+const base = VARIANTS.c.base;
+const week = weekOverview(site.openingHours as any);
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-primary text-paper">
+  <div class="mx-auto max-w-[1400px] px-4 py-14 md:px-8">
+    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <Logo variant="lockup" tone="light" width={170} class="h-auto w-[150px]" />
+        <p class="mt-5 font-display text-xl font-extrabold uppercase">{site.claim}</p>
+        <p class="mt-3 max-w-[30ch] text-base text-paper/85">{site.subline}</p>
+      </div>
+
+      <nav aria-label="Fußzeilen-Navigation">
+        <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/70">Mehr</p>
+        <ul class="mt-4 flex flex-col gap-2.5">
+          {NAV_FOOTER.map((item) => (
+            <li>
+              <a href={`${base}${item.path}`} class="min-h-[44px] items-center text-base underline-offset-4 hover:underline inline-flex">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div>
+        <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/70">Öffnungszeiten</p>
+        <dl class="mt-4 flex flex-col gap-1.5 font-mono text-[15px]">
+          {week.map((d) => (
+            <div class="flex justify-between gap-4">
+              <dt class="text-paper/80">{d.short}</dt>
+              <dd class="tabular">{d.hours}</dd>
+            </div>
+          ))}
+        </dl>
+        <p class="mt-3 text-paper/70">Di + Mi Ruhetag — plan deinen Besuch drumherum.</p>
+      </div>
+
+      <div>
+        <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/70">Kontakt</p>
+        <p class="mt-4 text-lg">{site.address.street}<br />{site.address.zip} {site.address.city}</p>
+        <a href={telHref(site.phone)} class="mt-3 inline-block text-xl underline-offset-4 hover:underline">{site.phoneDisplay}</a>
+        <a
+          href={`https://www.instagram.com/${site.instagram}/`}
+          target="_blank"
+          rel="noopener"
+          class="mt-3 flex min-h-[44px] items-center gap-2 text-base underline-offset-4 hover:underline"
+        >
+          @{site.instagram}
+        </a>
+        {site.tooGoodToGo.partner && (
+          <p class="mt-3 font-mono text-[15px] text-paper/85">Too Good To Go: Tüte für {site.tooGoodToGo.bagPrice} € statt {site.tooGoodToGo.bagValue} €</p>
+        )}
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-wrap items-center justify-between gap-4 border-t-2 border-paper/25 pt-6">
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[15px]">
+        {NAV_LEGAL.map((item) => (
+          <li><a href={`${base}${item.path}`} class="underline-offset-4 hover:underline">{item.label}</a></li>
+        ))}
+      </ul>
+      <p class="font-mono text-[15px] text-paper/70">© {year} {site.name}</p>
+    </div>
+  </div>
+</footer>

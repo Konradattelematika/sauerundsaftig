@@ -1,0 +1,59 @@
+---
+/**
+ * Layout Variante B — „Salzhaff" (Nordic Quiet).
+ * Bindet die B-Tokens (styles/b.css), Header/Footer, Skip-Link, StickyBar,
+ * Motion-Bootstrap und View Transitions. Jede Route unter /b nutzt dieses Layout.
+ */
+import '../../styles/b.css';
+import { ClientRouter } from 'astro:transitions';
+import SeoHead from '../../components/shared/SeoHead.astro';
+import StickyBar from '../../components/shared/StickyBar.astro';
+import Motion from '../../components/shared/Motion.astro';
+import Header from './components/Header.astro';
+import Footer from './components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: object[];
+  ogImage?: string;
+  noindex?: boolean;
+  bodyClass?: string;
+}
+const { title, description, jsonLd = [], ogImage, noindex = false, bodyClass = '' } = Astro.props;
+const base = '/b';
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <SeoHead title={title} description={description} jsonLd={jsonLd} ogImage={ogImage} noindex={noindex} />
+    <ClientRouter />
+    <style>
+      /* Masken-Reveal für großformatige Bilder ("Wasser"-Bewegung, VARIANT-BRIEF). */
+      .mask-reveal[data-reveal] {
+        clip-path: inset(0 0 0 0);
+      }
+      .js-motion .mask-reveal[data-reveal] {
+        opacity: 1;
+        transform: none;
+        clip-path: inset(100% 0 0 0);
+        transition: clip-path var(--dur-slow) var(--ease-brand);
+        transition-delay: var(--reveal-delay, 0ms);
+      }
+      .js-motion .mask-reveal[data-reveal].is-visible {
+        clip-path: inset(0 0 0 0);
+      }
+    </style>
+  </head>
+  <body class:list={['has-sticky-bar', bodyClass]}>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <Header base={base} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer base={base} />
+    <StickyBar base={base} />
+    <Motion />
+  </body>
+</html>

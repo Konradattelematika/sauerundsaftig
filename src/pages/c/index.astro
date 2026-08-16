@@ -1,0 +1,208 @@
+---
+import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import Layout from '../../variants/c-backstube/Layout.astro';
+import Marquee from '../../variants/c-backstube/components/Marquee.astro';
+import DuotoneImage from '../../variants/c-backstube/components/DuotoneImage.astro';
+import OpeningStatus from '../../components/shared/OpeningStatus.astro';
+import NewsletterForm from '../../components/shared/NewsletterForm.astro';
+import site from '../../data/site.json';
+import { getImage, getAlt } from '../../lib/images';
+import { widthsFor } from '../../variants/c-backstube/lib/media';
+import { routeHref } from '../../lib/format';
+import { weekOverview } from '../../lib/opening-hours';
+import { localBusiness } from '../../lib/schema-org';
+import { btnPrimary, btnOnDark, btnSecondary, label, labelOnDark } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+
+const heuteFrischEntries = await getCollection('heuteFrisch');
+const today = heuteFrischEntries[0];
+
+const menuSections = await getCollection('menu');
+const schnecken = menuSections.find((s) => s.data.slug === 'schnecken');
+
+const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
+
+const week = weekOverview(site.openingHours as any);
+
+const heroImg = getImage('c', 'schnecke-pistazie-hoch');
+const heroWidths = widthsFor(heroImg);
+
+const jsonLd = [localBusiness(new URL(base, Astro.site).toString())];
+---
+
+<Layout
+  title="Sauer & Saftig — Café und Backstube in Rerik"
+  description="Café und Backstube in der Dünenstraße 1, Ostseebad Rerik. Sauerteig, den man schmeckt — auch im Käsekuchen."
+  jsonLd={jsonLd}
+>
+  {/* ============ HERO ============ */}
+  <section class="relative overflow-x-hidden bg-bg pb-0 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={`${label} mb-4`}>Café &amp; Backstube · {site.address.city}</p>
+
+      <h1 class="hero-poster font-display font-extrabold uppercase leading-[0.86] tracking-tight text-ink">
+        <span class="block text-[clamp(3rem,13vw,9rem)]" data-reveal>Sauer</span>
+        <span class="relative -my-1 block" data-reveal style="--reveal-delay:90ms">
+          <span class="inline-block text-[clamp(3rem,13vw,9rem)] text-accent-ink">macht</span>
+        </span>
+
+        <span class="relative -mx-4 my-2 flex items-center gap-3 overflow-visible px-4 sm:gap-5 md:-mx-8 md:px-8" data-reveal style="--reveal-delay:170ms">
+          <span class="hero-tile relative aspect-[3/4] w-[26vw] max-w-[190px] shrink-0 overflow-hidden border-2 border-ink bg-accent sm:w-[160px] md:w-[190px]">
+            <Picture
+              src={heroImg}
+              formats={['avif', 'webp']}
+              widths={heroWidths}
+              sizes="(min-width: 768px) 190px, 26vw"
+              alt={getAlt('schnecke-pistazie-hoch')}
+              loading="eager"
+              fetchpriority="high"
+              class="h-full w-full object-cover"
+            />
+          </span>
+          <span class="block flex-1 text-[clamp(3rem,13vw,9rem)]">Saftig.</span>
+        </span>
+      </h1>
+
+      <p class="prose-measure mt-6 text-lg text-ink-soft md:text-xl">{site.subline}</p>
+
+      <div class="mt-6 flex flex-wrap items-center gap-4">
+        <OpeningStatus size="lg" />
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-4 pb-14 md:pb-20">
+        <a href={`${base}/karte`} class={btnPrimary}>Karte ansehen</a>
+        <a href={routeHref(site.address.street, site.address.zip, site.address.city)} target="_blank" rel="noopener" class={btnSecondary}>
+          Route
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* ============ MARQUEE „HEUTE FRISCH" ============ */}
+  <Marquee date={today.data.date} items={today.data.items} />
+
+  {/* ============ SIGNATURE: SCHNECKEN (bg-accent) ============ */}
+  <section class="bg-accent py-16 md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/85">Die Signature</p>
+      <h2 class="mt-2 font-display text-[clamp(2.5rem,8vw,6rem)] font-extrabold uppercase leading-[0.9] text-paper">
+        Die Schnecke.
+      </h2>
+
+      <div class="mt-10 border-2 border-ink bg-paper p-6 md:p-8">
+        <p class="prose-measure text-lg text-ink">
+          Sauerteig statt Hefe, 18 Stunden Reifezeit, jeden Morgen frisch gedreht. Drei Sorten, ein Prinzip:
+          {schnecken?.data.note}
+        </p>
+      </div>
+
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        {schnecken?.data.items.map((item, i) => (
+          <a
+            href={`${base}/karte/schnecken`}
+            class="group block border-2 border-ink bg-paper"
+            data-reveal
+            style={`--reveal-delay:${i * 90}ms`}
+          >
+            <DuotoneImage motif={item.motif ?? 'schnecke-pistazie'} tone="bg-secondary" class="aspect-[4/3]" alt={getAlt(item.motif ?? 'schnecke-pistazie')} />
+            <div class="p-5">
+              <p class="font-display text-2xl font-extrabold uppercase text-ink">{item.name}</p>
+              <p class="mt-2 text-base text-ink-soft">{item.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <a href={`${base}/karte/schnecken`} class={`${btnOnDark} mt-10`}>Alle Schnecken ansehen</a>
+    </div>
+  </section>
+
+  {/* ============ KARTE-TEASER (bg-primary) ============ */}
+  <section class="bg-primary py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={labelOnDark}>Fast alles beginnt mit Sauerteig</p>
+      <h2 class="mt-2 font-display text-[clamp(2.25rem,6vw,4.5rem)] font-extrabold uppercase leading-[0.92]">
+        Auch der Käsekuchen.
+      </h2>
+      <p class="prose-measure mt-5 text-lg text-paper/90 md:text-xl">
+        Brot, Kuchen, Frühstück, Schnecken, Kaffee — fünf Sektionen, ein Teig als Basis. Die Karte kommt mit dem Küchen-Update, bis dahin gelten Beispielpreise.
+      </p>
+      <a href={`${base}/karte`} class={`${btnOnDark} mt-8`}>Zur Karte</a>
+    </div>
+  </section>
+
+  {/* ============ BESUCH-MODUL KOMPAKT (bg-secondary) ============ */}
+  <section class="bg-secondary py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <div class="grid gap-10 md:grid-cols-[1.1fr_1fr] md:items-start">
+        <div>
+          <p class={labelOnDark}>Besuch uns</p>
+          <h2 class="mt-2 font-display text-[clamp(2.25rem,6vw,4.5rem)] font-extrabold uppercase leading-[0.92]">
+            {site.address.street}
+          </h2>
+          <p class="mt-3 text-lg text-paper/90">{site.address.zip} {site.address.city}</p>
+
+          <p class="mt-8 font-mono text-[clamp(1.5rem,4vw,2.25rem)]">
+            <a href={`tel:${site.phone.replace(/[^+\d]/g, '')}`} class="underline-offset-4 hover:underline">{site.phoneDisplay}</a>
+          </p>
+
+          <p class="mt-6 text-base text-paper/85">Dienstag + Mittwoch backen wir nicht — plan deinen Besuch drumherum.</p>
+
+          {site.tooGoodToGo.partner && (
+            <p class="mt-3 font-mono text-[15px] text-paper/80">Too Good To Go: Überraschungstüte für {site.tooGoodToGo.bagPrice} € (Wert ca. {site.tooGoodToGo.bagValue} €)</p>
+          )}
+
+          <a href={`${base}/besuch`} class={`${btnOnDark} mt-8`}>Alle Infos zum Besuch</a>
+        </div>
+
+        <dl class="border-2 border-paper/40 font-mono text-base">
+          {week.map((d) => (
+            <div class="flex justify-between gap-4 border-b border-paper/20 px-5 py-3 last:border-b-0">
+              <dt class="text-paper/85">{d.day}</dt>
+              <dd class="tabular">{d.hours}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  {/* ============ SOCIAL PROOF (bg-bg) ============ */}
+  <section class="bg-bg py-16 md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Was Gäste sagen</p>
+      <p class="mt-3 font-display text-3xl font-extrabold text-ink md:text-4xl">
+        {site.rating.value.toString().replace('.', ',')} ★ · {site.rating.count} {site.rating.source}-Bewertungen
+      </p>
+
+      <div class="mt-10 grid gap-6 md:grid-cols-2">
+        {testimonials.map((t) => (
+          <div class="border-2 border-dashed border-ink/30 bg-bg-alt p-6">
+            {t.data.isPlaceholder && (
+              <p class="mb-3 inline-block border border-ink/40 px-2 py-0.5 font-mono text-[13px] uppercase tracking-wide text-ink-soft">
+                Platzhalter — echtes Zitat folgt
+              </p>
+            )}
+            <p class="text-lg text-ink-soft">„{t.data.quote}"</p>
+            <p class="mt-4 font-mono text-[15px] text-ink-soft">{t.data.author}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ============ NEWSLETTER (bg-bg-alt) ============ */}
+  <section class="bg-bg-alt py-16 md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <div class="border-2 border-ink bg-paper p-6 md:p-10">
+        <p class={label}>Der Brotbrief</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold uppercase text-ink md:text-4xl">Nichts verpassen</h2>
+        <div class="mt-6 max-w-xl">
+          <NewsletterForm base={base} />
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

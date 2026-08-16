@@ -1,0 +1,42 @@
+---
+/**
+ * Großformatiges Bild mit Masken-Reveal von unten (VARIANT-BRIEF Bewegung „Wasser"):
+ * clip-path inset(100% 0 0 0) → inset(0) via .is-visible, siehe <style> in Layout.astro.
+ */
+import { Picture } from 'astro:assets';
+import { getImage, getAlt, WIDTHS, SIZES_FULL } from '../../../lib/images';
+
+interface Props {
+  motif: string;
+  alt?: string;
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+  imgClass?: string;
+  delay?: number;
+}
+const {
+  motif,
+  alt,
+  sizes = SIZES_FULL,
+  eager = false,
+  class: cls = '',
+  imgClass = '',
+  delay = 0,
+} = Astro.props;
+const img = getImage('b', motif);
+---
+
+<div class:list={['mask-reveal overflow-hidden', cls]} data-reveal style={delay ? `--reveal-delay: ${delay}ms` : undefined}>
+  <Picture
+    src={img}
+    formats={['avif', 'webp']}
+    widths={WIDTHS}
+    sizes={sizes}
+    alt={alt ?? getAlt(motif)}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : undefined}
+    decoding={eager ? 'sync' : 'async'}
+    class:list={['h-full w-full object-cover', imgClass]}
+  />
+</div>

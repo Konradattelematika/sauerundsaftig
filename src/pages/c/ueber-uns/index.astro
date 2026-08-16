@@ -1,0 +1,78 @@
+---
+import Layout from '../../../variants/c-backstube/Layout.astro';
+import DuotoneImage from '../../../variants/c-backstube/components/DuotoneImage.astro';
+import { breadcrumbs } from '../../../lib/schema-org';
+import { label, labelOnDark, stamp } from '../../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Über uns', url: new URL(`${base}/ueber-uns`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Über uns — Sauer & Saftig"
+  description="Wir haben ein Café übernommen, das viele geliebt haben. Die Reise zum Sauerteig-Café — und wer dahintersteckt."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-10 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Übernahme</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,10vw,6.5rem)] font-extrabold uppercase leading-[0.9] text-ink">
+        Die Reise zum<br />Sauerteig-Café.
+      </h1>
+      <p class="prose-measure mt-6 text-lg text-ink-soft md:text-xl">
+        Wir haben ein Café übernommen, das viele geliebt haben. Manches haben wir verändert, manches braucht Zeit.
+        Auf Instagram nennen wir es: die Reise zum Sauerteig-Café.
+      </p>
+      <span class={`${stamp} mt-4 inline-flex`}>TODO(kunde): Namen und Gesichter folgen</span>
+    </div>
+  </section>
+
+  <section class="bg-secondary py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:grid-cols-2 md:px-8">
+      <DuotoneImage motif="team-1" tone="bg-secondary" class="aspect-[4/5]" priority alt="Porträt aus der Backstube, Platzhalter bis zur Team-Vorstellung" />
+      <div>
+        <p class={labelOnDark}>Backstube</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold uppercase md:text-4xl">Wer hier backt</h2>
+        <p class="prose-measure mt-4 text-lg text-paper/90 md:text-xl">
+          Hier steht bald ein echtes Porträt und ein paar Sätze zur Person. Bis die Fotos fertig sind, zeigen wir einen
+          Platzhalter — die Kruste bleibt schon mal echt.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-primary py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:grid-cols-2 md:px-8">
+      <div class="md:order-2">
+        <DuotoneImage motif="team-2" tone="bg-primary" class="aspect-[4/5]" alt="Porträt aus dem Service, Platzhalter bis zur Team-Vorstellung" />
+      </div>
+      <div class="md:order-1">
+        <p class={labelOnDark}>Service</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold uppercase md:text-4xl">Wer euch bedient</h2>
+        <p class="prose-measure mt-4 text-lg text-paper/90 md:text-xl">
+          Auch hier: Name und Geschichte folgen, sobald wir die Fotos im Kasten haben. Bis dahin gilt — ihr trefft uns
+          lieber live in der Dünenstraße 1.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-bg py-16 md:py-24" data-reveal>
+    <div class="mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:grid-cols-2 md:px-8">
+      <div>
+        <p class={label}>Rerik</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold uppercase text-ink md:text-4xl">Direkt an der Küste</h2>
+        <p class="prose-measure mt-4 text-lg text-ink-soft md:text-xl">
+          Dünenstraße 1, Ostseebad Rerik — Steilküste und Salzhaff liegen quasi vor der Tür. Wer nach dem Frühstück noch
+          Zeit hat, läuft in fünf Minuten am Wasser.
+        </p>
+      </div>
+      <DuotoneImage motif="kueste" tone="bg-accent" class="aspect-[16/10]" alt="Steilküste am Salzhaff bei Rerik" />
+    </div>
+  </section>
+</Layout>

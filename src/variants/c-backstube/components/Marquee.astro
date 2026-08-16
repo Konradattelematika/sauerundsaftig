@@ -1,0 +1,48 @@
+---
+/**
+ * „Heute frisch"-Ticker: laufende Zeile zwischen Hero und erster Sektion.
+ * Inhalt doppelt (nahtlose Schleife via .marquee-track-Keyframe aus c.css), Dublette aria-hidden,
+ * echter Inhalt zusätzlich als sr-only-Liste. Stoppt bei reduced-motion (CSS), pausiert bei Hover (CSS).
+ */
+import { formatDate } from '../../../lib/format';
+
+interface Item {
+  name: string;
+  note?: string;
+  soldOut: boolean;
+}
+interface Props {
+  date: string;
+  items: Item[];
+}
+const { date, items } = Astro.props;
+
+function itemLabel(i: Item): string {
+  if (i.soldOut) return `${i.name} — ausverkauft`;
+  return i.note ? `${i.name} — ${i.note}` : i.name;
+}
+---
+
+<div class="marquee-wrap overflow-hidden border-y-2 border-ink bg-secondary py-3.5 text-paper">
+  <div class="marquee-track" aria-hidden="true">
+    {[0, 1].map(() => (
+      <div class="flex shrink-0 items-center">
+        <span class="px-4 font-mono text-[15px] uppercase tracking-wide">Heute frisch · {formatDate(date, { day: '2-digit', month: '2-digit', year: undefined })}</span>
+        {items.map((item) => (
+          <span class="flex items-center">
+            <span class="px-3 text-paper/50" aria-hidden="true">■</span>
+            <span class:list={['font-mono text-[15px] uppercase tracking-wide', item.soldOut && 'line-through opacity-60']}>
+              {itemLabel(item)}
+            </span>
+          </span>
+        ))}
+        <span class="px-3 text-paper/50" aria-hidden="true">■</span>
+      </div>
+    ))}
+  </div>
+
+  <ul class="sr-only">
+    <li>Heute frisch, {formatDate(date)}:</li>
+    {items.map((item) => <li>{itemLabel(item)}</li>)}
+  </ul>
+</div>

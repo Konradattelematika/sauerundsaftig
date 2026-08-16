@@ -1,0 +1,120 @@
+---
+/**
+ * Signature-Seite /karte/schnecken — höchster Gestaltungsanspruch der Variante.
+ * Drei Sorten als horizontale Snap-Galerie, Prozess Sauerteig→18h, Querschnitt-Motiv,
+ * CTA Vorbestellen (VARIANT-BRIEF §4.6 + „Zusätzliche B-Akzente").
+ */
+import { getEntry } from 'astro:content';
+import { Picture } from 'astro:assets';
+import Layout from '../../../variants/b-salzhaff/Layout.astro';
+import RevealHeadline from '../../../variants/b-salzhaff/components/RevealHeadline.astro';
+import MaskImage from '../../../variants/b-salzhaff/components/MaskImage.astro';
+import SectionLabel from '../../../variants/b-salzhaff/components/SectionLabel.astro';
+import { getImage, getAlt, WIDTHS, SIZES_HALF } from '../../../lib/images';
+import { formatMenuPrice } from '../../../lib/format';
+import { breadcrumbs, menuSchema } from '../../../lib/schema-org';
+
+const base = '/b';
+const section = await getEntry('menu', 'schnecken');
+if (!section) throw new Error('Menü-Sektion "schnecken" fehlt');
+const { items, intro, note } = section.data;
+
+const jsonLd = [
+  menuSchema([{ title: section.data.title, items }], String(Astro.site)),
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Karte', url: `${Astro.site}${base}/karte` },
+    { name: 'Schnecken', url: `${Astro.site}${base}/karte/schnecken` },
+  ]),
+];
+
+const querschnitt = getImage('b', 'schnecke-querschnitt');
+---
+
+<Layout
+  title="Sauerteigschnecken — Sauer & Saftig"
+  description="Drei Sorten, ein Teig: Sauerteigschnecken statt Hefeteig, 18 Stunden Ruhe, ofenfrisch am Vormittag."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Signature</p>
+    <RevealHeadline
+      as="h1"
+      class="mt-4 text-[clamp(2.6rem,8vw,6.5rem)]"
+      lines={['Drei Sorten.', 'Ein Teig, der 18 Stunden ruht.']}
+      accentLines={[1]}
+    />
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">{intro}</p>
+    {note && <p class="mt-2 max-w-[60ch] text-ink-soft">{note}</p>}
+  </section>
+
+  <section class="mt-12 md:mt-20">
+    <ul class="flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-4 md:gap-10 md:px-8" aria-label="Die drei Sorten">
+      {items.map((item, i) => (
+        <li class="w-[82vw] shrink-0 snap-start md:w-[38vw] lg:w-[30vw]">
+          <MaskImage
+            motif={item.motif ?? 'schnecke-blech'}
+            alt={item.name}
+            sizes={SIZES_HALF}
+            class="aspect-[4/5]"
+            delay={i * 80}
+          />
+          <div class="mt-5 flex items-baseline justify-between gap-4">
+            <h2 class="font-display text-3xl">{item.name}</h2>
+            {item.price !== undefined && (
+              <p class="font-mono text-xl tabular text-ink">{formatMenuPrice(item.price, item.priceIsPlaceholder)}</p>
+            )}
+          </div>
+          {item.description && <p class="mt-2 max-w-[42ch] text-ink-soft">{item.description}</p>}
+          {item.allergens.length > 0 && (
+            <p class="mt-3 font-mono text-[15px] text-ink-soft">Allergene: {item.allergens.join(', ')}</p>
+          )}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="mx-auto mt-4 max-w-[1440px] px-4 md:px-8">
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-ink/20 pt-6 font-mono text-xl tabular text-ink">
+      <span>Teig <span data-countup="18">0</span> h</span>
+      <span class="text-ink-soft" aria-hidden="true">·</span>
+      <span>Sorten {items.length}</span>
+      <span class="text-ink-soft" aria-hidden="true">·</span>
+      <span>Vormittags ofenfrisch</span>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+    <SectionLabel number="01" label="Prozess" />
+    <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16">
+      <div>
+        <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Sauerteig statt Hefe</h2>
+        <p class="mt-4 max-w-[52ch] text-ink-soft">
+          Der Grundteig reift wie unser Brot — mit Anstellgut statt Hefeblock, über Stunden statt Minuten. Das
+          gibt der Schnecke mehr Aroma und eine Krume, die länger saftig bleibt.
+        </p>
+        <p class="mt-4 max-w-[52ch] text-ink-soft">
+          Gefüllt, aufgerollt, geschnitten — und am nächsten Vormittag ofenfrisch in der Theke. Solange der
+          Vorrat reicht.
+        </p>
+        <a
+          href={`${base}/vorbestellen`}
+          class="mt-8 inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
+        >
+          Vorbestellen
+        </a>
+      </div>
+      <div class="mask-reveal overflow-hidden" data-reveal>
+        <Picture
+          src={querschnitt}
+          formats={['avif', 'webp']}
+          widths={WIDTHS}
+          sizes={SIZES_HALF}
+          alt={getAlt('schnecke-querschnitt')}
+          loading="lazy"
+          class="aspect-[4/5] h-full w-full object-cover"
+        />
+      </div>
+    </div>
+  </section>
+</Layout>

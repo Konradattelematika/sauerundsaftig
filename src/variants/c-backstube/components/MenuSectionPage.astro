@@ -1,0 +1,40 @@
+---
+/** Wiederverwendete Seiten-Hülle für die vier Karten-Sektionsseiten (/karte/fruehstueck etc.). */
+import { getCollection } from 'astro:content';
+import Layout from '../Layout.astro';
+import MenuSectionBlock from './MenuSectionBlock.astro';
+import { menuSchema, breadcrumbs } from '../../../lib/schema-org';
+import { label } from '../lib/ui';
+
+interface Props {
+  slug: 'fruehstueck' | 'kuchen' | 'brot' | 'kaffee';
+  tone: 'bg-bg' | 'bg-bg-alt' | 'bg-primary' | 'bg-secondary';
+}
+const { slug, tone } = Astro.props;
+const base = '/c';
+
+const entries = await getCollection('menu');
+const section = entries.find((e) => e.data.slug === slug)!.data;
+
+const jsonLd = [
+  menuSchema([{ title: section.title, items: section.items }], new URL(`${base}/karte/${slug}`, Astro.site).toString()),
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Karte', url: new URL(`${base}/karte`, Astro.site).toString() },
+    { name: section.title, url: new URL(`${base}/karte/${slug}`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title={`${section.title} — Karte — Sauer & Saftig`}
+  description={`${section.title}: ${section.intro}`}
+  jsonLd={jsonLd}
+>
+  <div class="bg-bg pb-2 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}><a href={`${base}/karte`} class="underline-offset-4 hover:underline">Karte</a> / {section.title}</p>
+    </div>
+  </div>
+  <MenuSectionBlock section={section} tone={tone} id={slug} />
+</Layout>

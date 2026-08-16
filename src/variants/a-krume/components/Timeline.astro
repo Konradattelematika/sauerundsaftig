@@ -1,0 +1,38 @@
+---
+/**
+ * 18-Stunden-Zeitleiste für /sauerteig: vertikale Linie mit Uhrzeit-Markern,
+ * Etappentexte alternierend links/rechts (Desktop), gestaffeltes data-reveal.
+ */
+interface Stage {
+  time: string;
+  title: string;
+  text: string;
+}
+interface Props {
+  stages: Stage[];
+}
+const { stages } = Astro.props;
+---
+
+<ol class="mx-auto flex max-w-4xl flex-col">
+  {stages.map((s, i) => {
+    const alt = i % 2 === 1;
+    const delay = (i % 3) * 100;
+    const num = String(i + 1).padStart(2, '0');
+    return (
+      <li class="relative flex gap-5 py-6 md:block md:py-10" data-reveal style={`--reveal-delay:${delay}ms`}>
+        <div class="relative w-9 shrink-0 md:absolute md:inset-y-0 md:left-1/2 md:w-9 md:-translate-x-1/2">
+          <span class="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-ink/15" aria-hidden="true"></span>
+          <span class="relative z-10 mx-auto grid size-9 place-items-center rounded-full border-2 border-primary bg-paper font-mono text-[10px] text-primary-deep">
+            {num}
+          </span>
+        </div>
+        <div class:list={['min-w-0 flex-1 md:w-1/2', alt ? 'md:ml-auto md:pl-12 md:text-left' : 'md:mr-auto md:pr-12 md:text-right']}>
+          <p class="font-mono text-sm uppercase tracking-widest text-primary-deep">{s.time}</p>
+          <h3 class="mt-1 text-xl md:text-2xl">{s.title}</h3>
+          <p class:list={['prose-measure mt-2 text-ink-soft', !alt && 'md:ml-auto']}>{s.text}</p>
+        </div>
+      </li>
+    );
+  })}
+</ol>

@@ -1,0 +1,15 @@
+---
+/** /ueber-uns — Menschen, Übernahme, Rerik (VARIANT-BRIEF §5 Übernahme-Story). */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import RevealHeadline from '../../variants/b-salzhaff/components/RevealHeadline.astro';
+import MaskImage from '../../variants/b-salzhaff/components/MaskImage.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Über uns', url: `${Astro.site}${base}/ueber-uns` },
+  ]),
+];

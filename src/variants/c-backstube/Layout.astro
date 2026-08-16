@@ -1,0 +1,39 @@
+---
+/** Basislayout Variante C „Backstube". Importiert c.css, bindet Header/Footer/StickyBar/Motion ein. */
+import { ClientRouter } from 'astro:transitions';
+import '../../styles/c.css';
+import SeoHead from '../../components/shared/SeoHead.astro';
+import StickyBar from '../../components/shared/StickyBar.astro';
+import Motion from '../../components/shared/Motion.astro';
+import Header from './components/Header.astro';
+import Footer from './components/Footer.astro';
+import { VARIANTS } from '../../lib/variants';
+
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: object[];
+  ogImage?: string;
+  noindex?: boolean;
+}
+const { title, description, jsonLd = [], ogImage, noindex = false } = Astro.props;
+const base = VARIANTS.c.base;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <SeoHead title={title} description={description} jsonLd={jsonLd} ogImage={ogImage} noindex={noindex} />
+    <ClientRouter />
+  </head>
+  <body class="has-sticky-bar bg-bg text-ink">
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <StickyBar base={base} />
+    <Motion />
+  </body>
+</html>

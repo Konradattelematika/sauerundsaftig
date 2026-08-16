@@ -1,0 +1,35 @@
+---
+/** Sektionsseite Kuchen (VARIANT-BRIEF Routen /karte/kuchen). */
+import { getEntry } from 'astro:content';
+import Layout from '../../../variants/b-salzhaff/Layout.astro';
+import MenuSection from '../../../variants/b-salzhaff/components/MenuSection.astro';
+import MenuLegend from '../../../variants/b-salzhaff/components/MenuLegend.astro';
+import { breadcrumbs, menuSchema } from '../../../lib/schema-org';
+
+const base = '/b';
+const section = await getEntry('menu', 'kuchen');
+if (!section) throw new Error('Menü-Sektion "kuchen" fehlt');
+
+const jsonLd = [
+  menuSchema([{ title: section.data.title, items: section.data.items }], String(Astro.site)),
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Karte', url: `${Astro.site}${base}/karte` },
+    { name: section.data.title, url: `${Astro.site}${base}/karte/kuchen` },
+  ]),
+];
+---
+
+<Layout title={`${section.data.title} — Karte — Sauer & Saftig`} description={section.data.intro} jsonLd={jsonLd}>
+  <div class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <a href={`${base}/karte`} class="inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink-soft hover:text-ink">
+      ← Zur ganzen Karte
+    </a>
+    <div class="mt-8">
+      <MenuLegend />
+    </div>
+    <div class="mt-8">
+      <MenuSection section={section} number="01" headingLevel="h1" />
+    </div>
+  </div>
+</Layout>

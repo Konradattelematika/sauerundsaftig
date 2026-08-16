@@ -1,0 +1,86 @@
+---
+/** /gastgeber — B2B-Landingpage (VARIANT-BRIEF §5 Gastgeber-Angebot). */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import MockForm from '../../variants/b-salzhaff/components/MockForm.astro';
+import MaskImage from '../../variants/b-salzhaff/components/MaskImage.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Für Gastgeber', url: `${Astro.site}${base}/gastgeber` },
+  ]),
+];
+
+const ANGEBOTE = [
+  { title: 'Willkommensbrot-Paket', desc: 'Ein Laib Sauerteigbrot für deine Gäste am Anreisetag, fertig verpackt zur Abholung oder Lieferung.' },
+  { title: 'Frühstückskorb zur Anreise', desc: 'Brot, Aufstriche, eine Schnecke — ein kleiner Korb, der den ersten Urlaubsmorgen einfacher macht.' },
+  { title: 'Gutscheine als Gastgeschenk', desc: 'Frei wählbarer Betrag, den deine Gäste bei uns einlösen — ohne Ablaufdatum-Stress für dich.' },
+  { title: 'Kartenständer mit QR-Code', desc: 'Ein kostenloser Ständer für deine Rezeption, QR-Code führt direkt zu unserer Karte und Vorbestellung.' },
+];
+---
+
+<Layout
+  title="Für Gastgeber — Sauer & Saftig"
+  description="Willkommensbrot, Frühstückskörbe und Gutscheine für deine Gäste — Angebote für Gastgeber in Rerik."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Für Gastgeber</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Ein gutes Frühstück ist Teil der Anreise</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">
+      Für Vermieter und Pensionen in und um Rerik: Brot, Frühstückskörbe und Gutscheine, mit denen du deinen
+      Gästen den ersten Morgen einfacher machst.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="01" label="Angebot" />
+    <div class="mt-8 grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-2">
+      {ANGEBOTE.map((a) => (
+        <div class="border-t border-ink/20 pt-6" data-reveal>
+          <h2 class="text-2xl">{a.title}</h2>
+          <p class="mt-2 max-w-[46ch] text-ink-soft">{a.desc}</p>
+        </div>
+      ))}
+    </div>
+    <p class="mt-10 max-w-[60ch] text-xl text-ink-soft">
+      Preise auf Anfrage — Mengen, Rhythmus und Zustellung stimmen wir individuell ab. Rechnung ist möglich.
+    </p>
+  </section>
+
+  <section class="mt-4 md:mt-8">
+    <MaskImage motif="brot-laib" class="aspect-[16/9] w-full" />
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="02" label="Warum das hilft" />
+    <div class="mt-8 max-w-[60ch]">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Warum das deine Bewertungen verbessert</h2>
+      <p class="mt-4 text-ink-soft">
+        Ein frisches Brot am Anreisetag oder ein kleiner Frühstückskorb ist oft das Erste, was Gäste von deiner
+        Unterkunft mitbekommen — und das Erste, was sie in einer Bewertung erwähnen. Ein gutes Detail am Anfang
+        des Aufenthalts bleibt hängen, ohne dass du selbst backen musst.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="03" label="Anfrage" />
+    <div class="mt-8 max-w-2xl">
+      <MockForm
+        formId="gastgeber"
+        submitLabel="Anfrage senden (Demo)"
+        successText="Danke für deine Anfrage. Demo — wir melden uns nicht automatisch, ruf uns gern direkt an."
+        fields={[
+          { id: 'betrieb', label: 'Name deiner Unterkunft', type: 'text', autocomplete: 'organization' },
+          { id: 'name', label: 'Ansprechperson', type: 'text', autocomplete: 'name' },
+          { id: 'email', label: 'E-Mail', type: 'email', autocomplete: 'email' },
+          { id: 'nachricht', label: 'Was interessiert dich?', type: 'textarea', required: false },
+        ]}
+      />
+    </div>
+  </section>
+</Layout>

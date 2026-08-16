@@ -1,0 +1,80 @@
+---
+/** Handwerksseite mit 18-Stunden-Zeitleiste (Uhrzeiten/Temperaturen aus journal/achtzehn-stunden.md). */
+import Layout from '../../../variants/c-backstube/Layout.astro';
+import TimelineStep from '../../../variants/c-backstube/components/TimelineStep.astro';
+import DuotoneImage from '../../../variants/c-backstube/components/DuotoneImage.astro';
+import { breadcrumbs } from '../../../lib/schema-org';
+import { label, btnPrimary } from '../../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+
+const STEPS = [
+  { time: '14:00', title: 'Ansetzen', text: 'Der Sauerteig kommt aus dem Glas, wird mit Mehl und Wasser aufgefrischt und beginnt zu arbeiten. Parallel ruht das Mehl für den Hauptteig eine Stunde in Wasser — Autolyse, ohne dass wir kneten müssen.', tone: 'bg-bg' as const },
+  { time: '15:30', title: 'Kneten', text: 'Sauerteig und Salz kommen dazu. Kurz kneten, dann Pause — kein Mixer läuft stundenlang, wir greifen nur alle 30 Minuten ein.', tone: 'bg-secondary' as const },
+  { time: '17–19', title: 'Dehnen & Falten', text: 'Vier Runden im Halbstundentakt bei rund 24 Grad Raumtemperatur. Der Teig wird mit jeder Runde straffer, die Oberfläche glatter.', tone: 'bg-primary' as const },
+  { time: '21:00', title: 'Formen', text: 'Der Teig wird zur Kugel gezogen, dann zum Laib geformt und kopfüber in den bemehlten Gärkorb gelegt. Die Naht zeigt nach oben.', tone: 'bg-accent' as const },
+  { time: '21:30', title: 'Kühlschrank', text: 'Ab in die kalte Gare über Nacht, bei rund 4 Grad. Sie bremst die Hefen, lässt den Bakterien aber Zeit — hier entsteht ein guter Teil der Säure.', tone: 'bg-bg' as const },
+  { time: '06:00', title: 'Ofen an', text: 'Der Ofen heizt auf 250 Grad vor, mit Schwaden. Die Laibe kommen kalt und straff aus dem Kühlschrank direkt zum Einschießen.', tone: 'bg-secondary' as const },
+  { time: '07:15', title: 'Raus aus dem Ofen', text: 'Die Kruste ist dunkel, fast schwarzbraun an den Rissen, und knackt beim Abkühlen hörbar. Die letzte halbe Stunde gehört dem Brot allein.', tone: 'bg-primary' as const },
+  { time: '08:00', title: 'Theke', text: '18 Stunden nach dem ersten Handgriff steht der Laib bei uns im Regal, bereit für den ersten Schnitt des Tages.', tone: 'bg-accent' as const },
+];
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Sauerteig', url: new URL(`${base}/sauerteig`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Sauerteig — 18 Stunden von Mehl zu Brot — Sauer & Saftig"
+  description="Von 14 Uhr bis 8 Uhr: die Zeitleiste eines Sauerteiglaibs, Etappe für Etappe — Ansetzen, Falten, kalte Gare, Ofen, Theke."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-10 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Handwerk</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold uppercase leading-[0.88] text-ink">
+        18 Stunden.
+      </h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+        Kein Schritt lässt sich beschleunigen, ohne dass Krume oder Kruste darunter leiden — also zählen wir mit.
+        Ein Laib Sauerteigbrot hat, bis er bei uns im Regal liegt, einen ganzen Arbeitstag und eine Nacht hinter sich.
+      </p>
+
+      <div class="mt-8 grid max-w-xl grid-cols-3 gap-4 border-2 border-ink p-5 text-center" data-reveal>
+        <div>
+          <p class="font-mono text-4xl font-bold tabular"><span data-countup="18">0</span></p>
+          <p class="mt-1 font-mono text-[15px] uppercase tracking-wide text-ink-soft">Stunden</p>
+        </div>
+        <div>
+          <p class="font-mono text-4xl font-bold tabular"><span data-countup="250">0</span>°</p>
+          <p class="mt-1 font-mono text-[15px] uppercase tracking-wide text-ink-soft">Ofen</p>
+        </div>
+        <div>
+          <p class="font-mono text-4xl font-bold tabular"><span data-countup="4">0</span>°</p>
+          <p class="mt-1 font-mono text-[15px] uppercase tracking-wide text-ink-soft">Kühlschrank</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {STEPS.map((step, i) => <TimelineStep time={step.time} title={step.title} text={step.text} tone={step.tone} index={i} />)}
+
+  <section class="bg-bg py-16 md:py-24" data-reveal>
+    <div class="mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:grid-cols-2 md:px-8">
+      <div>
+        <h2 class="font-display text-3xl font-extrabold uppercase leading-[0.95] text-ink md:text-4xl">
+          Keine Abkürzungen.
+        </h2>
+        <p class="prose-measure mt-4 text-lg text-ink-soft md:text-xl">
+          Diese Zeitleiste ist für uns kein Sonderfall, sondern der Alltag hinter jedem Laib, den wir verkaufen.
+          Mehl, Wasser, Salz und Zeit sind die einzigen Zutaten — an der letzten lässt sich kaum rütteln.
+        </p>
+        <a href={`${base}/journal/achtzehn-stunden`} class={`${btnPrimary} mt-6`}>Den ganzen Artikel lesen</a>
+      </div>
+      <DuotoneImage motif="ofen" tone="bg-secondary" class="aspect-[4/3]" alt="Ofeneinschuss in der Backstube" />
+    </div>
+  </section>
+</Layout>

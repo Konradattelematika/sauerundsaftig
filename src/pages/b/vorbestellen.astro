@@ -1,0 +1,36 @@
+---
+/** /vorbestellen — PreorderFlow-Island + Erklärtext (VARIANT-BRIEF Routen). */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import PreorderFlow from '../../components/shared/PreorderFlow.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Vorbestellen', url: `${Astro.site}${base}/vorbestellen` },
+  ]),
+];
+---
+
+<Layout
+  title="Vorbestellen — Sauer & Saftig"
+  description="Brot, Schnecken und Torten vorbestellen, abholen zur Wunschzeit. Bestellschluss 18 Uhr am Vortag, Torten 5 Tage Vorlauf."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Vorbestellen</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Reserviert, statt vergriffen</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">
+      Bestellschluss ist 18 Uhr am Vortag der Abholung. Käsekuchen und Obsttorte brauchen 5 Tage Vorlauf.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="01" label="Bestellung" />
+    <div class="mt-8 max-w-2xl">
+      <PreorderFlow base={base} />
+    </div>
+  </section>
+</Layout>

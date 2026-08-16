@@ -1,0 +1,106 @@
+---
+/**
+ * Header Variante A: schmale, ruhige Kopfzeile mit Logo, Hauptnavigation,
+ * OpeningStatus (sm) und CTA. Mobil: <details>-Drawer (CSS-first, kein JS).
+ */
+import Logo from '../../../components/shared/Logo.astro';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import { NAV_MAIN, NAV_CTA } from '../../../lib/variants';
+
+interface Props {
+  base: string;
+}
+const { base } = Astro.props;
+const path = Astro.url.pathname;
+
+function isActive(itemPath: string): boolean {
+  const full = `${base}${itemPath}`;
+  return path === full || path.startsWith(`${full}/`);
+}
+---
+
+<header class="sticky top-0 z-50 border-b border-ink/10 bg-paper/95 backdrop-blur">
+  <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-3 md:px-8">
+    <a href={base} class="shrink-0" aria-label="Sauer & Saftig — Startseite">
+      <Logo variant="lockup" tone="dark" width={140} loading="eager" />
+    </a>
+
+    <nav aria-label="Hauptnavigation" class="hidden md:block">
+      <ul class="flex items-center gap-7 font-mono text-sm uppercase tracking-widest">
+        {NAV_MAIN.map((item) => (
+          <li>
+            <a
+              href={`${base}${item.path}`}
+              aria-current={isActive(item.path) ? 'page' : undefined}
+              class="inline-flex min-h-11 items-center border-b-2 border-transparent py-1 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:border-primary aria-[current=page]:border-primary aria-[current=page]:text-primary-deep"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="hidden items-center gap-6 md:flex">
+      <OpeningStatus size="sm" />
+      <a
+        href={`${base}${NAV_CTA.path}`}
+        class="inline-flex min-h-11 items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-sm text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep"
+      >
+        {NAV_CTA.label}
+      </a>
+    </div>
+
+    <details class="mobile-nav md:hidden">
+      <summary
+        class="grid size-11 cursor-pointer list-none place-items-center rounded-card border-2 border-ink text-ink"
+        aria-label="Menü öffnen"
+      >
+        <svg class="icon-menu" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </summary>
+      <div class="fixed inset-0 z-40 overflow-y-auto bg-paper pb-10 pt-24">
+        <nav aria-label="Mobile Navigation" class="mx-auto flex max-w-md flex-col gap-1 px-6">
+          <ul class="flex flex-col divide-y divide-ink/10 font-display text-3xl">
+            {NAV_MAIN.map((item) => (
+              <li>
+                <a
+                  href={`${base}${item.path}`}
+                  aria-current={isActive(item.path) ? 'page' : undefined}
+                  class="flex min-h-14 items-center py-3 text-ink aria-[current=page]:text-primary-deep"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href={`${base}${NAV_CTA.path}`}
+            class="mt-6 inline-flex min-h-12 items-center justify-center rounded-card bg-ink px-5 py-3 font-mono text-sm text-bg"
+          >
+            {NAV_CTA.label}
+          </a>
+          <div class="mt-6">
+            <OpeningStatus size="sm" />
+          </div>
+        </nav>
+      </div>
+    </details>
+  </div>
+</header>
+
+<style>
+  details.mobile-nav > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.mobile-nav[open] > summary .icon-menu {
+    display: none;
+  }
+  details.mobile-nav:not([open]) > summary .icon-close {
+    display: none;
+  }
+</style>

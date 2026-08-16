@@ -1,0 +1,37 @@
+---
+/** /workshops — Kursübersicht mit Restplatz-Badges (VARIANT-BRIEF §4.8). */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/b-salzhaff/Layout.astro';
+import WorkshopCard from '../../../variants/b-salzhaff/components/WorkshopCard.astro';
+import { breadcrumbs } from '../../../lib/schema-org';
+
+const base = '/b';
+const workshops = (await getCollection('workshops')).sort((a, b) => a.data.order - b.data.order);
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Workshops', url: `${Astro.site}${base}/workshops` },
+  ]),
+];
+---
+
+<Layout
+  title="Workshops — Sauer & Saftig"
+  description="Backkurse in unserer Backstube in Rerik: Sauerteig für Anfänger, Brot und Schnecken, Eltern-Kind-Backen, Gruppen und Firmen."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Workshops</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Selbst Hand anlegen</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">
+      Kleine Gruppen, echte Backstube, dein eigenes Anstellgut zum Mitnehmen.
+    </p>
+  </section>
+
+  <div class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    {workshops.map((w) => (
+      <WorkshopCard workshop={w} base={base} />
+    ))}
+  </div>
+</Layout>

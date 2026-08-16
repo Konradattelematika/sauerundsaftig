@@ -1,0 +1,144 @@
+---
+/**
+ * Formular-Mock (Name/E-Mail/Nachricht + optionales Zusatzfeld), reine Demo —
+ * es wird nichts übertragen. Gleiche Interaktionsmuster wie die geteilten
+ * Islands (Validierung, Erfolgsmeldung), lokal für Variante A gebaut, weil
+ * Kontakt-/Gastgeber-Anfrage kein geteiltes Island im Brief ist.
+ */
+interface Props {
+  formId: string;
+  submitLabel: string;
+  messageLabel?: string;
+  extraFieldLabel?: string;
+}
+const { formId, submitLabel, messageLabel = 'Nachricht*', extraFieldLabel } = Astro.props;
+
+const btnPrimary =
+  'inline-flex min-h-[44px] items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-sm text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] disabled:cursor-not-allowed disabled:bg-ink/30 disabled:text-bg/70';
+---
+
+<div class="contact-form-mock rounded-card border border-ink/10 bg-paper p-5 md:p-7" data-contact-form-mock data-form-id={formId}>
+  <p class="font-mono text-sm text-ink-soft">Demo-Formular — deine Angaben werden hier noch nicht übertragen.</p>
+  <form data-contact-form novalidate class="mt-5">
+    <div class="flex flex-col gap-4">
+      <div>
+        <label for={`${formId}-name`} class="block text-sm text-ink-soft">Name*</label>
+        <input
+          id={`${formId}-name`}
+          name="name"
+          type="text"
+          autocomplete="name"
+          class="mt-1 min-h-[44px] w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+          aria-describedby={`${formId}-name-error`}
+        />
+        <p id={`${formId}-name-error`} class="mt-1 text-sm text-closed" data-error-for="name" aria-live="polite" hidden></p>
+      </div>
+      <div>
+        <label for={`${formId}-email`} class="block text-sm text-ink-soft">E-Mail*</label>
+        <input
+          id={`${formId}-email`}
+          name="email"
+          type="email"
+          autocomplete="email"
+          class="mt-1 min-h-[44px] w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+          aria-describedby={`${formId}-email-error`}
+        />
+        <p id={`${formId}-email-error`} class="mt-1 text-sm text-closed" data-error-for="email" aria-live="polite" hidden></p>
+      </div>
+      {extraFieldLabel && (
+        <div>
+          <label for={`${formId}-extra`} class="block text-sm text-ink-soft">{extraFieldLabel}</label>
+          <input
+            id={`${formId}-extra`}
+            name="extra"
+            type="text"
+            class="mt-1 min-h-[44px] w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+          />
+        </div>
+      )}
+      <div>
+        <label for={`${formId}-message`} class="block text-sm text-ink-soft">{messageLabel}</label>
+        <textarea
+          id={`${formId}-message`}
+          name="message"
+          rows="4"
+          class="mt-1 w-full rounded-card border-2 border-ink/20 bg-paper px-3 py-2 text-base"
+          aria-describedby={`${formId}-message-error`}
+        ></textarea>
+        <p id={`${formId}-message-error`} class="mt-1 text-sm text-closed" data-error-for="message" aria-live="polite" hidden></p>
+      </div>
+    </div>
+    <div class="mt-6">
+      <button type="submit" class={btnPrimary}>{submitLabel}</button>
+    </div>
+  </form>
+  <div class="success-panel mt-6" data-success hidden tabindex="-1" aria-live="polite">
+    <p class="text-xl">Danke — deine Nachricht ist bei uns angekommen (Demo).</p>
+    <p class="mt-2 text-base">Der Versand ist noch nicht angeschlossen. Für ein dringendes Anliegen ruf uns direkt an.</p>
+  </div>
+</div>
+
+<script>
+  function initContactForms() {
+    document.querySelectorAll<HTMLElement>('[data-contact-form-mock]').forEach((root) => {
+      if (root.dataset.bound === 'true') return;
+      root.dataset.bound = 'true';
+
+      const form = root.querySelector<HTMLFormElement>('[data-contact-form]')!;
+      const successEl = root.querySelector<HTMLElement>('[data-success]')!;
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let valid = true;
+
+        const nameInput = form.querySelector<HTMLInputElement>('input[name="name"]')!;
+        const nameError = form.querySelector<HTMLElement>('[data-error-for="name"]')!;
+        nameError.hidden = true;
+        nameInput.removeAttribute('aria-invalid');
+        if (!nameInput.value.trim()) {
+          nameError.textContent = 'Da fehlt noch dein Name.';
+          nameError.hidden = false;
+          nameInput.setAttribute('aria-invalid', 'true');
+          valid = false;
+        }
+
+        const emailInput = form.querySelector<HTMLInputElement>('input[name="email"]')!;
+        const emailError = form.querySelector<HTMLElement>('[data-error-for="email"]')!;
+        emailError.hidden = true;
+        emailInput.removeAttribute('aria-invalid');
+        const emailValue = emailInput.value.trim();
+        if (!emailValue) {
+          emailError.textContent = 'Da fehlt noch eine E-Mail — sonst können wir dir nicht antworten.';
+          emailError.hidden = false;
+          emailInput.setAttribute('aria-invalid', 'true');
+          valid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+          emailError.textContent = 'Das sieht noch nicht nach einer E-Mail-Adresse aus.';
+          emailError.hidden = false;
+          emailInput.setAttribute('aria-invalid', 'true');
+          valid = false;
+        }
+
+        const messageInput = form.querySelector<HTMLTextAreaElement>('textarea[name="message"]')!;
+        const messageError = form.querySelector<HTMLElement>('[data-error-for="message"]')!;
+        messageError.hidden = true;
+        messageInput.removeAttribute('aria-invalid');
+        if (!messageInput.value.trim()) {
+          messageError.textContent = 'Da fehlt noch deine Nachricht.';
+          messageError.hidden = false;
+          messageInput.setAttribute('aria-invalid', 'true');
+          valid = false;
+        }
+
+        if (!valid) return;
+
+        form.hidden = true;
+        successEl.hidden = false;
+        successEl.focus();
+      });
+    });
+  }
+
+  initContactForms();
+  document.addEventListener('astro:page-load', initContactForms);
+</script>

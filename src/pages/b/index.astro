@@ -1,0 +1,77 @@
+---
+/** Startseite Variante B — „Salzhaff". Eigenständiges Hero-Konzept (VARIANT-BRIEF §4.2). */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import OpeningStatus from '../../components/shared/OpeningStatus.astro';
+import NewsletterForm from '../../components/shared/NewsletterForm.astro';
+import RevealHeadline from '../../variants/b-salzhaff/components/RevealHeadline.astro';
+import MaskImage from '../../variants/b-salzhaff/components/MaskImage.astro';
+import HeuteFrischBoard from '../../variants/b-salzhaff/components/HeuteFrischBoard.astro';
+import SchneckenTeaser from '../../variants/b-salzhaff/components/SchneckenTeaser.astro';
+import SocialProof from '../../variants/b-salzhaff/components/SocialProof.astro';
+import BesuchCompact from '../../variants/b-salzhaff/components/BesuchCompact.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import site from '../../data/site.json';
+import { routeHref } from '../../lib/format';
+import { localBusiness } from '../../lib/schema-org';
+
+const base = '/b';
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+---
+
+<Layout
+  title="Sauer & Saftig — Café und Backstube in Rerik"
+  description={site.subline}
+  jsonLd={[localBusiness(String(Astro.site))]}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="flex flex-wrap items-center gap-3 font-mono text-xl tracking-tight text-ink">
+      <span>Ostseebad Rerik</span>
+      <span aria-hidden="true" class="text-ink-soft">·</span>
+      <OpeningStatus size="lg" />
+    </p>
+
+    <RevealHeadline
+      as="h1"
+      class="mt-6 text-[clamp(2.6rem,8vw,7rem)]"
+      lines={['Sauerteig, den man schmeckt.', 'Und Kuchen, der ihn kann.']}
+      accentLines={[1]}
+    />
+
+    <p class="mt-6 max-w-[46ch] text-xl text-ink-soft">{site.subline}</p>
+
+    <div class="mt-8 flex flex-wrap items-center gap-6">
+      <a
+        href={route}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
+      >
+        Route
+      </a>
+      <a href={`${base}/karte`} class="group inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink">
+        Karte ansehen
+        <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="mt-12 md:mt-20">
+    <MaskImage motif="hero-krume" eager class="aspect-[16/10] w-full md:aspect-[21/9]" />
+  </section>
+
+  <HeuteFrischBoard />
+  <SchneckenTeaser base={base} />
+  <SocialProof />
+  <BesuchCompact base={base} />
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+    <SectionLabel number="05" label="Newsletter" />
+    <div class="mt-8 max-w-[52ch]">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Neues aus der Backstube</h2>
+      <p class="mt-3 text-ink-soft">Ein paar Mal im Monat: was gerade frisch ist, neue Workshops, Journal-Notizen.</p>
+      <div class="mt-8">
+        <NewsletterForm base={base} />
+      </div>
+    </div>
+  </section>
+</Layout>

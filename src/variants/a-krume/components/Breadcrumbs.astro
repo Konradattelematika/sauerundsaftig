@@ -1,0 +1,33 @@
+---
+/**
+ * Sichtbarer Breadcrumb-Trail + BreadcrumbList-JSON-LD in einem Aufwasch.
+ * `items[].href` sind absolute Pfade (z. B. "/a/karte").
+ */
+import { breadcrumbs } from '../../../lib/schema-org';
+
+interface Item {
+  label: string;
+  href: string;
+}
+interface Props {
+  items: Item[];
+}
+const { items } = Astro.props;
+const jsonLd = breadcrumbs(items.map((it) => ({ name: it.label, url: new URL(it.href, Astro.site).toString() })));
+---
+
+<nav aria-label="Breadcrumb" class="border-b border-ink/10 bg-bg-alt">
+  <ol class="mx-auto flex max-w-[1440px] flex-wrap items-center gap-2 px-4 py-3 font-mono text-[13px] uppercase tracking-widest text-ink-soft md:px-8">
+    {items.map((it, i) => (
+      <li class="flex items-center gap-2">
+        {i > 0 && <span aria-hidden="true">/</span>}
+        {i === items.length - 1 ? (
+          <span aria-current="page" class="text-ink">{it.label}</span>
+        ) : (
+          <a href={it.href} class="hover:text-ink">{it.label}</a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
