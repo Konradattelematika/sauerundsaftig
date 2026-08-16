@@ -131,7 +131,8 @@ export function breadcrumbs(items: { name: string; url: string }[]) {
       '@type': 'ListItem',
       position: i + 1,
       name: it.name,
-      item: it.url,
+      // Doppel-Slashes normalisieren (Astro.site endet mit "/", Basen beginnen mit "/")
+      item: it.url.replace(/([^:])\/\/+/g, '$1/'),
     })),
   };
 }

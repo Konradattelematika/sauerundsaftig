@@ -1,0 +1,29 @@
+---
+/** /404 — Plakat: „Nichts aufgegangen." + Link zur Karte/Start. */
+import Layout from '../../variants/c-backstube/Layout.astro';
+import { btnPrimary, btnSecondary } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+---
+
+<Layout
+  title="Seite nicht gefunden — Sauer & Saftig"
+  description="Diese Seite gibt es nicht — oder nicht mehr."
+  noindex
+>
+  <section class="bg-bg py-24 text-center md:py-32">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-ink-soft">404</p>
+      <h1 class="mt-4 font-display text-[clamp(3rem,14vw,10rem)] font-extrabold uppercase leading-[0.84] text-ink">
+        Nichts<br />aufgegangen.
+      </h1>
+      <p class="prose-measure mx-auto mt-6 text-lg text-ink-soft md:text-xl">
+        Diese Seite gibt es nicht — oder nicht mehr. Vielleicht ist sie wie ein Anstellgut ohne Fütterung: irgendwann einfach weg.
+      </p>
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <a href={`${base}/karte`} class={btnPrimary}>Zur Karte</a>
+        <a href={base} class={btnSecondary}>Zur Startseite</a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,76 @@
+---
+/**
+ * /faq — alle Einträge aus der faq-Collection (nach order) als natives
+ * <details>-Accordion, FAQPage-JSON-LD via faqPage(). Einträge mit `todoKunde`
+ * bekommen einen dezenten Badge, statt die Unsicherheit zu verstecken.
+ */
+import { getCollection, render } from 'astro:content';
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
+import { faqPage } from '../../lib/schema-org';
+
+const base = '/a';
+const entries = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+
+const withHtml = await Promise.all(
+  entries.map(async (e) => {
+    const { Content } = await render(e);
+    return { entry: e, Content, html: e.rendered?.html ?? e.body ?? '' };
+  }),
+);
+
+const jsonLd = [
+  faqPage(withHtml.map(({ entry, html }) => ({ question: entry.data.question, answerHtml: html }))),
+];
+---
+
+<Layout title="Häufige Fragen — Sauer & Saftig" description="Antworten auf häufige Fragen: Öffnungszeiten, Reservierung, Zahlungsmittel, Hunde, Vorbestellung und mehr." jsonLd={jsonLd}>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'FAQ', href: `${base}/faq` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro
+        as="h1"
+        size="lg"
+        eyebrow="FAQ"
+        title="Häufige Fragen"
+        intro="Was uns am Telefon und an der Theke am häufigsten gefragt wird — ehrlich beantwortet, auch wenn wir manches noch nicht sicher sagen können."
+        class="mb-10 md:mb-14"
+      />
+
+      <div class="mx-auto max-w-3xl divide-y divide-ink/10 border-t border-ink/10">
+        {withHtml.map(({ entry, Content }, i) => (
+          <details class="faq-item group py-2" data-reveal style={`--reveal-delay:${(i % 4) * 100}ms`}>
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-lg md:text-xl">
+              <span class="flex flex-wrap items-center gap-3">
+                {entry.data.question}
+                {entry.data.todoKunde && (
+                  <span class="rounded-full border border-accent-ink/40 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-accent-ink">
+                    folgt
+                  </span>
+                )}
+              </span>
+              <span class="faq-icon shrink-0 font-mono text-2xl text-ink-soft" aria-hidden="true">+</span>
+            </summary>
+            <div class="prose-measure pb-5 text-ink-soft">
+              <Content />
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+  .faq-icon {
+    transition: transform var(--dur-fast) var(--ease-brand);
+  }
+</style>

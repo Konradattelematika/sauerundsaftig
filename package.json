@@ -11,7 +11,9 @@
     "preview": "astro preview",
     "typecheck": "astro check",
     "test": "vitest run",
+    "test:routes": "node scripts/test-routes.mjs",
     "brand": "node scripts/generate-brand.mjs",
+    "brand:import": "node tools/brand-import/import.mjs",
     "placeholders": "node scripts/generate-placeholders.mjs"
   },
   "dependencies": {

@@ -1,0 +1,39 @@
+---
+/**
+ * /jobs — Kurzseite ohne erfundene Stellen: allgemeine Initiativbewerbung + Telefon.
+ * TODO(kunde): Aktuelle offene Stellen (Position, Stunden, Zeitraum) ergänzen, sobald vorhanden.
+ */
+import Layout from '../../variants/c-backstube/Layout.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { breadcrumbs } from '../../lib/schema-org';
+import { label, btnPrimary } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Jobs', url: new URL(`${base}/jobs`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Jobs — Sauer & Saftig"
+  description="Wir suchen Verstärkung fürs Saisonteam in Backstube und Service — melde dich telefonisch für eine Initiativbewerbung."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-16 pt-10 md:pb-24 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Jobs</p>
+      <h1 class="mt-2 font-display text-[clamp(2.75rem,10vw,7rem)] font-extrabold uppercase leading-[0.86] text-ink">
+        Backstube?<br />Service?<br />Melde dich.
+      </h1>
+      <p class="prose-measure mt-6 text-lg text-ink-soft md:text-xl">
+        Konkrete offene Stellen listen wir hier aktuell nicht — wir suchen aber laufend Verstärkung fürs Saisonteam.
+        Wenn du Lust auf Backstube oder Service hast, ruf uns an, dann sehen wir gemeinsam, was gerade passt.
+      </p>
+      <a href={telHref(site.phone)} class={`${btnPrimary} mt-8`}>{site.phoneDisplay} anrufen</a>
+    </div>
+  </section>
+</Layout>

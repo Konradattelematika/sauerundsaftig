@@ -1,0 +1,45 @@
+---
+/**
+ * /jobs — ehrlich: keine erfundenen offenen Stellen, nur allgemeiner Aufruf +
+ * Telefon. TODO(kunde): echte Stellenausschreibungen ergänzen, sobald vorhanden.
+ */
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+
+const base = '/a';
+const phoneHref = telHref(site.phone);
+---
+
+<Layout
+  title="Jobs — Sauer & Saftig"
+  description="Wir wachsen mit der Saison — melde dich, wenn du in Backstube oder Service anpacken kannst."
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Jobs', href: `${base}/jobs` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-3xl px-4 md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>Jobs</p>
+      <h1 class="mt-4 text-[clamp(2.25rem,6vw,3.75rem)]" data-reveal style="--reveal-delay:100ms">
+        Wir wachsen mit der Saison
+      </h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        Aktuell haben wir keine konkrete Stelle ausgeschrieben — trotzdem freuen wir uns über Initiativbewerbungen.
+        Melde dich, wenn du in der Backstube oder im Service anpacken kannst, egal ob für eine Saison oder länger.
+      </p>
+      <p class="prose-measure mt-4 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        Am einfachsten geht das telefonisch — dann können wir gleich klären, ob und wann etwas zusammenpasst.
+      </p>
+      <a
+        href={phoneHref}
+        class="mt-8 inline-flex min-h-11 items-center justify-center rounded-card bg-ink px-6 py-3 font-mono text-xl text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep"
+        data-reveal
+        style="--reveal-delay:300ms"
+      >
+        {site.phoneDisplay}
+      </a>
+      <!-- TODO(kunde): Sobald es konkrete offene Stellen gibt, hier mit Rolle, Umfang und Startdatum ersetzen. Keine erfundenen Stellen anzeigen. -->
+    </div>
+  </section>
+</Layout>

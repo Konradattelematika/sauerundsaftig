@@ -1,0 +1,38 @@
+---
+/**
+ * /404 — Variante A: editorial gesetzte 404 mit Sauerteig-Bild, Links zu
+ * Karte und Startseite. Wird von nginx als error_page für alles unter /a/ ausgeliefert.
+ */
+import Layout from '../../variants/a-krume/Layout.astro';
+
+const base = '/a';
+---
+
+<Layout title="Seite nicht gefunden — Sauer & Saftig" description="Diese Seite gibt es nicht." noindex>
+  <section class="bg-bg py-20 md:py-32">
+    <div class="mx-auto flex max-w-3xl flex-col items-center px-4 text-center md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>404</p>
+      <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)]" data-reveal style="--reveal-delay:100ms">
+        Diese Seite ist wie ein Sauerteig ohne Fütterung — nicht mehr da.
+      </h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        Der Link, dem du gefolgt bist, führt ins Leere. Vielleicht findest du, wonach du suchst, auf der Karte
+        oder auf der Startseite.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4" data-reveal style="--reveal-delay:200ms">
+        <a
+          href={`${base}/karte`}
+          class="inline-flex min-h-11 items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-sm text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
+        >
+          Zur Karte
+        </a>
+        <a
+          href={base}
+          class="inline-flex min-h-11 items-center justify-center rounded-card border-2 border-ink px-6 py-3 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
+        >
+          Zur Startseite
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

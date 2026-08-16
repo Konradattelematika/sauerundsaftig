@@ -1,0 +1,80 @@
+---
+/**
+ * /kontakt — Adresse, Telefon (tel:, ≥20px), Instagram, Live-Status, Karte.
+ * Kein Formular: ehrlicher Hinweis, dass wir uns noch in der Demo-Phase befinden
+ * (VARIANT-BRIEF: „Formular-Mock" ist für /gastgeber vorgesehen — für /kontakt selbst
+ * ist noch keine Mail-/Formular-Anbindung vorhanden, siehe BRAND-TODO).
+ */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import ClickToLoadMap from '../../components/shared/ClickToLoadMap.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import OpeningStatus from '../../components/shared/OpeningStatus.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { localBusiness, breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+const jsonLd = [
+  localBusiness(String(Astro.site)),
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Kontakt', url: `${Astro.site}${base}/kontakt` },
+  ]),
+];
+---
+
+<Layout
+  title="Kontakt — Sauer & Saftig"
+  description="Adresse, Telefon und Instagram von Sauer & Saftig in Ostseebad Rerik."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Kontakt</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Ruf einfach an</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">
+      Am schnellsten erreichst du uns telefonisch — für Reservierung, Fragen zur Karte oder alles andere.
+    </p>
+    <div class="mt-8">
+      <OpeningStatus size="lg" />
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="01" label="Erreichbarkeit" />
+    <div class="mt-8 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20">
+      <div class="flex flex-col gap-8">
+        <div>
+          <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Telefon</p>
+          <a href={telHref(site.phone)} class="mt-2 block min-h-[44px] w-fit font-mono text-[clamp(2rem,7vw,3.5rem)] tabular text-ink">
+            {site.phoneDisplay}
+          </a>
+        </div>
+        <div>
+          <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Adresse</p>
+          <p class="mt-2 text-xl text-ink">{site.address.street}</p>
+          <p class="text-xl text-ink">{site.address.zip} {site.address.city}</p>
+        </div>
+        <div>
+          <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Instagram</p>
+          <a
+            href={`https://www.instagram.com/${site.instagram}/`}
+            target="_blank"
+            rel="noopener"
+            class="mt-2 inline-flex min-h-[44px] items-center text-xl text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+          >
+            @{site.instagram}
+          </a>
+        </div>
+        <div class="rounded-card border border-ink/15 bg-paper p-6">
+          <p class="text-xl text-ink">Wir sind noch in der Demo-Phase.</p>
+          <p class="mt-2 text-ink-soft">
+            Ein Kontaktformular gibt es hier bewusst noch nicht — ruf uns lieber direkt an, dann bekommst du sofort eine Antwort.
+          </p>
+        </div>
+      </div>
+      <div>
+        <ClickToLoadMap />
+      </div>
+    </div>
+  </section>
+</Layout>

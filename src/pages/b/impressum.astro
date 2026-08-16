@@ -1,0 +1,49 @@
+---
+/**
+ * /impressum — rendert IMPRESSUM aus lib/legal.ts, noindex (VARIANT-BRIEF Routen).
+ * Zeilen, die mit "TODO(kunde)" beginnen, werden dezent als "folgt"-Hinweis dargestellt.
+ */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import { IMPRESSUM } from '../../lib/legal';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Impressum', url: `${Astro.site}${base}/impressum` },
+  ]),
+];
+---
+
+<Layout
+  title="Impressum — Sauer & Saftig"
+  description="Anbieterkennzeichnung gemäß § 5 DDG."
+  jsonLd={jsonLd}
+  noindex
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Rechtliches</p>
+    <h1 class="mt-4 font-display text-[clamp(2.4rem,6vw,4.5rem)] leading-[0.98]">Impressum</h1>
+  </section>
+
+  <section class="mx-auto max-w-[900px] px-4 py-16 md:px-8 md:py-24">
+    <div class="prose-measure flex flex-col gap-12">
+      {IMPRESSUM.map((section, i) => (
+        <div>
+          <SectionLabel number={String(i + 1).padStart(2, '0')} label={section.heading} />
+          <div class="mt-6 flex flex-col gap-3">
+            {section.paragraphs.map((p) =>
+              p.startsWith('TODO(kunde)') ? (
+                <p class="font-mono text-[15px] text-ink-soft">folgt — {p.replace(/^TODO\(kunde\):\s*/, '')}</p>
+              ) : (
+                <p class="text-xl text-ink-soft">{p}</p>
+              ),
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

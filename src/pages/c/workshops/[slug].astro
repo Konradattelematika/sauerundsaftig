@@ -1,0 +1,95 @@
+---
+/**
+ * /workshops/[slug] — Einzelkurs: riesiger Kurstitel, includes als Stempel-Liste, Body (render),
+ * WorkshopBooking-Island, JSON-LD via workshopEvent (VARIANT-BRIEF §3, getStaticPaths über die
+ * workshops-Collection).
+ */
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../variants/c-backstube/Layout.astro';
+import DuotoneImage from '../../../variants/c-backstube/components/DuotoneImage.astro';
+import WorkshopBooking from '../../../components/shared/WorkshopBooking.astro';
+import { getAlt } from '../../../lib/images';
+import { breadcrumbs, workshopEvent } from '../../../lib/schema-org';
+import { label, stamp } from '../../../variants/c-backstube/lib/ui';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('workshops')).sort((a, b) => a.data.order - b.data.order);
+  return entries.map((entry, index) => ({ params: { slug: entry.id }, props: { entry, index } }));
+}
+
+const { entry, index } = Astro.props;
+const { title, subtitle, duration, price, isDraft, level, capacity, includes, dates, motif } = entry.data;
+const { Content } = await render(entry);
+const base = '/c';
+
+const TONES = ['bg-secondary', 'bg-primary', 'bg-accent'] as const;
+const tone = TONES[index % TONES.length];
+
+const next = dates[0];
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Workshops', url: new URL(`${base}/workshops`, Astro.site).toString() },
+    { name: title, url: new URL(`${base}/workshops/${entry.id}`, Astro.site).toString() },
+  ]),
+  ...(next
+    ? [
+        workshopEvent({
+          title,
+          subtitle,
+          price,
+          isDraft,
+          date: next.date,
+          time: next.time,
+          duration,
+          url: new URL(`${base}/workshops/${entry.id}`, Astro.site).toString(),
+        }),
+      ]
+    : []),
+];
+---
+
+<Layout title={`${title} — Workshop — Sauer & Saftig`} description={subtitle} jsonLd={jsonLd}>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>
+        <a href={`${base}/workshops`} class="underline-offset-4 hover:underline">Workshops</a> / {level}
+      </p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold uppercase leading-[0.86] text-ink">
+        {title}
+      </h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">{subtitle}</p>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <span class={stamp}>{duration}</span>
+        <span class={stamp}>Bis zu {capacity} Personen</span>
+        <span class={stamp}>{level}</span>
+      </div>
+    </div>
+  </section>
+
+  <div class:list={[tone, 'py-2']}>
+    <DuotoneImage motif={motif} tone={tone} class="aspect-[21/9] w-full" alt={getAlt(motif)} priority />
+  </div>
+
+  <section class="bg-bg py-14 md:py-20" data-reveal>
+    <div class="mx-auto grid max-w-[1400px] gap-12 px-4 md:grid-cols-[1.3fr_1fr] md:gap-16 md:px-8">
+      <div>
+        <p class={label}>Inklusive</p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          {includes.map((inc: string) => <span class={stamp}>{inc}</span>)}
+        </div>
+
+        <p class={`${label} mt-10`}>Ablauf</p>
+        <div class="prose-measure mt-4 flex flex-col gap-5 text-lg text-ink-soft">
+          <Content />
+        </div>
+      </div>
+
+      <div>
+        <WorkshopBooking title={title} price={price} isDraft={isDraft} duration={duration} capacity={capacity} dates={dates} />
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,103 @@
+---
+/**
+ * /workshops/[slug] — Einzelkurs: Body aus der Collection, Includes-Liste,
+ * WorkshopBooking-Island. JSON-LD via workshopEvent, je Termin ein Event.
+ */
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import WorkshopBooking from '../../../components/shared/WorkshopBooking.astro';
+import { formatDateShort } from '../../../lib/format';
+import { workshopEvent } from '../../../lib/schema-org';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('workshops');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { title, subtitle, duration, price, isDraft, level, capacity, includes, motif, dates } = entry.data;
+const { Content } = await render(entry);
+const base = '/a';
+
+const jsonLd = dates.map((d) =>
+  workshopEvent({
+    title,
+    subtitle,
+    price,
+    isDraft,
+    date: d.date,
+    time: d.time,
+    duration,
+    url: new URL(`${base}/workshops/${entry.id}`, Astro.site).toString(),
+  }),
+);
+---
+
+<Layout title={`${title} — Workshop | Sauer & Saftig`} description={subtitle} jsonLd={jsonLd}>
+  <Breadcrumbs
+    items={[
+      { label: 'Start', href: base },
+      { label: 'Workshops', href: `${base}/workshops` },
+      { label: title, href: `${base}/workshops/${entry.id}` },
+    ]}
+  />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>{level} · {duration}</p>
+      <h1 class="mt-4 max-w-4xl text-[clamp(2.5rem,6vw,4.5rem)]" data-reveal style="--reveal-delay:100ms">
+        {title}
+      </h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl" data-reveal style="--reveal-delay:200ms">
+        {subtitle}
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div class="md:col-span-7" data-reveal>
+          <Figure motif={motif} aspect="aspect-[4/3]" sizes="(min-width: 1024px) 55vw, 100vw" loading="eager" />
+
+          <div class="prose-measure mt-10 flex flex-col gap-5 text-lg text-ink">
+            <Content />
+          </div>
+
+          <div class="mt-12">
+            <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Inklusive</p>
+            <ul class="mt-4 flex flex-col divide-y divide-ink/10">
+              {includes.map((inc) => (
+                <li class="flex min-h-11 items-center py-3">{inc}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div class="md:col-span-4 md:col-start-9" data-reveal style="--reveal-delay:100ms">
+          <div class="md:sticky md:top-24">
+            <WorkshopBooking title={title} price={price} isDraft={isDraft} duration={duration} capacity={capacity} dates={dates} />
+            {dates.length === 0 && (
+              <p class="prose-measure mt-4 text-sm text-ink-soft">
+                Für diesen Kurs gibt es keine festen Termine — sprich uns direkt an, wir stimmen einen Wunschtermin
+                mit dir ab.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {dates.length > 0 && (
+    <section class="bg-bg py-10">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+        <p class="font-mono text-sm text-ink-soft">
+          Nächste Termine: {dates.map((d) => `${formatDateShort(d.date)} · ${d.time} Uhr`).join(' · ')}
+        </p>
+      </div>
+    </section>
+  )}
+</Layout>

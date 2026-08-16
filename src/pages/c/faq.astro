@@ -1,0 +1,71 @@
+---
+/** /faq — Fragen aus der Collection als natives <details>-Accordion, FAQPage-JSON-LD via faqPage(). */
+import { getCollection } from 'astro:content';
+import Layout from '../../variants/c-backstube/Layout.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { faqPage, breadcrumbs } from '../../lib/schema-org';
+import { label, stamp } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const entries = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+
+/** Antworten sind reine Prosa (keine Markdown-Auszeichnung) — Absätze als <p> für die JSON-LD-Antwort. */
+function toAnswerHtml(body: string): string {
+  return body
+    .trim()
+    .split(/\n{2,}/)
+    .map((p) => `<p>${p.trim()}</p>`)
+    .join('');
+}
+
+const jsonLd = [
+  faqPage(entries.map((e) => ({ question: e.data.question, answerHtml: toAnswerHtml(e.body ?? '') }))),
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'FAQ', url: new URL(`${base}/faq`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Fragen und Antworten — Sauer & Saftig"
+  description="Häufige Fragen zu Öffnungszeiten, Reservierung, Karte und mehr — kurz beantwortet."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Fragen</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold uppercase leading-[0.88] text-ink">FAQ.</h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+        Fehlt deine Frage? Ruf an: <a href={telHref(site.phone)} class="underline-offset-4 hover:underline">{site.phoneDisplay}</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-bg pb-16 md:pb-24">
+    <div class="mx-auto max-w-[900px] px-4 md:px-8">
+      <div class="border-t-2 border-ink/15">
+        {entries.map((entry, i) => (
+          <details class="group border-b-2 border-ink/15 py-2" data-reveal style={`--reveal-delay:${Math.min(i, 8) * 50}ms`}>
+            <summary class="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-6 py-4">
+              <span class="font-display text-2xl font-extrabold uppercase leading-snug text-ink md:text-3xl">
+                {entry.data.question}
+              </span>
+              <span
+                class="shrink-0 font-mono text-3xl text-ink-soft transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-open:rotate-45"
+                aria-hidden="true"
+              >+</span>
+            </summary>
+            <div class="prose-measure pb-4 text-lg text-ink-soft" set:html={toAnswerHtml(entry.body ?? '')} />
+            {entry.data.todoKunde && (
+              <p class="pb-6">
+                <span class={stamp}>folgt — {entry.data.todoKunde}</span>
+              </p>
+            )}
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

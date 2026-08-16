@@ -1,0 +1,136 @@
+---
+/**
+ * /ueber-uns — Menschen, Übernahme, Rerik (VARIANT-BRIEF §5 Übernahme-Story).
+ * Keine erfundenen Namen/Jahreszahlen: TODO(kunde)-Kommentar markiert, wo die
+ * echte Teamvorstellung nachgereicht wird.
+ */
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
+import Figure from '../../variants/a-krume/components/Figure.astro';
+import site from '../../data/site.json';
+
+const base = '/a';
+---
+
+<Layout
+  title="Über uns — Sauer & Saftig"
+  description="Wir haben ein Café in Ostseebad Rerik übernommen und backen seitdem fast alles mit eigenem Sauerteig. Die Übernahme, der Ort, unsere Werte."
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Über uns', href: `${base}/ueber-uns` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro
+        as="h1"
+        size="lg"
+        eyebrow="Über uns"
+        title="Ein Café, das wir übernommen haben"
+        intro="Wir haben ein Café übernommen, das viele in Rerik schon lange kannten und mochten. Manches haben wir bewusst verändert — allen voran den Sauerteig, der seitdem fast überall drinsteckt. Anderes braucht noch Zeit. Auf Instagram nennen wir das unsere Reise zum Sauerteig-Café."
+      />
+    </div>
+  </section>
+
+  <!-- Übernahme: Bild links (7), Text rechts (4), versetzt -->
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center">
+        <div class="md:col-span-7" data-reveal>
+          <Figure motif="gastraum" aspect="aspect-[4/5]" sizes="(min-width: 768px) 55vw, 100vw" />
+        </div>
+        <div class="md:col-span-4 md:col-start-8 md:-ml-16 md:mt-16" data-reveal style="--reveal-delay:100ms">
+          <div class="rounded-card bg-paper p-6 md:p-8 md:shadow-[0_1px_0_0_rgba(36,27,20,0.08)]">
+            <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Was neu ist</p>
+            <h2 class="mt-2 text-3xl">Dieselben Räume, eine andere Backstube</h2>
+            <p class="prose-measure mt-3 text-ink-soft">
+              Die Räume kennst du vielleicht noch von früher. Neu dazugekommen ist eine Backstube, in der fast
+              jeden Tag Sauerteig angesetzt wird — und eine Karte, die sich seitdem Schritt für Schritt verändert,
+              statt an einem Tag komplett neu zu sein.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team: ehrlich als Platzhalter markiert, keine erfundenen Namen -->
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro eyebrow="Die Menschen dahinter" title="Wer hier bäckt und serviert" class="mb-10 md:mb-14" />
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div data-reveal>
+          <Figure motif="team-1" aspect="aspect-[4/5]" sizes="(min-width: 768px) 40vw, 90vw" />
+        </div>
+        <div data-reveal style="--reveal-delay:100ms">
+          <Figure motif="team-2" aspect="aspect-[4/5]" sizes="(min-width: 768px) 40vw, 90vw" />
+        </div>
+      </div>
+      <p class="prose-measure mt-8 text-lg text-ink-soft" data-reveal>
+        Hinter der Theke und in der Backstube steht ein kleines Team. Wer das im Einzelnen ist, stellen wir dir
+        hier vor, sobald Fotos und Namen final abgestimmt sind — bis dahin bleiben die Bilder Platzhalter.
+      </p>
+      <!-- TODO(kunde): Namen, Rollen und aktuelle Teamfotos ergänzen, sobald final freigegeben. Keine erfundenen Namen oder Gründungsjahre einsetzen. -->
+    </div>
+  </section>
+
+  <!-- Rerik-Bezug -->
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
+        <div class="md:col-span-5" data-reveal>
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Der Ort</p>
+          <h2 class="mt-3 text-[clamp(2rem,4vw,2.75rem)]">Dünenstraße 1, Ostseebad Rerik</h2>
+          <p class="prose-measure mt-4 text-lg text-ink-soft">
+            Rerik liegt zwischen Ostsee und Salzhaff, ruhiger als seine größeren Nachbarorte an der Küste. Für uns
+            war das Grund genug, hier eine Backstube zu betreiben, die nicht nur an Sommertagen trägt.
+          </p>
+          <a
+            href={`${base}/besuch`}
+            class="mt-6 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+          >
+            Anfahrt und Öffnungszeiten
+          </a>
+        </div>
+        <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
+          <Figure motif="fassade" aspect="aspect-[16/9]" sizes="(min-width: 768px) 45vw, 100vw" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Werte -->
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro eyebrow="Wofür wir stehen" title="Drei Dinge, die uns wichtig sind" class="mb-10 md:mb-14" />
+      <div class="grid grid-cols-1 gap-8 border-t border-ink/10 pt-8 md:grid-cols-3 md:gap-10">
+        <div data-reveal>
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">01</p>
+          <h3 class="mt-2 text-2xl">Handwerk &amp; Zeit</h3>
+          <p class="prose-measure mt-3 text-ink-soft">
+            Sauerteig statt Hefe, überall wo es geht — 18 Stunden für einen Laib, kein Schritt wird abgekürzt.
+          </p>
+          <a href={`${base}/sauerteig`} class="mt-4 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink">
+            Der 18-Stunden-Prozess
+          </a>
+        </div>
+        <div data-reveal style="--reveal-delay:100ms">
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">02</p>
+          <h3 class="mt-2 text-2xl">Ehrlichkeit</h3>
+          <p class="prose-measure mt-3 text-ink-soft">
+            Preise, Termine und offene Fragen markieren wir dort, wo wir selbst noch nicht alles final haben —
+            lieber ehrlich mit einem ° oder einem TODO als glattgebügelt.
+          </p>
+        </div>
+        <div data-reveal style="--reveal-delay:200ms">
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">03</p>
+          <h3 class="mt-2 text-2xl">Too Good To Go</h3>
+          <p class="prose-measure mt-3 text-ink-soft">
+            Kein Versprechen, sondern eine Zahl: Über Too Good To Go bekommst du eine Überraschungstüte mit rund
+            {site.tooGoodToGo.bagValue} € Warenwert für {site.tooGoodToGo.bagPrice} € — Ware, die sonst am Ende
+            des Tages übrig geblieben wäre.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

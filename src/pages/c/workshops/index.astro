@@ -1,0 +1,145 @@
+---
+/** /workshops — Kursübersicht: Plakat-Karten in wechselnden Volltonfarben, Restplatz-Stempel. */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/c-backstube/Layout.astro';
+import DuotoneImage from '../../../variants/c-backstube/components/DuotoneImage.astro';
+import { getAlt } from '../../../lib/images';
+import { formatDateShort, formatMenuPrice } from '../../../lib/format';
+import { breadcrumbs } from '../../../lib/schema-org';
+import { label, stamp } from '../../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const workshops = (await getCollection('workshops')).sort((a, b) => a.data.order - b.data.order);
+
+const TONES = ['bg-accent', 'bg-primary', 'bg-secondary'] as const;
+
+interface CardData {
+  id: string;
+  title: string;
+  subtitle: string;
+  level: string;
+  duration: string;
+  motif: string;
+  tone: (typeof TONES)[number];
+  onAccent: boolean;
+  hasPrice: boolean;
+  priceLabel: string;
+  seatsLabel: string;
+  seatsKind: 'available' | 'low' | 'soldout' | 'none';
+  nextDateLabel: string | null;
+}
+
+/* Alle Vergleiche vorab im Skriptteil berechnet — vermeidet Vergleichsoperatoren im Template. */
+const cards: CardData[] = workshops.map((w, i) => {
+  const tone = TONES[i % TONES.length];
+  const next = w.data.dates[0];
+  let seatsKind: CardData['seatsKind'] = 'none';
+  let seatsLabel = 'Termin nach Absprache';
+  let nextDateLabel: string | null = null;
+
+  if (next) {
+    nextDateLabel = `${formatDateShort(next.date)} · ${next.time} Uhr`;
+    const seatsLeft = next.seatsLeft;
+    if (seatsLeft < 1) {
+      seatsKind = 'soldout';
+      seatsLabel = 'Ausgebucht';
+    } else if (seatsLeft < 4) {
+      seatsKind = 'low';
+      seatsLabel = `Nur noch ${seatsLeft} Plätze`;
+    } else {
+      seatsKind = 'available';
+      seatsLabel = `${seatsLeft} Plätze frei`;
+    }
+  }
+
+  return {
+    id: w.id,
+    title: w.data.title,
+    subtitle: w.data.subtitle,
+    level: w.data.level,
+    duration: w.data.duration,
+    motif: w.data.motif,
+    tone,
+    onAccent: tone === 'bg-accent',
+    hasPrice: w.data.price > 0,
+    priceLabel: formatMenuPrice(w.data.price, w.data.isDraft),
+    seatsLabel,
+    seatsKind,
+    nextDateLabel,
+  };
+});
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Workshops', url: new URL(`${base}/workshops`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Workshops — Sauer & Saftig"
+  description="Backkurse in unserer Backstube in Rerik: Sauerteig für Anfänger, Brot und Schnecken, Eltern-Kind-Backen, Gruppen und Firmen."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Selbst backen</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold uppercase leading-[0.88] text-ink">Workshops.</h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+        Kleine Gruppen, echte Backstube, eigenes Anstellgut zum Mitnehmen. Vier Formate, ein Ofen.
+      </p>
+      <p class="mt-4 font-mono text-[15px] text-ink-soft">
+        ° Beispielpreis/Entwurf — endgültige Preise folgen mit der Kundenfreigabe.
+      </p>
+    </div>
+  </section>
+
+  <div class="border-y-2 border-ink bg-ink py-3.5 text-center text-paper">
+    <p class="font-mono text-[15px] uppercase tracking-wide">Alle Termine sind Entwurf, bis wir sie endgültig freigeben.</p>
+  </div>
+
+  <section class="bg-bg py-14 md:py-20">
+    <div class="mx-auto grid max-w-[1400px] gap-6 px-4 md:grid-cols-2 md:px-8">
+      {cards.map((c, i) => (
+        <a
+          href={`${base}/workshops/${c.id}`}
+          class:list={[c.tone, 'group block border-2 border-ink text-paper']}
+          data-reveal
+          style={`--reveal-delay:${i * 80}ms`}
+        >
+          <DuotoneImage motif={c.motif} tone={c.tone} class="aspect-[4/3]" alt={getAlt(c.motif)} />
+          <div class="p-6 md:p-7">
+            <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/85">{c.level} · {c.duration}</p>
+            <h2 class="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.92] md:text-4xl">{c.title}</h2>
+
+            {c.onAccent ? (
+              <div class="mt-4 border-2 border-ink bg-paper p-4 text-ink">
+                <p class="text-base">{c.subtitle}</p>
+              </div>
+            ) : (
+              <p class="mt-4 text-base text-paper/90">{c.subtitle}</p>
+            )}
+
+            <div class="mt-5 flex flex-wrap items-center gap-3">
+              {c.hasPrice && <p class="font-mono text-xl tabular">{c.priceLabel}</p>}
+              {c.seatsKind === 'soldout' && <span class={`${stamp} opacity-70`}>{c.seatsLabel}</span>}
+              {c.seatsKind === 'low' && <span class={`${stamp} border-ink bg-accent`}>{c.seatsLabel}</span>}
+              {(c.seatsKind === 'available' || c.seatsKind === 'none') && (
+                <span class="font-mono text-[15px] text-paper/85">{c.seatsLabel}</span>
+              )}
+            </div>
+
+            {c.nextDateLabel && (
+              <p class="mt-2 font-mono text-[15px] text-paper/75">Nächster Termin: {c.nextDateLabel}</p>
+            )}
+
+            <span class="mt-6 inline-flex items-center gap-2 font-mono text-[15px] uppercase tracking-wide underline-offset-4 group-hover:underline">
+              Details ansehen →
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,36 @@
+---
+/** /vorbestellen — Intro (Bestellschluss, Vorlaufzeiten) + PreorderFlow-Island. */
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
+import PreorderFlow from '../../components/shared/PreorderFlow.astro';
+
+const base = '/a';
+---
+
+<Layout
+  title="Vorbestellen — Sauer & Saftig"
+  description="Brot, Schnecken und Torten vorbestellen, abholen zur Wunschzeit. Bestellschluss 18 Uhr am Vortag, Torten und Obsttorten brauchen 5 Tage Vorlauf."
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Vorbestellen', href: `${base}/vorbestellen` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro
+        as="h1"
+        size="lg"
+        eyebrow="Vorbestellen"
+        title="Reserviert, statt vergriffen"
+        intro="Bestellschluss ist 18 Uhr am Vortag der Abholung. Käsekuchen und Obsttorte brauchen 5 Tage Vorlauf, weil wir Zutaten und Backzeit dafür einplanen."
+      />
+    </div>
+  </section>
+
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="mx-auto max-w-2xl" data-reveal>
+        <PreorderFlow base={base} />
+      </div>
+    </div>
+  </section>
+</Layout>

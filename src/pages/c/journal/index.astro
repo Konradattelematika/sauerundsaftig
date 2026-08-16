@@ -1,0 +1,72 @@
+---
+/** /journal — Artikel (Datum absteigend) als fette Schlagzeilen-Liste mit Kategorie-Stempel. */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/c-backstube/Layout.astro';
+import NewsletterForm from '../../../components/shared/NewsletterForm.astro';
+import { formatDate } from '../../../lib/format';
+import { breadcrumbs } from '../../../lib/schema-org';
+import { label, stamp } from '../../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const entries = (await getCollection('journal')).sort((a, b) => (a.data.date < b.data.date ? 1 : -1));
+
+const CATEGORY_LABELS: Record<string, string> = {
+  backstube: 'Backstube',
+  sauerteig: 'Sauerteig',
+  rerik: 'Rerik',
+};
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Journal', url: new URL(`${base}/journal`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout title="Journal — Sauer & Saftig" description="Notizen aus der Backstube: Sauerteig, Rerik und was gerade passiert." jsonLd={jsonLd}>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Journal</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold uppercase leading-[0.88] text-ink">Notizen.</h1>
+    </div>
+  </section>
+
+  <section class="bg-bg pb-16 md:pb-24">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <ul class="flex flex-col">
+        {entries.map((entry, i) => (
+          <li class="border-b-2 border-ink/15 first:border-t-2" data-reveal style={`--reveal-delay:${Math.min(i, 8) * 60}ms`}>
+            <a
+              href={`${base}/journal/${entry.id}`}
+              class="group flex flex-col gap-3 py-8 transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] md:flex-row md:items-baseline md:gap-8 md:hover:translate-x-3"
+            >
+              <span class={`${stamp} shrink-0`}>{CATEGORY_LABELS[entry.data.category] ?? entry.data.category}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-3xl font-extrabold uppercase leading-[0.98] text-ink md:text-5xl">
+                  {entry.data.title}
+                </span>
+                <span class="mt-2 block max-w-[62ch] text-base text-ink-soft md:text-lg">{entry.data.description}</span>
+              </span>
+              <span class="shrink-0 font-mono text-[15px] tabular text-ink-soft md:w-[16ch] md:text-right">
+                {formatDate(entry.data.date)}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="bg-secondary py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <div class="border-2 border-paper bg-paper p-6 text-ink md:p-10">
+        <p class={label}>Der Brotbrief</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold uppercase text-ink md:text-4xl">Nichts verpassen</h2>
+        <div class="mt-6 max-w-xl">
+          <NewsletterForm base={base} />
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

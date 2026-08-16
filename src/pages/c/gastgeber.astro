@@ -1,0 +1,107 @@
+---
+/**
+ * /gastgeber — B2B-Landingpage für Vermieter/Pensionen. Preise: ° Beispielpreise nur dort, wo sie
+ * sich auf bereits bestehende, echte Platzhalterdaten stützen (Brot-Preis aus der Karte, Beträge aus
+ * dem Gutschein-Konfigurator) — sonst „Preis auf Anfrage" (keine frei erfundene Preisliste).
+ */
+import { getCollection } from 'astro:content';
+import Layout from '../../variants/c-backstube/Layout.astro';
+import DuotoneImage from '../../variants/c-backstube/components/DuotoneImage.astro';
+import { getAlt } from '../../lib/images';
+import { formatMenuPrice, formatPrice, telHref } from '../../lib/format';
+import site from '../../data/site.json';
+import { breadcrumbs } from '../../lib/schema-org';
+import { label, labelOnDark, btnPrimary } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+
+const menu = await getCollection('menu');
+const brot = menu.find((m) => m.data.slug === 'brot')!.data;
+const klassik = brot.items.find((i) => i.name === 'Sauerteigbrot Klassik')!;
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Für Gastgeber', url: new URL(`${base}/gastgeber`, Astro.site).toString() },
+  ]),
+];
+
+const ANGEBOTE = [
+  {
+    title: 'Willkommensbrot',
+    text: 'Ein Laib Sauerteigbrot für deine Gäste am Anreisetag, fertig verpackt zur Abholung oder Lieferung.',
+    price: `ab ${formatMenuPrice(klassik.price, klassik.priceIsPlaceholder)} pro Laib`,
+  },
+  {
+    title: 'Frühstückskorb zur Anreise',
+    text: 'Brot, Aufstriche, eine Schnecke — ein kleiner Korb, der den ersten Urlaubsmorgen einfacher macht.',
+    price: 'Preis auf Anfrage',
+  },
+  {
+    title: 'Gutschein-Gastgeschenk',
+    text: 'Frei wählbarer Betrag, den deine Gäste bei uns einlösen — ohne Ablaufdatum-Stress für dich.',
+    price: `° Beispielbeträge: ${formatPrice(20)}, ${formatPrice(35)}, ${formatPrice(50)}`,
+  },
+  {
+    title: 'QR-Kartenständer',
+    text: 'Ein Ständer für deine Rezeption, QR-Code führt direkt zu unserer Karte und Vorbestellung.',
+    price: 'Kostenlos',
+  },
+] as const;
+
+const TONES = ['bg-primary', 'bg-secondary'] as const;
+---
+
+<Layout
+  title="Für Gastgeber — Sauer & Saftig"
+  description="Willkommensbrot, Frühstückskörbe und Gutscheine für deine Gäste — Angebote für Vermieter und Pensionen in Rerik."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Für Gastgeber</p>
+      <h1 class="mt-2 font-display text-[clamp(2.75rem,10vw,6.5rem)] font-extrabold uppercase leading-[0.9] text-ink">
+        3.300 Gästebetten.<br />Ein gutes Frühstück.
+      </h1>
+      <p class="prose-measure mt-6 text-lg text-ink-soft md:text-xl">
+        Rerik zählt rund 3.300 Gästebetten. Für Vermieter und Pensionen backen wir Brot, packen Körbe und drucken
+        Gutscheine — damit der erste Morgen deiner Gäste nicht bei dir in der Küche entsteht.
+      </p>
+      <a href={telHref(site.phone)} class={`${btnPrimary} mt-8`}>Anrufen: {site.phoneDisplay}</a>
+    </div>
+  </section>
+
+  {ANGEBOTE.map((a, i) => {
+    const tone = TONES[i % TONES.length];
+    return (
+      <section class:list={[tone, 'py-16 text-paper md:py-24']} data-reveal>
+        <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+          <p class={labelOnDark}>Angebot {i + 1}</p>
+          <h2 class="mt-2 font-display text-[clamp(2.25rem,7vw,5rem)] font-extrabold uppercase leading-[0.9]">{a.title}</h2>
+          <p class="prose-measure mt-5 text-lg text-paper/90 md:text-xl">{a.text}</p>
+          <p class="mt-6 font-mono text-xl tabular">{a.price}</p>
+        </div>
+      </section>
+    );
+  })}
+
+  <section class="bg-bg py-16 md:py-24" data-reveal>
+    <div class="mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:grid-cols-2 md:px-8">
+      <div>
+        <p class={label}>Warum das hilft</p>
+        <h2 class="mt-2 font-display text-3xl font-extrabold uppercase text-ink md:text-4xl">Warum das deine Bewertungen verbessert</h2>
+        <p class="prose-measure mt-4 text-lg text-ink-soft md:text-xl">
+          Ein frisches Brot am Anreisetag oder ein kleiner Frühstückskorb ist oft das Erste, was Gäste von deiner
+          Unterkunft mitbekommen — und das Erste, was in einer Bewertung auftaucht. Ein gutes Detail am Anfang
+          bleibt hängen, ohne dass du selbst backen musst.
+        </p>
+        <p class="prose-measure mt-4 text-lg text-ink-soft md:text-xl">
+          Rechnung ist möglich, Menge und Rhythmus stimmen wir individuell ab. Ruf einfach durch, statt ein Formular
+          auszufüllen — meistens ist das schneller.
+        </p>
+        <a href={telHref(site.phone)} class={`${btnPrimary} mt-6`}>Jetzt anrufen</a>
+      </div>
+      <DuotoneImage motif="brot-laib" tone="bg-accent" class="aspect-[4/3]" alt={getAlt('brot-laib')} />
+    </div>
+  </section>
+</Layout>

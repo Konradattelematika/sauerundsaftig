@@ -1,0 +1,69 @@
+---
+/**
+ * /shop — Gutscheine (VoucherConfigurator-Island) als Herzstück, darunter ehrlich
+ * als „in Planung" gekennzeichnete Vorschau ohne Kaufbuttons.
+ */
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
+import VoucherConfigurator from '../../components/shared/VoucherConfigurator.astro';
+
+const base = '/a';
+
+const IN_PLANUNG = [
+  {
+    title: 'Anstellgut im Glas',
+    text: 'Ein eigenes Glas Anstellgut zum Mitnehmen ist geplant, aktuell aber noch nicht einzeln erhältlich. Im Workshop „Sauerteig für Anfänger" ist es schon inklusive.',
+  },
+  {
+    title: 'Sauerteig-Spickzettel zum Mitnehmen',
+    text: 'Eine gedruckte Kurzanleitung fürs eigene Anstellgut für die Theke ist in Planung. Als PDF gibt es die digitale Version schon jetzt für Abonnentinnen und Abonnenten des Brotbriefs.',
+  },
+  {
+    title: 'Merch',
+    text: 'Ein kleines Sortiment — Tasse, Beutel, vielleicht ein Schneidebrett — ist angedacht, aber noch nicht spruchreif.',
+  },
+];
+---
+
+<Layout
+  title="Shop &amp; Gutscheine — Sauer & Saftig"
+  description="Gutscheine für Café und Backstube — als Betrag oder für einen Workshop. Anstellgut-Glas und Merch sind in Planung."
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Shop & Gutscheine', href: `${base}/shop` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro
+        as="h1"
+        size="lg"
+        eyebrow="Shop"
+        title="Gutscheine für Café und Backstube"
+        intro="Ein Betrag frei wählbar oder direkt für einen Workshop — als Gastgeschenk oder für dich selbst. Die Zahlung ist noch eine Demo, echtes Bezahlen folgt mit dem Shop-Update."
+      />
+    </div>
+  </section>
+
+  <section class="bg-bg pb-14 md:pb-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="mx-auto max-w-2xl" data-reveal>
+        <VoucherConfigurator base={base} />
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro eyebrow="In Planung" title="Noch nicht käuflich, aber angedacht" class="mb-10 md:mb-14" />
+      <div class="grid grid-cols-1 gap-8 border-t border-ink/10 pt-8 md:grid-cols-3 md:gap-10">
+        {IN_PLANUNG.map((item, i) => (
+          <div data-reveal style={`--reveal-delay:${(i % 3) * 100}ms`}>
+            <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Bald</p>
+            <h2 class="mt-2 text-2xl">{item.title}</h2>
+            <p class="prose-measure mt-3 text-ink-soft">{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,74 @@
+---
+/** /kontakt — Adresse/Telefon/Instagram plakativ, OpeningStatus, ClickToLoadMap, kein Formular. */
+import Layout from '../../variants/c-backstube/Layout.astro';
+import ClickToLoadMap from '../../components/shared/ClickToLoadMap.astro';
+import OpeningStatus from '../../components/shared/OpeningStatus.astro';
+import site from '../../data/site.json';
+import { routeHref, telHref } from '../../lib/format';
+import { localBusiness, breadcrumbs } from '../../lib/schema-org';
+import { label, btnPrimary, btnSecondary } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const jsonLd = [
+  localBusiness(new URL(base, Astro.site).toString()),
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Kontakt', url: new URL(`${base}/kontakt`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Kontakt — Sauer & Saftig"
+  description="Adresse, Telefon und Instagram von Sauer & Saftig in Rerik. Anfragen laufen telefonisch — ein Kontaktformular gibt es aktuell nicht."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Kontakt</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,10vw,6.5rem)] font-extrabold uppercase leading-[0.9] text-ink">
+        Ruf einfach an.
+      </h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+        Ein Kontaktformular gibt es bei uns bewusst nicht — am schnellsten erreichst du uns telefonisch oder auf Instagram.
+      </p>
+      <div class="mt-6"><OpeningStatus size="lg" /></div>
+    </div>
+  </section>
+
+  <section class="bg-accent py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <a
+        href={telHref(site.phone)}
+        class="block font-display text-[clamp(2.75rem,10vw,6rem)] font-extrabold uppercase leading-[0.9] underline-offset-8 hover:underline"
+      >
+        {site.phoneDisplay}
+      </a>
+      <a
+        href={`https://www.instagram.com/${site.instagram}/`}
+        target="_blank"
+        rel="noopener"
+        class="mt-6 inline-block font-mono text-2xl underline-offset-4 hover:underline md:text-3xl"
+      >
+        @{site.instagram}
+      </a>
+    </div>
+  </section>
+
+  <section class="bg-bg py-16 md:py-24" data-reveal>
+    <div class="mx-auto grid max-w-[1400px] gap-10 px-4 md:grid-cols-2 md:px-8">
+      <div>
+        <p class={label}>Adresse</p>
+        <p class="mt-3 font-display text-3xl font-extrabold uppercase text-ink md:text-4xl">{site.address.street}</p>
+        <p class="mt-2 text-xl text-ink-soft">{site.address.zip} {site.address.city}</p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href={telHref(site.phone)} class={btnPrimary}>Anrufen</a>
+          <a href={routeHref(site.address.street, site.address.zip, site.address.city)} target="_blank" rel="noopener" class={btnSecondary}>
+            Route
+          </a>
+        </div>
+      </div>
+      <ClickToLoadMap />
+    </div>
+  </section>
+</Layout>

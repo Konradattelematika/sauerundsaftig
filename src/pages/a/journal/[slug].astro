@@ -1,0 +1,94 @@
+---
+/**
+ * /journal/[slug] — Artikelseite: prose-measure, article-JSON-LD, „Weiterlesen"
+ * auf zwei andere Artikel. Scroll-Fortschrittsbalken bewusst weggelassen.
+ */
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { formatDate } from '../../../lib/format';
+import { article } from '../../../lib/schema-org';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('journal');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry, all: entries } }));
+}
+
+const { entry, all } = Astro.props;
+const { title, description, date, category, motif } = entry.data;
+const { Content } = await render(entry);
+const base = '/a';
+
+const CATEGORY_LABELS: Record<string, string> = {
+  backstube: 'Backstube',
+  sauerteig: 'Sauerteig',
+  rerik: 'Rerik',
+};
+
+const url = new URL(`${base}/journal/${entry.id}`, Astro.site).toString();
+const jsonLd = [article({ title, description, date, url })];
+
+const others = all
+  .filter((e) => e.id !== entry.id)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 2);
+---
+
+<Layout title={`${title} — Journal | Sauer & Saftig`} description={description} jsonLd={jsonLd}>
+  <Breadcrumbs
+    items={[
+      { label: 'Start', href: base },
+      { label: 'Journal', href: `${base}/journal` },
+      { label: title, href: `${base}/journal/${entry.id}` },
+    ]}
+  />
+
+  <section class="bg-bg py-14 md:py-20">
+    <div class="mx-auto max-w-[900px] px-4 md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>
+        {CATEGORY_LABELS[category] ?? category} · {formatDate(date)}
+      </p>
+      <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)]" data-reveal style="--reveal-delay:100ms">{title}</h1>
+      <p class="prose-measure mt-5 text-xl text-ink-soft" data-reveal style="--reveal-delay:200ms">{description}</p>
+    </div>
+  </section>
+
+  <section class="bg-bg-alt py-8 md:py-10">
+    <div class="mx-auto max-w-[1200px] px-4 md:px-8">
+      <Figure motif={motif} aspect="aspect-[16/9]" sizes="(min-width: 900px) 1200px, 100vw" loading="eager" />
+    </div>
+  </section>
+
+  <article class="bg-bg py-14 md:py-24">
+    <div class="prose-measure mx-auto flex flex-col gap-5 px-4 text-lg text-ink md:px-8">
+      <Content />
+    </div>
+  </article>
+
+  {others.length > 0 && (
+    <section class="bg-bg-alt py-14 md:py-24">
+      <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" data-reveal>Weiterlesen</p>
+        <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {others.map((o, i) => (
+            <a
+              href={`${base}/journal/${o.id}`}
+              class="group block rounded-card border border-ink/10 bg-paper p-6"
+              data-reveal
+              style={`--reveal-delay:${(i % 2) * 100}ms`}
+            >
+              <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">
+                {CATEGORY_LABELS[o.data.category] ?? o.data.category} · {formatDate(o.data.date)}
+              </p>
+              <h2 class="mt-2 text-2xl transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:text-primary-deep">
+                {o.data.title}
+              </h2>
+              <p class="prose-measure mt-2 text-ink-soft">{o.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>

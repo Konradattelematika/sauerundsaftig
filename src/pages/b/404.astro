@@ -1,0 +1,33 @@
+---
+/**
+ * /404 — Variantencharakter B „Salzhaff" (VARIANT-BRIEF Routen §/404): sehr ruhig,
+ * große Serif-Zeile, Mono-Zeile "404", Links zu Karte und Startseite.
+ * Astro emittiert diese Datei wegen des Ordnerpfads als /b/404/index.html
+ * (nicht als Sonderfall /404.html) — passend zu deploy/nginx.conf.
+ */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+
+const base = '/b';
+---
+
+<Layout title="Nicht gefunden — Sauer & Saftig" description="Diese Seite gibt es nicht." noindex>
+  <section class="mx-auto flex min-h-[60vh] max-w-[1440px] flex-col justify-center px-4 py-20 md:px-8">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">404</p>
+    <h1 class="mt-4 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.98]">Nichts. Nur Luft.</h1>
+    <p class="mt-6 max-w-[52ch] text-xl text-ink-soft">
+      Diese Seite ist nicht da — vielleicht war sie es nie. Weiter geht es hier.
+    </p>
+    <div class="mt-10 flex flex-wrap items-center gap-6">
+      <a
+        href={`${base}/karte`}
+        class="inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
+      >
+        Zur Karte
+      </a>
+      <a href={base} class="group inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink">
+        Zur Startseite
+        <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,94 @@
+---
+/**
+ * /journal — Artikelliste aus der journal-Collection, nach Datum absteigend.
+ * Editorial: großer Aufmacher-Teaser + Liste, Kategorie-Label mono.
+ */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import NewsletterForm from '../../../components/shared/NewsletterForm.astro';
+import { formatDate } from '../../../lib/format';
+
+const base = '/a';
+const entries = (await getCollection('journal')).sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+);
+const [featured, ...rest] = entries;
+
+const CATEGORY_LABELS: Record<string, string> = {
+  backstube: 'Backstube',
+  sauerteig: 'Sauerteig',
+  rerik: 'Rerik',
+};
+---
+
+<Layout
+  title="Journal — Sauer & Saftig"
+  description="Notizen aus der Backstube: Sauerteig, Rerik und was gerade passiert."
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Journal', href: `${base}/journal` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro as="h1" size="lg" eyebrow="Journal" title="Notizen aus der Backstube" class="mb-10 md:mb-16" />
+
+      {featured && (
+        <a href={`${base}/journal/${featured.id}`} class="group block" data-reveal>
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center">
+            <div class="md:col-span-7">
+              <Figure motif={featured.data.motif} aspect="aspect-[16/10]" sizes="(min-width: 768px) 55vw, 100vw" loading="eager" />
+            </div>
+            <div class="md:col-span-4 md:col-start-9">
+              <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">
+                {CATEGORY_LABELS[featured.data.category] ?? featured.data.category} · {formatDate(featured.data.date)}
+              </p>
+              <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.75rem)] transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:text-primary-deep">
+                {featured.data.title}
+              </h2>
+              <p class="prose-measure mt-3 text-lg text-ink-soft">{featured.data.description}</p>
+              <span class="mt-5 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4">
+                Weiterlesen
+              </span>
+            </div>
+          </div>
+        </a>
+      )}
+    </div>
+  </section>
+
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <ul class="flex flex-col">
+        {rest.map((entry, i) => (
+          <li class="border-b border-ink/10 py-8 first:pt-0" data-reveal style={`--reveal-delay:${(i % 3) * 100}ms`}>
+            <a href={`${base}/journal/${entry.id}`} class="group flex flex-col gap-2 md:flex-row md:items-baseline md:gap-10">
+              <span class="shrink-0 font-mono text-sm uppercase tracking-widest text-ink-soft md:w-[22ch]">
+                {CATEGORY_LABELS[entry.data.category] ?? entry.data.category} · {formatDate(entry.data.date)}
+              </span>
+              <span class="text-2xl transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:text-primary-deep md:text-3xl">
+                {entry.data.title}
+              </span>
+            </a>
+            <p class="prose-measure mt-2 text-ink-soft md:ml-[calc(22ch+2.5rem)]">{entry.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div class="md:col-span-5" data-reveal>
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Der Brotbrief</p>
+          <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.5rem)]">Einmal im Monat Post aus der Backstube</h2>
+        </div>
+        <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
+          <NewsletterForm base={base} />
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

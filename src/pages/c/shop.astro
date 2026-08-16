@@ -1,0 +1,70 @@
+---
+/**
+ * /shop — VoucherConfigurator-Island als Hero-Sektion auf Papier.
+ * „In Planung"-Block (Anstellgut-Glas, Spickzettel, Merch) ehrlich gekennzeichnet, keine Kaufbuttons.
+ */
+import Layout from '../../variants/c-backstube/Layout.astro';
+import VoucherConfigurator from '../../components/shared/VoucherConfigurator.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+import { label, stamp } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Shop & Gutscheine', url: new URL(`${base}/shop`, Astro.site).toString() },
+  ]),
+];
+
+const IN_PLANUNG = [
+  {
+    title: 'Anstellgut im Glas',
+    text: 'Ein eigenes Glas Anstellgut zum Mitnehmen — aktuell nur im Workshop „Sauerteig für Anfänger" inklusive, einzeln noch nicht erhältlich.',
+  },
+  {
+    title: 'Der Sauerteig-Spickzettel',
+    text: 'Ein Blatt mit unseren Eckdaten fürs Anstellgut zu Hause — Fütterrhythmus, Temperatur, Warnzeichen. Noch in Vorbereitung.',
+  },
+  {
+    title: 'Merch',
+    text: 'Ein kleines Sortiment ist angedacht — mehr dazu, sobald es feststeht.',
+  },
+] as const;
+---
+
+<Layout
+  title="Shop & Gutscheine — Sauer & Saftig"
+  description="Gutscheine für Café und Backstube — als Betrag oder für einen Workshop. Weitere Produkte sind in Planung."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Shop</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold uppercase leading-[0.88] text-ink">Gutscheine.</h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+        Ein Betrag frei wählbar oder direkt für einen Workshop — als Geschenk oder für dich selbst.
+      </p>
+
+      <div class="mt-10 border-2 border-ink bg-paper p-6 md:p-10">
+        <VoucherConfigurator base={base} />
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-secondary py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/85">In Planung</p>
+      <h2 class="mt-2 font-display text-[clamp(2.25rem,6vw,4.5rem)] font-extrabold uppercase leading-[0.92]">Kommt noch, ehrlich.</h2>
+
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        {IN_PLANUNG.map((item) => (
+          <div class="border-2 border-ink bg-paper p-6 text-ink">
+            <span class={stamp}>Bald</span>
+            <p class="mt-4 font-display text-2xl font-extrabold uppercase">{item.title}</p>
+            <p class="mt-3 text-base text-ink-soft">{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

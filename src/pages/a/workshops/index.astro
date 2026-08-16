@@ -1,0 +1,64 @@
+---
+/**
+ * /workshops — Kursübersicht aus der workshops-Collection, sortiert nach `order`.
+ * Karten mit Datum/Dauer/Preis (°-Marker wegen isDraft) und Restplatz-Badge.
+ */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import WorkshopCard from '../../../variants/a-krume/components/WorkshopCard.astro';
+
+const base = '/a';
+const workshops = (await getCollection('workshops')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Layout
+  title="Workshops — Sauerteig- und Backkurse | Sauer & Saftig"
+  description="Backkurse in unserer Backstube in Rerik: Sauerteig für Anfänger, Brot und Schnecken, Eltern-Kind-Backen, Gruppen und Firmen."
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Workshops', href: `${base}/workshops` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro
+        as="h1"
+        size="lg"
+        eyebrow="Workshops"
+        title="Selbst Hand in den Teig legen"
+        intro="Kleine Gruppen, echte Backstube, dein eigenes Anstellgut zum Mitnehmen. Vier Kurse, von Sauerteig für Anfänger bis Gruppen und Firmen."
+      />
+      <div class="mt-8 rounded-card border border-ink/15 bg-bg-alt p-5 md:mt-10" data-reveal style="--reveal-delay:100ms">
+        <p class="font-mono text-sm uppercase tracking-widest text-ink-soft">Hinweis</p>
+        <p class="prose-measure mt-2 text-ink-soft">
+          Preise und Termine unten sind Entwurf, bis wir sie mit dem Kunden final abgestimmt haben. Zieh dich also
+          nicht an einem einzelnen Termin fest — ruf im Zweifel kurz an.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-bg pb-14 md:pb-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="flex flex-col">
+        {workshops.map((w, i) => (
+          <WorkshopCard
+            base={base}
+            slug={w.id}
+            title={w.data.title}
+            subtitle={w.data.subtitle}
+            duration={w.data.duration}
+            price={w.data.price}
+            isDraft={w.data.isDraft}
+            motif={w.data.motif}
+            nextDate={w.data.dates[0]}
+            revealDelay={((i % 3) * 100) as 0 | 100 | 200}
+          />
+        ))}
+      </div>
+      <p class="mt-8 font-mono text-sm text-ink-soft">
+        ° Beispielpreis/Entwurf — Termine folgen final erst nach Kundenfreigabe.
+      </p>
+    </div>
+  </section>
+</Layout>

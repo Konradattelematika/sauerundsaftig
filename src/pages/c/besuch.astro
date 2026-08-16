@@ -1,0 +1,127 @@
+---
+/**
+ * /besuch — Öffnungszeiten als riesige Mono-Tabelle, OpeningStatus lg, Telefon display-groß,
+ * ClickToLoadMap, Parken/Barrierefreiheit/Hunde/Zahlungsmittel vorsichtig + TODO(kunde).
+ * Reservierung ist ausschließlich telefonisch (bestätigt, BRAND-TODO #1).
+ */
+import Layout from '../../variants/c-backstube/Layout.astro';
+import ClickToLoadMap from '../../components/shared/ClickToLoadMap.astro';
+import OpeningStatus from '../../components/shared/OpeningStatus.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { weekOverview } from '../../lib/opening-hours';
+import { localBusiness, breadcrumbs } from '../../lib/schema-org';
+import { label, stamp } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const week = weekOverview(site.openingHours as any);
+
+const jsonLd = [
+  localBusiness(new URL(base, Astro.site).toString()),
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Besuch', url: new URL(`${base}/besuch`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Besuch — Öffnungszeiten, Anfahrt, Kontakt — Sauer & Saftig"
+  description="Öffnungszeiten, Adresse und Anreise nach Rerik, Dünenstraße 1. Donnerstag bis Montag geöffnet, Dienstag und Mittwoch Ruhetag."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Besuch</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,10vw,6.5rem)] font-extrabold uppercase leading-[0.9] text-ink">
+        {site.address.street}
+      </h1>
+      <p class="mt-3 text-xl text-ink-soft md:text-2xl">{site.address.zip} {site.address.city}</p>
+      <div class="mt-6"><OpeningStatus size="lg" /></div>
+      <a
+        href={telHref(site.phone)}
+        class="mt-8 block w-fit font-mono text-[clamp(2.5rem,10vw,5rem)] tabular text-ink underline-offset-8 hover:underline"
+      >
+        {site.phoneDisplay}
+      </a>
+      <p class="mt-4 max-w-[60ch] text-lg text-ink-soft">
+        Reservierungen und Anfragen laufen ausschließlich telefonisch — ruf einfach an.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-primary py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/80">Öffnungszeiten</p>
+      <table class="mt-8 w-full border-collapse font-mono text-[clamp(1.25rem,3.5vw,2.25rem)]">
+        <caption class="sr-only">Öffnungszeiten je Wochentag</caption>
+        <tbody>
+          {week.map((d) => (
+            <tr class="border-b-2 border-paper/25">
+              <td class="py-4 pr-4 uppercase tracking-wide">{d.day}</td>
+              <td class="py-4 text-right tabular">{d.hours}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p class="mt-6 max-w-[60ch] text-lg text-paper/85">
+        Zu Feiertagen wie Heiligabend und dem 1. Weihnachtstag bleibt bei uns geschlossen — die aktuelle Ausnahme
+        siehst du oben im Live-Status.
+      </p>
+      {site.tooGoodToGo.partner && (
+        <p class="mt-3 font-mono text-[15px] text-paper/75">
+          Too Good To Go: Überraschungstüte für {site.tooGoodToGo.bagPrice} € (Wert ca. {site.tooGoodToGo.bagValue} €)
+        </p>
+      )}
+    </div>
+  </section>
+
+  <section class="bg-bg py-16 md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Anfahrt</p>
+      <h2 class="mt-2 font-display text-3xl font-extrabold uppercase text-ink md:text-4xl">So findest du uns</h2>
+      <div class="mt-8">
+        <ClickToLoadMap />
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-secondary py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class="font-mono text-[15px] uppercase tracking-[0.15em] text-paper/80">Vor Ort</p>
+      <div class="mt-8 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <h3 class="font-display text-xl font-extrabold uppercase">Parken</h3>
+          <p class="mt-2 max-w-[40ch] text-base text-paper/90">
+            Parkmöglichkeiten in der Nähe sind uns noch nicht abschließend bestätigt — ruf kurz an, dann sagen wir
+            dir, wo du am besten stehst.
+          </p>
+          <span class={`${stamp} mt-4 inline-flex`}>TODO(kunde): Parken bestätigen</span>
+        </div>
+        <div>
+          <h3 class="font-display text-xl font-extrabold uppercase">Barrierefreiheit</h3>
+          <p class="mt-2 max-w-[40ch] text-base text-paper/90">
+            Ob Café und Zugang barrierefrei sind, klären wir aktuell noch. Am sichersten fragst du kurz vorher
+            telefonisch nach.
+          </p>
+          <span class={`${stamp} mt-4 inline-flex`}>TODO(kunde): Barrierefreiheit bestätigen</span>
+        </div>
+        <div>
+          <h3 class="font-display text-xl font-extrabold uppercase">Hunde</h3>
+          <p class="mt-2 max-w-[40ch] text-base text-paper/90">
+            Das prüfen wir gerade noch — ruf kurz an, bevor du mit Hund vorbeikommst.
+          </p>
+          <span class={`${stamp} mt-4 inline-flex`}>TODO(kunde): Hunde-Regelung bestätigen</span>
+        </div>
+        <div>
+          <h3 class="font-display text-xl font-extrabold uppercase">Zahlungsmittel</h3>
+          <p class="mt-2 max-w-[40ch] text-base text-paper/90">
+            Ob Kartenzahlung bei uns geht, können wir gerade noch nicht sicher sagen. Ruf kurz an, dann wissen wir
+            Bescheid.
+          </p>
+          <span class={`${stamp} mt-4 inline-flex`}>TODO(kunde): Zahlungsmittel bestätigen</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,54 @@
+---
+/** /vorbestellen — Plakat-Intro (Bestellschluss als Display-Zeile) + PreorderFlow-Island. */
+import Layout from '../../variants/c-backstube/Layout.astro';
+import PreorderFlow from '../../components/shared/PreorderFlow.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+import { label, stamp } from '../../variants/c-backstube/lib/ui';
+
+const base = '/c';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Vorbestellen', url: new URL(`${base}/vorbestellen`, Astro.site).toString() },
+  ]),
+];
+---
+
+<Layout
+  title="Vorbestellen — Sauer & Saftig"
+  description="Brot, Schnecken und Torten vorbestellen und zur Wunschzeit abholen. Bestellschluss 18 Uhr am Vortag, Torten 5 Tage Vorlauf."
+  jsonLd={jsonLd}
+>
+  <section class="bg-bg pb-8 pt-10 md:pt-14">
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <p class={label}>Click &amp; Collect</p>
+      <h1 class="mt-2 font-display text-[clamp(3rem,11vw,7rem)] font-extrabold uppercase leading-[0.88] text-ink">Vorbestellen.</h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+        Vier Schritte, dann liegt dein Brot bereit, wenn du kommst: Produkt wählen, Abholtag wählen, Zeitfenster wählen, fertig.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-accent py-16 text-paper md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <h2 class="font-display text-[clamp(2.5rem,9vw,6rem)] font-extrabold uppercase leading-[0.88]">
+        Bestellschluss<br />18 Uhr.
+      </h2>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <span class={stamp}>Am Vortag der Abholung</span>
+        <span class={stamp}>Torten: 5 Tage Vorlauf</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-bg py-16 md:py-24" data-reveal>
+    <div class="mx-auto max-w-[1400px] px-4 md:px-8">
+      <div class="border-2 border-ink bg-paper p-6 md:p-10">
+        <p class={label}>Deine Bestellung</p>
+        <div class="mt-6 max-w-2xl">
+          <PreorderFlow base={base} />
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

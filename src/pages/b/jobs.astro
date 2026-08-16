@@ -1,0 +1,48 @@
+---
+/**
+ * /jobs — ehrlich, keine erfundenen Stellen (VARIANT-BRIEF Routen §/jobs).
+ * TODO(kunde): sobald konkrete Stellenprofile (Backstube/Service, Umfang, Zeitraum)
+ * feststehen, hier als Liste ergänzen statt der allgemeinen Initiativbewerbung.
+ */
+import Layout from '../../variants/b-salzhaff/Layout.astro';
+import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/b';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Jobs', url: `${Astro.site}${base}/jobs` },
+  ]),
+];
+---
+
+<Layout
+  title="Jobs — Sauer & Saftig"
+  description="Verstärkung für Backstube und Service in Rerik gesucht — melde dich telefonisch."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Jobs</p>
+    <h1 class="mt-4 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]">Verstärkung fürs Saisonteam</h1>
+  </section>
+
+  <section class="mx-auto max-w-[900px] px-4 py-16 md:px-8 md:py-24">
+    <SectionLabel number="01" label="Initiativbewerbung" />
+    <div class="mt-8 max-w-[60ch]">
+      <p class="text-xl text-ink-soft">
+        Wir suchen gelegentlich Verstärkung — für die Backstube ebenso wie für den Service im Café. Feste,
+        ausgeschriebene Stellen haben wir gerade keine, aber melde dich, wenn du Backstube oder Service kannst.
+      </p>
+      <p class="mt-4 text-xl text-ink-soft">
+        Ruf uns einfach an, dann sprechen wir über das, was gerade und was demnächst ansteht.
+      </p>
+      <a href={telHref(site.phone)} class="mt-8 block min-h-[44px] w-fit font-mono text-[clamp(2rem,7vw,3.5rem)] tabular text-ink">
+        {site.phoneDisplay}
+      </a>
+      {/* TODO(kunde): konkrete Stellenprofile (Position, Umfang, Zeitraum) ergänzen, sobald bestätigt. */}
+    </div>
+  </section>
+</Layout>

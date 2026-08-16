@@ -1,0 +1,43 @@
+---
+/** /datenschutz — rendert DATENSCHUTZ aus lib/legal.ts, TODO(kunde)-Zeilen sichtbar markiert. noindex. */
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import { DATENSCHUTZ } from '../../lib/legal.ts';
+
+const base = '/a';
+---
+
+<Layout
+  title="Datenschutz — Sauer & Saftig"
+  description="Datenschutzerklärung von Sauer & Saftig."
+  noindex
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Datenschutz', href: `${base}/datenschutz` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-3xl px-4 md:px-8">
+      <h1 class="text-[clamp(2rem,5vw,3rem)]">Datenschutz</h1>
+      <div class="mt-10 flex flex-col gap-10">
+        {DATENSCHUTZ.map((section) => (
+          <div>
+            <h2 class="text-2xl">{section.heading}</h2>
+            <div class="prose-measure mt-3 flex flex-col gap-2 text-ink-soft">
+              {section.paragraphs.map((p) =>
+                p.includes('TODO(kunde)') ? (
+                  <p class="flex flex-wrap items-baseline gap-2">
+                    <span class="shrink-0 rounded-full border border-accent-ink/40 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-accent-ink">
+                      folgt
+                    </span>
+                    <span>{p}</span>
+                  </p>
+                ) : (
+                  <p>{p}</p>
+                ),
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

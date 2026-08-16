@@ -1,0 +1,108 @@
+---
+/**
+ * /gastgeber — B2B-Landingpage für Ferienwohnungs-Vermieter (VARIANT-BRIEF §5).
+ * Preise bewusst „auf Anfrage" (VARIANT-BRIEF §5: keine erfundene Preisliste) —
+ * Kontakt läuft über den Anruf-CTA statt über ein Formular.
+ */
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
+import Figure from '../../variants/a-krume/components/Figure.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+
+const base = '/a';
+const phoneHref = telHref(site.phone);
+
+const ANGEBOTE = [
+  { title: 'Willkommensbrot-Paket', text: 'Ein Laib Sauerteigbrot für deine Gäste am Anreisetag, fertig verpackt zur Abholung.' },
+  { title: 'Frühstückskorb zur Anreise', text: 'Brot, Aufstriche und eine Schnecke — ein kleiner Korb, der den ersten Urlaubsmorgen einfacher macht.' },
+  { title: 'Gutscheine als Gastgeschenk', text: 'Frei wählbarer Betrag, den deine Gäste bei uns einlösen — ohne dass du selbst Ware vorhalten musst.' },
+  { title: 'Kartenständer mit QR-Code', text: 'Ein kostenloser Ständer für deine Rezeption. Der QR-Code führt direkt zu unserer Karte und zur Vorbestellung.' },
+];
+---
+
+<Layout
+  title="Für Gastgeber — Sauer & Saftig"
+  description="Willkommensbrot, Frühstückskörbe, Gutscheine und ein kostenloser Kartenständer für Ferienwohnungs-Vermieter in Rerik."
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Für Gastgeber', href: `${base}/gastgeber` }]} />
+
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <SectionIntro
+        as="h1"
+        size="lg"
+        eyebrow="Für Gastgeber"
+        title="Ein gutes Frühstück ist Teil der Anreise"
+        intro="Rerik zählt rund 3.300 Gästebetten in Ferienwohnungen und -häusern. Für Vermieterinnen und Vermieter bieten wir vier Wege, deinen Gästen den ersten Morgen leichter zu machen — ohne dass du selbst backen musst."
+      />
+    </div>
+  </section>
+
+  <!-- Angebot: Kacheln links (7), Bild rechts (5) -->
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div class="md:col-span-7">
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" data-reveal>Das Angebot</p>
+          <div class="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-2">
+            {ANGEBOTE.map((a, i) => (
+              <div class="rounded-card border border-ink/10 bg-paper p-6" data-reveal style={`--reveal-delay:${(i % 2) * 100}ms`}>
+                <h2 class="text-xl">{a.title}</h2>
+                <p class="prose-measure mt-2 text-ink-soft">{a.text}</p>
+              </div>
+            ))}
+          </div>
+          <p class="prose-measure mt-6 font-mono text-sm text-ink-soft">
+            Preise gibt es auf Anfrage — Mengen, Rhythmus und Zustellung stimmen wir individuell mit dir ab.
+            Rechnung ist möglich.
+          </p>
+        </div>
+        <div class="md:col-span-5" data-reveal style="--reveal-delay:100ms">
+          <Figure motif="brot-laib" alt="Ganzer Sauerteiglaib, wie er im Willkommensbrot-Paket steckt (Platzhalterbild)" aspect="aspect-[4/5]" sizes="(min-width: 768px) 35vw, 100vw" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Warum das hilft -->
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div class="md:col-span-6" data-reveal>
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Warum das hilft</p>
+          <h2 class="mt-3 text-[clamp(2rem,4vw,2.75rem)]">Warum das deine Bewertungen verbessert</h2>
+        </div>
+        <div class="md:col-span-6" data-reveal style="--reveal-delay:100ms">
+          <p class="prose-measure text-lg text-ink-soft">
+            Ein frisches Brot am Anreisetag oder ein kleiner Frühstückskorb ist oft das Erste, was Gäste von
+            deiner Unterkunft mitbekommen — und häufig das Erste, was sie später in einer Bewertung erwähnen. Ein
+            gutes Detail am Anfang des Aufenthalts bleibt hängen, ohne dass du selbst in der Küche stehst.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kontakt: Anruf-CTA statt Formular -->
+  <section class="bg-accent py-14 text-white md:py-20">
+    <div class="mx-auto max-w-[1440px] px-4 text-center md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.25em]" data-reveal>Anfrage</p>
+      <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.75rem)]" data-reveal style="--reveal-delay:100ms">
+        Ruf uns an, wir sprechen alles Weitere direkt durch
+      </h2>
+      <p class="prose-measure mx-auto mt-3 text-white/90" data-reveal style="--reveal-delay:100ms">
+        Ein Anfrageformular ist hier noch nicht angeschlossen — am schnellsten geht es telefonisch.
+      </p>
+      <a
+        href={phoneHref}
+        class="mt-8 inline-flex min-h-11 items-center justify-center rounded-card bg-white px-6 py-3 font-mono text-xl text-accent-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-bg"
+        data-reveal
+        style="--reveal-delay:200ms"
+      >
+        {site.phoneDisplay}
+      </a>
+    </div>
+  </section>
+</Layout>
