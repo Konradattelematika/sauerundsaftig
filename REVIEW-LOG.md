@@ -46,3 +46,17 @@ Orchestrator-Prüfprotokoll. Ein Eintrag je Schritt: Datum, Prüfung, Abweichung
   (brot-laib, obsttorte, kaesekuchen) mit echten Alt-Texten. Befund „Sommer-Brotpause" als
   Launch-Blocker in BRAND-TODO dokumentiert.
 - Tests: vitest 16/16, astro check 0 Fehler, Variantenwähler um D erweitert.
+
+## 16.08.2026 — Dritter Lauf: echte Fotos + echte Preise
+- 14 Kundenfotos gesichtet, 14 Motive belegt (inkl. neues Hero-Motiv: Schneckenblech,
+  Brotregal mit Preistafel, Gastraum, Frühstücksplatte, 4 Auftragstorten, Lotus-Schnecken).
+- Frühstückskarte komplett aus geliefertem PDF übernommen (10 Positionen + Extras,
+  priceIsPlaceholder=false). Brotpreise von der Tafel (6,50/7/7). Getränke-Lineup von der
+  Tafel übernommen, Preise dort nur teilweise lesbar → bleiben als ° markiert.
+- PreorderFlow auf echte Brotsorten umgestellt; C-Gastgeber-Referenz auf umbenanntes
+  Brot gefixt (Build-Fehler gefunden durch test:routes).
+- Variantenwähler: „drei" → „vier Richtungen", ehrlicher Foto-/Preis-Hinweis.
+- Higgsfield: kein MCP in dieser Umgebung verbunden (Bezahldienst) — dynamische
+  Inszenierung stattdessen nativ (Ken-Burns auf Krume-Masken in D, bestehende
+  Reveals/Parallax-Motion), dokumentiert für Konrad.
+- QA: build ok, test:routes 136/136 OK, vitest 16/16, astro check 0 Fehler. Push 51ea151.
