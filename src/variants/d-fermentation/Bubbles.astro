@@ -1,0 +1,38 @@
+---
+/**
+ * Fermentationsblasen — lebender Hintergrund. Nur transform/opacity (GPU),
+ * sehr langsame Drift, bei prefers-reduced-motion statisch (CSS regelt das).
+ * In eine relative Sektion legen; pointer-events sind aus.
+ */
+interface Props {
+  /** Dichte: subtle (Standard) oder rich (Hero) */
+  density?: 'subtle' | 'rich';
+  class?: string;
+}
+const { density = 'subtle', class: cls = '' } = Astro.props;
+
+interface B { size: number; x: number; y: number; color: string; t: number; dx: string; dy: string; s: number; o: number }
+const AMBER = 'rgb(232 162 83 / 0.55)';
+const GLUT = 'rgb(242 122 31 / 0.4)';
+const SEE = 'rgb(110 143 134 / 0.45)';
+const base: B[] = [
+  { size: 34, x: 8, y: 12, color: AMBER, t: 30, dx: '5vw', dy: '-7vh', s: 1.15, o: 0.5 },
+  { size: 22, x: 72, y: 8, color: SEE, t: 26, dx: '-4vw', dy: '6vh', s: 1.1, o: 0.4 },
+  { size: 28, x: 60, y: 62, color: GLUT, t: 34, dx: '6vw', dy: '-5vh', s: 1.18, o: 0.45 },
+];
+const rich: B[] = [
+  ...base,
+  { size: 16, x: 30, y: 74, color: AMBER, t: 22, dx: '-5vw', dy: '-8vh', s: 1.2, o: 0.4 },
+  { size: 12, x: 88, y: 40, color: GLUT, t: 24, dx: '-3vw', dy: '7vh', s: 1.12, o: 0.35 },
+];
+const bubbles = density === 'rich' ? rich : base;
+---
+
+<div class:list={['pointer-events-none absolute inset-0 overflow-hidden', cls]} aria-hidden="true">
+  {bubbles.map((b) => (
+    <span
+      class="bubble"
+      style={`width:${b.size}vmin;height:${b.size}vmin;left:${b.x}%;top:${b.y}%;background:${b.color};opacity:${b.o};--drift-x:${b.dx};--drift-y:${b.dy};--drift-s:${b.s};--drift-t:${b.t}s`}
+    ></span>
+  ))}
+</div>

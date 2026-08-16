@@ -1,0 +1,77 @@
+---
+/**
+ * Intro-Loader (nur Startseite): atmender Teig-Blob + Wortfolge
+ * „Mehl → Wasser → Zeit → Wärme" → Logo. Gesamt ~1,9 s, überspringbar
+ * (Klick/Taste/Scroll), bei prefers-reduced-motion oder Client-Navigation
+ * sofort weg. Kein künstliches Warten auf Assets.
+ */
+---
+
+<div
+  id="d-loader"
+  class="fixed inset-0 z-[90] flex flex-col items-center justify-center gap-8 bg-bg"
+  aria-hidden="true"
+>
+  <svg viewBox="0 0 200 200" class="blob-breathe h-36 w-36" aria-hidden="true">
+    <defs>
+      <radialGradient id="d-loader-g" cx="38%" cy="32%" r="80%">
+        <stop offset="0" stop-color="#E8A253" />
+        <stop offset="1" stop-color="#B87333" />
+      </radialGradient>
+    </defs>
+    <path
+      fill="url(#d-loader-g)"
+      d="M100,14 C136,10 172,34 182,70 C192,106 176,144 146,166 C116,188 76,186 48,164 C20,142 8,104 20,70 C32,36 64,18 100,14 Z"
+    />
+  </svg>
+  <p id="d-loader-word" class="font-display text-3xl text-ink" style="min-height:1.4em">Mehl</p>
+</div>
+
+<script>
+  let shown = false;
+
+  function runLoader() {
+    const el = document.getElementById('d-loader');
+    if (!el) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (shown || reduced) {
+      el.remove();
+      return;
+    }
+    shown = true;
+    document.documentElement.style.overflow = 'hidden';
+
+    const words = ['Mehl', 'Wasser', 'Zeit', 'Wärme'];
+    const wordEl = document.getElementById('d-loader-word');
+    let i = 0;
+    const tick = setInterval(() => {
+      i += 1;
+      if (wordEl && i < words.length) wordEl.textContent = words[i] ?? '';
+    }, 380);
+
+    const close = () => {
+      clearInterval(tick);
+      document.documentElement.style.overflow = '';
+      el.style.transition = 'opacity 400ms var(--ease-brand)';
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+      setTimeout(() => el.remove(), 450);
+      window.removeEventListener('keydown', close);
+      window.removeEventListener('pointerdown', close);
+      window.removeEventListener('wheel', close);
+      window.removeEventListener('touchmove', close);
+    };
+    window.addEventListener('keydown', close, { once: true });
+    window.addEventListener('pointerdown', close, { once: true });
+    window.addEventListener('wheel', close, { once: true, passive: true });
+    window.addEventListener('touchmove', close, { once: true, passive: true });
+    setTimeout(close, 1900);
+  }
+
+  runLoader();
+  // Bei View-Transition-Navigation zurück zur Startseite: Loader nicht erneut zeigen
+  document.addEventListener('astro:page-load', () => {
+    if (shown) document.getElementById('d-loader')?.remove();
+    else runLoader();
+  });
+</script>

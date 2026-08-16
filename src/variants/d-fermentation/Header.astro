@@ -1,0 +1,79 @@
+---
+/** Header D — dunkel, schwebend, mit Glüh-CTA und Fullscreen-Menü mobil. */
+import Logo from '../../components/shared/Logo.astro';
+import OpeningStatus from '../../components/shared/OpeningStatus.astro';
+import { NAV_CTA, NAV_MAIN } from '../../lib/variants';
+
+const base = '/d';
+const path = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-40 border-b border-ink/10 bg-bg/85 backdrop-blur-md">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
+    <a href={base} class="shrink-0" aria-label="Sauer & Saftig — Startseite Variante Fermentation">
+      <Logo variant="wordmark" tone="light" width={132} />
+    </a>
+
+    <nav class="hidden items-center gap-7 md:flex" aria-label="Hauptnavigation">
+      {NAV_MAIN.map((n) => (
+        <a
+          href={`${base}${n.path}`}
+          class:list={['link-grow text-[1.05rem]', path.startsWith(`${base}${n.path}`) ? 'text-primary' : 'text-ink']}
+          aria-current={path.startsWith(`${base}${n.path}`) ? 'page' : undefined}
+        >
+          {n.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <OpeningStatus class="hidden lg:inline-flex" />
+      <a
+        href={`${base}${NAV_CTA.path}`}
+        class="btn-glow hidden min-h-[44px] items-center rounded-card bg-accent px-5 py-2.5 font-mono text-sm text-black md:inline-flex"
+      >
+        {NAV_CTA.label}
+      </a>
+      <button
+        type="button"
+        class="d-menu-btn inline-flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-card border border-ink/25 md:hidden"
+        aria-expanded="false"
+        aria-controls="d-mobile-menu"
+        aria-label="Menü öffnen"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="d-mobile-menu" class="hidden border-t border-ink/10 bg-bg md:hidden" hidden>
+    <nav class="grid gap-1 px-4 py-4" aria-label="Mobile Navigation">
+      {[...NAV_MAIN, NAV_CTA].map((n) => (
+        <a href={`${base}${n.path}`} class="flex min-h-[48px] items-center rounded-card px-3 font-display text-2xl">
+          {n.label}
+        </a>
+      ))}
+      <div class="px-3 py-3"><OpeningStatus /></div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  function bind() {
+    const btn = document.querySelector<HTMLButtonElement>('.d-menu-btn');
+    const menu = document.getElementById('d-mobile-menu');
+    if (!btn || !menu || btn.dataset.bound) return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.setAttribute('aria-label', open ? 'Menü öffnen' : 'Menü schließen');
+      menu.classList.toggle('hidden', open);
+      menu.toggleAttribute('hidden', open);
+    });
+  }
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>

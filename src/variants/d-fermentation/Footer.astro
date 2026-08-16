@@ -1,0 +1,76 @@
+---
+/** Footer D — Marquee-Claim, Navigations-Spalten, Logo-Wasserzeichen. */
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { weekOverview } from '../../lib/opening-hours';
+import { NAV_FOOTER, NAV_LEGAL, NAV_MAIN } from '../../lib/variants';
+import type { Schedule } from '../../lib/opening-hours';
+
+const base = '/d';
+const week = weekOverview(site.openingHours as unknown as Schedule);
+const ticker = ['Sauer macht saftig', '18 Stunden Gare', 'Dünenstraße 1 · Rerik', 'Fast alles mit Sauerteig', 'Too Good To Go Partner'];
+---
+
+<footer class="relative mt-24 overflow-hidden border-t border-ink/10 bg-bg-alt">
+  {/* Marquee-Claim */}
+  <div class="overflow-hidden border-b border-ink/10 py-4" aria-hidden="true">
+    <div class="marquee-d gap-10 font-display text-2xl text-primary/80">
+      {[0, 1].map((i) => (
+        <div class="flex shrink-0 gap-10" aria-hidden={i === 1 ? 'true' : undefined}>
+          {ticker.map((t) => (
+            <span class="whitespace-nowrap">{t} <span class="mx-3 text-ink-soft">·</span></span>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+  <p class="sr-only">{ticker.join(' · ')}</p>
+
+  <div class="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-[1.2fr_1fr_1fr] md:px-6">
+    <img
+      src="/brand/logo-lockup-light-640.png"
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute -right-10 -bottom-16 w-[340px] opacity-[0.07] md:w-[420px]"
+      width="420"
+      height="303"
+      loading="lazy"
+    />
+    <div class="grid content-start gap-3">
+      <p class="font-display text-2xl">Sauer &amp; Saftig</p>
+      <p class="text-ink-soft">{site.address.street}<br />{site.address.zip} {site.address.city}</p>
+      <a href={telHref(site.phone)} class="link-grow w-fit text-xl">{site.phoneDisplay}</a>
+      <a href={`https://www.instagram.com/${site.instagram}/`} target="_blank" rel="noopener" class="link-grow w-fit text-ink-soft">
+        Instagram @{site.instagram}
+      </a>
+    </div>
+    <nav class="grid content-start gap-2" aria-label="Footer-Navigation">
+      {[...NAV_MAIN, ...NAV_FOOTER].map((n) => (
+        <a href={`${base}${n.path}`} class="link-grow w-fit text-ink-soft">{n.label}</a>
+      ))}
+    </nav>
+    <div class="grid content-start gap-2">
+      <p class="font-mono text-sm tracking-widest text-ink-soft uppercase">Öffnungszeiten</p>
+      <ul class="grid gap-1 text-lg">
+        {week.map((w) => (
+          <li class="flex justify-between gap-4 tabular">
+            <span>{w.day}</span>
+            <span class:list={[w.hours === 'Ruhetag' ? 'text-closed' : 'text-ink']}>{w.hours}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-ink/10">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-sm text-ink-soft md:px-6">
+      <p>© 2026 Sauer &amp; Saftig · Ostseebad Rerik</p>
+      <nav class="flex gap-5" aria-label="Rechtliches">
+        {NAV_LEGAL.map((n) => (
+          <a href={`${base}${n.path}`} class="link-grow">{n.label}</a>
+        ))}
+        <a href="/" class="link-grow">Variantenwahl</a>
+      </nav>
+    </div>
+  </div>
+</footer>

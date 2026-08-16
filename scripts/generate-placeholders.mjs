@@ -42,6 +42,7 @@ const PALETTES = {
   a: { stops: [['#EDE5D6', '#D9C6A8'], ['#E4D5BC', '#C9A87E'], ['#E9DFC9', '#D4BC96']], label: '#4A2C16', grain: 0.055 },
   b: { stops: [['#E8E9E6', '#CBD0CC'], ['#DFE3E0', '#B9C4C2'], ['#E4E6E2', '#C2CBC5']], label: '#3E5C63', grain: 0.04 },
   c: { stops: [['#E0761F', '#B65A14'], ['#6B3A1C', '#4E2913'], ['#2F4A50', '#22373C'], ['#EAD9B7', '#D9BC85']], label: '#FDF9F0', grain: 0.07 },
+  d: { stops: [['#5A3A1E', '#241812'], ['#6E4423', '#2A1F16'], ['#4A3320', '#1B1410'], ['#7A4A26', '#33241A']], label: '#E8A253', grain: 0.09, hl: 0.1 },
 };
 
 function hash(s) { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); }
@@ -62,7 +63,7 @@ function svgFor(variant, motif, ratio, desc) {
       <stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/>
     </linearGradient>
     <radialGradient id="r" cx="${cx}%" cy="30%" r="80%">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="${p.hl ?? 0.35}"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
     </radialGradient>
     <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="${hv % 97}"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope="${p.grain}"/></feComponentTransfer><feComposite operator="in" in2="SourceGraphic"/></filter>
   </defs>
@@ -76,7 +77,7 @@ function svgFor(variant, motif, ratio, desc) {
 </svg>`;
 }
 
-for (const variant of ['a', 'b', 'c']) {
+for (const variant of process.argv[2] ? [process.argv[2]] : ['a', 'b', 'c', 'd']) {
   const dir = new URL(`../src/assets/placeholders/${variant}/`, import.meta.url).pathname;
   await mkdir(dir, { recursive: true });
   for (const [motif, ratio, desc] of MOTIFS) {

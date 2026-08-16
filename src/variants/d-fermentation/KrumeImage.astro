@@ -1,0 +1,30 @@
+---
+/**
+ * Bild im organischen Krume-Fenster (Blob-ClipPath) mit sanftem Hover-Atmen.
+ * Braucht KrumeDefs im Layout.
+ */
+import { Image } from 'astro:assets';
+import { getAlt, getImage } from '../../lib/images';
+
+interface Props {
+  motif: string;
+  shape?: 1 | 2 | 3;
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+}
+const { motif, shape = 1, widths = [400, 800, 1200], sizes = '(min-width: 1024px) 50vw, 100vw', class: cls = '', loading = 'lazy' } = Astro.props;
+const maskClass = shape === 1 ? 'krume-mask' : shape === 2 ? 'krume-mask-2' : 'krume-mask-3';
+---
+
+<div class:list={['krume-frame group', cls]}>
+  <Image
+    src={getImage('d', motif)}
+    alt={getAlt(motif)}
+    widths={widths}
+    sizes={sizes}
+    loading={loading}
+    class:list={[maskClass, 'h-full w-full object-cover transition-transform duration-[var(--dur-slow)] ease-[var(--ease-brand)] group-hover:scale-[1.03]']}
+  />
+</div>

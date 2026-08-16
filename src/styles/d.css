@@ -1,0 +1,127 @@
+/* Variante D — „Fermentation" · Digital Immersive (Nachtbackstube) */
+@import 'tailwindcss';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+@import './shared.css';
+@import './fonts-clash-display.css';
+@import './fonts-general-sans.css';
+
+@theme static {
+  --color-*: initial;
+  --color-bg: #16110d; /* dunkle Röstung */
+  --color-bg-alt: #211913; /* Ofenraum */
+  --color-ink: #f4ebdd; /* Creme auf Dunkel, ~14:1 */
+  --color-ink-soft: #cbbba6; /* ~8,5:1 auf bg */
+  --color-primary: #e8a253; /* Glut/Amber */
+  --color-primary-deep: #b87333;
+  --color-secondary: #6e8f86; /* Salzhaff bei Nacht */
+  --color-secondary-soft: #3a4a45;
+  --color-accent: #f27a1f; /* Sanddorn-Glut — CTAs */
+  --color-accent-ink: #ffb063; /* Akzent-Text auf Dunkel (≥7:1) */
+  --color-open: #96c96e; /* Signal geöffnet auf Dunkel */
+  --color-closed: #ec7c62; /* Signal geschlossen auf Dunkel */
+  --color-paper: #f8f1e4; /* helle Inseln (Karten, Gutschein) */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+
+  --font-display: 'Clash Display', 'Arial', sans-serif;
+  --font-body: 'General Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'Courier New', monospace;
+
+  /* Motion „Fermentation": organisch, atmend, spürbar aber weich */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 250ms;
+  --dur-base: 450ms;
+  --dur-slow: 700ms;
+
+  --radius-card: 1.25rem; /* organisch-rund */
+}
+
+.font-display,
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+/* ---------- Fermentationsblasen (Hintergrund-Leben) ---------- */
+/* GPU-schonend: nur transform/opacity, große Blur-Kreise, sehr langsam. */
+@keyframes bubble-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(var(--drift-x, 4vw), var(--drift-y, -6vh), 0) scale(var(--drift-s, 1.12)); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  animation: bubble-drift var(--drift-t, 26s) ease-in-out infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bubble { animation: none !important; }
+}
+
+/* ---------- Krume-Masken (organische Bildfenster) ---------- */
+.krume-mask { clip-path: url(#krume-blob-1); }
+.krume-mask-2 { clip-path: url(#krume-blob-2); }
+.krume-mask-3 { clip-path: url(#krume-blob-3); }
+
+/* ---------- Atmende Blobs (Loader, Prozess) ---------- */
+@keyframes blob-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+.blob-breathe { animation: blob-breathe 4.5s ease-in-out infinite; transform-origin: center; }
+@media (prefers-reduced-motion: reduce) {
+  .blob-breathe { animation: none !important; }
+}
+
+/* ---------- Typo-Marquee ---------- */
+@keyframes marquee-d {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-d {
+  display: flex;
+  width: max-content;
+  animation: marquee-d 32s linear infinite;
+}
+.marquee-d:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-d { animation: none !important; }
+}
+
+/* ---------- View Transitions (Seitenwechsel) ---------- */
+::view-transition-old(root) {
+  animation: vt-out 220ms var(--ease-brand) both;
+}
+::view-transition-new(root) {
+  animation: vt-in 260ms var(--ease-brand) both;
+}
+@keyframes vt-out { to { opacity: 0; transform: scale(0.992); } }
+@keyframes vt-in { from { opacity: 0; transform: scale(1.008); } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+}
+
+/* ---------- Underline-Microinteraction ---------- */
+.link-grow {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size var(--dur-fast) var(--ease-brand);
+  padding-bottom: 2px;
+}
+.link-grow:hover, .link-grow:focus-visible { background-size: 100% 1.5px; }
+
+/* ---------- Glüh-CTA ---------- */
+.btn-glow {
+  box-shadow: 0 0 0 rgb(242 122 31 / 0);
+  transition: box-shadow var(--dur-base) var(--ease-brand), transform var(--dur-fast) var(--ease-brand);
+}
+.btn-glow:hover, .btn-glow:focus-visible { box-shadow: 0 0 36px rgb(242 122 31 / 0.35); }
+.btn-glow:active { transform: translateY(1px); }

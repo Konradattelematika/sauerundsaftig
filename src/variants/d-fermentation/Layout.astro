@@ -1,0 +1,39 @@
+---
+/** Layout Variante D „Fermentation" — dunkle Nachtbackstube, View Transitions. */
+import '../../styles/d.css';
+import { ClientRouter } from 'astro:transitions';
+import Motion from '../../components/shared/Motion.astro';
+import SeoHead from '../../components/shared/SeoHead.astro';
+import StickyBar from '../../components/shared/StickyBar.astro';
+import Footer from './Footer.astro';
+import Header from './Header.astro';
+import KrumeDefs from './KrumeDefs.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: object[];
+  noindex?: boolean;
+}
+const { title, description, jsonLd = [], noindex = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <SeoHead {title} {description} {jsonLd} {noindex} />
+    <meta name="theme-color" content="#16110D" />
+    <ClientRouter />
+  </head>
+  <body class="has-sticky-bar">
+    <a href="#main" class="skip-link">Zum Inhalt springen</a>
+    <KrumeDefs />
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <StickyBar base="/d" />
+    <Motion />
+  </body>
+</html>

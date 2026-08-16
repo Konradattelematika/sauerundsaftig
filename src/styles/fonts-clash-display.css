@@ -1,0 +1,8 @@
+/* Clash Display Variable — self-hosted (Fontshare, ITF Free Font License) */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('../assets/fonts/ClashDisplay-Variable.woff2') format('woff2-variations');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}

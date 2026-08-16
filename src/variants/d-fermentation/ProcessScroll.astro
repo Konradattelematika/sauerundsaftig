@@ -1,0 +1,136 @@
+---
+/**
+ * Scrollgetriebener Teigprozess: ein zentraler organischer Blob verformt sich
+ * über sechs Etappen (Mehl & Wasser → … → Brot), Etappentexte blenden je nach
+ * Scrollposition. Technik: sticky Section + rAF-Interpolation von Radius-
+ * Polygonen (nur SVG-path-Updates, kein Layout-Thrash).
+ * Fallback (kein JS / reduced-motion): statische Etappenliste, voll lesbar.
+ */
+const STAGES = [
+  { time: '14:00', title: 'Mehl & Wasser', text: 'Der Sauerteig wird aufgefrischt, der Hauptteig ruht in der Autolyse.' },
+  { time: '17:00', title: 'Falten', text: 'Vier Runden Dehnen und Falten. Der Teig baut Spannung auf.' },
+  { time: '21:00', title: 'Formen', text: 'Rundwirken, Laib formen, kopfüber in den Gärkorb.' },
+  { time: '21:30', title: 'Kalte Gare', text: 'Über Nacht bei 4 Grad. Hier entsteht die Säure, die trägt.' },
+  { time: '06:30', title: 'Ofen', text: '250 Grad, Schwaden, ein Schnitt — der Laib reißt kontrolliert auf.' },
+  { time: '08:00', title: 'Brot', text: 'Ausgekühlt an der Theke. 18 Stunden nach dem ersten Handgriff.' },
+];
+---
+
+<section class="d-process relative" aria-label="Der 18-Stunden-Backprozess">
+  {/* Statischer Fallback — sichtbar ohne JS oder mit reduced-motion */}
+  <ol class="d-process-static mx-auto grid max-w-3xl gap-10 px-6 py-20">
+    {STAGES.map((s) => (
+      <li class="grid gap-1 border-l-2 border-primary/40 pl-6">
+        <span class="font-mono text-sm text-primary">{s.time}</span>
+        <h3 class="font-display text-2xl">{s.title}</h3>
+        <p class="text-ink-soft">{s.text}</p>
+      </li>
+    ))}
+  </ol>
+
+  {/* Scroll-Inszenierung — wird per JS aktiviert */}
+  <div class="d-process-scroll hidden" data-process style="height: 420vh">
+    <div class="sticky top-0 flex h-screen flex-col items-center justify-center gap-6 overflow-hidden px-6">
+      <svg viewBox="-110 -110 220 220" class="h-[38vmin] w-[38vmin]" aria-hidden="true">
+        <defs>
+          <radialGradient id="d-proc-g" cx="40%" cy="30%" r="85%">
+            <stop offset="0" stop-color="#E8A253" />
+            <stop offset="1" stop-color="#8a5626" />
+          </radialGradient>
+        </defs>
+        <path data-blob fill="url(#d-proc-g)" d="" />
+        <path data-cut stroke="#16110D" stroke-width="3" stroke-linecap="round" fill="none" opacity="0" d="M-38,-8 C-14,-26 16,-26 40,-10" />
+      </svg>
+      <div class="grid min-h-28 max-w-xl gap-1 text-center">
+        <span class="font-mono text-base text-primary" data-stage-time>14:00</span>
+        <h3 class="font-display text-3xl md:text-4xl" data-stage-title>Mehl &amp; Wasser</h3>
+        <p class="text-lg text-ink-soft" data-stage-text>Der Sauerteig wird aufgefrischt, der Hauptteig ruht in der Autolyse.</p>
+      </div>
+      <div class="flex gap-2" aria-hidden="true" data-stage-dots>
+        {STAGES.map(() => (
+          <span class="size-2 rounded-full bg-ink-soft/40 transition-colors duration-[var(--dur-fast)]"></span>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ stages: STAGES }}>
+  // Radius-Profile (12 Punkte) je Etappe: von unruhig-lebendig zu rund-ruhig zum Laib.
+  const PROFILES = [
+    [86, 78, 92, 80, 88, 76, 90, 82, 86, 74, 92, 80], // Mehl & Wasser: grob, unruhig
+    [90, 82, 86, 92, 80, 88, 84, 92, 78, 88, 84, 90], // Falten: Spannung
+    [88, 90, 92, 90, 88, 90, 92, 90, 88, 90, 92, 90], // Formen: fast rund
+    [80, 84, 86, 84, 82, 84, 86, 84, 82, 84, 86, 84], // Kalte Gare: kompakt
+    [92, 96, 98, 96, 92, 88, 84, 82, 84, 88, 92, 96], // Ofentrieb: bläht oben auf
+    [96, 100, 102, 100, 96, 90, 82, 78, 82, 90, 96, 100], // Brot: Laibform
+  ];
+
+  function blobPath(radii) {
+    const n = radii.length;
+    const pts = radii.map((r, i) => {
+      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+      return [Math.cos(a) * r, Math.sin(a) * r];
+    });
+    let d = '';
+    for (let i = 0; i < n; i++) {
+      const p0 = pts[(i + n - 1) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+      const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += (i === 0 ? `M${p1[0].toFixed(1)},${p1[1].toFixed(1)}` : '') +
+        `C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+    }
+    return d + 'Z';
+  }
+
+  function init() {
+    const wrap = document.querySelector('[data-process]');
+    if (!wrap) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return; // statischer Fallback bleibt
+
+    const statik = document.querySelector('.d-process-static');
+    statik?.classList.add('hidden');
+    wrap.classList.remove('hidden');
+
+    const blob = wrap.querySelector('[data-blob]');
+    const cut = wrap.querySelector('[data-cut]');
+    const tEl = wrap.querySelector('[data-stage-time]');
+    const hEl = wrap.querySelector('[data-stage-title]');
+    const pEl = wrap.querySelector('[data-stage-text]');
+    const dots = [...wrap.querySelectorAll('[data-stage-dots] span')];
+    let current = -1;
+    let ticking = false;
+
+    function render() {
+      ticking = false;
+      const rect = wrap.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      const p = Math.min(1, Math.max(0, -rect.top / total));
+      const f = p * (PROFILES.length - 1);
+      const i = Math.min(PROFILES.length - 2, Math.floor(f));
+      const t = f - i;
+      const e = t * t * (3 - 2 * t); // smoothstep
+      const radii = PROFILES[i].map((r, k) => r + (PROFILES[i + 1][k] - r) * e);
+      blob?.setAttribute('d', blobPath(radii));
+      if (cut) cut.setAttribute('opacity', String(Math.max(0, (f - 3.6) / 1.4)));
+      const stage = Math.round(f);
+      if (stage !== current) {
+        current = stage;
+        const s = stages[stage];
+        if (tEl) tEl.textContent = s.time;
+        if (hEl) hEl.innerHTML = s.title.replace('&', '&amp;');
+        if (pEl) pEl.textContent = s.text;
+        dots.forEach((d, k) => d.style.backgroundColor = k === stage ? 'var(--color-primary)' : 'rgb(203 187 166 / 0.4)');
+      }
+    }
+    function onScroll() {
+      if (!ticking) { ticking = true; requestAnimationFrame(render); }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    render();
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

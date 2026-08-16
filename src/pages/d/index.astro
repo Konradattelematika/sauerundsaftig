@@ -1,0 +1,236 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Layout from '../../variants/d-fermentation/Layout.astro';
+import Loader from '../../variants/d-fermentation/Loader.astro';
+import Bubbles from '../../variants/d-fermentation/Bubbles.astro';
+import KrumeImage from '../../variants/d-fermentation/KrumeImage.astro';
+import ProcessScroll from '../../variants/d-fermentation/ProcessScroll.astro';
+import OpeningStatus from '../../components/shared/OpeningStatus.astro';
+import NewsletterForm from '../../components/shared/NewsletterForm.astro';
+import site from '../../data/site.json';
+import { formatDateShort, routeHref, telHref } from '../../lib/format';
+import { localBusiness } from '../../lib/schema-org';
+
+const base = '/d';
+const heute = await getEntry('heuteFrisch', 'today');
+const schnecken = await getEntry('menu', 'schnecken');
+const workshops = (await getCollection('workshops'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .filter((w) => w.data.dates.length > 0)
+  .slice(0, 2);
+const journal = (await getCollection('journal'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .slice(0, 3);
+const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+---
+
+<Layout
+  title="Sauer & Saftig — Café und Backstube in Ostseebad Rerik"
+  description="Fast alles mit eigenem Sauerteig: Brot, Schnecken, sogar der Käsekuchen. Café und Backstube in der Dünenstraße 1, Ostseebad Rerik."
+  jsonLd={[localBusiness(String(Astro.site))]}
+>
+  <Loader />
+
+  {/* HERO — Nachtbackstube */}
+  <section class="relative flex min-h-[92svh] items-center overflow-hidden">
+    <Bubbles density="rich" />
+    <div class="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-[1.1fr_0.9fr] md:px-6">
+      <div class="grid gap-6">
+        <p class="font-mono text-sm tracking-widest text-ink-soft uppercase" data-reveal>
+          Café &amp; Backstube · Ostseebad Rerik
+        </p>
+        <h1 class="font-display text-[clamp(3.2rem,10vw,7.5rem)] leading-[0.95]">
+          <span class="block" data-reveal>Sauer</span>
+          <span class="block" data-reveal style="--reveal-delay: 90ms">macht</span>
+          <span class="block text-primary" data-reveal style="--reveal-delay: 180ms">saftig.</span>
+        </h1>
+        <p class="max-w-[46ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 260ms">
+          Fast alles hier beginnt mit unserem Sauerteig. Das Brot. Die Schnecken.
+          Sogar der Käsekuchen.
+        </p>
+        <div data-reveal style="--reveal-delay: 320ms"><OpeningStatus size="lg" /></div>
+        <div class="flex flex-wrap gap-4" data-reveal style="--reveal-delay: 380ms">
+          <a href={`${base}/karte`} class="btn-glow inline-flex min-h-[48px] items-center rounded-card bg-accent px-7 py-3 font-mono text-black">
+            Karte ansehen
+          </a>
+          <a href={route} target="_blank" rel="noopener" class="link-grow inline-flex min-h-[48px] items-center text-lg">
+            Route starten →
+          </a>
+        </div>
+      </div>
+      <div class="relative" data-reveal style="--reveal-delay: 200ms">
+        <KrumeImage motif="hero-krume" shape={1} loading="eager" class="aspect-square" sizes="(min-width: 768px) 45vw, 90vw" />
+      </div>
+    </div>
+  </section>
+
+  {/* HEUTE FRISCH */}
+  {heute && (
+    <section class="relative mx-auto max-w-6xl px-4 py-20 md:px-6" aria-labelledby="heute-h">
+      <div class="mb-10 flex items-end justify-between gap-4">
+        <h2 id="heute-h" class="font-display text-4xl md:text-5xl" data-reveal>Heute frisch</h2>
+        <p class="font-mono text-sm text-ink-soft">{formatDateShort(heute.data.date)}</p>
+      </div>
+      <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {heute.data.items.map((item, i) => (
+          <li class="grid gap-3" data-reveal style={`--reveal-delay: ${i * 80}ms`}>
+            {item.motif && <KrumeImage motif={item.motif} shape={((i % 3) + 1) as 1 | 2 | 3} class="aspect-square" sizes="(min-width: 640px) 25vw, 90vw" />}
+            <div class="flex items-baseline justify-between gap-2">
+              <h3 class="font-display text-xl">{item.name}</h3>
+              {item.soldOut && <span class="font-mono text-sm text-closed">ausverkauft</span>}
+            </div>
+            {item.note && !item.soldOut && <p class="font-mono text-sm text-primary">{item.note}</p>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {/* SIGNATURE — Schnecken */}
+  {schnecken && (
+    <section class="relative overflow-hidden bg-bg-alt py-24" aria-labelledby="schnecken-h">
+      <Bubbles />
+      <div class="relative mx-auto grid max-w-6xl gap-12 px-4 md:px-6">
+        <div class="grid gap-4">
+          <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Unsere Signature</p>
+          <h2 id="schnecken-h" class="font-display text-4xl md:text-6xl" data-reveal>
+            Die Sauerteigschnecke.
+          </h2>
+          <p class="max-w-[52ch] text-xl text-ink-soft" data-reveal>{schnecken.data.intro}</p>
+        </div>
+        <ul class="grid gap-8 sm:grid-cols-3">
+          {schnecken.data.items.map((s, i) => (
+            <li class="grid gap-3" data-reveal style={`--reveal-delay: ${i * 100}ms`}>
+              {s.motif && <KrumeImage motif={s.motif} shape={((i % 3) + 1) as 1 | 2 | 3} class="aspect-square" sizes="(min-width: 640px) 30vw, 90vw" />}
+              <h3 class="font-display text-2xl">{s.name}</h3>
+              {s.description && <p class="text-ink-soft">{s.description}</p>}
+            </li>
+          ))}
+        </ul>
+        <a href={`${base}/karte/schnecken`} class="link-grow w-fit text-xl text-primary">Alles über die Schnecke →</a>
+      </div>
+    </section>
+  )}
+
+  {/* PROZESS — Scroll-Inszenierung */}
+  <section class="py-24" aria-labelledby="prozess-h">
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Von 14 Uhr bis zur Theke</p>
+      <h2 id="prozess-h" class="mt-3 font-display text-4xl md:text-6xl" data-reveal>
+        <span class="tabular" data-countup="18">18</span> Stunden. Keine Abkürzung.
+      </h2>
+    </div>
+    <ProcessScroll />
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <a href={`${base}/sauerteig`} class="link-grow text-xl text-primary">Warum wir so backen →</a>
+    </div>
+  </section>
+
+  {/* DREI BEWEISE */}
+  <section class="border-y border-ink/10 bg-bg-alt py-16" aria-label="Drei Beweise">
+    <ul class="mx-auto grid max-w-6xl gap-10 px-4 sm:grid-cols-3 md:px-6">
+      <li class="grid gap-2" data-reveal>
+        <span class="font-display text-5xl text-primary tabular" data-countup="18">18</span>
+        <p class="text-lg">Stunden Gare für jeden Laib — eigener Sauerteig, eigene Backstube.</p>
+      </li>
+      <li class="grid gap-2" data-reveal style="--reveal-delay: 90ms">
+        <span class="font-display text-5xl text-primary">4,6 ★</span>
+        <p class="text-lg">bei {site.rating.count} Google-Bewertungen.</p>
+      </li>
+      <li class="grid gap-2" data-reveal style="--reveal-delay: 180ms">
+        <span class="font-display text-5xl text-primary">4 €</span>
+        <p class="text-lg">statt {site.tooGoodToGo.bagValue} € Warenwert: Too-Good-To-Go-Tüte. Nichts wird weggeworfen.</p>
+      </li>
+    </ul>
+  </section>
+
+  {/* WORKSHOPS */}
+  <section class="mx-auto max-w-6xl px-4 py-20 md:px-6" aria-labelledby="ws-h">
+    <h2 id="ws-h" class="font-display text-4xl md:text-5xl" data-reveal>Backen lernen, wo gebacken wird.</h2>
+    <p class="mt-3 max-w-[52ch] text-xl text-ink-soft" data-reveal>
+      Kurse in der Backstube — Termine und Preise sind noch Entwurf°.
+    </p>
+    <ul class="mt-10 grid gap-6 md:grid-cols-2">
+      {workshops.map((w, i) => {
+        const next = w.data.dates.find((d) => d.seatsLeft > 0) ?? w.data.dates[0];
+        return (
+          <li data-reveal style={`--reveal-delay: ${i * 90}ms`}>
+            <a href={`${base}/workshops/${w.id}`} class="group grid gap-3 rounded-card border border-ink/15 bg-bg-alt p-6 transition-colors duration-[var(--dur-fast)] hover:border-primary/60">
+              <div class="flex items-baseline justify-between gap-3">
+                <h3 class="font-display text-2xl group-hover:text-primary">{w.data.title}</h3>
+                <span class="font-mono text-lg tabular">{w.data.price} €°</span>
+              </div>
+              <p class="text-ink-soft">{w.data.subtitle}</p>
+              {next && (
+                <p class="font-mono text-sm">
+                  <span class="text-primary">{formatDateShort(next.date)} · {next.time} Uhr</span>
+                  {next.seatsLeft > 0 && next.seatsLeft <= 3 && (
+                    <span class="ml-3 rounded-card bg-accent px-2 py-0.5 text-black">nur noch {next.seatsLeft} Plätze</span>
+                  )}
+                </p>
+              )}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+    <p class="mt-4 font-mono text-sm text-ink-soft">° Beispielwerte — finale Termine folgen.</p>
+  </section>
+
+  {/* SOCIAL PROOF */}
+  <section class="bg-bg-alt py-20" aria-label="Stimmen">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 md:grid-cols-[0.8fr_1.2fr] md:px-6">
+      <div class="grid content-start gap-2" data-reveal>
+        <p class="font-display text-6xl">4,6 ★</p>
+        <p class="text-xl text-ink-soft">{site.rating.count} Bewertungen auf Google</p>
+      </div>
+      <ul class="grid gap-6">
+        {testimonials.map((t, i) => (
+          <li class="rounded-card border border-ink/15 p-6" data-reveal style={`--reveal-delay: ${i * 90}ms`}>
+            <p class:list={['text-lg', t.data.isPlaceholder && 'italic text-ink-soft']}>„{t.data.quote}"</p>
+            <p class="mt-2 font-mono text-sm text-ink-soft">— {t.data.author}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* JOURNAL */}
+  <section class="mx-auto max-w-6xl px-4 py-20 md:px-6" aria-labelledby="journal-h">
+    <h2 id="journal-h" class="font-display text-4xl md:text-5xl" data-reveal>Aus der Nachtbackstube</h2>
+    <ul class="mt-10 grid gap-8 md:grid-cols-3">
+      {journal.map((j, i) => (
+        <li data-reveal style={`--reveal-delay: ${i * 90}ms`}>
+          <a href={`${base}/journal/${j.id}`} class="group grid gap-3">
+            <KrumeImage motif={j.data.motif} shape={((i % 3) + 1) as 1 | 2 | 3} class="aspect-[4/3]" sizes="(min-width: 768px) 30vw, 90vw" />
+            <p class="font-mono text-sm text-primary uppercase">{j.data.category}</p>
+            <h3 class="font-display text-2xl group-hover:text-primary">{j.data.title}</h3>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  {/* BESUCH */}
+  <section class="relative overflow-hidden border-t border-ink/10 bg-bg-alt py-20" aria-labelledby="besuch-h">
+    <Bubbles />
+    <div class="relative mx-auto grid max-w-6xl gap-8 px-4 text-center md:px-6">
+      <h2 id="besuch-h" class="font-display text-4xl md:text-5xl" data-reveal>Dünenstraße 1, Rerik.</h2>
+      <div data-reveal><OpeningStatus size="lg" class="justify-center" /></div>
+      <p class="text-xl">Do–Mo 8–16 Uhr · Di + Mi Ruhetag</p>
+      <div class="flex flex-wrap justify-center gap-4" data-reveal>
+        <a href={telHref(site.phone)} class="btn-glow inline-flex min-h-[48px] items-center rounded-card bg-accent px-7 py-3 font-mono text-lg text-black">
+          {site.phoneDisplay}
+        </a>
+        <a href={`${base}/besuch`} class="link-grow inline-flex min-h-[48px] items-center text-lg">Anfahrt &amp; Besuch →</a>
+      </div>
+    </div>
+  </section>
+
+  {/* NEWSLETTER */}
+  <section class="mx-auto max-w-2xl px-4 py-20 md:px-6" aria-labelledby="nl-h">
+    <h2 id="nl-h" class="font-display text-4xl" data-reveal>Der Brotbrief</h2>
+    <div class="mt-6" data-reveal><NewsletterForm base={base} /></div>
+  </section>
+</Layout>

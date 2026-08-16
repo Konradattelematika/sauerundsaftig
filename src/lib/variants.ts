@@ -1,6 +1,6 @@
 /** Metadaten der drei Design-Varianten — für Wähler-Seite, Layouts und OG-Images. */
 
-export type VariantKey = 'a' | 'b' | 'c';
+export type VariantKey = 'a' | 'b' | 'c' | 'd';
 
 export interface VariantMeta {
   key: VariantKey;
@@ -43,6 +43,16 @@ export const VARIANTS: Record<VariantKey, VariantMeta> = {
     swatches: ['#F4EFE2', '#E0761F', '#6B3A1C', '#2F4A50', '#FDF9F0'],
     typeSample: { display: 'Bricolage Grotesque', body: 'Satoshi' },
     motion: 'Ofen — kräftig, mit Anschlag, 250–400 ms',
+  },
+  d: {
+    key: 'd',
+    name: 'Fermentation',
+    workingTitle: 'Digital Immersive',
+    stance: 'Die Nachtbackstube: dunkel, lebendig, animiert — eine Website, die atmet.',
+    base: '/d',
+    swatches: ['#16110D', '#E8A253', '#F4EBDD', '#F27A1F', '#6E8F86'],
+    typeSample: { display: 'Clash Display', body: 'General Sans' },
+    motion: 'Fermentation — organisch, scrollgetrieben, 250–700 ms',
   },
 };
 
