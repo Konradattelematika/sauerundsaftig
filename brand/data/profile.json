@@ -1,0 +1,13 @@
+{
+  "username": "sauerundsaftig",
+  "fullName": "Sauer & Saftig Café",
+  "bio": null,
+  "externalLinks": [],
+  "followerCount": 1141,
+  "postsCountReported": 59,
+  "profilePicPath": "brand/source/instagram/raw/images/89b7c15a321e7e6a.jpg",
+  "ownerId": 67555612407,
+  "fetchedAt": "2026-08-16T09:38:07.624Z",
+  "fetchMethod": "playwright",
+  "notes": "Bio-Text ist über die kostenlosen öffentlichen Wege (og:-Tags, Embed-Widgets) nicht zugänglich — siehe sources.md. followerCount/postsCountReported stammen aus dem Profil-Embed-Widget, nicht aus der vollständigen Profilseite (dort ohne Login/JS-Session nicht erreichbar)."
+}
