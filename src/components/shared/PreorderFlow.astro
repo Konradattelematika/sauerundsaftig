@@ -23,16 +23,19 @@ interface Product {
   price: number;
   leadDays: number;
   note?: string;
+  /** true = Beispielpreis (°); Brotpreise sind bestätigt (Tafel im Café, 16.08.2026) */
+  placeholder?: boolean;
 }
 
 const PRODUCTS: Product[] = [
-  { id: 'sauerteig-klassik', name: 'Sauerteigbrot Klassik', price: 6.5, leadDays: 0 },
-  { id: 'roggen-pur', name: 'Roggen pur', price: 7.0, leadDays: 0 },
-  { id: 'schnecke-pistazie', name: 'Sauerteigschnecke Pistazie', price: 4.2, leadDays: 0 },
-  { id: 'schnecke-lotus', name: 'Sauerteigschnecke Lotus', price: 4.2, leadDays: 0 },
-  { id: 'schnecke-haselnuss', name: 'Sauerteigschnecke Haselnuss', price: 4.2, leadDays: 0 },
-  { id: 'kaesekuchen', name: 'Käsekuchen ganz', price: 24.0, leadDays: 5, note: 'Vorlauf 5 Tage' },
-  { id: 'obsttorte', name: 'Obsttorte ganz', price: 26.0, leadDays: 5, note: 'Vorlauf 5 Tage' },
+  { id: 'bauernbrot', name: 'Bauernbrot', price: 7.0, leadDays: 0 },
+  { id: 'roggenvollkorn', name: 'Roggenvollkorn', price: 7.0, leadDays: 0 },
+  { id: 'dinkelvollkorn-saaten', name: 'Dinkelvollkorn mit Saaten', price: 6.5, leadDays: 0, note: 'neu' },
+  { id: 'schnecke-pistazie', name: 'Sauerteigschnecke Pistazie', price: 4.2, leadDays: 0, placeholder: true },
+  { id: 'schnecke-lotus', name: 'Sauerteigschnecke Lotus', price: 4.2, leadDays: 0, placeholder: true },
+  { id: 'schnecke-haselnuss', name: 'Sauerteigschnecke Haselnuss', price: 4.2, leadDays: 0, placeholder: true },
+  { id: 'kaesekuchen', name: 'Käsekuchen ganz', price: 24.0, leadDays: 5, note: 'Vorlauf 5 Tage', placeholder: true },
+  { id: 'obsttorte', name: 'Obsttorte ganz', price: 26.0, leadDays: 5, note: 'Vorlauf 5 Tage', placeholder: true },
 ];
 
 const WINDOWS = [
@@ -89,7 +92,7 @@ const btnSecondary =
                 <div>
                   <p class="text-base">{p.name}</p>
                   <p class="font-mono text-sm text-ink-soft">
-                    {formatMenuPrice(p.price, true)}{p.note ? ` · ${p.note}` : ''}
+                    {formatMenuPrice(p.price, p.placeholder ?? false)}{p.note ? ` · ${p.note}` : ''}
                   </p>
                 </div>
                 <div class="inline-flex items-center gap-3">
@@ -112,7 +115,7 @@ const btnSecondary =
             ))}
           </ul>
         </fieldset>
-        <p class="mt-3 text-sm text-ink-soft">° Beispielpreis — finale Preise folgen.</p>
+        <p class="mt-3 text-sm text-ink-soft">° Beispielpreis — finale Preise folgen. Brotpreise sind aktuell.</p>
         <div class="mt-6 flex flex-wrap items-center justify-end gap-3">
           <p class="mr-auto text-sm text-ink-soft" data-hint-step1>Wähle mindestens ein Produkt, um weiterzugehen.</p>
           <button type="button" class={btnPrimary} data-action="next" data-target-step="2" disabled>Weiter</button>

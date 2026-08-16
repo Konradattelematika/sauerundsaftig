@@ -1,26 +1,28 @@
 {
-  "title": "Brot",
+  "title": "Brot & Gebäck",
   "slug": "brot",
   "order": 30,
-  "intro": "Vier Laibe, ein Teig als Basis. Zum Mitnehmen ganz oder als Scheibe zum Frühstück.",
+  "intro": "Sauerteigbrote aus der eigenen Backstube — lange geführt, dunkel ausgebacken.",
+  "note": "Solange der Vorrat reicht — sichere dir deinen Laib über die Vorbestellung.",
   "items": [
     {
-      "name": "Sauerteigbrot Klassik",
-      "description": "18 Stunden Gare, kräftige Kruste, offene Krume.",
-      "price": 7.0,
-      "priceIsPlaceholder": true,
+      "name": "Dinkelvollkorn mit Saaten",
+      "description": "Unser Neuer: Dinkelvollkorn, dicht an Saaten, saftige Krume.",
+      "price": 6.5,
+      "priceIsPlaceholder": false,
       "priceSuffix": "pro Laib",
+      "seasonal": "neu im Regal",
       "veggie": true,
       "vegan": true,
       "allergens": ["Gluten"],
-      "motif": "brot-laib",
+      "motif": "brotregal",
       "highlight": true
     },
     {
-      "name": "Roggen pur",
-      "description": "Nur Roggen, nur Zeit. Kräftig im Geschmack, hält sich lang.",
-      "price": 7.5,
-      "priceIsPlaceholder": true,
+      "name": "Bauernbrot",
+      "description": "Der Klassiker: kräftige Kruste, offene Krume, reiner Sauerteig.",
+      "price": 7,
+      "priceIsPlaceholder": false,
       "priceSuffix": "pro Laib",
       "veggie": true,
       "vegan": true,
@@ -28,27 +30,21 @@
       "motif": "brot-laib"
     },
     {
-      "name": "Walnussbrot",
-      "description": "Mit ganzen Walnüssen im Teig, leicht süßlicher Abgang.",
-      "price": 8.0,
-      "priceIsPlaceholder": true,
+      "name": "Roggenvollkorn",
+      "description": "Dunkel, dicht und würzig — im Kasten gebacken, hält tagelang.",
+      "price": 7,
+      "priceIsPlaceholder": false,
       "priceSuffix": "pro Laib",
       "veggie": true,
       "vegan": true,
-      "allergens": ["Gluten", "Nüsse"],
-      "seasonal": "nur samstags",
-      "motif": "brot-laib"
+      "allergens": ["Gluten"]
     },
     {
-      "name": "Dinkel-Vollkorn",
-      "description": "Vollwertig gemahlen, mild in der Säure.",
-      "price": 7.2,
-      "priceIsPlaceholder": true,
-      "priceSuffix": "pro Laib",
+      "name": "Brötchen & Laugenbrezeln",
+      "description": "Täglich im Korb auf der Theke — auch als halbe belegte Brötchen oder Stulle ab 3,00.",
       "veggie": true,
-      "vegan": true,
       "allergens": ["Gluten"],
-      "motif": "brot-laib"
+      "motif": "theke"
     }
   ]
 }

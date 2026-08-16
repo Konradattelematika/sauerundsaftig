@@ -52,11 +52,25 @@ export function getImage(variant: VariantKey, motif: string): ImageMetadata {
   return ph.default;
 }
 
-/** Alt-Texte für echte Fotos (Quelle: Instagram @sauerundsaftig, s. brand/sources.md) */
+/** Alt-Texte für echte Fotos (Quellen: Instagram @sauerundsaftig + Kundenfotos 16.08.2026) */
 const PHOTO_ALT: Record<string, string> = {
+  'hero-krume': 'Frisch gebackene Sauerteigschnecken dicht an dicht, glänzend vom Ofen',
   'brot-laib': 'Frisch gebackene Sauerteiglaibe mit eingeschnittenem Ährenmuster und bemehlter Kruste',
-  obsttorte: 'Erdbeer-Mascarpone-Torte im Vintage-Stil mit rosa Buttercreme und Schleifen',
+  obsttorte: 'Erdbeertorte, dicht belegt mit frischen Erdbeeren',
   kaesekuchen: 'Käsekuchen mit Himbeer- und Maracujaspiegel auf Holzbrettern in der Theke',
+  gastraum: 'Sitzecke im Gastraum: Holzbänke mit Kissen am großen Fenster',
+  'gastraum-abend': 'Gastraum am Abend mit warmem Licht und gedeckten Holztischen',
+  theke: 'Theke mit Vitrine, Brotkörben, Brezelständer und Getränketafel',
+  brotregal: 'Brotregal mit Sauerteigbroten und Tafel: Dinkelvollkorn mit Saaten, Bauernbrot, Roggenvollkorn',
+  fruehstueck: 'Große Frühstücksplatte mit Käse, Räucherlachs, Eiern, Obst und Beeren',
+  'schnecke-blech': 'Frisch gebackene Schnecken dicht an dicht auf dem Blech',
+  'schnecke-lotus': 'Lotus-Schnecken mit Karamellcreme und Keks, frisch vom Blech',
+  'schnecke-saison': 'Saison-Schnecken mit Sahne, frischen Erdbeeren und Fruchtsoße',
+  'kaesekuchen-lotus': 'Käsekuchen mit Karamellspiegel und Lotus-Keksen',
+  'torte-blau': 'Auftragstorte mit hellblauer Creme und Streuseln',
+  'torte-rosa': 'Auftragstorte in Rosa mit gespritzten Bögen und Schleifen',
+  'torte-blumen': 'Auftragstorte mit heller Creme und echten Wiesenblumen',
+  'torte-vintage': 'Erdbeer-Mascarpone-Torte im Vintage-Stil mit Buttercreme',
 };
 
 export function hasPhoto(motif: string): boolean {

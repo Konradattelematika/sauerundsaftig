@@ -20,9 +20,10 @@ Priorisiert. Punkte mit ⛔ blockieren den Launch, ◻︎ sind vor Launch zu kl�
    Reservierungen/Anfragen ausschließlich telefonisch unter 038296 769924.
    Pflegeort: `src/data/site.json` → `openingHours` (Stand entspricht bereits dem hinterlegten
    Google-Stand, `todoKunde`-Hinweis entfernt).
-2. ⛔ **Preise.** Alle Preise auf Karte, Workshops, Gutscheinen und Vorbestellung sind
-   **Platzhalter** (`"placeholder": true` in den Content-Dateien, Hinweis im UI).
-   Echte Karte mit Preisen liefern → Werte eintragen, Flag entfernen. (Konrad ist dran, 16.08.2026.)
+2. ◻︎ **Preise — teilweise echt (16.08.2026):** Frühstück (komplette Karte aus geliefertem PDF)
+   und Brote (Tafel-Foto: Dinkelvollkorn mit Saaten 6,50 · Bauernbrot 7 · Roggenvollkorn 7) sind
+   übernommen, `priceIsPlaceholder: false`. Noch Platzhalter (°): Kuchen/Torten stückweise,
+   Schnecken, Getränke (Tafel nur teilweise lesbar — zweite Größen fehlen), Workshops, Gastgeber.
 3. ✅ **Coolify-Deploy** erledigt — Site läuft live unter sauerundsaftig.jawollja.gmbh.
 4. ◻︎ **Team & Übernahme-Story.** Namen der Betreiber:innen, Zeitpunkt/Anlass der Übernahme,
    1–2 O-Töne. `/ueber-uns` erzählt die Story bewusst ohne Namen („Wir") — mit Namen wird

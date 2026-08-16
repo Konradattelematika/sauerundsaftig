@@ -17,7 +17,7 @@ const base = '/c';
 
 const menu = await getCollection('menu');
 const brot = menu.find((m) => m.data.slug === 'brot')!.data;
-const klassik = brot.items.find((i) => i.name === 'Sauerteigbrot Klassik')!;
+const klassik = brot.items.find((i) => i.name === 'Bauernbrot') ?? brot.items[0]!;
 
 const jsonLd = [
   breadcrumbs([

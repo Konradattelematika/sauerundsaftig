@@ -6,7 +6,7 @@
   "items": [
     {
       "name": "Käsekuchen",
-      "description": "Der Boden entsteht aus Sauerteigresten, die sonst im Abfall landen würden. Cremig oben, würzig unten.",
+      "description": "Auch hier arbeitet unser Sauerteig mit. Cremig oben, würzig unten — zuletzt mit Himbeer- oder Maracujaspiegel.",
       "price": 4.8,
       "priceIsPlaceholder": true,
       "priceSuffix": "pro Stück",
@@ -17,8 +17,19 @@
       "highlight": true
     },
     {
+      "name": "Lotus-Käsekuchen",
+      "description": "Karamellspiegel, Lotus-Keks obendrauf — der Bruder unserer Lotus-Schnecke.",
+      "price": 4.9,
+      "priceIsPlaceholder": true,
+      "priceSuffix": "pro Stück",
+      "veggie": true,
+      "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"],
+      "motif": "kaesekuchen-lotus"
+    },
+    {
       "name": "Obsttorte der Saison",
-      "description": "Was der Markt gerade hergibt, kommt oben drauf.",
+      "description": "Was der Markt gerade hergibt, kommt oben drauf — gerade: Erdbeeren, dicht an dicht.",
       "price": 5.2,
       "priceIsPlaceholder": true,
       "priceSuffix": "pro Stück",
@@ -36,19 +47,7 @@
       "priceSuffix": "pro Stück",
       "veggie": true,
       "vegan": false,
-      "allergens": ["Gluten", "Milch", "Ei"],
-      "motif": "kaesekuchen"
-    },
-    {
-      "name": "Möhrenkuchen mit Walnuss",
-      "description": "Fein gerieben, mit Frischkäsecreme und gehackten Walnüssen.",
-      "price": 5.0,
-      "priceIsPlaceholder": true,
-      "priceSuffix": "pro Stück",
-      "veggie": true,
-      "vegan": false,
-      "allergens": ["Gluten", "Milch", "Ei", "Nüsse"],
-      "motif": "kaesekuchen"
+      "allergens": ["Gluten", "Milch", "Ei"]
     },
     {
       "name": "Zitronenkuchen",
@@ -58,8 +57,14 @@
       "priceSuffix": "pro Stück",
       "veggie": true,
       "vegan": false,
+      "allergens": ["Gluten", "Milch", "Ei"]
+    },
+    {
+      "name": "Torten auf Bestellung",
+      "description": "Geburtstag, Taufe, einfach so: gestaltete Cremetorten nach deinem Wunsch — 5 Tage Vorlauf, Anfrage telefonisch.",
+      "veggie": true,
       "allergens": ["Gluten", "Milch", "Ei"],
-      "motif": "obsttorte"
+      "motif": "torte-rosa"
     }
   ]
 }

@@ -2,65 +2,74 @@
   "title": "Kaffee & Getränke",
   "slug": "kaffee",
   "order": 50,
-  "intro": "Filterkaffee, Espresso aus der Siebträgermaschine, Tee lose aufgegossen.",
+  "intro": "Espresso aus der Siebträgermaschine, Matcha in zwei Varianten, Kaltes für den Strandtag.",
+  "note": "Preise von der Tafel im Café — die zweiten Größen tragen wir noch nach.",
   "items": [
     {
-      "name": "Filterkaffee",
-      "description": "Frisch aufgebrüht, Kanne oder Tasse.",
-      "price": 2.8,
-      "priceIsPlaceholder": true,
-      "veggie": true,
-      "vegan": true,
-      "allergens": [],
-      "motif": "kaffee"
-    },
-    {
       "name": "Espresso",
-      "price": 2.5,
+      "price": 3.3,
       "priceIsPlaceholder": true,
       "veggie": true,
       "vegan": true,
-      "allergens": [],
       "motif": "kaffee"
     },
     {
       "name": "Cappuccino",
-      "price": 3.5,
+      "price": 3.9,
       "priceIsPlaceholder": true,
       "veggie": true,
-      "vegan": false,
       "allergens": ["Milch"],
-      "motif": "kaffee"
+      "motif": "kaffee",
+      "highlight": true
     },
     {
-      "name": "Hafermilch",
-      "description": "Aufpreis für Hafermilch statt Kuhmilch, bei jedem Milchkaffee.",
-      "price": 0.4,
+      "name": "Milchkaffee",
+      "price": 4.5,
       "priceIsPlaceholder": true,
-      "priceSuffix": "Aufpreis",
       "veggie": true,
-      "vegan": true,
-      "allergens": [],
-      "motif": "kaffee"
+      "allergens": ["Milch"]
     },
     {
-      "name": "Tee",
-      "description": "Lose aufgegossen, mehrere Sorten zur Wahl.",
-      "price": 3.2,
+      "name": "Latte",
+      "price": 4.9,
       "priceIsPlaceholder": true,
       "veggie": true,
-      "vegan": true,
-      "allergens": [],
-      "motif": "kaffee"
+      "allergens": ["Milch"]
     },
     {
-      "name": "Kakao",
-      "price": 3.8,
+      "name": "Eisschokolade / Schokolade",
+      "price": 5.9,
       "priceIsPlaceholder": true,
       "veggie": true,
-      "vegan": false,
-      "allergens": ["Milch"],
-      "motif": "kaffee"
+      "allergens": ["Milch"]
+    },
+    {
+      "name": "Matcha Latte",
+      "price": 5.5,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "allergens": ["Milch"]
+    },
+    {
+      "name": "Matcha Frucht",
+      "description": "Saisonal auch als Special — zuletzt mit Erdbeerwolkenschaum.",
+      "price": 5.9,
+      "priceIsPlaceholder": true,
+      "veggie": true
+    },
+    {
+      "name": "Iced Latte",
+      "price": 5.2,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "allergens": ["Milch"]
+    },
+    {
+      "name": "Eiskaffee",
+      "price": 5.5,
+      "priceIsPlaceholder": true,
+      "veggie": true,
+      "allergens": ["Milch"]
     }
   ]
 }

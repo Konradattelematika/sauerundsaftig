@@ -2,59 +2,81 @@
   "title": "Frühstück",
   "slug": "fruehstueck",
   "order": 10,
-  "intro": "Sauerteigbrot vom Vortag, Rührei aus der Pfanne, ein Kaffee dazu. Frühstück bis 12 Uhr.",
-  "note": "Frühstück gibt es bis 12 Uhr.",
+  "intro": "Bis 12 Uhr. Immer mit Brötchen oder Sauerteigbrot nach Wahl — und 0,1 l Orangensaft dazu.",
+  "note": "Dazu wählbar: Marmeladenteller 1,90 · Schokocreme oder Honig 1,90 · Wurstplatte 4,90 · Käseplatte 4,90 · Frühstückslachs 6,90 · gekochtes Ei 1,90 · Brezel mit Butter 4,90 · Croissant mit Butter 3,90. Halbe belegte Brötchen oder Stulle ab 3,00 — belegt nach eurem Geschmack. * Kennzeichnung siehe Aushang im Café.",
   "items": [
     {
-      "name": "Frühstücksbrett mit Sauerteigbrot",
-      "description": "Zwei Scheiben vom Klassiker, Butter, Aufstrich, Käse und Ei nach Wahl.",
-      "price": 14.5,
-      "priceIsPlaceholder": true,
+      "name": "Bäckerinfrühstück",
+      "description": "2 Brötchen oder Sauerteigbrot nach Wahl, Butter, Schinken*, Salami*, Schnittkäse.",
+      "price": 10.9,
+      "priceIsPlaceholder": false
+    },
+    {
+      "name": "Käsefrühstück",
+      "description": "2 Brötchen oder Sauerteigbrot, Schnittkäse, Frischkäse, Camembert, Butter.",
+      "price": 10.9,
+      "priceIsPlaceholder": false,
+      "veggie": true
+    },
+    {
+      "name": "Süßes Frühstück",
+      "description": "1 Brötchen oder Sauerteigbrot, 1 Croissant, Erdbeer- und Aprikosenmarmelade, Honig, Butter.",
+      "price": 9.9,
+      "priceIsPlaceholder": false,
+      "veggie": true
+    },
+    {
+      "name": "Rührei-Frühstück",
+      "description": "2 Brötchen oder Sauerteigbrot, Rührei aus 3 Eiern, Butter. Wahlweise mit Lauch und Tomate, Käse, knusprigem Bacon* oder Avocado (12,90–14,90).",
+      "price": 11.9,
+      "priceIsPlaceholder": false,
       "veggie": true,
-      "vegan": false,
+      "allergens": ["Ei"]
+    },
+    {
+      "name": "Fischerfrühstück",
+      "description": "2 Brötchen oder Sauerteigbrot, Räucherlachs, Meerrettich, Butter, zwei Rühr- oder Spiegeleier.",
+      "price": 13.9,
+      "priceIsPlaceholder": false,
+      "allergens": ["Fisch", "Ei"]
+    },
+    {
+      "name": "Süß & Salzig",
+      "description": "2 Brötchen oder Sauerteigbrot, Schinken*, Salami*, Käse, Marmelade, Honig, Butter.",
+      "price": 12.5,
+      "priceIsPlaceholder": false
+    },
+    {
+      "name": "Gegrilltes Sauerteig-Käsesandwich",
+      "description": "Geschmolzener Käse, Gewürzgurke und Butter zwischen zwei Sauerteigbrotscheiben, dazu zwei Spiegel- oder Rühreier.",
+      "price": 11.9,
+      "priceIsPlaceholder": false,
+      "veggie": true,
       "allergens": ["Gluten", "Milch", "Ei"],
+      "highlight": true
+    },
+    {
+      "name": "Frühstück für Zwei",
+      "description": "4 Brötchen oder Sauerteigbrot, Laugenbrezel, Butter, Marmeladen, Honig, Schinken*, Salami*, Käse, Räucherlachs, Nürnberger Würstchen, Rühreier, Bacon*.",
+      "price": 34.9,
+      "priceIsPlaceholder": false,
       "motif": "fruehstueck",
       "highlight": true
     },
     {
-      "name": "Süßes Frühstück mit Schnecke",
-      "description": "Sauerteigschnecke nach Wahl, Joghurt, Obst der Saison.",
-      "price": 12.5,
-      "priceIsPlaceholder": true,
-      "veggie": true,
-      "vegan": false,
-      "allergens": ["Gluten", "Milch", "Nüsse"],
-      "motif": "schnecke-pistazie"
+      "name": "Veggie-Frühstück für Zwei",
+      "description": "4 Brötchen oder Sauerteigbrot, Croissant, Butter, Marmeladen, Honig, Käse, Camembert, Frischkäse, Schokocreme, Joghurt, Rühreier.",
+      "price": 34.9,
+      "priceIsPlaceholder": false,
+      "veggie": true
     },
     {
-      "name": "Porridge mit Fruchtkompott",
-      "description": "Haferflocken, langsam gequollen, dazu Kompott der Saison.",
-      "price": 8.5,
-      "priceIsPlaceholder": true,
+      "name": "Joghurt-Bowl",
+      "description": "Griechischer Joghurt mit frischem Obstsalat, Nüssen und Agavendicksaft.",
+      "price": 6.9,
+      "priceIsPlaceholder": false,
       "veggie": true,
-      "vegan": true,
-      "allergens": [],
-      "motif": "fruehstueck"
-    },
-    {
-      "name": "Rührei auf Sauerteigtoast",
-      "description": "Drei Eier, cremig gerührt, auf geröstetem Sauerteigbrot.",
-      "price": 11.0,
-      "priceIsPlaceholder": true,
-      "veggie": true,
-      "vegan": false,
-      "allergens": ["Gluten", "Ei", "Milch"],
-      "motif": "fruehstueck"
-    },
-    {
-      "name": "Kinderfrühstück",
-      "description": "Kleines Brett, Ei, ein Getränk nach Wahl.",
-      "price": 8.0,
-      "priceIsPlaceholder": true,
-      "veggie": true,
-      "vegan": false,
-      "allergens": ["Gluten", "Milch", "Ei"],
-      "motif": "fruehstueck"
+      "allergens": ["Milch", "Nüsse"]
     }
   ]
 }

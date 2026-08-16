@@ -79,6 +79,20 @@ h1, h2 {
   .blob-breathe { animation: none !important; }
 }
 
+/* ---------- Ken-Burns: langsames Atmen der Krume-Bilder ---------- */
+@keyframes krume-kenburns {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}
+.js-motion .krume-kenburns {
+  animation: krume-kenburns 18s ease-in-out infinite;
+  will-change: transform;
+}
+.js-motion .group:hover .krume-kenburns { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .krume-kenburns { animation: none !important; }
+}
+
 /* ---------- Typo-Marquee ---------- */
 @keyframes marquee-d {
   from { transform: translateX(0); }
