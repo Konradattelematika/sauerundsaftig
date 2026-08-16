@@ -52,7 +52,19 @@ export function getImage(variant: VariantKey, motif: string): ImageMetadata {
   return ph.default;
 }
 
+/** Alt-Texte für echte Fotos (Quelle: Instagram @sauerundsaftig, s. brand/sources.md) */
+const PHOTO_ALT: Record<string, string> = {
+  'brot-laib': 'Frisch gebackene Sauerteiglaibe mit eingeschnittenem Ährenmuster und bemehlter Kruste',
+  obsttorte: 'Erdbeer-Mascarpone-Torte im Vintage-Stil mit rosa Buttercreme und Schleifen',
+  kaesekuchen: 'Käsekuchen mit Himbeer- und Maracujaspiegel auf Holzbrettern in der Theke',
+};
+
+export function hasPhoto(motif: string): boolean {
+  return Boolean(photos[`../assets/photos/${motif}.jpg`]);
+}
+
 export function getAlt(motif: string): string {
+  if (hasPhoto(motif) && PHOTO_ALT[motif]) return PHOTO_ALT[motif];
   return MOTIF_ALT[motif] ?? 'Platzhalterbild';
 }
 

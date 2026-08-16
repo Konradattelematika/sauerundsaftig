@@ -2,6 +2,20 @@
 
 Priorisiert. Punkte mit ⛔ blockieren den Launch, ◻︎ sind vor Launch zu klären, ○ später.
 
+## Instagram-Befunde (Import 16.08.2026, Details in brand/sources.md)
+
+- ⛔ **„Kleine Brotpause diesen Sommer"** — der neueste Post (Shortcode DZws5d3MDjT) kündigt eine
+  sommerliche Brotpause an, zusammen mit „Zuwachs in der Sauer&Saftig-Familie". Unsere Seiten
+  /karte/brot und /vorbestellen bieten Brot an — **vor Launch klären**, ob/wann Brot wieder
+  verfügbar ist und ob ein Hinweisbanner nötig ist.
+- Profil aktuell: **1.141 Follower, 59 Beiträge** (Recherche-Stand im Auftrag war 743/38 — Account wächst).
+- Belegt durch Posts: Torten auf Kundenauftrag (DVN4rovjLik), Erdbeer-Mascarpone-Vintagetorte
+  (DVTVQDlDKsn), Käsekuchen-Auswahl in der Theke (DViajs2jKPF), Matcha-Spezial „Erdbeerwolkenschaum"
+  (DVLQSKejP4W, saisonal). Drei Echtfotos sind bereits als Motive eingebunden
+  (src/assets/photos/: brot-laib, obsttorte, kaesekuchen).
+- Instagram-Bio (inkl. der dort genannten Öffnungszeiten) ist ohne Login **nicht abrufbar** —
+  Bio-Angaben konnten weder bestätigt noch widerlegt werden.
+
 1. ✅ **Öffnungszeiten bestätigt** (Konrad, 16.08.2026): Do–Mo 8–16 Uhr, Di+Mi geschlossen.
    Reservierungen/Anfragen ausschließlich telefonisch unter 038296 769924.
    Pflegeort: `src/data/site.json` → `openingHours` (Stand entspricht bereits dem hinterlegten
