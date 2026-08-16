@@ -7,6 +7,7 @@
 import '@fontsource-variable/fraunces/full.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '../styles/fonts-clash-display.css';
 import SeoHead from '../components/shared/SeoHead.astro';
 import { VARIANTS } from '../lib/variants';
 
@@ -15,16 +16,19 @@ const displayFont: Record<string, string> = {
   a: "'Fraunces Variable', Georgia, serif",
   b: "'Instrument Serif', Georgia, serif",
   c: "'Bricolage Grotesque Variable', Arial, sans-serif",
+  d: "'Clash Display', Arial, sans-serif",
 };
 const sample: Record<string, string> = {
   a: 'Sauer macht saftig.',
   b: 'Sauer macht saftig.',
   c: 'SAUER MACHT SAFTIG.',
+  d: 'Sauer macht saftig.',
 };
 const personas: Record<string, string> = {
   a: 'Breiteste Zielgruppe · die sichere Wahl',
   b: 'Urban, Instagram-affin · Premium durch Ruhe',
   c: 'Maximale Wiedererkennung · bewusst mutig',
+  d: 'Digital-first, animiert · die experimentelle Option',
 };
 const stand = new Date().toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' });
 ---
@@ -125,6 +129,13 @@ const stand = new Date().toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin'
         display: inline-flex; align-items: center;
       }
       .outro { margin-top: clamp(40px, 6vw, 80px); text-align: center; color: #6d675e; font-size: 0.9rem; }
+      /* Variante D zeigt sich authentisch dunkel */
+      .card[data-variant='d'] { background: #16110d; color: #f4ebdd; border-color: #3a2a1a; }
+      .card[data-variant='d'] .kicker, .card[data-variant='d'] .meta dt, .card[data-variant='d'] .stance { color: #cbbba6; }
+      .card[data-variant='d'] .specimen { border-color: #3a2a1a; color: #e8a253; }
+      .card[data-variant='d'] .cta { background: #f27a1f; color: #16110d; }
+      @media (min-width: 900px) and (max-width: 1279px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+      @media (min-width: 1280px) { .cards { grid-template-columns: repeat(4, 1fr); } }
     </style>
   </body>
 </html>
