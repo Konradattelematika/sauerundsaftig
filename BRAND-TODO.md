@@ -2,15 +2,14 @@
 
 Priorisiert. Punkte mit ⛔ blockieren den Launch, ◻︎ sind vor Launch zu klären, ○ später.
 
-1. ⛔ **Öffnungszeiten bestätigen.** Google (Mo 8–16, Di+Mi zu, Do–So 8–16) widerspricht
-   Instagram-Bio (Mo–Di 8–17, Mi zu, Do–So 8–17). Website nutzt bis zur Klärung den
-   Google-Stand. Pflegeort: `src/content/settings/site.json` → `openingHours`.
+1. ✅ **Öffnungszeiten bestätigt** (Konrad, 16.08.2026): Do–Mo 8–16 Uhr, Di+Mi geschlossen.
+   Reservierungen/Anfragen ausschließlich telefonisch unter 038296 769924.
+   Pflegeort: `src/data/site.json` → `openingHours` (Stand entspricht bereits dem hinterlegten
+   Google-Stand, `todoKunde`-Hinweis entfernt).
 2. ⛔ **Preise.** Alle Preise auf Karte, Workshops, Gutscheinen und Vorbestellung sind
    **Platzhalter** (`"placeholder": true` in den Content-Dateien, Hinweis im UI).
-   Echte Karte mit Preisen liefern → Werte eintragen, Flag entfernen.
-3. ⛔ **Coolify-Deploy.** Der API-Token in `~/.config/deck_sync.env` ist ungültig
-   (401 Unauthenticated). Für den Live-Gang: Token erneuern oder App manuell anlegen
-   (Anleitung in `README.md`/`HANDOVER.md`). DNS zeigt bereits auf den Server.
+   Echte Karte mit Preisen liefern → Werte eintragen, Flag entfernen. (Konrad ist dran, 16.08.2026.)
+3. ✅ **Coolify-Deploy** erledigt — Site läuft live unter sauerundsaftig.jawollja.gmbh.
 4. ◻︎ **Team & Übernahme-Story.** Namen der Betreiber:innen, Zeitpunkt/Anlass der Übernahme,
    1–2 O-Töne. `/ueber-uns` erzählt die Story bewusst ohne Namen („Wir") — mit Namen wird
    sie doppelt so stark. `TODO(kunde)`-Marker im Code.

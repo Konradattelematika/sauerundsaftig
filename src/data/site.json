@@ -23,7 +23,6 @@
   "priceRange": "€€",
   "tooGoodToGo": { "partner": true, "bagValue": 12, "bagPrice": 4 },
   "openingHours": {
-    "todoKunde": "Google und Instagram widersprechen sich — bis zur Klärung gilt der Google-Stand (Mo 8–16, Di+Mi Ruhetag, Do–So 8–16)",
     "week": {
       "mon": [["08:00", "16:00"]],
       "tue": [],
