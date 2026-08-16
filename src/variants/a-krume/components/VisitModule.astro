@@ -4,7 +4,7 @@
  * und Telefon immer ≥20px (§6-Prüfliste, Persona 62+).
  */
 import site from '../../../data/site.json';
-import { weekOverview } from '../../../lib/opening-hours';
+import { weekOverview, type Schedule } from '../../../lib/opening-hours';
 import { telHref, routeHref } from '../../../lib/format';
 import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
 
@@ -14,7 +14,7 @@ interface Props {
 }
 const { base, variant = 'compact' } = Astro.props;
 const full = variant === 'full';
-const week = weekOverview(site.openingHours);
+const week = weekOverview(site.openingHours as unknown as Schedule);
 const phoneHref = telHref(site.phone);
 const route = routeHref(site.address.street, site.address.zip, site.address.city);
 ---

@@ -11,7 +11,7 @@ import SectionLabel from './SectionLabel.astro';
 interface Props {
   section: CollectionEntry<'menu'>;
   number: string;
-  headingLevel?: 'h2' | 'h3';
+  headingLevel?: 'h1' | 'h2' | 'h3';
 }
 const { section, number, headingLevel = 'h2' } = Astro.props;
 const { title, intro, note, items } = section.data;

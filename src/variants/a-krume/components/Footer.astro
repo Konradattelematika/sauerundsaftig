@@ -6,14 +6,14 @@
 import Logo from '../../../components/shared/Logo.astro';
 import site from '../../../data/site.json';
 import { NAV_FOOTER, NAV_LEGAL } from '../../../lib/variants';
-import { weekOverview } from '../../../lib/opening-hours';
+import { weekOverview, type Schedule } from '../../../lib/opening-hours';
 import { telHref } from '../../../lib/format';
 
 interface Props {
   base: string;
 }
 const { base } = Astro.props;
-const week = weekOverview(site.openingHours);
+const week = weekOverview(site.openingHours as unknown as Schedule);
 const phoneHref = telHref(site.phone);
 ---
 
