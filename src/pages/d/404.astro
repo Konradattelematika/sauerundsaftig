@@ -1,0 +1,41 @@
+---
+/**
+ * /404 — Variantencharakter D „Fermentation": dunkle Fläche, atmender Blob
+ * (wie im Loader), Links zu Karte und Startseite.
+ * Astro emittiert diese Datei wegen des Ordnerpfads als /d/404/index.html
+ * (nicht als Sonderfall /404.html) — passend zu deploy/nginx.conf.
+ */
+import Layout from '../../variants/d-fermentation/Layout.astro';
+
+const base = '/d';
+---
+
+<Layout title="Nicht gefunden — Sauer & Saftig" description="Diese Seite gibt es nicht." noindex>
+  <section class="mx-auto flex min-h-[70vh] max-w-6xl flex-col items-center justify-center gap-8 px-4 py-20 text-center md:px-6">
+    <svg viewBox="0 0 200 200" class="blob-breathe h-32 w-32" aria-hidden="true">
+      <defs>
+        <radialGradient id="d-404-g" cx="38%" cy="32%" r="80%">
+          <stop offset="0" stop-color="#E8A253" />
+          <stop offset="1" stop-color="#B87333" />
+        </radialGradient>
+      </defs>
+      <path
+        fill="url(#d-404-g)"
+        d="M100,14 C136,10 172,34 182,70 C192,106 176,144 146,166 C116,188 76,186 48,164 C20,142 8,104 20,70 C32,36 64,18 100,14 Z"
+      />
+    </svg>
+    <p class="font-mono text-sm tracking-widest text-ink-soft uppercase" data-reveal>404</p>
+    <h1 class="font-display text-[clamp(2.6rem,8vw,5.5rem)] leading-[0.98]" data-reveal>
+      Hier ist nichts aufgegangen.
+    </h1>
+    <p class="max-w-[52ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 80ms">
+      Diese Seite gibt es nicht — vielleicht ist sie ohne Fütterung geblieben. Weiter geht es hier.
+    </p>
+    <div class="flex flex-wrap items-center justify-center gap-4" data-reveal style="--reveal-delay: 140ms">
+      <a href={`${base}/karte`} class="btn-glow inline-flex min-h-[48px] items-center rounded-card bg-accent px-7 py-3 font-mono text-black">
+        Zur Karte
+      </a>
+      <a href={base} class="link-grow inline-flex min-h-[48px] items-center text-lg">Zur Startseite →</a>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,72 @@
+---
+/**
+ * /sauerteig — Haltungsseite mit ProcessScroll (scrollgesteuerte 18-Stunden-
+ * Zeitleiste), Anstellgut/Bekömmlichkeit, CTAs zu Workshops und Shop.
+ */
+import Layout from '../../variants/d-fermentation/Layout.astro';
+import ProcessScroll from '../../variants/d-fermentation/ProcessScroll.astro';
+import KrumeImage from '../../variants/d-fermentation/KrumeImage.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/d';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Sauerteig', url: `${Astro.site}${base}/sauerteig` },
+  ]),
+];
+---
+
+<Layout
+  title="Sauerteig — die 18-Stunden-Zeitleiste — Sauer & Saftig"
+  description="Von 14 Uhr bis 8 Uhr: wie aus Mehl, Wasser und Zeit ein Sauerteigbrot wird, Etappe für Etappe."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Haltung</p>
+    <h1 class="mt-3 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.96]" data-reveal>
+      Kein Schritt lässt<br />sich abkürzen.
+    </h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 80ms">
+      <span class="tabular" data-countup="18">0</span> Stunden, von der Auffrischung bis zur Theke — jede
+      einzelne davon macht die Krume offener und die Kruste kräftiger.
+    </p>
+  </section>
+
+  <ProcessScroll />
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+    <div class="grid gap-10 md:grid-cols-2 md:gap-16">
+      <div data-reveal>
+        <p class="font-mono text-sm tracking-widest text-primary uppercase">Anstellgut</p>
+        <h2 class="mt-2 font-display text-3xl md:text-4xl">Ein Glas, das seit Jahren lebt</h2>
+        <p class="mt-4 max-w-[52ch] text-xl text-ink-soft">
+          Unser Anstellgut wird täglich gefüttert — Mehl, Wasser, Zeit. Es ersetzt Hefe komplett und gibt
+          jedem Teig die Bakterien und wilden Hefen mit, die für Trieb und Säure sorgen.
+        </p>
+        <p class="mt-4 max-w-[52ch] text-xl text-ink-soft">
+          Die lange Fermentation baut einen Teil des Glutens ab, bevor er gebacken wird — deshalb
+          empfinden viele unser Brot als besonders bekömmlich. Ein Heilsversprechen ist das nicht,
+          nur unsere Erfahrung aus der Backstube.
+        </p>
+      </div>
+      <div data-reveal style="--reveal-delay: 100ms">
+        <KrumeImage motif="anstellgut" shape={3} class="aspect-[4/5]" sizes="(min-width: 768px) 45vw, 90vw" />
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-ink/10 bg-bg-alt py-16 md:py-20" aria-label="Weitermachen">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-4 md:px-6" data-reveal>
+      <p class="max-w-[40ch] text-xl">Selbst Hand anlegen oder ein Anstellgut verschenken?</p>
+      <div class="flex flex-wrap gap-4">
+        <a href={`${base}/workshops`} class="btn-glow inline-flex min-h-[48px] items-center rounded-card bg-accent px-6 py-3 font-mono text-black">
+          Workshops
+        </a>
+        <a href={`${base}/shop`} class="link-grow inline-flex min-h-[48px] items-center text-lg text-primary">
+          Zum Shop →
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

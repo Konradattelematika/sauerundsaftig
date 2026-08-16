@@ -1,0 +1,97 @@
+---
+/**
+ * /workshops/[slug] — Einzelkurs mit WorkshopBooking-Island (getStaticPaths
+ * über die workshops-Collection), workshopEvent()-JSON-LD je Termin.
+ */
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../variants/d-fermentation/Layout.astro';
+import WorkshopBooking from '../../../components/shared/WorkshopBooking.astro';
+import KrumeImage from '../../../variants/d-fermentation/KrumeImage.astro';
+import { breadcrumbs, workshopEvent } from '../../../lib/schema-org';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('workshops');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { title, subtitle, duration, price, isDraft, level, capacity, includes, dates } = entry.data;
+const { Content } = await render(entry);
+const base = '/d';
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Workshops', url: `${Astro.site}${base}/workshops` },
+    { name: title, url: `${Astro.site}${base}/workshops/${entry.id}` },
+  ]),
+  ...dates.map((d) =>
+    workshopEvent({
+      title,
+      subtitle,
+      price,
+      isDraft,
+      date: d.date,
+      time: d.time,
+      duration,
+      url: `${Astro.site}${base}/workshops/${entry.id}`,
+    }),
+  ),
+];
+---
+
+<Layout title={`${title} — Workshop — Sauer & Saftig`} description={subtitle} jsonLd={jsonLd}>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <a href={`${base}/workshops`} class="link-grow inline-flex min-h-[44px] items-center gap-2 font-mono text-sm text-ink-soft">
+      ← Alle Workshops
+    </a>
+    <p class="mt-6 font-mono text-sm tracking-widest text-primary uppercase" data-reveal>{level}</p>
+    <h1 class="mt-3 font-display text-[clamp(2.6rem,7vw,5.5rem)] leading-[0.98]" data-reveal>{title}</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 80ms">{subtitle}</p>
+  </section>
+
+  <section class="mt-10 md:mt-14" data-reveal>
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <KrumeImage motif={entry.data.motif} shape={1} class="aspect-[16/9]" sizes="100vw" />
+    </div>
+  </section>
+
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-16 px-4 py-16 md:grid-cols-[1.3fr_1fr] md:gap-20 md:px-6 md:py-24">
+    <div>
+      <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Ablauf</p>
+      <div class="prose-measure mt-6 flex flex-col gap-5 text-xl text-ink-soft" data-reveal style="--reveal-delay: 60ms">
+        <Content />
+      </div>
+
+      <p class="mt-14 font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Inklusive</p>
+      <ul class="mt-6 flex flex-col gap-1" data-reveal style="--reveal-delay: 60ms">
+        {includes.map((inc: string) => (
+          <li class="flex min-h-[44px] items-center gap-3 border-t border-ink/15 py-3 text-lg last:border-b">
+            <span class="font-mono text-primary" aria-hidden="true">·</span>
+            {inc}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div data-reveal style="--reveal-delay: 100ms">
+      <WorkshopBooking title={title} price={price} isDraft={isDraft} duration={duration} capacity={capacity} dates={dates} />
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /*
+   * WorkshopBooking (shared, nicht editierbar) rendert eine helle bg-paper-Karte
+   * ohne eigene Textfarbe — erbt sonst --color-ink, das in Variante D hell ist
+   * (heller Text auf heller Karte). Fix bleibt auf dieser Seite beschränkt und
+   * nutzt nur Tokens, keine Hexwerte.
+   */
+  :global(.workshop-booking) {
+    color: var(--color-bg);
+  }
+  :global(.workshop-booking .text-ink-soft) {
+    color: color-mix(in oklab, var(--color-bg) 60%, transparent);
+  }
+</style>
+

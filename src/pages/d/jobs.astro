@@ -1,0 +1,47 @@
+---
+/**
+ * /jobs — ehrlich, keine erfundenen Stellen.
+ * TODO(kunde): sobald konkrete Stellenprofile (Backstube/Service, Umfang, Zeitraum)
+ * feststehen, hier als Liste ergänzen statt der allgemeinen Initiativbewerbung.
+ */
+import Layout from '../../variants/d-fermentation/Layout.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/d';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Jobs', url: `${Astro.site}${base}/jobs` },
+  ]),
+];
+---
+
+<Layout title="Jobs — Sauer & Saftig" description="Verstärkung für Backstube und Service in Rerik gesucht — melde dich telefonisch." jsonLd={jsonLd}>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Jobs</p>
+    <h1 class="mt-3 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.96]" data-reveal>
+      Die Nachtbackstube<br />braucht Menschen,<br />die früh können.
+    </h1>
+  </section>
+
+  <section class="mx-auto max-w-[900px] px-4 py-16 md:px-6 md:py-24">
+    <div class="max-w-[60ch]" data-reveal>
+      <p class="text-xl text-ink-soft">
+        Wir suchen gelegentlich Verstärkung — für die Backstube ebenso wie für den Service im Café.
+        Feste, ausgeschriebene Stellen haben wir gerade keine, aber melde dich, wenn du früh anfangen
+        und mit anpacken kannst.
+      </p>
+      <p class="mt-4 text-xl text-ink-soft">
+        Ruf uns einfach an, dann sprechen wir über das, was gerade und was demnächst ansteht.
+      </p>
+      <a href={telHref(site.phone)} class="btn-glow mt-8 inline-flex min-h-[48px] items-center rounded-card bg-accent px-7 py-3 font-mono text-[clamp(1.6rem,5vw,2.6rem)] text-black">
+        {site.phoneDisplay}
+      </a>
+      <p class="mt-8 font-mono text-sm text-ink-soft">
+        TODO(kunde): konkrete Stellenprofile (Position, Umfang, Zeitraum) ergänzen, sobald bestätigt.
+      </p>
+    </div>
+  </section>
+</Layout>

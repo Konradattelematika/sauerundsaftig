@@ -1,0 +1,20 @@
+---
+/** Öffnungszeiten-Wochentabelle, groß (VARIANT-BRIEF D §Routen /besuch: "text-xl+"). */
+import site from '../../../data/site.json';
+import { weekOverview } from '../../../lib/opening-hours';
+import type { Schedule } from '../../../lib/opening-hours';
+
+const week = weekOverview(site.openingHours as unknown as Schedule);
+---
+
+<table class="w-full border-collapse text-xl">
+  <caption class="sr-only">Öffnungszeiten je Wochentag</caption>
+  <tbody>
+    {week.map((w) => (
+      <tr class="border-b border-ink/10">
+        <th scope="row" class="py-3 pr-4 text-left font-normal text-ink-soft">{w.day}</th>
+        <td class:list={['py-3 text-right tabular', w.hours === 'Ruhetag' ? 'text-closed' : 'text-ink']}>{w.hours}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

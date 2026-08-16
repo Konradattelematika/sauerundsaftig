@@ -1,0 +1,65 @@
+---
+/** /karte/brot — Sektionsseite Brot (VARIANT-BRIEF D §2). */
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '../../../variants/d-fermentation/Layout.astro';
+import MenuSectionBlock from '../../../variants/d-fermentation/components/MenuSectionBlock.astro';
+import MenuLegend from '../../../variants/d-fermentation/components/MenuLegend.astro';
+import KrumeImage from '../../../variants/d-fermentation/KrumeImage.astro';
+import { SIZES_HALF } from '../../../lib/images';
+import { breadcrumbs, menuSchema } from '../../../lib/schema-org';
+import { MENU_SECTIONS } from '../../../lib/variants';
+
+const base = '/d';
+const section = await getEntry('menu', 'brot');
+if (!section) throw new Error('Menü-Sektion "brot" fehlt');
+
+const allSections = await getCollection('menu');
+const others = MENU_SECTIONS.filter((slug) => slug !== 'brot')
+  .map((slug) => allSections.find((s) => s.data.slug === slug))
+  .filter((s): s is NonNullable<typeof s> => Boolean(s));
+
+const motifs = section.data.items.filter((i) => i.motif).slice(0, 2);
+
+const jsonLd = [
+  menuSchema([{ title: section.data.title, items: section.data.items }], String(Astro.site)),
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Karte', url: `${Astro.site}${base}/karte` },
+    { name: section.data.title, url: `${Astro.site}${base}/karte/brot` },
+  ]),
+];
+---
+
+<Layout title={`${section.data.title} — Karte — Sauer & Saftig`} description={section.data.intro} jsonLd={jsonLd}>
+  <div class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <a href={`${base}/karte`} class="link-grow inline-flex min-h-[44px] items-center gap-2 font-mono text-sm text-ink-soft">
+      ← Zur ganzen Karte
+    </a>
+    <div class="mt-8" data-reveal>
+      <MenuLegend />
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-6xl px-4 pb-4 md:px-6">
+    <MenuSectionBlock section={section} as="h1" kicker="Karte · Brot" />
+  </div>
+
+  {motifs.length > 0 && (
+    <div class="mx-auto mt-10 grid max-w-6xl gap-6 px-4 sm:grid-cols-2 md:px-6" data-reveal>
+      {motifs.map((item, i) => (
+        <KrumeImage motif={item.motif as string} shape={((i % 3) + 1) as 1 | 2 | 3} class="aspect-[4/3]" sizes={SIZES_HALF} />
+      ))}
+    </div>
+  )}
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24" aria-label="Weitere Sektionen der Karte">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Auch auf der Karte</p>
+    <nav class="mt-4 flex flex-wrap gap-x-8 gap-y-3">
+      {others.map((s) => (
+        <a href={`${base}/karte/${s.data.slug}`} class="link-grow flex min-h-[44px] items-center text-xl">
+          {s.data.title} →
+        </a>
+      ))}
+    </nav>
+  </section>
+</Layout>

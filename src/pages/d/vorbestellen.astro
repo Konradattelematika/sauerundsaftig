@@ -1,0 +1,51 @@
+---
+/** /vorbestellen — PreorderFlow-Island + Erklärtext (Bestellschluss 18 Uhr Vortag, Torten 5 Tage). */
+import Layout from '../../variants/d-fermentation/Layout.astro';
+import PreorderFlow from '../../components/shared/PreorderFlow.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/d';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Vorbestellen', url: `${Astro.site}${base}/vorbestellen` },
+  ]),
+];
+---
+
+<Layout
+  title="Vorbestellen — Sauer & Saftig"
+  description="Brot, Schnecken und Torten vorbestellen, abholen zur Wunschzeit. Bestellschluss 18 Uhr am Vortag, Torten 5 Tage Vorlauf."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Vorbestellen</p>
+    <h1 class="mt-3 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.96]" data-reveal>
+      Reserviert,<br />statt vergriffen.
+    </h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 80ms">
+      Bestellschluss ist 18 Uhr am Vortag der Abholung. Käsekuchen und Obsttorte brauchen 5 Tage Vorlauf.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+    <div class="max-w-2xl" data-reveal>
+      <PreorderFlow base={base} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /*
+   * PreorderFlow (shared, nicht editierbar) rendert eine helle bg-paper-Karte
+   * ohne eigene Textfarbe — erbt sonst --color-ink, das in Variante D hell ist
+   * (heller Text auf heller Karte). Fix bleibt auf dieser Seite beschränkt und
+   * nutzt nur Tokens, keine Hexwerte.
+   */
+  :global(.preorder-flow) {
+    color: var(--color-bg);
+  }
+  :global(.preorder-flow .text-ink-soft) {
+    color: color-mix(in oklab, var(--color-bg) 60%, transparent);
+  }
+</style>

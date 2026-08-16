@@ -1,0 +1,91 @@
+---
+/**
+ * /gastgeber — B2B-Landingpage für Vermieter (3.300 Gästebetten in Rerik):
+ * Angebots-Karten, Anruf-CTA, Absatz zu Bewertungen.
+ * Bewusst OHNE erfundene °-Preise: Für diese B2B-Pakete gibt es keine Preis-
+ * Quelle in den Inhaltsdaten (anders als bei der Speisekarte, wo ° echte
+ * Platzhalterwerte aus src/content/menu markiert) — "Preis auf Anfrage" folgt
+ * damit VARIANT-BRIEF §5 ("KEINE erfundene Preisliste").
+ */
+import Layout from '../../variants/d-fermentation/Layout.astro';
+import KrumeImage from '../../variants/d-fermentation/KrumeImage.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/d';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Für Gastgeber', url: `${Astro.site}${base}/gastgeber` },
+  ]),
+];
+
+const ANGEBOTE = [
+  { title: 'Willkommensbrot-Paket', desc: 'Ein Laib Sauerteigbrot für deine Gäste am Anreisetag, fertig verpackt zur Abholung oder Lieferung.' },
+  { title: 'Frühstückskorb zur Anreise', desc: 'Brot, Aufstriche, eine Schnecke — ein kleiner Korb, der den ersten Urlaubsmorgen einfacher macht.' },
+  { title: 'Gutschein als Gastgeschenk', desc: 'Frei wählbarer Betrag, den deine Gäste bei uns einlösen — ohne Ablaufdatum-Stress für dich.' },
+  { title: 'QR-Kartenständer', desc: 'Ein kostenloser Ständer für deine Rezeption, QR-Code führt direkt zu unserer Karte und Vorbestellung.' },
+];
+---
+
+<Layout
+  title="Für Gastgeber — Sauer & Saftig"
+  description="Willkommensbrot, Frühstückskörbe und Gutscheine für deine Gäste — Angebote für Gastgeber in Rerik."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Für Gastgeber</p>
+    <h1 class="mt-3 font-display text-[clamp(2.6rem,8vw,6rem)] leading-[0.96]" data-reveal>
+      Ein gutes Frühstück ist Teil der Anreise.
+    </h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 80ms">
+      Für Vermieter und Pensionen in und um Rerik, bei rund 3.300 Gästebetten am Ort: Brot,
+      Frühstückskörbe und Gutscheine, mit denen du den ersten Morgen deiner Gäste einfacher machst.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Angebot</p>
+    <ul class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+      {ANGEBOTE.map((a, i) => (
+        <li class="rounded-card border border-ink/15 bg-bg-alt p-6" data-reveal style={`--reveal-delay: ${i * 80}ms`}>
+          <div class="flex items-baseline justify-between gap-4">
+            <h2 class="text-2xl">{a.title}</h2>
+            <span class="shrink-0 font-mono text-sm tracking-widest text-primary uppercase">Auf Anfrage</span>
+          </div>
+          <p class="mt-2 max-w-[46ch] text-ink-soft">{a.desc}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft" data-reveal>
+      Preise auf Anfrage — Mengen, Rhythmus und Zustellung stimmen wir individuell ab. Rechnung ist
+      möglich.
+    </p>
+    <a
+      href={telHref(site.phone)}
+      class="btn-glow mt-8 inline-flex min-h-[48px] items-center rounded-card bg-accent px-7 py-3 font-mono text-black"
+      data-reveal
+    >
+      Anrufen: {site.phoneDisplay}
+    </a>
+  </section>
+
+  <section class="mt-4 md:mt-8" data-reveal>
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <KrumeImage motif="brot-laib" shape={2} class="aspect-[16/9]" sizes="100vw" />
+    </div>
+  </section>
+
+  <section class="border-t border-ink/10 bg-bg-alt py-16 md:py-24" aria-labelledby="bewertungen-h">
+    <div class="mx-auto max-w-6xl px-4 md:px-6" data-reveal>
+      <p class="font-mono text-sm tracking-widest text-primary uppercase">Warum das hilft</p>
+      <h2 id="bewertungen-h" class="mt-2 font-display text-3xl md:text-5xl">Warum das deine Bewertungen verbessert</h2>
+      <p class="mt-6 max-w-[60ch] text-xl text-ink-soft">
+        Ein frisches Brot am Anreisetag oder ein kleiner Frühstückskorb ist oft das Erste, was Gäste von
+        deiner Unterkunft mitbekommen — und das Erste, was sie in einer Bewertung erwähnen. Ein gutes
+        Detail am Anfang des Aufenthalts bleibt hängen, ohne dass du selbst backen musst.
+      </p>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,114 @@
+---
+/** /ueber-uns — Übernahme-Story ohne Namen, Werte, TGTG-Beweis, Rerik-Bezug. */
+import Layout from '../../variants/d-fermentation/Layout.astro';
+import KrumeImage from '../../variants/d-fermentation/KrumeImage.astro';
+import site from '../../data/site.json';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/d';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Über uns', url: `${Astro.site}${base}/ueber-uns` },
+  ]),
+];
+
+const WERTE = [
+  { title: 'Ehrlich statt aufgehübscht', text: 'Was noch nicht fertig ist, sagen wir so — auch auf dieser Website.' },
+  { title: 'Handwerk statt Abkürzung', text: 'Sauerteig statt Hefe, überall wo es geht. 18 Stunden, nicht drei.' },
+  { title: 'Nichts wird weggeworfen', text: 'Reste vom Sauerteig landen im Käsekuchenboden statt im Müll.' },
+];
+---
+
+<Layout
+  title="Über uns — Sauer & Saftig"
+  description="Wir haben ein Café übernommen, das viele geliebt haben. Die Reise zum Sauerteig-Café — und wer dahintersteckt."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Übernahme</p>
+    <h1 class="mt-3 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.96]" data-reveal>
+      Die Reise zum<br />Sauerteig-Café.
+    </h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 80ms">
+      Wir haben ein Café übernommen, das viele geliebt haben. Manches haben wir verändert, manches
+      braucht Zeit. Auf Instagram nennen wir es: die Reise zum Sauerteig-Café.
+    </p>
+    <p class="mt-4 font-mono text-sm text-ink-soft" data-reveal style="--reveal-delay: 140ms">
+      TODO(kunde): Namen und Gesichter folgen.
+    </p>
+  </section>
+
+  <section class="border-t border-ink/10 bg-bg-alt py-16 md:py-24" aria-labelledby="team1-h">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2 md:px-6">
+      <div data-reveal>
+        <KrumeImage motif="team-1" shape={1} class="aspect-[4/5]" sizes="(min-width: 768px) 45vw, 90vw" />
+      </div>
+      <div data-reveal style="--reveal-delay: 100ms">
+        <p class="font-mono text-sm tracking-widest text-primary uppercase">Backstube</p>
+        <h2 id="team1-h" class="mt-2 font-display text-3xl md:text-4xl">Wer hier backt</h2>
+        <p class="mt-4 max-w-[52ch] text-xl text-ink-soft">
+          Hier steht bald ein echtes Porträt und ein paar Sätze zur Person. Bis die Fotos fertig sind,
+          zeigen wir einen Platzhalter — die Kruste bleibt schon mal echt.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-24" aria-labelledby="team2-h">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2 md:px-6">
+      <div class="md:order-2" data-reveal>
+        <KrumeImage motif="team-2" shape={2} class="aspect-[4/5]" sizes="(min-width: 768px) 45vw, 90vw" />
+      </div>
+      <div class="md:order-1" data-reveal style="--reveal-delay: 100ms">
+        <p class="font-mono text-sm tracking-widest text-primary uppercase">Service</p>
+        <h2 id="team2-h" class="mt-2 font-display text-3xl md:text-4xl">Wer euch bedient</h2>
+        <p class="mt-4 max-w-[52ch] text-xl text-ink-soft">
+          Auch hier: Name und Geschichte folgen, sobald die Fotos im Kasten sind. Bis dahin gilt — trefft
+          uns lieber live in der Dünenstraße 1.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-ink/10 bg-bg-alt py-16 md:py-24" aria-labelledby="werte-h">
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Haltung</p>
+      <h2 id="werte-h" class="mt-2 font-display text-3xl md:text-4xl" data-reveal>Was uns wichtig ist</h2>
+      <ul class="mt-10 grid gap-10 md:grid-cols-3">
+        {WERTE.map((w, i) => (
+          <li class="border-t border-ink/15 pt-6" data-reveal style={`--reveal-delay: ${i * 90}ms`}>
+            <h3 class="font-display text-2xl">{w.title}</h3>
+            <p class="mt-2 text-ink-soft">{w.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-24" aria-labelledby="gastraum-h">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2 md:px-6">
+      <div data-reveal>
+        <p class="font-mono text-sm tracking-widest text-primary uppercase">Beweis</p>
+        <h2 id="gastraum-h" class="mt-2 font-display text-3xl md:text-4xl">Nichts wird weggeworfen</h2>
+        <p class="mt-4 max-w-[52ch] text-xl text-ink-soft">
+          Über Too Good To Go geht bei uns raus, was sonst im Müll landen würde: eine Überraschungstüte
+          mit rund {site.tooGoodToGo.bagValue} € Warenwert für {site.tooGoodToGo.bagPrice} €.
+        </p>
+      </div>
+      <div data-reveal style="--reveal-delay: 100ms">
+        <KrumeImage motif="gastraum" shape={3} class="aspect-[4/5]" sizes="(min-width: 768px) 45vw, 90vw" />
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-ink/10 bg-bg-alt py-16 md:py-20" aria-label="Rerik">
+    <div class="mx-auto max-w-6xl px-4 md:px-6" data-reveal>
+      <p class="font-mono text-sm tracking-widest text-primary uppercase">Rerik</p>
+      <p class="mt-4 max-w-[60ch] text-xl text-ink-soft">
+        Dünenstraße 1, Ostseebad Rerik — Steilküste und Salzhaff liegen quasi vor der Tür. Wer nach dem
+        Frühstück noch Zeit hat, läuft in fünf Minuten ans Wasser.
+      </p>
+    </div>
+  </section>
+</Layout>

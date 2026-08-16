@@ -1,0 +1,71 @@
+---
+/** /shop — Gutscheine (VoucherConfigurator-Island) + ehrliche "In Planung"-Sektion. */
+import Layout from '../../variants/d-fermentation/Layout.astro';
+import VoucherConfigurator from '../../components/shared/VoucherConfigurator.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+
+const base = '/d';
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Shop & Gutscheine', url: `${Astro.site}${base}/shop` },
+  ]),
+];
+---
+
+<Layout
+  title="Shop & Gutscheine — Sauer & Saftig"
+  description="Gutscheine für Café und Backstube — als Betrag oder für einen Workshop."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Shop</p>
+    <h1 class="mt-3 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.96]" data-reveal>Gutscheine</h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 80ms">
+      Ein Betrag frei wählbar oder direkt für einen Workshop — als Gastgeschenk oder für dich selbst.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+    <div class="max-w-3xl" data-reveal>
+      <VoucherConfigurator base={base} />
+    </div>
+  </section>
+
+  <section class="border-t border-ink/10 bg-bg-alt py-16 md:py-24" aria-labelledby="planung-h">
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>In Planung</p>
+      <h2 id="planung-h" class="mt-2 font-display text-3xl md:text-4xl" data-reveal>Demnächst im Shop</h2>
+      <div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div class="rounded-card border border-ink/15 bg-bg p-6" data-reveal>
+          <p class="font-mono text-sm tracking-widest text-primary uppercase">Bald</p>
+          <p class="mt-2 text-xl">Anstellgut im Glas</p>
+          <p class="mt-2 text-ink-soft">
+            Ein eigenes Glas Anstellgut zum Mitnehmen ist geplant, aktuell aber noch nicht einzeln
+            erhältlich.
+          </p>
+        </div>
+        <div class="rounded-card border border-ink/15 bg-bg p-6" data-reveal style="--reveal-delay: 90ms">
+          <p class="font-mono text-sm tracking-widest text-primary uppercase">Bald</p>
+          <p class="mt-2 text-xl">Merch</p>
+          <p class="mt-2 text-ink-soft">Ein kleines Sortiment ist in Planung — mehr dazu, sobald es so weit ist.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /*
+   * VoucherConfigurator (shared, nicht editierbar): die Gutschein-Vorschau
+   * (.voucher-preview) nutzt eine helle bg-paper-Karte ohne eigene Textfarbe —
+   * erbt sonst --color-ink, das in Variante D hell ist (heller Text auf heller
+   * Karte). Fix bleibt auf dieser Seite beschränkt und nutzt nur Tokens.
+   */
+  :global(.voucher-preview) {
+    color: var(--color-bg);
+  }
+  :global(.voucher-preview .text-ink-soft) {
+    color: color-mix(in oklab, var(--color-bg) 60%, transparent);
+  }
+</style>

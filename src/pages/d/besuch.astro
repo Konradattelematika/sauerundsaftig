@@ -1,0 +1,118 @@
+---
+/**
+ * /besuch — Öffnungszeiten sehr groß, Telefon riesig, ClickToLoadMap,
+ * Parken/Hunde/Barrierefreiheit/Zahlungsmittel vorsichtig formuliert.
+ */
+import Layout from '../../variants/d-fermentation/Layout.astro';
+import ClickToLoadMap from '../../components/shared/ClickToLoadMap.astro';
+import OpeningStatus from '../../components/shared/OpeningStatus.astro';
+import WeekTable from '../../variants/d-fermentation/components/WeekTable.astro';
+import site from '../../data/site.json';
+import { telHref } from '../../lib/format';
+import { localBusiness, breadcrumbs } from '../../lib/schema-org';
+
+const base = '/d';
+const jsonLd = [
+  localBusiness(String(Astro.site)),
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Besuch', url: `${Astro.site}${base}/besuch` },
+  ]),
+];
+---
+
+<Layout
+  title="Besuch — Öffnungszeiten, Anfahrt, Kontakt — Sauer & Saftig"
+  description="Öffnungszeiten, Adresse und Anreise nach Rerik, Dünenstraße 1."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Besuch</p>
+    <h1 class="mt-3 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.96]" data-reveal>
+      Dünenstraße 1,<br />Ostseebad Rerik.
+    </h1>
+    <div class="mt-6" data-reveal style="--reveal-delay: 80ms"><OpeningStatus size="lg" /></div>
+    <a
+      href={telHref(site.phone)}
+      class="btn-glow mt-8 inline-flex min-h-[48px] items-center rounded-card bg-accent px-7 py-3 font-mono text-[clamp(1.8rem,6vw,3rem)] text-black"
+      data-reveal
+      style="--reveal-delay: 140ms"
+    >
+      {site.phoneDisplay}
+    </a>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Öffnungszeiten</p>
+    <div class="mt-8 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20">
+      <div data-reveal><WeekTable /></div>
+      <div class="grid content-start gap-6" data-reveal style="--reveal-delay: 100ms">
+        <p class="text-xl text-ink-soft">
+          Dienstag und Mittwoch backen wir nicht — plan deinen Besuch drumherum. Donnerstag bis Montag
+          sind wir da.
+        </p>
+        <p class="text-xl text-ink-soft">
+          Google und Instagram widersprechen sich manchmal — verlässlich ist der Stand hier auf der
+          Website.
+        </p>
+        <p class="text-xl">Zu Feiertagen wie Heiligabend und dem 1. Weihnachtstag bleibt bei uns geschlossen.</p>
+        <div class="rounded-card border border-ink/15 bg-bg-alt p-6">
+          <p class="font-mono text-sm tracking-widest text-primary uppercase">Too Good To Go</p>
+          <p class="mt-2 text-xl">
+            Überraschungstüte, rund {site.tooGoodToGo.bagValue} € Warenwert für {site.tooGoodToGo.bagPrice} €.
+          </p>
+          <p class="mt-1 text-ink-soft">Verfügbarkeit und Abholzeit siehst du direkt in der App.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-ink/10 bg-bg-alt py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Anfahrt</p>
+      <div class="mt-8" data-reveal>
+        <ClickToLoadMap />
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Vor Ort</p>
+    <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2" data-reveal style="--reveal-delay: 60ms">
+      <div>
+        <h2 class="text-xl">Reservierung</h2>
+        <p class="mt-2 text-ink-soft">
+          Tische reservierst du bei uns ausschließlich telefonisch — ruf uns unter{' '}
+          <a href={telHref(site.phone)} class="link-grow text-ink">{site.phoneDisplay}</a> an.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-xl">Zahlungsmittel</h2>
+        <p class="mt-2 text-ink-soft">
+          Das können wir dir gerade noch nicht mit Sicherheit sagen — ruf kurz an unter{' '}
+          <a href={telHref(site.phone)} class="link-grow text-ink">{site.phoneDisplay}</a>, dann sagen
+          wir dir, welche Zahlungsmittel bei uns gehen.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-xl">Parken</h2>
+        <p class="mt-2 text-ink-soft">
+          Parkmöglichkeiten in der Nähe sind uns noch nicht abschließend bestätigt — ruf kurz an, dann
+          sagen wir dir, wo du am besten stehst.
+        </p>
+      </div>
+      <div>
+        <h2 class="text-xl">Hunde</h2>
+        <p class="mt-2 text-ink-soft">Das prüfen wir gerade noch — ruf kurz an, bevor du mit Hund vorbeikommst.</p>
+      </div>
+      <div>
+        <h2 class="text-xl">Barrierefreiheit</h2>
+        <p class="mt-2 text-ink-soft">
+          Ob Café und Zugang barrierefrei sind, klären wir aktuell noch. Am sichersten fragst du kurz
+          vorher telefonisch nach.
+        </p>
+        {/* TODO(kunde): Angaben zu Parken/Hunden/Barrierefreiheit/Zahlungsmitteln bestätigen. */}
+      </div>
+    </div>
+  </section>
+</Layout>

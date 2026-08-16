@@ -1,0 +1,72 @@
+---
+/** /workshops — Kursübersicht mit Restplatz-Badges (VARIANT-BRIEF D §6). */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/d-fermentation/Layout.astro';
+import { formatDateShort, formatMenuPrice } from '../../../lib/format';
+import { breadcrumbs } from '../../../lib/schema-org';
+
+const base = '/d';
+const workshops = (await getCollection('workshops')).sort((a, b) => a.data.order - b.data.order);
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Workshops', url: `${Astro.site}${base}/workshops` },
+  ]),
+];
+---
+
+<Layout
+  title="Workshops — Sauer & Saftig"
+  description="Backkurse in unserer Backstube in Rerik: Sauerteig für Anfänger, Brot und Schnecken, Eltern-Kind-Backen, Gruppen und Firmen."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Workshops</p>
+    <h1 class="mt-3 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.96]" data-reveal>
+      Backen lernen,<br />wo gebacken wird.
+    </h1>
+    <p class="mt-6 max-w-[60ch] text-xl text-ink-soft" data-reveal style="--reveal-delay: 80ms">
+      Kleine Gruppen, echte Backstube, dein eigenes Anstellgut zum Mitnehmen.
+    </p>
+    <p class="mt-6 max-w-[60ch] rounded-card border border-primary/30 bg-bg-alt px-4 py-3 font-mono text-sm text-primary" data-reveal style="--reveal-delay: 120ms">
+      Alle Termine und Preise sind Entwurf — die finale Kursplanung folgt.
+    </p>
+  </section>
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+    <ul class="grid gap-6 md:grid-cols-2">
+      {workshops.map((w, i) => {
+        const withSeats = w.data.dates.filter((d) => d.seatsLeft > 0);
+        const next = withSeats[0] ?? w.data.dates[0];
+        const soldOut = w.data.dates.length > 0 && withSeats.length === 0;
+        const priceLabel = w.data.price > 0 ? formatMenuPrice(w.data.price, w.data.isDraft) : 'auf Anfrage';
+        return (
+          <li data-reveal style={`--reveal-delay: ${i * 90}ms`}>
+            <a
+              href={`${base}/workshops/${w.id}`}
+              class="group flex h-full flex-col gap-3 rounded-card border border-ink/15 bg-bg-alt p-6 transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:border-primary/60"
+            >
+              <div class="flex items-baseline justify-between gap-3">
+                <h2 class="font-display text-2xl group-hover:text-primary">{w.data.title}</h2>
+                <span class="shrink-0 font-mono text-lg tabular">{priceLabel}</span>
+              </div>
+              <p class="text-ink-soft">{w.data.subtitle}</p>
+              <p class="font-mono text-sm text-ink-soft">Dauer: {w.data.duration} · bis {w.data.capacity} Personen</p>
+              <div class="mt-auto flex flex-wrap items-center gap-3 pt-2">
+                {next && (
+                  <span class="font-mono text-sm text-primary">{formatDateShort(next.date)} · {next.time} Uhr</span>
+                )}
+                {next && next.seatsLeft > 0 && next.seatsLeft <= 3 && (
+                  <span class="rounded-card bg-accent px-2 py-0.5 font-mono text-xs text-black">nur noch {next.seatsLeft} Plätze</span>
+                )}
+                {soldOut && <span class="font-mono text-xs text-closed">ausgebucht</span>}
+              </div>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+    <p class="mt-8 font-mono text-sm text-ink-soft">° Beispielwerte — finale Termine folgen.</p>
+  </div>
+</Layout>

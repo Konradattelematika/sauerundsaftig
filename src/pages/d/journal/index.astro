@@ -1,0 +1,59 @@
+---
+/** /journal — alle Artikel (Datum absteigend) als KrumeImage-Kacheln-Grid. */
+import { getCollection } from 'astro:content';
+import Layout from '../../../variants/d-fermentation/Layout.astro';
+import KrumeImage from '../../../variants/d-fermentation/KrumeImage.astro';
+import NewsletterForm from '../../../components/shared/NewsletterForm.astro';
+import { formatDate } from '../../../lib/format';
+import { breadcrumbs } from '../../../lib/schema-org';
+
+const base = '/d';
+const entries = (await getCollection('journal')).sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+const CATEGORY_LABELS: Record<string, string> = {
+  backstube: 'Backstube',
+  sauerteig: 'Sauerteig',
+  rerik: 'Rerik',
+};
+
+const jsonLd = [
+  breadcrumbs([
+    { name: 'Start', url: `${Astro.site}${base}` },
+    { name: 'Journal', url: `${Astro.site}${base}/journal` },
+  ]),
+];
+---
+
+<Layout title="Journal — Sauer & Saftig" description="Notizen aus der Nachtbackstube: Sauerteig, Rerik und was gerade passiert." jsonLd={jsonLd}>
+  <section class="mx-auto max-w-6xl px-4 pt-14 pb-4 md:px-6">
+    <p class="font-mono text-sm tracking-widest text-primary uppercase" data-reveal>Journal</p>
+    <h1 class="mt-3 font-display text-[clamp(2.8rem,9vw,6.5rem)] leading-[0.96]" data-reveal>
+      Notizen aus<br />der Nachtbackstube.
+    </h1>
+  </section>
+
+  <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
+    <ul class="grid gap-x-8 gap-y-12 md:grid-cols-3">
+      {entries.map((entry, i) => (
+        <li data-reveal style={`--reveal-delay: ${Math.min(i, 6) * 70}ms`}>
+          <a href={`${base}/journal/${entry.id}`} class="group grid gap-3">
+            <KrumeImage motif={entry.data.motif} shape={((i % 3) + 1) as 1 | 2 | 3} class="aspect-[4/3]" sizes="(min-width: 768px) 30vw, 90vw" />
+            <p class="font-mono text-sm text-primary uppercase">
+              {CATEGORY_LABELS[entry.data.category] ?? entry.data.category} · {formatDate(entry.data.date)}
+            </p>
+            <h2 class="font-display text-2xl group-hover:text-primary">{entry.data.title}</h2>
+            <p class="text-ink-soft">{entry.data.description}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <section class="border-t border-ink/10 bg-bg-alt py-16 md:py-24" aria-labelledby="nl-h">
+    <div class="mx-auto max-w-2xl px-4 md:px-6">
+      <h2 id="nl-h" class="font-display text-4xl" data-reveal>Der Brotbrief</h2>
+      <p class="mt-3 text-ink-soft" data-reveal>Ein paar Mal im Monat: was gerade frisch ist, neue Workshops, Journal-Notizen.</p>
+      <div class="mt-8" data-reveal><NewsletterForm base={base} /></div>
+    </div>
+  </section>
+</Layout>
