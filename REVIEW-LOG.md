@@ -29,3 +29,20 @@ Orchestrator-Prüfprotokoll. Ein Eintrag je Schritt: Datum, Prüfung, Abweichung
   °-Preislegende, Badges ≤3/ausgebucht, Gutschein-Vorschau mit Wortmarke, Consent + Honeypot). Kein
   localStorage, keine Hexfarben (grep). Executor fixte selbst: Astro-Compiler-Falle mit `<=` im
   Template, Date-Konsistenz-Bug in der Abholtagslogik (GPT-Review). Status: DONE.
+
+## 16.08.2026 — Zweiter Lauf (Job 20260815-083115-web, Fortsetzung)
+- 500er-Ursache identifiziert und behoben: nginx-try_files fiel auf nicht existierende
+  Varianten-404-Dateien zurück → error_page-Konstruktion + 404-Seiten in allen Varianten.
+- Varianten A (14 neue Routen), B (6) und C (13) durch Executor komplettiert; Orchestrator-Gate:
+  Screenshots 1440px aller Startseiten, Stichproben, astro check 0 Fehler.
+- Route-Smoke-Test scripts/test-routes.mjs (npm run test:routes): 136 Routen, 0 kaputte Links,
+  nginx-Semantik nachgebildet, 404-Datei-Check je Variante.
+- NEU Variante D „Fermentation" (Digital Immersive): Nachtbackstube-Tokens, Clash Display,
+  Intro-Loader (Mehl/Wasser/Zeit/Wärme), Fermentationsblasen, Krume-Blob-Masken,
+  scrollgetriebener Teigprozess (statischer Fallback bei reduced-motion), View Transitions,
+  Marquee, alle 30 Routen. Budget-Check Startseite: 840 KB gesamt, 15,5 KB JS.
+- Instagram-Brand-Importer (tools/brand-import, kostenlos, ohne Login, Embed-Widgets+Playwright):
+  6 echte Post-Bilder + Captions + Profildaten importiert; 3 Echtfotos als Motive eingebunden
+  (brot-laib, obsttorte, kaesekuchen) mit echten Alt-Texten. Befund „Sommer-Brotpause" als
+  Launch-Blocker in BRAND-TODO dokumentiert.
+- Tests: vitest 16/16, astro check 0 Fehler, Variantenwähler um D erweitert.
