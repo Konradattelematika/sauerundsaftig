@@ -2,6 +2,14 @@
 
 Priorisiert. Punkte mit ⛔ blockieren den Launch, ◻︎ sind vor Launch zu klären, ○ später.
 
+## Vorschau-Schutz (aktiv seit 17.08.2026)
+
+- Die gesamte Site liegt hinter **Basic Auth** (Benutzer `sauer`, Passwort separat mitgeteilt)
+  und ist per `robots.txt: Disallow /` + `X-Robots-Tag: noindex` für Suchmaschinen gesperrt.
+- **Vor dem Launch entfernen:** in `deploy/nginx.conf` die beiden `auth_basic`-Zeilen und den
+  `X-Robots-Tag`-Header löschen, `public/robots.txt` wieder auf `Allow` + Sitemap stellen,
+  Passwort ändern oder `deploy/htpasswd` löschen. Danach Deploy anstoßen.
+
 ## Instagram-Befunde (Import 16.08.2026, Details in brand/sources.md)
 
 - ⛔ **„Kleine Brotpause diesen Sommer"** — der neueste Post (Shortcode DZws5d3MDjT) kündigt eine
