@@ -70,14 +70,9 @@
       el.style.transform = `translate3d(0, ${(-d * f).toFixed(1)}px, 0)`;
     }
   }
-  function initParallax() {
-    parallaxEls = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
-    if (!window.matchMedia('(min-width: 768px)').matches) {
-      parallaxEls.forEach((el) => (el.style.transform = ''));
-      parallaxEls = [];
-      return;
-    }
-    paintParallax();
+  function bindParallaxListeners() {
+    // Genau einmal pro Seite binden — unabhängig vom aktuellen Breakpoint, damit ein späteres
+    // Vergrößern des Fensters (Mobile → Desktop) den Parallax nachträglich aktiviert.
     if (parallaxBound) return;
     parallaxBound = true;
     let ticking = false;
@@ -94,6 +89,16 @@
       { passive: true },
     );
     window.addEventListener('resize', () => initParallax(), { passive: true });
+  }
+  function initParallax() {
+    bindParallaxListeners();
+    parallaxEls = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
+    if (!window.matchMedia('(min-width: 768px)').matches) {
+      parallaxEls.forEach((el) => (el.style.transform = ''));
+      parallaxEls = [];
+      return;
+    }
+    paintParallax();
   }
 
   init();

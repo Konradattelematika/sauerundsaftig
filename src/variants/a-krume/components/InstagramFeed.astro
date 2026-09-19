@@ -296,7 +296,9 @@ const handle = `@${INSTAGRAM_PROFILE.username}`;
       if (!raf) raf = requestAnimationFrame(paint);
     };
     scroller.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule, { passive: true });
+    // ResizeObserver statt window.resize: hängt am Scroller und verschwindet mit ihm bei
+    // Client-Navigation (ClientRouter) — kein Listener-Wachstum auf window.
+    new ResizeObserver(schedule).observe(scroller);
     paint();
 
     // --- Buttons ---

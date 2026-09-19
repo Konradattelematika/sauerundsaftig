@@ -125,12 +125,17 @@ const isAbout = path.startsWith(`${base}/ueber-mich`) || path.startsWith(`${base
 
 <script>
   // Schatten unter dem Header erst, wenn gescrollt wurde (kein Layout-Shift, nur box-shadow).
+  // Ein einziger Scroll-Listener pro Seite: Bei Client-Navigation (ClientRouter) wird der Header
+  // ausgetauscht, deshalb wird das aktuelle Element zur Laufzeit gesucht statt beim Binden gemerkt.
+  let bound = false;
+  function paintHeaderShadow() {
+    document.querySelector<HTMLElement>('[data-header]')?.classList.toggle('is-scrolled', window.scrollY > 8);
+  }
   function bindHeaderShadow() {
-    const header = document.querySelector<HTMLElement>('[data-header]');
-    if (!header) return;
-    const paint = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
-    paint();
-    window.addEventListener('scroll', paint, { passive: true });
+    paintHeaderShadow();
+    if (bound) return;
+    bound = true;
+    window.addEventListener('scroll', paintHeaderShadow, { passive: true });
   }
   bindHeaderShadow();
   document.addEventListener('astro:page-load', bindHeaderShadow);

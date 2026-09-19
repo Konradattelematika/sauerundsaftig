@@ -92,3 +92,9 @@ Orchestrator-Prüfprotokoll. Ein Eintrag je Schritt: Datum, Prüfung, Abweichung
     behoben; Komposita-Trennung; Gastgeber-Karten `min-w-0`; aria-current im Mobilmenü.
 - Abschluss: build 128 Seiten, test:routes 138/138, astro check 0 Fehler, vitest 16/16, Overflow-Matrix
   A/B/C/D × 375–1920 grün. Deploy: Push + Coolify-Trigger (Vorschau hinter Basic Auth).
+- Codex-Review (19.09.2026, nach Push): zwei berechtigte Befunde behoben — Parallax band den Resize-Listener
+  erst nach dem Breakpoint-Check (Mobil→Desktop-Vergrößerung blieb ohne Parallax), Header-A registrierte pro
+  Client-Navigation einen neuen Scroll-Listener auf den bereits ausgetauschten Header. Beim Nachprüfen
+  gleiches Leak im Instagram-Feed gefunden (window.resize pro Seitenaufruf) → ResizeObserver am Scroller.
+  Playwright-Nachweis: Scroll-/Resize-Listener auf window bleiben über 4 Client-Navigationen konstant (2/1),
+  Header-Schatten schaltet nach Navigation korrekt, Parallax aktiviert sich nach Resize 375→1280 px.
