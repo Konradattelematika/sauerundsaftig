@@ -12,13 +12,12 @@ Priorisiert. Punkte mit ⛔ blockieren den Launch, ◻︎ sind vor Launch zu kl�
 
 ## Neu seit 19.09.2026 — Variante A (Warm Krume), Details in docs/MATERIAL-THEKE.md
 
-- ⛔ **Zwei Bilder fehlen noch im Repo** (im Auftrag genannt, aber nicht beim Job angekommen):
-  1. Porträt von Josie mit der Urkunde → `src/assets/photos/josie-portrait.jpg`
-  2. Nahaufnahme der Terrazzo-Thekenoberfläche → `src/assets/textures/terrazzo.jpg`
-     (ersetzt den prozeduralen Platzhalter; danach `TERRAZZO_IS_PLACEHOLDER = false` in `src/lib/textures.ts`).
+- ✅ **Beide nachgelieferten Bilder eingebunden (19.09.2026):** Josies Porträt mit Urkunde liegt als
+  fokussierter 4:5-Ausschnitt unter `src/assets/photos/josie-portrait.jpg`; die echte Thekenoberfläche
+  ersetzt unter `src/assets/textures/terrazzo.jpg` den prozeduralen Platzhalter.
 - ◻︎ **Über-mich-Texte** (/a/ueber-mich): Herkunft/Weg zum Backen, Übernahme (seit wann, warum), Team,
-  vergebende Stelle + Anlass der Auszeichnung „Bester Bäcker 2025 – Landkreis Rostock". Platzhalterboxen sind
-  im Layout sichtbar markiert.
+  jeweils möglichst in Josies eigenen Worten. Die noch offene Platzhalterbox ist im Layout sichtbar markiert;
+  die Auszeichnung ist durch das Foto als Leserumfrage der Ostsee-Zeitung belegt.
 - ○ **Instagram-Live-Feed**: Business/Creator-Konto + Access-Token (Instagram-API mit Instagram-Login) →
   Build-Env `INSTAGRAM_ACCESS_TOKEN`; bis dahin läuft der Feed mit den 5 importierten Posts + Café-Fotos.
 
@@ -48,7 +47,8 @@ Priorisiert. Punkte mit ⛔ blockieren den Launch, ◻︎ sind vor Launch zu kl�
 4. ◻︎ **Team & Übernahme-Story.** Namen der Betreiber:innen, Zeitpunkt/Anlass der Übernahme,
    1–2 O-Töne. `/ueber-uns` erzählt die Story bewusst ohne Namen („Wir") — mit Namen wird
    sie doppelt so stark. `TODO(kunde)`-Marker im Code.
-5. ◻︎ **Fotoshooting** nach `IMAGE-BRIEF.md` (alle Bilder sind aktuell markierte Platzhalter).
+5. ◻︎ **Restliche Fotomotive** nach `IMAGE-BRIEF.md`; zahlreiche Café-/Produktbilder sowie Josies Porträt
+   sind bereits echt, noch unbelegte Motiv-Keys fallen weiterhin klar erkennbar auf Platzhalter zurück.
 6. ◻︎ **Workshops freigeben:** Formate, echte Termine, echte Preise, max. Teilnehmerzahl.
    Aktuelle Kurse/Termine sind als Entwurf gekennzeichnet.
 7. ◻︎ **Öffnungszeiten-Ausnahmen** (Feiertage, Betriebsferien) melden → `exceptions` in site.json.
