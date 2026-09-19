@@ -5,8 +5,8 @@
  * wiederkehrendes, zurückhaltendes Material eingesetzt. Ein Bild, viele Anwendungen:
  * Bänder zwischen Sektionen, Passepartouts um Fotos, Tags, kleine Akzente, Textur in
  * Display-Typo. Die Bild-URL liefert Layout.astro als CSS-Variable --tz-url (optimiertes
- * Asset aus src/assets/textures/terrazzo.jpg — aktuell prozeduraler PLATZHALTER, s.
- * scripts/generate-terrazzo.mjs; das echte Foto ersetzt nur die Datei).
+ * Asset aus src/assets/textures/terrazzo.jpg — seit 19.09.2026 das echte Foto der
+ * Café-Theke; scripts/generate-terrazzo.mjs bleibt als Notfall-Platzhalter erhalten.
  *
  * Regel: pro Viewport höchstens ein großes und wenige kleine Terrazzo-Elemente.
  */
@@ -20,7 +20,7 @@
 .tz-blob,
 .tz-offset::before,
 .tz-frame::after {
-  background-color: #d8dedb; /* Fallback, bis das Bild geladen ist */
+  background-color: #b9b6ad; /* Fallback (Mittelton der echten Thekenplatte), bis das Bild geladen ist */
   background-image: var(--tz-url);
   background-size: cover;
   background-position: var(--tz-pos, 40% 40%);

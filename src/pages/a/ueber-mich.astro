@@ -5,7 +5,8 @@
  * Typo-Sektion, Café/Theke mit Terrazzo-Übergang, Instagram-Feed, Besuch.
  *
  * Fakten nur aus vorhandenen Quellen (site.json, Über-uns-Story, Instagram-Captions,
- * Auftrag: Name Josie + Urkunde „Bester Bäcker 2025 – Landkreis Rostock"). Alles andere
+ * Auftrag: Name Josie + Urkunde „Bester Bäcker 2025 – Landkreis Rostock", lt. Foto Leserumfrage der
+ * Ostsee-Zeitung). Alles andere
  * steht als sichtbarer redaktioneller Platzhalter (TODO(kunde)) — nichts erfunden.
  */
 import Layout from '../../variants/a-krume/Layout.astro';
@@ -13,7 +14,6 @@ import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
 import Figure from '../../variants/a-krume/components/Figure.astro';
 import InstagramFeed from '../../variants/a-krume/components/InstagramFeed.astro';
 import VisitModule from '../../variants/a-krume/components/VisitModule.astro';
-import site from '../../data/site.json';
 import { hasPhoto } from '../../lib/images';
 import { TERRAZZO_IS_PLACEHOLDER } from '../../lib/textures';
 import { btnSecondary, linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
@@ -142,15 +142,11 @@ const principles = [
           <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">2025</p>
           <h2 class="mt-4 text-[clamp(2.25rem,5.5vw,4.25rem)]">Und dann war da plötzlich diese Urkunde.</h2>
           <p class="prose-measure mt-6 text-lg text-ink-soft md:text-xl">
-            „Bester Bäcker 2025 – Landkreis Rostock" steht darauf. Auf dem Foto oben halte ich sie in den Händen,
-            und ehrlich gesagt weiß ich immer noch nicht genau, wohin damit. Geändert hat sich dadurch jedenfalls
-            nichts am Rezept: Der Teig braucht weiterhin seine 18 Stunden, und Dienstag und Mittwoch bleibt der
-            Ofen aus.
+            „Bester Bäcker 2025 – Landkreis Rostock" steht darauf, gewählt in der Leserumfrage der Ostsee-Zeitung.
+            Auf dem Foto oben halte ich sie in der Hand — in der anderen ein Brett mit Gebäck, weil das an dem Tag
+            eben auch fertig werden musste. Geändert hat sich durch die Urkunde nichts am Rezept: Der Teig braucht
+            weiterhin seine 18 Stunden, und Dienstag und Mittwoch bleibt der Ofen aus.
           </p>
-          <p class="mt-4 font-mono text-[11px] uppercase tracking-widest text-ink-soft/80">
-            Platzhalter — wer die Auszeichnung vergeben hat und bei welchem Anlass, ergänzt Josie
-          </p>
-          <!-- TODO(kunde): Vergebende Stelle/Anlass der Auszeichnung bestätigen, dann den Platzhalter-Satz löschen. -->
         </div>
         <div class="md:col-span-4 md:col-start-9" data-reveal style="--reveal-delay:100ms">
           <div class="tz-mat max-w-sm">
@@ -158,6 +154,7 @@ const principles = [
               <p class="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-soft">Urkunde</p>
               <p class="mt-4 font-display text-3xl leading-tight md:text-4xl">Bester Bäcker<br />2025</p>
               <p class="mt-3 font-mono text-sm uppercase tracking-widest text-ink-soft">Landkreis Rostock</p>
+              <p class="mt-2 font-mono text-[11px] uppercase tracking-widest text-ink-soft/80">Leserumfrage · Ostsee-Zeitung</p>
               <span class="tz-rule mx-auto mt-6" aria-hidden="true"></span>
             </div>
           </div>

@@ -98,3 +98,12 @@ Orchestrator-Prüfprotokoll. Ein Eintrag je Schritt: Datum, Prüfung, Abweichung
   gleiches Leak im Instagram-Feed gefunden (window.resize pro Seitenaufruf) → ResizeObserver am Scroller.
   Playwright-Nachweis: Scroll-/Resize-Listener auf window bleiben über 4 Client-Navigationen konstant (2/1),
   Header-Schatten schaltet nach Navigation korrekt, Parallax aktiviert sich nach Resize 375→1280 px.
+
+## 19.09.2026 — Nachlieferung Porträt und Thekenoberfläche
+- Josies geliefertes Porträt als fokussierten 4:5-Ausschnitt eingebunden; Gesicht, Gebäck und Urkunde bleiben
+  bei 375/768/1440 px sichtbar. Urkundenhinweis anhand des Fotos als Leserumfrage der Ostsee-Zeitung präzisiert.
+- HEIC der echten Thekenoberfläche dekodiert, als ruhigen quadratischen Ausschnitt optimiert und im bestehenden
+  Terrazzo-System anstelle des prozeduralen Platzhalters aktiviert; Fallback-Farben an das Material angepasst.
+- Offenen Review-Kleinbefund behoben: Der mobile Link „Über mich“ ist auf `/a/ueber-uns` nicht mehr fälschlich
+  `aria-current="page"`. QA: Build 128 Seiten, 138/138 Routen, Typecheck 0 Fehler, Vitest 16/16; Playwright
+  ohne Overflow, Browser-/Netzwerkfehler oder sichtbare Asset-Platzhalter bei 375/768/1440 px.

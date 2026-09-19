@@ -53,7 +53,7 @@ export function getImage(variant: VariantKey, motif: string): ImageMetadata {
   return ph.default;
 }
 
-/** Alt-Texte für echte Fotos (Quellen: Instagram @sauerundsaftig + Kundenfotos 16.08.2026) */
+/** Alt-Texte für echte Fotos (Quellen: Instagram @sauerundsaftig + Kundenfotos) */
 const PHOTO_ALT: Record<string, string> = {
   'hero-krume': 'Frisch gebackene Sauerteigschnecken dicht an dicht, glänzend vom Ofen',
   'brot-laib': 'Frisch gebackene Sauerteiglaibe mit eingeschnittenem Ährenmuster und bemehlter Kruste',
@@ -72,7 +72,7 @@ const PHOTO_ALT: Record<string, string> = {
   'torte-rosa': 'Auftragstorte in Rosa mit gespritzten Bögen und Schleifen',
   'torte-blumen': 'Auftragstorte mit heller Creme und echten Wiesenblumen',
   'torte-vintage': 'Erdbeer-Mascarpone-Torte im Vintage-Stil mit Buttercreme',
-  'josie-portrait': 'Josie im Café, in den Händen die Urkunde „Bester Bäcker 2025 – Landkreis Rostock“',
+  'josie-portrait': 'Josie lachend hinter der Theke mit einem Holzbrett voller Gebäck und der Urkunde „Bester Bäcker 2025 – Landkreis Rostock“ aus der Leserumfrage der Ostsee-Zeitung',
 };
 
 export function hasPhoto(motif: string): boolean {

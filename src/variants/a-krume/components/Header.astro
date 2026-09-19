@@ -20,7 +20,7 @@ function isActive(itemPath: string): boolean {
   const full = `${base}${itemPath}`;
   return path === full || path.startsWith(`${full}/`);
 }
-const isAbout = path.startsWith(`${base}/ueber-mich`) || path.startsWith(`${base}/ueber-uns`);
+const isAboutMe = path.startsWith(`${base}/ueber-mich`);
 ---
 
 <header class="header-a sticky top-0 z-50 border-b border-ink/10 bg-paper lg:bg-paper/95 lg:backdrop-blur" data-header>
@@ -83,7 +83,7 @@ const isAbout = path.startsWith(`${base}/ueber-mich`) || path.startsWith(`${base
             <li class="drawer-item" style={`--i:${NAV_MAIN.length}`}>
               <a
                 href={`${base}/ueber-mich`}
-                aria-current={isAbout ? 'page' : undefined}
+                aria-current={isAboutMe ? 'page' : undefined}
                 class="flex min-h-14 items-center justify-between py-3 text-ink aria-[current=page]:text-primary-deep"
               >
                 Über mich
