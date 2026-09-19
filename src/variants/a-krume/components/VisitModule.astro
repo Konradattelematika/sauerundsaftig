@@ -7,6 +7,7 @@ import site from '../../../data/site.json';
 import { weekOverview, type Schedule } from '../../../lib/opening-hours';
 import { telHref, routeHref } from '../../../lib/format';
 import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import { btnPrimary, btnSecondary } from '../lib/ui';
 
 interface Props {
   base: string;
@@ -24,6 +25,7 @@ const route = routeHref(site.address.street, site.address.zip, site.address.city
     <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
       <div class="md:col-span-5" data-reveal>
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Besuch</p>
+        <span class="tz-rule mt-3" aria-hidden="true"></span>
         <h2 class:list={['mt-3', full ? 'text-[clamp(2rem,5vw,3.5rem)]' : 'text-[clamp(1.75rem,4vw,2.5rem)]']}>
           Wann du uns findest
         </h2>
@@ -34,14 +36,14 @@ const route = routeHref(site.address.street, site.address.zip, site.address.city
         <div class="mt-6 flex flex-wrap gap-4">
           <a
             href={phoneHref}
-            class="inline-flex min-h-11 items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-xl text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep md:text-2xl"
+            class:list={[btnPrimary, 'px-5 py-2.5 text-xl md:text-2xl']}
           >
             {site.phoneDisplay}
           </a>
           {!full && (
             <a
               href={`${base}/besuch`}
-              class="inline-flex min-h-11 items-center justify-center rounded-card border-2 border-ink px-5 py-2.5 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
+              class:list={[btnSecondary, 'px-5 py-2.5']}
             >
               Alle Infos zum Besuch
             </a>
@@ -50,7 +52,7 @@ const route = routeHref(site.address.street, site.address.zip, site.address.city
             href={route}
             target="_blank"
             rel="noopener"
-            class="inline-flex min-h-11 items-center justify-center rounded-card border-2 border-ink px-5 py-2.5 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
+            class:list={[btnSecondary, 'px-5 py-2.5']}
           >
             Route
           </a>

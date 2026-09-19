@@ -47,6 +47,7 @@ const jsonLd = dates.map((d) =>
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
       <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>{level} · {duration}</p>
+      <span class="tz-rule mt-3" aria-hidden="true"></span>
       <h1 class="mt-4 max-w-4xl text-[clamp(2.5rem,6vw,4.5rem)]" data-reveal style="--reveal-delay:100ms">
         {title}
       </h1>
@@ -60,7 +61,7 @@ const jsonLd = dates.map((d) =>
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
       <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
         <div class="md:col-span-7" data-reveal>
-          <Figure motif={motif} aspect="aspect-[4/3]" sizes="(min-width: 1024px) 55vw, 100vw" loading="eager" />
+          <Figure motif={motif} aspect="aspect-[4/3]" sizes="(min-width: 1024px) 55vw, 100vw" loading="eager" mat="flat" hover />
 
           <div class="prose-measure mt-10 flex flex-col gap-5 text-lg text-ink">
             <Content />

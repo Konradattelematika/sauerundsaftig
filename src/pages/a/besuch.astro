@@ -12,6 +12,7 @@ import site from '../../data/site.json';
 import { weekOverview, type Schedule } from '../../lib/opening-hours';
 import { telHref, routeHref } from '../../lib/format';
 import { localBusiness } from '../../lib/schema-org';
+import { btnSecondary } from '../../variants/a-krume/lib/ui';
 
 const base = '/a';
 // site.json wird als generisches JSON typisiert (string[][] statt Tupel) — Cast wie in lib/schema-org.ts.
@@ -31,6 +32,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
       <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>Besuch</p>
+      <span class="tz-rule mt-3" aria-hidden="true"></span>
       <h1 class="mt-4 text-[clamp(2.5rem,6vw,4.5rem)]" data-reveal style="--reveal-delay:100ms">
         Dünenstraße 1, Ostseebad Rerik
       </h1>
@@ -96,12 +98,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
         {/* TODO(kunde): genaue Wegbeschreibung/Beschilderung ab den Nachbarorten bestätigen, bevor wir konkreter werden. */}
         <p class="mt-3 font-mono text-sm">Am sichersten: kurz anrufen, wenn du dir bei der Anfahrt unsicher bist.</p>
       </div>
-      <a
-        href={route}
-        target="_blank"
-        rel="noopener"
-        class="mt-6 inline-flex min-h-11 items-center justify-center rounded-card border-2 border-ink px-6 py-3 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
-      >
+      <a href={route} target="_blank" rel="noopener" class:list={[btnSecondary, 'mt-6']}>
         Route in Maps starten
       </a>
     </div>
@@ -116,7 +113,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
           <h2 class="text-xl">Parken</h2>
           <p class="prose-measure mt-2 text-ink-soft">
             Parkmöglichkeiten in der Nähe haben wir noch nicht abschließend bestätigt. Ruf uns kurz an unter{' '}
-            <a href={phoneHref} class="text-ink underline decoration-ink/30 underline-offset-4">{site.phoneDisplay}</a>,
+            <a href={phoneHref} class="link-ul text-ink">{site.phoneDisplay}</a>,
             dann sagen wir dir, wo du am besten stehst.
           </p>
           {/* TODO(kunde): Parksituation Dünenstraße 1 bestätigen. */}
@@ -142,7 +139,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
           <h2 class="text-xl">Reservierung</h2>
           <p class="prose-measure mt-2 text-ink-soft">
             Reservierungen laufen ausschließlich telefonisch — ruf uns unter{' '}
-            <a href={phoneHref} class="text-ink underline decoration-ink/30 underline-offset-4">{site.phoneDisplay}</a>{' '}
+            <a href={phoneHref} class="link-ul text-ink">{site.phoneDisplay}</a>{' '}
             an und frag nach einem Tisch für deinen Termin.
           </p>
         </div>
@@ -151,7 +148,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
           <p class="prose-measure mt-2 text-ink-soft">
             Ob und mit welcher Karte du bei uns zahlen kannst, können wir dir gerade noch nicht mit Sicherheit
             sagen. Ruf am besten kurz an unter{' '}
-            <a href={phoneHref} class="text-ink underline decoration-ink/30 underline-offset-4">{site.phoneDisplay}</a>,
+            <a href={phoneHref} class="link-ul text-ink">{site.phoneDisplay}</a>,
             dann sagen wir dir aktuell, welche Zahlungsmittel bei uns gehen.
           </p>
           {/* TODO(kunde): Zahlungsmittel final bestätigen (site.json → paymentTodoKunde). */}

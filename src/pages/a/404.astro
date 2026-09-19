@@ -4,6 +4,7 @@
  * Karte und Startseite. Wird von nginx als error_page für alles unter /a/ ausgeliefert.
  */
 import Layout from '../../variants/a-krume/Layout.astro';
+import { btnAccent, btnSecondary, arrowIcon } from '../../variants/a-krume/lib/ui';
 
 const base = '/a';
 ---
@@ -12,6 +13,7 @@ const base = '/a';
   <section class="bg-bg py-20 md:py-32">
     <div class="mx-auto flex max-w-3xl flex-col items-center px-4 text-center md:px-8">
       <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>404</p>
+      <span class="tz-rule mx-auto mt-3" aria-hidden="true"></span>
       <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)]" data-reveal style="--reveal-delay:100ms">
         Diese Seite ist wie ein Sauerteig ohne Fütterung — nicht mehr da.
       </h1>
@@ -20,16 +22,11 @@ const base = '/a';
         oder auf der Startseite.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-4" data-reveal style="--reveal-delay:200ms">
-        <a
-          href={`${base}/karte`}
-          class="inline-flex min-h-11 items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-sm text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
-        >
+        <a href={`${base}/karte`} class={btnAccent}>
           Zur Karte
+          <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
         </a>
-        <a
-          href={base}
-          class="inline-flex min-h-11 items-center justify-center rounded-card border-2 border-ink px-6 py-3 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
-        >
+        <a href={base} class={btnSecondary}>
           Zur Startseite
         </a>
       </div>

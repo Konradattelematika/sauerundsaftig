@@ -45,3 +45,100 @@ h1, h2 {
   font-variation-settings: 'SOFT' 40, 'WONK' 1, 'opsz' 72;
   letter-spacing: -0.02em;
 }
+/* Lange deutsche Komposita („Sauerteigschnecken") dürfen in schmalen Spalten trennen statt
+   die Seite horizontal aufzuschieben (lang="de" → Browser-Silbentrennung). */
+h2, h3 {
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+/* H1 (Hero-Zeilen) nicht automatisch trennen — „Sauer-teig" im Hero wäre falsch; nur Notumbruch */
+h1 {
+  overflow-wrap: break-word;
+  hyphens: manual;
+  -webkit-hyphens: manual;
+}
+
+/* ---------- Material „Theke" (Terrazzo) ---------- */
+@import './a-terrazzo.css';
+
+/* ---------- Editorial-Feinheiten Variante A ---------- */
+/* Fließtext-Absätze auf Story-Seiten: etwas mehr Luft, Fraunces-Initiale optional */
+.prose-editorial p + p { margin-top: 1.25em; }
+.prose-editorial .lead { font-size: 1.25rem; line-height: 1.5; }
+@media (min-width: 768px) { .prose-editorial .lead { font-size: 1.5rem; } }
+
+/* Animierte Unterstreichung für Textlinks: leise Grundlinie, volle Linie zieht von links auf */
+.link-ul {
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(rgb(36 27 20 / 0.28), rgb(36 27 20 / 0.28));
+  background-repeat: no-repeat;
+  background-size: 0% 1.5px, 100% 1px;
+  background-position: 0 calc(100% - 0.55em), 0 calc(100% - 0.55em);
+  padding-bottom: 0.15em;
+  transition: background-size var(--dur-fast) var(--ease-brand);
+}
+.link-ul:hover,
+.link-ul:focus-visible,
+.group:hover .link-ul {
+  background-size: 100% 1.5px, 100% 1px;
+}
+.text-bg .link-ul,
+.link-ul.link-ul--light {
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(rgb(247 242 232 / 0.35), rgb(247 242 232 / 0.35));
+}
+
+/* Pfeil in Links/Buttons wandert 3 px */
+.arrow-icon { transition: transform var(--dur-fast) var(--ease-brand); }
+a:hover .arrow-icon,
+a:focus-visible .arrow-icon,
+.group:hover .arrow-icon { transform: translateX(3px); }
+
+/* Sanfte Bildbewegung beim Hover (Figure hover=true oder in .group) */
+.fig-hover img { transition: transform var(--dur-slow) var(--ease-brand); transform-origin: center; }
+.fig-hover:hover img,
+.group:hover .fig-hover img { transform: scale(1.035); }
+
+/* Bild-Reveal beim Scrollen: Bild schält sich von unten frei (nur mit JS + ohne reduced-motion) */
+.js-motion [data-reveal='image'] {
+  clip-path: inset(0 0 14% 0);
+  transition:
+    opacity var(--dur-slow) var(--ease-brand),
+    transform var(--dur-slow) var(--ease-brand),
+    clip-path 900ms var(--ease-brand);
+}
+.js-motion [data-reveal='image'].is-visible { clip-path: inset(0 0 0 0); }
+
+/* Header: Nav-Unterstreichung zieht auf; Schatten erst nach dem Scrollen */
+.nav-a a { position: relative; }
+.nav-a a::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0.35rem;
+  height: 2px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-fast) var(--ease-brand);
+}
+.nav-a a:hover::after,
+.nav-a a:focus-visible::after,
+.nav-a a[aria-current='page']::after { transform: scaleX(1); }
+.header-a { transition: box-shadow var(--dur-fast) var(--ease-brand); }
+.header-a.is-scrolled { box-shadow: 0 1px 0 rgb(36 27 20 / 0.06), 0 8px 24px -16px rgb(36 27 20 / 0.25); }
+
+/* Mobile Drawer: Links gestaffelt einblenden */
+details.mobile-nav[open] .drawer-item {
+  animation: drawer-in var(--dur-base) var(--ease-brand) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Große Zahlen/Ziffern in Fraunces: alte Ziffern für Editorial-Charakter */
+.num-old { font-variant-numeric: oldstyle-nums; }

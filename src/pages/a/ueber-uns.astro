@@ -9,6 +9,7 @@ import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
 import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
 import Figure from '../../variants/a-krume/components/Figure.astro';
 import site from '../../data/site.json';
+import { linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
 
 const base = '/a';
 ---
@@ -27,6 +28,7 @@ const base = '/a';
         eyebrow="Über uns"
         title="Ein Café, das wir übernommen haben"
         intro="Wir haben ein Café übernommen, das viele in Rerik schon lange kannten und mochten. Manches haben wir bewusst verändert — allen voran den Sauerteig, der seitdem fast überall drinsteckt. Anderes braucht noch Zeit. Auf Instagram nennen wir das unsere Reise zum Sauerteig-Café."
+        rule
       />
     </div>
   </section>
@@ -36,9 +38,9 @@ const base = '/a';
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
       <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center">
         <div class="md:col-span-7" data-reveal>
-          <Figure motif="gastraum" aspect="aspect-[4/5]" sizes="(min-width: 768px) 55vw, 100vw" />
+          <Figure motif="gastraum" aspect="aspect-[4/5]" sizes="(min-width: 768px) 55vw, 100vw" mat="offset" hover />
         </div>
-        <div class="md:col-span-4 md:col-start-8 md:-ml-16 md:mt-16" data-reveal style="--reveal-delay:100ms">
+        <div class="relative z-10 md:col-span-4 md:col-start-8 md:-ml-16 md:mt-16" data-reveal style="--reveal-delay:100ms">
           <div class="rounded-card bg-paper p-6 md:p-8 md:shadow-[0_1px_0_0_rgba(36,27,20,0.08)]">
             <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Was neu ist</p>
             <h2 class="mt-2 text-3xl">Dieselben Räume, eine andere Backstube</h2>
@@ -68,6 +70,8 @@ const base = '/a';
       <p class="prose-measure mt-8 text-lg text-ink-soft" data-reveal>
         Hinter der Theke und in der Backstube steht ein kleines Team. Wer das im Einzelnen ist, stellen wir dir
         hier vor, sobald Fotos und Namen final abgestimmt sind — bis dahin bleiben die Bilder Platzhalter.
+        Wer hier bäckt, steht schon fest:
+        <a href={`${base}/ueber-mich`} class="link-ul text-ink">Moin, ich bin Josie.</a>
       </p>
       <!-- TODO(kunde): Namen, Rollen und aktuelle Teamfotos ergänzen, sobald final freigegeben. Keine erfundenen Namen oder Gründungsjahre einsetzen. -->
     </div>
@@ -84,11 +88,9 @@ const base = '/a';
             Rerik liegt zwischen Ostsee und Salzhaff, ruhiger als seine größeren Nachbarorte an der Küste. Für uns
             war das Grund genug, hier eine Backstube zu betreiben, die nicht nur an Sommertagen trägt.
           </p>
-          <a
-            href={`${base}/besuch`}
-            class="mt-6 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
-          >
+          <a href={`${base}/besuch`} class:list={[linkArrow, 'mt-6']}>
             Anfahrt und Öffnungszeiten
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </a>
         </div>
         <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
@@ -109,8 +111,9 @@ const base = '/a';
           <p class="prose-measure mt-3 text-ink-soft">
             Sauerteig statt Hefe, überall wo es geht — 18 Stunden für einen Laib, kein Schritt wird abgekürzt.
           </p>
-          <a href={`${base}/sauerteig`} class="mt-4 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink">
+          <a href={`${base}/sauerteig`} class:list={[linkArrow, 'mt-4']}>
             Der 18-Stunden-Prozess
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </a>
         </div>
         <div data-reveal style="--reveal-delay:100ms">

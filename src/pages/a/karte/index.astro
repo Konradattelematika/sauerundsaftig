@@ -8,6 +8,7 @@ import MenuItemsList from '../../../variants/a-krume/components/MenuItemsList.as
 import Figure from '../../../variants/a-krume/components/Figure.astro';
 import { MENU_SECTIONS } from '../../../lib/variants';
 import { menuSchema } from '../../../lib/schema-org';
+import { btnGhost, linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
 
 const base = '/a';
 const allSections = await getCollection('menu');
@@ -38,19 +39,19 @@ const jsonLd = [
         eyebrow="Die Karte"
         title="Fünf Sektionen, ein Teig als Basis"
         intro="Frühstück, Kuchen, Brot, Schnecken, Kaffee — fast überall steckt derselbe Sauerteig drin, nur anders verarbeitet."
+        rule
       />
       <nav aria-label="Sektionen der Karte" class="mt-8 flex flex-wrap gap-3" data-reveal style="--reveal-delay:100ms">
         {sections.map((s) => (
-          <a
-            href={`#${s.data.slug}`}
-            class="inline-flex min-h-11 items-center rounded-card border-2 border-ink/20 px-4 py-2 font-mono text-sm uppercase tracking-widest text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:border-ink"
-          >
+          <a href={`#${s.data.slug}`} class:list={[btnGhost, 'uppercase tracking-widest']}>
             {s.data.title}
           </a>
         ))}
       </nav>
     </div>
   </section>
+
+  <span class="tz-band" aria-hidden="true"></span>
 
   {sections.map((section, i) => (
     <section id={section.data.slug} class:list={['scroll-mt-24 py-14 md:py-24', i % 2 === 1 ? 'bg-bg-alt' : 'bg-bg']}>
@@ -61,11 +62,9 @@ const jsonLd = [
             {section.data.note && (
               <p class="prose-measure mt-4 font-mono text-sm text-ink-soft">{section.data.note}</p>
             )}
-            <a
-              href={`${base}/karte/${section.data.slug}`}
-              class="mt-6 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
-            >
+            <a href={`${base}/karte/${section.data.slug}`} class:list={[linkArrow, 'mt-6']}>
               {section.data.slug === 'schnecken' ? 'Zur Signature-Seite' : `${section.data.title} als eigene Seite`}
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             </a>
           </div>
           <div class="md:col-span-8">

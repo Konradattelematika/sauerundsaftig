@@ -35,6 +35,7 @@ const MOTIFS = [
   ['fassade', '16x9', 'Fassade Dünenstraße 1'],
   ['kueste', '16x9', 'Steilküste / Salzhaff, ruhig'],
   ['tgtg', '1x1', 'Too-Good-To-Go-Tüte'],
+  ['josie-portrait', '4x5', 'Porträt Josie im Café'],
 ];
 
 /** Farbklima je Variante: [Verlauf-Stops], Labelfarbe, Kornstärke */
@@ -77,12 +78,15 @@ function svgFor(variant, motif, ratio, desc) {
 </svg>`;
 }
 
+// Optional: nur ein Motiv erzeugen (`node scripts/generate-placeholders.mjs "" josie-portrait`)
+const onlyMotif = process.argv[3];
+const motifs = onlyMotif ? MOTIFS.filter(([m]) => m === onlyMotif) : MOTIFS;
 for (const variant of process.argv[2] ? [process.argv[2]] : ['a', 'b', 'c', 'd']) {
   const dir = new URL(`../src/assets/placeholders/${variant}/`, import.meta.url).pathname;
   await mkdir(dir, { recursive: true });
-  for (const [motif, ratio, desc] of MOTIFS) {
+  for (const [motif, ratio, desc] of motifs) {
     const svg = Buffer.from(svgFor(variant, motif, ratio, desc));
     await sharp(svg).jpeg({ quality: 72, mozjpeg: true }).toFile(`${dir}${motif}.jpg`);
   }
-  console.log(`Variante ${variant}: ${MOTIFS.length} Platzhalter`);
+  console.log(`Variante ${variant}: ${motifs.length} Platzhalter`);
 }

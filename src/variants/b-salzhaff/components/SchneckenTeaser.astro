@@ -4,6 +4,7 @@ import { getEntry } from 'astro:content';
 import SectionLabel from './SectionLabel.astro';
 import MaskImage from './MaskImage.astro';
 import { SIZES_THIRD } from '../../../lib/images';
+import { linkArrow, linkArrowIcon, imgHoverScale } from '../lib/ui';
 
 interface Props {
   base: string;
@@ -19,26 +20,24 @@ const items = schnecken?.data.items ?? [];
     <h2 class="font-display text-[clamp(2.2rem,6vw,4.5rem)] leading-[0.98]">
       Sauerteig statt Hefe.<br />18 Stunden Ruhe.
     </h2>
-    <a
-      href={`${base}/karte/schnecken`}
-      class="group inline-flex min-h-[44px] w-fit items-center gap-2 font-mono text-[15px] text-ink"
-    >
+    <a href={`${base}/karte/schnecken`} class={linkArrow}>
       Zur Schnecken-Seite
-      <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+      <span class={linkArrowIcon} aria-hidden="true">→</span>
     </a>
   </div>
 
   <div class="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3">
     {items.map((item, i) => (
-      <a href={`${base}/karte/schnecken`} class="block">
+      <a href={`${base}/karte/schnecken`} class="group block">
         <MaskImage
           motif={item.motif ?? 'schnecke-blech'}
           alt={item.name}
           sizes={SIZES_THIRD}
           class="aspect-[4/5]"
+          imgClass={imgHoverScale}
           delay={i * 80}
         />
-        <p class="mt-4 text-xl">{item.name}</p>
+        <p class="mt-4 text-xl transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:text-primary">{item.name}</p>
       </a>
     ))}
   </div>

@@ -6,6 +6,7 @@ import { NAV_FOOTER, NAV_LEGAL } from '../../../lib/variants';
 import { weekOverview } from '../../../lib/opening-hours';
 import { telHref } from '../../../lib/format';
 import type { Schedule } from '../../../lib/opening-hours';
+import { linkUnderline } from '../lib/ui';
 
 interface Props {
   base: string;
@@ -25,7 +26,7 @@ const week = weekOverview(site.openingHours as unknown as Schedule);
           href={`https://www.instagram.com/${site.instagram}/`}
           target="_blank"
           rel="noopener"
-          class="font-mono text-[15px] text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+          class:list={['font-mono text-[15px]', linkUnderline]}
         >
           @{site.instagram}
         </a>
@@ -34,7 +35,7 @@ const week = weekOverview(site.openingHours as unknown as Schedule);
       <nav aria-label="Weitere Seiten" class="flex flex-col gap-2">
         <p class="mb-2 font-mono text-[15px] uppercase tracking-widest text-ink-soft">Mehr</p>
         {NAV_FOOTER.map((item) => (
-          <a href={`${base}${item.path}`} class="w-fit min-h-[44px] py-1.5 text-ink hover:text-primary flex items-center">
+          <a href={`${base}${item.path}`} class="flex w-fit min-h-[44px] items-center py-1.5 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-primary">
             {item.label}
           </a>
         ))}
@@ -58,7 +59,7 @@ const week = weekOverview(site.openingHours as unknown as Schedule);
       <p class="font-display text-2xl text-ink">{site.claim}</p>
       <nav aria-label="Rechtliches" class="flex flex-wrap gap-x-6 gap-y-2">
         {NAV_LEGAL.map((item) => (
-          <a href={`${base}${item.path}`} class="font-mono text-[15px] text-ink-soft hover:text-ink">
+          <a href={`${base}${item.path}`} class="font-mono text-[15px] text-ink-soft transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-ink">
             {item.label}
           </a>
         ))}

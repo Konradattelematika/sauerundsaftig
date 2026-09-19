@@ -51,6 +51,49 @@
       { threshold: 0.6 },
     );
     document.querySelectorAll('[data-countup]').forEach((el) => cu.observe(el));
+
+    initParallax();
+  }
+
+  // Dezenter Parallax: Elemente mit data-parallax="0.06" verschieben sich um
+  // (Abstand zur Viewport-Mitte × Faktor). Nur ab 768 px, nur transform, ein rAF pro Frame.
+  // Ohne JS/mit reduced-motion passiert nichts — die Elemente stehen einfach still.
+  let parallaxBound = false;
+  let parallaxEls: HTMLElement[] = [];
+  function paintParallax() {
+    const vh = window.innerHeight;
+    for (const el of parallaxEls) {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -vh || r.top > vh * 2) continue;
+      const f = Number(el.dataset.parallax ?? '0.06');
+      const d = r.top + r.height / 2 - vh / 2;
+      el.style.transform = `translate3d(0, ${(-d * f).toFixed(1)}px, 0)`;
+    }
+  }
+  function initParallax() {
+    parallaxEls = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
+    if (!window.matchMedia('(min-width: 768px)').matches) {
+      parallaxEls.forEach((el) => (el.style.transform = ''));
+      parallaxEls = [];
+      return;
+    }
+    paintParallax();
+    if (parallaxBound) return;
+    parallaxBound = true;
+    let ticking = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking || parallaxEls.length === 0) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          paintParallax();
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+    window.addEventListener('resize', () => initParallax(), { passive: true });
   }
 
   init();

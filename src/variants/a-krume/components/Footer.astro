@@ -1,7 +1,8 @@
 ---
 /**
- * Footer Variante A: dunkler Abschluss (bg-ink), NAV_FOOTER/NAV_LEGAL,
- * Öffnungszeiten kompakt, Instagram, TGTG-Zeile, Claim.
+ * Footer Variante A: Terrazzo-Band als Übergang (Material „Theke"), dunkler Abschluss
+ * (bg-ink), NAV_FOOTER + „Über mich" (nur A), NAV_LEGAL, Öffnungszeiten kompakt,
+ * Instagram, TGTG-Zeile, Claim.
  */
 import Logo from '../../../components/shared/Logo.astro';
 import site from '../../../data/site.json';
@@ -15,9 +16,14 @@ interface Props {
 const { base } = Astro.props;
 const week = weekOverview(site.openingHours as unknown as Schedule);
 const phoneHref = telHref(site.phone);
+// „Über mich" (Josie) gibt es nur in Variante A — direkt hinter „Über uns" einsortieren
+const footerNav = NAV_FOOTER.flatMap((item) =>
+  item.path === '/ueber-uns' ? [item, { label: 'Über mich', path: '/ueber-mich' }] : [item],
+);
 ---
 
 <footer class="bg-ink text-bg">
+  <span class="tz-band" aria-hidden="true"></span>
   <div class="mx-auto grid max-w-[1440px] gap-10 px-4 py-16 md:grid-cols-12 md:gap-8 md:px-8 md:py-24">
     <div class="md:col-span-4">
       <Logo variant="lockup" tone="light" width={170} loading="lazy" />
@@ -27,18 +33,19 @@ const phoneHref = telHref(site.phone);
         href={`https://www.instagram.com/${site.instagram}/`}
         target="_blank"
         rel="noopener"
-        class="mt-5 inline-flex min-h-11 items-center font-mono text-sm underline decoration-bg/40 underline-offset-4 hover:decoration-bg"
+        class="link-ul link-ul--light mt-5 inline-flex min-h-11 items-center gap-2 font-mono text-sm"
       >
         @{site.instagram} auf Instagram
+        <svg class="arrow-icon size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
       </a>
     </div>
 
     <nav aria-label="Footer-Navigation" class="md:col-span-3">
       <p class="font-mono text-xs uppercase tracking-widest text-bg/60">Mehr</p>
       <ul class="mt-4 flex flex-col gap-3">
-        {NAV_FOOTER.map((item) => (
+        {footerNav.map((item) => (
           <li>
-            <a href={`${base}${item.path}`} class="inline-flex min-h-8 items-center text-bg/90 hover:text-bg">
+            <a href={`${base}${item.path}`} class="link-ul link-ul--light inline-flex min-h-8 items-center text-bg/90 hover:text-bg">
               {item.label}
             </a>
           </li>
@@ -56,7 +63,7 @@ const phoneHref = telHref(site.phone);
           </>
         ))}
       </dl>
-      <a href={phoneHref} class="mt-5 inline-flex min-h-11 items-center font-mono text-xl underline decoration-bg/40 underline-offset-4 hover:decoration-bg">
+      <a href={phoneHref} class="link-ul link-ul--light mt-5 inline-flex min-h-11 items-center font-mono text-xl">
         {site.phoneDisplay}
       </a>
       <p class="mt-4 max-w-[38ch] text-sm text-bg/70">
@@ -70,7 +77,7 @@ const phoneHref = telHref(site.phone);
       <p>© {new Date().getFullYear()} {site.name} · Dünenstraße 1, {site.address.city}</p>
       <ul class="flex flex-wrap items-center gap-5">
         {NAV_LEGAL.map((item) => (
-          <li><a href={`${base}${item.path}`} class="inline-flex min-h-8 items-center hover:text-bg">{item.label}</a></li>
+          <li><a href={`${base}${item.path}`} class="inline-flex min-h-8 items-center transition-colors duration-[var(--dur-fast)] hover:text-bg">{item.label}</a></li>
         ))}
       </ul>
     </div>

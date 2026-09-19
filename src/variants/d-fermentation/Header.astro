@@ -27,7 +27,11 @@ const path = Astro.url.pathname;
     </nav>
 
     <div class="flex items-center gap-4">
-      <OpeningStatus class="hidden lg:inline-flex" />
+      {/* Wrapper statt Class-Prop: die Komponente bringt selbst "inline-flex" mit,
+         das würde ein direkt übergebenes "hidden" in der Kaskade wieder aufheben. */}
+      <span class="hidden lg:inline-flex">
+        <OpeningStatus />
+      </span>
       <a
         href={`${base}${NAV_CTA.path}`}
         class="btn-glow hidden min-h-[44px] items-center rounded-card bg-accent px-5 py-2.5 font-mono text-sm text-black md:inline-flex"
@@ -51,7 +55,11 @@ const path = Astro.url.pathname;
   <div id="d-mobile-menu" class="hidden border-t border-ink/10 bg-bg md:hidden" hidden>
     <nav class="grid gap-1 px-4 py-4" aria-label="Mobile Navigation">
       {[...NAV_MAIN, NAV_CTA].map((n) => (
-        <a href={`${base}${n.path}`} class="flex min-h-[48px] items-center rounded-card px-3 font-display text-2xl">
+        <a
+          href={`${base}${n.path}`}
+          class:list={['flex min-h-[48px] items-center rounded-card px-3 font-display text-2xl transition-colors duration-[var(--dur-fast)]', path.startsWith(`${base}${n.path}`) ? 'text-primary' : 'text-ink']}
+          aria-current={path.startsWith(`${base}${n.path}`) ? 'page' : undefined}
+        >
           {n.label}
         </a>
       ))}

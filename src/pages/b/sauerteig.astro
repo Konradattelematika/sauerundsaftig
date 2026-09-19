@@ -9,6 +9,7 @@ import RevealHeadline from '../../variants/b-salzhaff/components/RevealHeadline.
 import MaskImage from '../../variants/b-salzhaff/components/MaskImage.astro';
 import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
 import { breadcrumbs } from '../../lib/schema-org';
+import { linkUnderline } from '../../variants/b-salzhaff/lib/ui';
 
 const base = '/b';
 
@@ -69,7 +70,7 @@ const jsonLd = [
       ))}
     </ol>
     <p class="mt-8 text-ink-soft">
-      Ausführlich nachlesen: <a href={`${base}/journal/achtzehn-stunden`} class="text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink">Journal — 18 Stunden, die Zeitleiste eines Laibs</a>.
+      Ausführlich nachlesen: <a href={`${base}/journal/achtzehn-stunden`} class={linkUnderline}>Journal — 18 Stunden, die Zeitleiste eines Laibs</a>.
     </p>
   </section>
 </Layout>

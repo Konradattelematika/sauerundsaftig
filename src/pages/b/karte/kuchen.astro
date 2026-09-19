@@ -2,6 +2,7 @@
 /** Sektionsseite Kuchen (VARIANT-BRIEF Routen /karte/kuchen). */
 import { getEntry } from 'astro:content';
 import Layout from '../../../variants/b-salzhaff/Layout.astro';
+import { linkBack } from '../../../variants/b-salzhaff/lib/ui';
 import MenuSection from '../../../variants/b-salzhaff/components/MenuSection.astro';
 import MenuLegend from '../../../variants/b-salzhaff/components/MenuLegend.astro';
 import { breadcrumbs, menuSchema } from '../../../lib/schema-org';
@@ -22,7 +23,7 @@ const jsonLd = [
 
 <Layout title={`${section.data.title} — Karte — Sauer & Saftig`} description={section.data.intro} jsonLd={jsonLd}>
   <div class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
-    <a href={`${base}/karte`} class="inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink-soft hover:text-ink">
+    <a href={`${base}/karte`} class={linkBack}>
       ← Zur ganzen Karte
     </a>
     <div class="mt-8">

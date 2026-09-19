@@ -8,6 +8,7 @@ import Layout from '../../../variants/b-salzhaff/Layout.astro';
 import MaskImage from '../../../variants/b-salzhaff/components/MaskImage.astro';
 import { formatDate } from '../../../lib/format';
 import { article, breadcrumbs } from '../../../lib/schema-org';
+import { linkBack } from '../../../variants/b-salzhaff/lib/ui';
 
 export async function getStaticPaths() {
   const entries = await getCollection('journal');
@@ -39,7 +40,7 @@ const jsonLd = [
   <div class="scroll-progress fixed inset-x-0 top-0 z-[60] h-[2px] bg-primary" data-scroll-progress style="width: 0%"></div>
 
   <article class="mx-auto max-w-[900px] px-4 pt-10 md:px-8 md:pt-16">
-    <a href={`${base}/journal`} class="inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink-soft hover:text-ink">
+    <a href={`${base}/journal`} class={linkBack}>
       ← Journal
     </a>
     <p class="mt-6 font-mono text-[15px] uppercase tracking-widest text-ink-soft">

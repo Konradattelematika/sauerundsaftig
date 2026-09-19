@@ -42,6 +42,7 @@ export const MOTIF_ALT: Record<string, string> = {
   fassade: 'Fassade des Cafés in der Dünenstraße 1 (Platzhalterbild)',
   kueste: 'Steilküste am Salzhaff bei Rerik (Platzhalterbild)',
   tgtg: 'Gepackte Too-Good-To-Go-Tüte auf der Theke (Platzhalterbild)',
+  'josie-portrait': 'Porträt von Josie im Café (Platzhalterbild — echtes Foto folgt)',
 };
 
 export function getImage(variant: VariantKey, motif: string): ImageMetadata {
@@ -71,6 +72,7 @@ const PHOTO_ALT: Record<string, string> = {
   'torte-rosa': 'Auftragstorte in Rosa mit gespritzten Bögen und Schleifen',
   'torte-blumen': 'Auftragstorte mit heller Creme und echten Wiesenblumen',
   'torte-vintage': 'Erdbeer-Mascarpone-Torte im Vintage-Stil mit Buttercreme',
+  'josie-portrait': 'Josie im Café, in den Händen die Urkunde „Bester Bäcker 2025 – Landkreis Rostock“',
 };
 
 export function hasPhoto(motif: string): boolean {

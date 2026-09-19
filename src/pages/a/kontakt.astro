@@ -10,6 +10,7 @@ import OpeningStatus from '../../components/shared/OpeningStatus.astro';
 import site from '../../data/site.json';
 import { telHref } from '../../lib/format';
 import { localBusiness } from '../../lib/schema-org';
+import { linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
 
 const base = '/a';
 const phoneHref = telHref(site.phone);
@@ -28,6 +29,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
       <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
         <div class="md:col-span-6" data-reveal>
           <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Kontakt</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
           <h1 class="mt-4 text-[clamp(2.5rem,6vw,4rem)]">Sprich uns an</h1>
           <p class="prose-measure mt-5 text-lg text-ink-soft">
             {site.address.street}, {site.address.zip} {site.address.city}
@@ -40,13 +42,9 @@ const jsonLd = [localBusiness(String(Astro.site))];
             {site.phoneDisplay}
           </a>
           <div class="mt-6">
-            <a
-              href={`https://www.instagram.com/${site.instagram}/`}
-              target="_blank"
-              rel="noopener"
-              class="inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
-            >
+            <a href={`https://www.instagram.com/${site.instagram}/`} target="_blank" rel="noopener" class={linkArrow}>
               @{site.instagram} auf Instagram
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
             </a>
           </div>
 

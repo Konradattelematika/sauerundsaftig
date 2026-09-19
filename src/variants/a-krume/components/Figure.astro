@@ -1,7 +1,9 @@
 ---
 /**
- * Bild-Baustein: astro:assets Picture in einem Seitenverhältnis-Rahmen (CLS-sicher),
- * optional mit data-reveal. Motiv-Keys s. lib/images.ts.
+ * Bild-Baustein: astro:assets Picture in einem Seitenverhältnis-Rahmen (CLS-sicher).
+ * Optionen: data-reveal (reveal / revealKind="image" = Freischäl-Effekt), sanfte
+ * Hover-Bewegung (hover), Terrazzo-Passepartout (mat="flat" | "offset" | "offset-left").
+ * Motiv-Keys s. lib/images.ts.
  */
 import { Picture } from 'astro:assets';
 import { getImage, getAlt, WIDTHS } from '../../../lib/images';
@@ -16,7 +18,13 @@ interface Props {
   loading?: 'eager' | 'lazy';
   fetchpriority?: 'high' | 'low' | 'auto';
   reveal?: boolean;
+  /** "image" = Clip-Reveal von unten (nur Variante A) */
+  revealKind?: 'default' | 'image';
   revealDelay?: 0 | 100 | 200;
+  /** Bild bewegt sich beim Hover minimal (auch wenn ein Eltern-.group gehovert wird) */
+  hover?: boolean;
+  /** Terrazzo-Passepartout: flach umlaufend oder versetzt hinter dem Bild */
+  mat?: 'none' | 'flat' | 'offset' | 'offset-left';
   class?: string;
   imgClass?: string;
 }
@@ -28,30 +36,49 @@ const {
   loading = 'lazy',
   fetchpriority = 'auto',
   reveal = false,
+  revealKind = 'default',
   revealDelay,
+  hover = false,
+  mat = 'none',
   class: cls = '',
   imgClass = '',
 } = Astro.props;
 const image = getImage('a', motif);
 const widths = safeWidths(image, WIDTHS);
 const style = revealDelay ? `--reveal-delay:${revealDelay}ms` : undefined;
+const revealAttr = reveal ? (revealKind === 'image' ? 'image' : '') : undefined;
+
+const frameClass = [
+  'overflow-hidden rounded-card bg-bg-alt',
+  aspect,
+  hover && 'fig-hover',
+  mat === 'none' && cls,
+];
+const matClass = [
+  mat === 'flat' && 'tz-mat',
+  (mat === 'offset' || mat === 'offset-left') && 'tz-offset',
+  mat === 'offset-left' && 'tz-offset--left',
+  cls,
+];
 ---
 
-{reveal ? (
-  <div class:list={['overflow-hidden rounded-card bg-bg-alt', aspect, cls]} data-reveal style={style}>
-    <Picture
-      src={image}
-      formats={['avif', 'webp']}
-      widths={widths}
-      sizes={sizes}
-      alt={alt ?? getAlt(motif)}
-      loading={loading}
-      fetchpriority={fetchpriority}
-      class:list={['h-full w-full object-cover', imgClass]}
-    />
+{mat !== 'none' ? (
+  <div class:list={matClass} data-reveal={revealAttr} style={style}>
+    <div class:list={frameClass}>
+      <Picture
+        src={image}
+        formats={['avif', 'webp']}
+        widths={widths}
+        sizes={sizes}
+        alt={alt ?? getAlt(motif)}
+        loading={loading}
+        fetchpriority={fetchpriority}
+        class:list={['h-full w-full object-cover', imgClass]}
+      />
+    </div>
   </div>
 ) : (
-  <div class:list={['overflow-hidden rounded-card bg-bg-alt', aspect, cls]}>
+  <div class:list={frameClass} data-reveal={revealAttr} style={style}>
     <Picture
       src={image}
       formats={['avif', 'webp']}

@@ -1,0 +1,372 @@
+---
+/**
+ * Instagram-Sektion Variante A — editorialer, horizontaler Feed statt 3×3-Raster.
+ * Unterschiedliche Kachelgrößen (lg/md/sm), kleine Kacheln versetzt, Scroll-Snap,
+ * Drag mit der Maus, Wischen auf Touch, Pfeiltasten-Buttons, Fortschrittslinie,
+ * Cursor-Label auf Desktop, Caption/Datum als Hover-Overlay (Touch: statisch unter dem Bild).
+ * Daten: lib/instagram.ts (lokaler Fallback, Live-Anbindung dort dokumentiert).
+ * prefers-reduced-motion: keine Skalierung, kein Cursor-Label, kein sanftes Scrollen.
+ */
+import { Picture } from 'astro:assets';
+import { getInstagramPosts, INSTAGRAM_PROFILE, INSTAGRAM_IS_LIVE } from '../../../lib/instagram';
+import { formatDate } from '../../../lib/format';
+import { safeWidths } from '../lib/picture';
+import { linkArrow, arrowIcon } from '../lib/ui';
+
+interface Props {
+  title?: string;
+  subline?: string;
+  limit?: number;
+  /** Hintergrund passend zur Sektionsfolge */
+  tone?: 'bg' | 'bg-alt';
+}
+const {
+  title = 'Frisch aus der Backstube',
+  subline = 'Noch mehr Krümel gibt’s auf Instagram.',
+  limit = 10,
+  tone = 'bg',
+} = Astro.props;
+
+const posts = await getInstagramPosts(limit);
+// Rhythmus: groß · klein (oben versetzt) · mittel · klein (unten versetzt) · groß · mittel …
+const PATTERN = ['lg', 'sm up', 'md', 'sm down', 'lg', 'md', 'sm up', 'md', 'lg', 'sm down'] as const;
+const WIDTHS = [320, 480, 640, 960];
+const SIZES: Record<string, string> = {
+  lg: '(min-width: 1440px) 460px, (min-width: 768px) 34vw, 78vw',
+  md: '(min-width: 1440px) 330px, (min-width: 768px) 24vw, 58vw',
+  sm: '(min-width: 1440px) 230px, (min-width: 768px) 17vw, 42vw',
+};
+const handle = `@${INSTAGRAM_PROFILE.username}`;
+---
+
+<section class:list={['ig relative overflow-x-clip py-14 md:py-24', tone === 'bg' ? 'bg-bg' : 'bg-bg-alt']} aria-labelledby="ig-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl" data-reveal>
+        <p><span class="tz-tag">Instagram · {handle}</span></p>
+        <h2 id="ig-title" class="mt-4 text-[clamp(2rem,5vw,3.5rem)]">{title}</h2>
+        <p class="prose-measure mt-3 text-lg text-ink-soft md:text-xl">{subline}</p>
+      </div>
+      <div class="hidden items-center gap-2 md:flex" data-reveal style="--reveal-delay:100ms">
+        <button
+          type="button"
+          class="ig-btn grid size-11 place-items-center rounded-card border-2 border-ink text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink"
+          data-ig-prev
+          aria-label="Vorherige Beiträge"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+        </button>
+        <button
+          type="button"
+          class="ig-btn grid size-11 place-items-center rounded-card border-2 border-ink text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink"
+          data-ig-next
+          aria-label="Weitere Beiträge"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ig-scroller mt-8 md:mt-12" data-ig-scroller data-reveal style="--reveal-delay:150ms">
+    <ul class="ig-track" role="list">
+      {posts.map((post, i) => {
+        const [size, shift] = PATTERN[i % PATTERN.length].split(' ');
+        const isLocal = post.source === 'local';
+        return (
+          <li class:list={['ig-item', `ig-item--${size}`, shift && `ig-item--${shift}`]}>
+            <a
+              href={post.permalink}
+              target="_blank"
+              rel="noopener"
+              class="ig-tile tz-frame group block rounded-card focus-visible:outline-offset-4"
+              data-ig-tile
+              aria-label={isLocal ? `${post.alt} — ${handle} auf Instagram öffnen` : `Instagram-Beitrag öffnen: ${post.caption ?? post.alt}`}
+            >
+              <figure class="m-0">
+                <div class:list={['ig-media overflow-hidden rounded-card bg-bg-alt', size === 'sm' ? 'aspect-square' : 'aspect-[4/5]']}>
+                  {typeof post.image === 'string' ? (
+                    <img src={post.image} alt={post.alt} loading="lazy" decoding="async" class="h-full w-full object-cover" />
+                  ) : (
+                    <Picture
+                      src={post.image}
+                      formats={['avif', 'webp']}
+                      widths={safeWidths(post.image, WIDTHS)}
+                      sizes={SIZES[size]}
+                      alt={post.alt}
+                      loading="lazy"
+                      class="h-full w-full object-cover"
+                    />
+                  )}
+                  {post.isVideo && (
+                    <span class="ig-reel absolute right-3 top-3 grid size-8 place-items-center rounded-full bg-ink/70 text-bg" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                    </span>
+                  )}
+                  <figcaption class="ig-cap">
+                    {isLocal ? (
+                      <span class="block font-mono text-xs uppercase tracking-widest">{handle}</span>
+                    ) : (
+                      <>
+                        {post.caption && <span class="ig-cap-text block text-[0.95rem] leading-snug">{post.caption}</span>}
+                        {post.date && <span class="mt-1 block font-mono text-[11px] uppercase tracking-widest opacity-80">{formatDate(post.date, { year: undefined })}</span>}
+                      </>
+                    )}
+                  </figcaption>
+                </div>
+                <figcaption class="ig-cap-static mt-2 font-mono text-[12px] uppercase tracking-widest text-ink-soft" aria-hidden="true">
+                  {isLocal ? handle : post.date ? formatDate(post.date, { year: undefined }) : handle}
+                </figcaption>
+              </figure>
+            </a>
+          </li>
+        );
+      })}
+      <li class="ig-item ig-item--end" aria-hidden="true"></li>
+    </ul>
+    <div class="ig-cursor" data-ig-cursor aria-hidden="true">Ansehen ↗</div>
+  </div>
+
+  <div class="mx-auto mt-6 max-w-[1440px] px-4 md:mt-8 md:px-8">
+    <div class="ig-progress" aria-hidden="true"><span data-ig-progress></span></div>
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-4">
+      <a href={INSTAGRAM_PROFILE.url} target="_blank" rel="noopener" class={linkArrow}>
+        {handle} auf Instagram folgen
+        <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+      </a>
+      <p class="font-mono text-[12px] uppercase tracking-widest text-ink-soft md:hidden">Wischen für mehr</p>
+      {!INSTAGRAM_IS_LIVE && (
+        <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft/80" title="Stand des Imports; Live-Feed folgt mit API-Zugang">
+          Auswahl · Stand {formatDate(INSTAGRAM_PROFILE.fetchedAt, { month: 'short' })}
+        </p>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Scroller bündig zum Container, auf großen Screens links am Raster ausgerichtet */
+  .ig-scroller {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: max(1rem, calc((100vw - 1440px) / 2 + 2rem));
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+    padding-block: 0.5rem;
+  }
+  .ig-scroller::-webkit-scrollbar { display: none; }
+  .ig-scroller[data-dragging] { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+  .ig-track {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(0.75rem, 1.6vw, 1.5rem);
+    width: max-content;
+    padding-inline: max(1rem, calc((100vw - 1440px) / 2 + 2rem));
+  }
+  @media (max-width: 767px) {
+    .ig-scroller { scroll-padding-inline: 1rem; }
+    .ig-track { padding-inline: 1rem; }
+  }
+  .ig-item { flex: 0 0 auto; scroll-snap-align: start; }
+  .ig-item--lg { width: clamp(260px, 34vw, 460px); }
+  .ig-item--md { width: clamp(200px, 24vw, 330px); }
+  .ig-item--sm { width: clamp(150px, 17vw, 230px); }
+  .ig-item--up { margin-top: clamp(1.5rem, 4vw, 4rem); }
+  .ig-item--down { margin-top: clamp(4rem, 12vw, 11rem); }
+  .ig-item--end { width: 1px; }
+  @media (max-width: 767px) {
+    .ig-item--lg { width: 78vw; }
+    .ig-item--md { width: 58vw; }
+    .ig-item--sm { width: 42vw; }
+    .ig-item--down { margin-top: clamp(3rem, 14vw, 5rem); }
+  }
+
+  .ig-tile { -webkit-user-drag: none; }
+  .ig-tile[draggable='false'] img { -webkit-user-drag: none; pointer-events: none; }
+  .ig-media { position: relative; }
+  .ig-media img { transition: transform var(--dur-slow) var(--ease-brand); }
+  .ig-tile:hover .ig-media img,
+  .ig-tile:focus-visible .ig-media img { transform: scale(1.04); }
+
+  /* Overlay-Caption: nur bei Hover-fähigen Geräten, schiebt sich von unten ein */
+  .ig-cap {
+    position: absolute;
+    inset: auto 0 0 0;
+    margin: 0;
+    padding: 2.5rem 0.9rem 0.9rem;
+    color: var(--color-bg);
+    background: linear-gradient(to top, rgb(36 27 20 / 0.72), rgb(36 27 20 / 0));
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--dur-fast) var(--ease-brand), transform var(--dur-fast) var(--ease-brand);
+  }
+  .ig-cap-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .ig-cap-static { display: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .ig-tile:hover .ig-cap,
+    .ig-tile:focus-visible .ig-cap { opacity: 1; transform: none; }
+  }
+  @media (hover: none), (pointer: coarse) {
+    .ig-cap { display: none; }
+    .ig-cap-static { display: block; }
+  }
+
+  /* Fortschrittslinie */
+  .ig-progress { position: relative; height: 2px; background: rgb(36 27 20 / 0.12); }
+  .ig-progress > span {
+    position: absolute; top: 0; bottom: 0; left: 0;
+    width: 20%;
+    background: var(--color-ink);
+    transform: translateX(var(--ig-x, 0));
+    transition: transform 80ms linear, width 80ms linear;
+  }
+
+  /* Cursor-Label (Desktop, kein reduced-motion): kleine Terrazzo-Scheibe folgt der Maus */
+  .ig-cursor {
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 5;
+    display: none;
+    place-items: center;
+    width: 5.25rem; height: 5.25rem;
+    border-radius: 999px;
+    background-color: #d8dedb;
+    background-image: var(--tz-url);
+    background-size: 420px auto;
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: inset 0 0 0 1px rgb(36 27 20 / 0.12), 0 8px 24px -12px rgb(36 27 20 / 0.4);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+    transition: opacity var(--dur-fast) var(--ease-brand), transform var(--dur-fast) var(--ease-brand);
+    will-change: transform;
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .ig-cursor { display: grid; }
+    .ig-scroller[data-cursor-on] .ig-cursor { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .ig-scroller[data-cursor-on] .ig-tile { cursor: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ig-tile:hover .ig-media img { transform: none; }
+  }
+</style>
+
+<script>
+  /**
+   * Feed-Interaktion: Drag mit der Maus (Touch scrollt nativ), Pfeil-Buttons, Fortschritt,
+   * Cursor-Label. Läuft je Scroller einmal; bei View-Transitions erneut (astro:page-load).
+   */
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function initFeed(section: HTMLElement) {
+    const scroller = section.querySelector<HTMLElement>('[data-ig-scroller]');
+    if (!scroller || scroller.dataset.ready) return;
+    scroller.dataset.ready = '1';
+
+    const prev = section.querySelector<HTMLButtonElement>('[data-ig-prev]');
+    const next = section.querySelector<HTMLButtonElement>('[data-ig-next]');
+    const progress = section.querySelector<HTMLElement>('[data-ig-progress]');
+    const cursor = section.querySelector<HTMLElement>('[data-ig-cursor]');
+    const tiles = Array.from(scroller.querySelectorAll<HTMLAnchorElement>('[data-ig-tile]'));
+    tiles.forEach((t) => t.setAttribute('draggable', 'false'));
+
+    // --- Fortschritt + Button-Zustand ---
+    let raf = 0;
+    const paint = () => {
+      raf = 0;
+      const max = scroller.scrollWidth - scroller.clientWidth;
+      const ratio = max > 0 ? scroller.scrollLeft / max : 0;
+      if (progress) {
+        const visible = Math.max(0.08, Math.min(1, scroller.clientWidth / scroller.scrollWidth));
+        progress.style.width = `${visible * 100}%`;
+        progress.style.setProperty('--ig-x', `${ratio * (1 / visible - 1) * 100}%`);
+      }
+      if (prev) prev.disabled = scroller.scrollLeft <= 2;
+      if (next) next.disabled = scroller.scrollLeft >= max - 2;
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(paint);
+    };
+    scroller.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
+    paint();
+
+    // --- Buttons ---
+    const step = (dir: 1 | -1) =>
+      scroller.scrollBy({ left: dir * scroller.clientWidth * 0.8, behavior: reduced.matches ? 'auto' : 'smooth' });
+    prev?.addEventListener('click', () => step(-1));
+    next?.addEventListener('click', () => step(1));
+
+    // --- Drag mit der Maus (Touch/Pen: nativ) ---
+    let startX = 0;
+    let startLeft = 0;
+    let dragging = false;
+    let moved = false;
+    scroller.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      dragging = true;
+      moved = false;
+      startX = e.clientX;
+      startLeft = scroller.scrollLeft;
+      scroller.setPointerCapture(e.pointerId);
+    });
+    scroller.addEventListener('pointermove', (e) => {
+      if (cursor && e.pointerType === 'mouse') {
+        const r = scroller.getBoundingClientRect();
+        cursor.style.transform = '';
+        cursor.style.left = `${e.clientX - r.left}px`;
+        cursor.style.top = `${e.clientY - r.top + scroller.scrollTop}px`;
+      }
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (!moved && Math.abs(dx) > 6) {
+        moved = true;
+        scroller.dataset.dragging = '1';
+      }
+      if (moved) scroller.scrollLeft = startLeft - dx;
+    });
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      // Klick nach einer Ziehbewegung unterdrücken
+      window.setTimeout(() => delete scroller.dataset.dragging, 0);
+    };
+    scroller.addEventListener('pointerup', endDrag);
+    scroller.addEventListener('pointercancel', endDrag);
+    scroller.addEventListener(
+      'click',
+      (e) => {
+        if (scroller.dataset.dragging) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
+      true,
+    );
+
+    // --- Cursor-Label über Kacheln (nur Maus, nicht bei reduced-motion) ---
+    if (cursor && !reduced.matches) {
+      tiles.forEach((t) => {
+        t.addEventListener('pointerenter', (e) => {
+          if (e.pointerType === 'mouse') scroller.dataset.cursorOn = '1';
+        });
+        t.addEventListener('pointerleave', () => delete scroller.dataset.cursorOn);
+      });
+      scroller.addEventListener('pointerleave', () => delete scroller.dataset.cursorOn);
+    }
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('section.ig').forEach(initFeed);
+  }
+  initAll();
+  document.addEventListener('astro:page-load', initAll);
+</script>

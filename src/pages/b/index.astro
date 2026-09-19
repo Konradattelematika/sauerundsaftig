@@ -13,6 +13,7 @@ import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astr
 import site from '../../data/site.json';
 import { routeHref } from '../../lib/format';
 import { localBusiness } from '../../lib/schema-org';
+import { btnPrimary, linkArrow, linkArrowIcon } from '../../variants/b-salzhaff/lib/ui';
 
 const base = '/b';
 const route = routeHref(site.address.street, site.address.zip, site.address.city);
@@ -40,17 +41,12 @@ const route = routeHref(site.address.street, site.address.zip, site.address.city
     <p class="mt-6 max-w-[46ch] text-xl text-ink-soft">{site.subline}</p>
 
     <div class="mt-8 flex flex-wrap items-center gap-6">
-      <a
-        href={route}
-        target="_blank"
-        rel="noopener"
-        class="inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
-      >
+      <a href={route} target="_blank" rel="noopener" class={btnPrimary}>
         Route
       </a>
-      <a href={`${base}/karte`} class="group inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink">
+      <a href={`${base}/karte`} class={linkArrow}>
         Karte ansehen
-        <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+        <span class={linkArrowIcon} aria-hidden="true">→</span>
       </a>
     </div>
   </section>

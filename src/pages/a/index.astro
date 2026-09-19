@@ -1,7 +1,9 @@
 ---
 /**
  * Startseite Variante A „Krume" — Magazin-Cover-Konzept:
- * links H1+Subline+Status+CTAs, rechts hochformatig beschnittenes Hero-Bild.
+ * links H1+Subline+Status+CTAs, rechts hochformatig beschnittenes Hero-Bild im versetzten
+ * Terrazzo-Passepartout (Material „Theke"). Danach: Heute frisch, Signature, Josie-Teaser,
+ * Instagram-Feed, Besuch, Social Proof, Brotbrief.
  */
 import Layout from '../../variants/a-krume/Layout.astro';
 import Figure from '../../variants/a-krume/components/Figure.astro';
@@ -9,15 +11,19 @@ import HeuteFrischBoard from '../../variants/a-krume/components/HeuteFrischBoard
 import SchneckenTeaser from '../../variants/a-krume/components/SchneckenTeaser.astro';
 import VisitModule from '../../variants/a-krume/components/VisitModule.astro';
 import SocialProof from '../../variants/a-krume/components/SocialProof.astro';
+import InstagramFeed from '../../variants/a-krume/components/InstagramFeed.astro';
 import NewsletterForm from '../../components/shared/NewsletterForm.astro';
 import OpeningStatus from '../../components/shared/OpeningStatus.astro';
 import site from '../../data/site.json';
 import { routeHref } from '../../lib/format';
 import { localBusiness } from '../../lib/schema-org';
+import { getAlt, hasPhoto } from '../../lib/images';
+import { btnAccent, btnSecondary, linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
 
 const base = '/a';
 const route = routeHref(site.address.street, site.address.zip, site.address.city);
 const jsonLd = [localBusiness(String(Astro.site))];
+const portraitIsPlaceholder = !hasPhoto('josie-portrait');
 ---
 
 <Layout
@@ -25,14 +31,12 @@ const jsonLd = [localBusiness(String(Astro.site))];
   description="Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen. Café und Backstube in der Dünenstraße 1, Ostseebad Rerik."
   jsonLd={jsonLd}
 >
-  <section class="bg-bg pb-14 pt-8 md:pb-24 md:pt-12">
+  <section class="bg-bg pb-14 pt-8 md:pb-24 md:pt-14">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center md:gap-6">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center md:gap-6">
         <div class="order-2 md:order-1 md:col-span-5">
-          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>
-            Café &amp; Backstube · Ostseebad Rerik
-          </p>
-          <h1 class="mt-4 text-[clamp(2.5rem,7vw,4.75rem)]" data-reveal style="--reveal-delay:100ms">
+          <p data-reveal><span class="tz-tag">Café &amp; Backstube · Ostseebad Rerik</span></p>
+          <h1 class="mt-5 text-[clamp(2.5rem,7vw,4.75rem)]" data-reveal style="--reveal-delay:100ms">
             Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen.
           </h1>
           <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl" data-reveal style="--reveal-delay:200ms">
@@ -42,42 +46,80 @@ const jsonLd = [localBusiness(String(Astro.site))];
             <OpeningStatus size="lg" />
           </div>
           <div class="mt-8 flex flex-wrap gap-4" data-reveal style="--reveal-delay:200ms">
-            <a
-              href={`${base}/karte`}
-              class="inline-flex min-h-11 items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-sm text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
-            >
+            <a href={`${base}/karte`} class={btnAccent}>
               Karte ansehen
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             </a>
-            <a
-              href={route}
-              target="_blank"
-              rel="noopener"
-              class="inline-flex min-h-11 items-center justify-center rounded-card border-2 border-ink px-6 py-3 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
-            >
-              Route
-            </a>
+            <a href={route} target="_blank" rel="noopener" class={btnSecondary}>Route</a>
           </div>
         </div>
 
-        <div class="order-1 md:order-2 md:col-span-7">
-          <div class="hero-zoom-frame overflow-hidden rounded-card">
-            <Figure
-              motif="hero-krume"
-              alt="Aufgerissene Sauerteigkruste mit Blick auf die offene Krume"
-              aspect="aspect-[4/5] md:aspect-[3/4]"
-              sizes="(min-width: 768px) 55vw, 100vw"
-              loading="eager"
-              fetchpriority="high"
-              imgClass="hero-zoom-img h-full w-full object-cover"
-            />
+        <div class="order-1 md:order-2 md:col-span-7 md:pl-6">
+          <div class="hero-zoom-frame tz-offset">
+            <div class="overflow-hidden rounded-card bg-bg-alt">
+              <Figure
+                motif="hero-krume"
+                aspect="aspect-[4/5] md:aspect-[3/4]"
+                sizes="(min-width: 768px) 55vw, 100vw"
+                loading="eager"
+                fetchpriority="high"
+                imgClass="hero-zoom-img h-full w-full object-cover"
+              />
+            </div>
           </div>
+          <p class="mt-4 flex items-center justify-between gap-4 font-mono text-[12px] uppercase tracking-widest text-ink-soft md:mt-6">
+            <span>{getAlt('hero-krume')}</span>
+            <span class="hidden shrink-0 sm:inline">Dünenstraße 1</span>
+          </p>
         </div>
       </div>
     </div>
   </section>
 
+  <span class="tz-band" aria-hidden="true"></span>
+
   <HeuteFrischBoard />
   <SchneckenTeaser base={base} />
+
+  <!-- Josie-Teaser: Porträt im versetzten Passepartout, typografischer Gruß, Link zur Über-mich-Seite -->
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 items-center gap-10 md:grid-cols-12">
+        <div class="md:col-span-4 md:col-start-2">
+          <Figure
+            motif="josie-portrait"
+            aspect="aspect-[4/5]"
+            sizes="(min-width: 1024px) 30vw, (min-width: 768px) 40vw, 80vw"
+            mat="offset-left"
+            reveal
+            revealKind="image"
+            hover
+            class="max-w-[420px]"
+          />
+          {portraitIsPlaceholder && (
+            <p class="mt-3 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Platzhalter — das Porträt folgt</p>
+          )}
+        </div>
+        <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Wer hier bäckt</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
+          <h2 class="mt-4 text-[clamp(2.25rem,5.5vw,4rem)]">Moin, ich bin Josie.</h2>
+          <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+            Ich habe in Rerik ein Café übernommen, das viele schon lange kannten — und eine Backstube
+            hineingestellt, in der fast alles mit Sauerteig beginnt. Warum, wie und was die Urkunde damit zu tun
+            hat, steht auf meiner Seite.
+          </p>
+          <a href={`${base}/ueber-mich`} class:list={[linkArrow, 'mt-6']}>
+            Mehr über mich und das Café
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <InstagramFeed tone="bg" />
+
   <VisitModule base={base} variant="compact" />
   <SocialProof />
 
@@ -86,6 +128,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
       <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
         <div class="md:col-span-5" data-reveal>
           <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Der Brotbrief</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
           <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.5rem)]">Einmal im Monat Post aus der Backstube</h2>
         </div>
         <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
@@ -101,15 +144,15 @@ const jsonLd = [localBusiness(String(Astro.site))];
     display: block;
   }
   :global(.hero-zoom-img) {
-    animation: hero-zoom var(--dur-slow) var(--ease-brand) both;
+    animation: hero-zoom 1200ms var(--ease-brand) both;
     transform-origin: center;
   }
   @keyframes hero-zoom {
     from {
-      transform: scale(1);
+      transform: scale(1.04);
     }
     to {
-      transform: scale(1.03);
+      transform: scale(1);
     }
   }
 </style>

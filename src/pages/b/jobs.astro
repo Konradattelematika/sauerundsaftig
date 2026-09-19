@@ -9,6 +9,7 @@ import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astr
 import site from '../../data/site.json';
 import { telHref } from '../../lib/format';
 import { breadcrumbs } from '../../lib/schema-org';
+import { phoneLinkLg } from '../../variants/b-salzhaff/lib/ui';
 
 const base = '/b';
 const jsonLd = [
@@ -39,7 +40,7 @@ const jsonLd = [
       <p class="mt-4 text-xl text-ink-soft">
         Ruf uns einfach an, dann sprechen wir über das, was gerade und was demnächst ansteht.
       </p>
-      <a href={telHref(site.phone)} class="mt-8 block min-h-[44px] w-fit font-mono text-[clamp(2rem,7vw,3.5rem)] tabular text-ink">
+      <a href={telHref(site.phone)} class:list={['mt-8', phoneLinkLg]}>
         {site.phoneDisplay}
       </a>
       {/* TODO(kunde): konkrete Stellenprofile (Position, Umfang, Zeitraum) ergänzen, sobald bestätigt. */}

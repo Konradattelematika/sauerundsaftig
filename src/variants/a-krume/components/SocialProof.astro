@@ -14,8 +14,9 @@ const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data
     <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
       <div class="md:col-span-4" data-reveal>
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Was Gäste sagen</p>
-        <p class="mt-3 text-[clamp(2rem,5vw,3rem)]">{site.rating.value.toLocaleString('de-DE')} ★</p>
-        <p class="mt-1 text-lg text-ink-soft">{site.rating.count} Google-Bewertungen</p>
+        <p class="mt-3 font-display text-[clamp(2.5rem,6vw,4rem)] leading-none">{site.rating.value.toLocaleString('de-DE')} <span class="text-accent-ink">★</span></p>
+        <p class="mt-2 text-lg text-ink-soft">{site.rating.count} Google-Bewertungen</p>
+        <span class="tz-rule mt-4" aria-hidden="true"></span>
       </div>
       <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:col-span-8">
         {testimonials.map((t, i) => (

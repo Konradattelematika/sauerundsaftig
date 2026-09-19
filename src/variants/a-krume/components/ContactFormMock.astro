@@ -5,6 +5,8 @@
  * Islands (Validierung, Erfolgsmeldung), lokal für Variante A gebaut, weil
  * Kontakt-/Gastgeber-Anfrage kein geteiltes Island im Brief ist.
  */
+import { btnPrimary as btnPrimaryBase } from '../lib/ui';
+
 interface Props {
   formId: string;
   submitLabel: string;
@@ -13,8 +15,7 @@ interface Props {
 }
 const { formId, submitLabel, messageLabel = 'Nachricht*', extraFieldLabel } = Astro.props;
 
-const btnPrimary =
-  'inline-flex min-h-[44px] items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-sm text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] disabled:cursor-not-allowed disabled:bg-ink/30 disabled:text-bg/70';
+const btnPrimary = `${btnPrimaryBase} disabled:cursor-not-allowed disabled:bg-ink/30 disabled:text-bg/70`;
 ---
 
 <div class="contact-form-mock rounded-card border border-ink/10 bg-paper p-5 md:p-7" data-contact-form-mock data-form-id={formId}>

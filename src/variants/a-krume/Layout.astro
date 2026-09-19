@@ -11,6 +11,7 @@ import StickyBar from '../../components/shared/StickyBar.astro';
 import Motion from '../../components/shared/Motion.astro';
 import Header from './components/Header.astro';
 import Footer from './components/Footer.astro';
+import { terrazzoCssUrl } from '../../lib/textures';
 
 interface Props {
   title: string;
@@ -21,10 +22,12 @@ interface Props {
 }
 const { title, description, jsonLd = [], ogImage, noindex = false } = Astro.props;
 const base = '/a';
+// Material Theke: eine optimierte Textur-URL fuer alle .tz-*-Klassen (s. styles/a-terrazzo.css)
+const tzUrl = await terrazzoCssUrl();
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang="de" style={`--tz-url:${tzUrl}`}>
   <head>
     <SeoHead title={title} description={description} jsonLd={jsonLd} ogImage={ogImage} noindex={noindex} />
     <ClientRouter />

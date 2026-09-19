@@ -13,6 +13,7 @@ import SectionLabel from '../../../variants/b-salzhaff/components/SectionLabel.a
 import { getImage, getAlt, WIDTHS, SIZES_HALF } from '../../../lib/images';
 import { formatMenuPrice } from '../../../lib/format';
 import { breadcrumbs, menuSchema } from '../../../lib/schema-org';
+import { btnPrimary } from '../../../variants/b-salzhaff/lib/ui';
 
 const base = '/b';
 const section = await getEntry('menu', 'schnecken');
@@ -97,10 +98,7 @@ const querschnitt = getImage('b', 'schnecke-querschnitt');
           Gefüllt, aufgerollt, geschnitten — und am nächsten Vormittag ofenfrisch in der Theke. Solange der
           Vorrat reicht.
         </p>
-        <a
-          href={`${base}/vorbestellen`}
-          class="mt-8 inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
-        >
+        <a href={`${base}/vorbestellen`} class:list={['mt-8', btnPrimary]}>
           Vorbestellen
         </a>
       </div>

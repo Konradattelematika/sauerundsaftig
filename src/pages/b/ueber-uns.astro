@@ -4,6 +4,8 @@ import Layout from '../../variants/b-salzhaff/Layout.astro';
 import RevealHeadline from '../../variants/b-salzhaff/components/RevealHeadline.astro';
 import MaskImage from '../../variants/b-salzhaff/components/MaskImage.astro';
 import SectionLabel from '../../variants/b-salzhaff/components/SectionLabel.astro';
+import { linkArrow, linkArrowIcon } from '../../variants/b-salzhaff/lib/ui';
+import site from '../../data/site.json';
 import { breadcrumbs } from '../../lib/schema-org';
 
 const base = '/b';
@@ -13,3 +15,116 @@ const jsonLd = [
     { name: 'Über uns', url: `${Astro.site}${base}/ueber-uns` },
   ]),
 ];
+
+const WERTE = [
+  {
+    title: 'Handwerk & Zeit',
+    text: 'Sauerteig statt Hefe, überall wo es geht — 18 Stunden für einen Laib, kein Schritt wird abgekürzt.',
+    link: { href: `${base}/sauerteig`, label: 'Der 18-Stunden-Prozess' },
+  },
+  {
+    title: 'Ehrlichkeit',
+    text: 'Preise, Termine und offene Fragen markieren wir dort, wo wir selbst noch nicht alles final haben — lieber ein ° oder ein TODO als glattgebügelt.',
+  },
+  {
+    title: 'Too Good To Go',
+    text: `Über Too Good To Go bekommst du eine Überraschungstüte mit rund ${site.tooGoodToGo.bagValue} € Warenwert für ${site.tooGoodToGo.bagPrice} € — Ware, die sonst übrig geblieben wäre.`,
+  },
+];
+---
+
+<Layout
+  title="Über uns — Sauer & Saftig"
+  description="Wir haben ein Café in Ostseebad Rerik übernommen und backen seitdem fast alles mit eigenem Sauerteig. Die Übernahme, der Ort, unsere Werte."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
+    <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Über uns</p>
+    <RevealHeadline
+      as="h1"
+      class="mt-4 text-[clamp(2.6rem,7vw,5.5rem)]"
+      lines={['Ein Café, das wir', 'übernommen haben.']}
+      accentLines={[1]}
+    />
+    <p class="mt-6 max-w-[62ch] text-xl text-ink-soft">
+      Wir haben ein Café übernommen, das viele in Rerik schon lange kannten und mochten. Manches haben
+      wir bewusst verändert — allen voran den Sauerteig, der seitdem fast überall drinsteckt. Anderes
+      braucht noch Zeit. Auf Instagram nennen wir das unsere Reise zum Sauerteig-Café.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+    <SectionLabel number="01" label="Übernahme" />
+    <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16 md:items-center">
+      <MaskImage motif="gastraum" class="aspect-[4/5] w-full" sizes="(min-width: 768px) 45vw, 100vw" />
+      <div>
+        <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Dieselben Räume, eine andere Backstube</h2>
+        <p class="mt-4 max-w-[52ch] text-ink-soft">
+          Die Räume kennst du vielleicht noch von früher. Neu dazugekommen ist eine Backstube, in der
+          fast jeden Tag Sauerteig angesetzt wird — und eine Karte, die sich seitdem Schritt für Schritt
+          verändert, statt an einem Tag komplett neu zu sein.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+    <SectionLabel number="02" label="Die Menschen dahinter" />
+    <div class="mt-8">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Wer hier bäckt und serviert</h2>
+    </div>
+    <div class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2">
+      <MaskImage motif="team-1" class="aspect-[4/5]" sizes="(min-width: 768px) 40vw, 90vw" delay={0} />
+      <MaskImage motif="team-2" class="aspect-[4/5]" sizes="(min-width: 768px) 40vw, 90vw" delay={80} />
+    </div>
+    <p class="mt-8 max-w-[60ch] text-xl text-ink-soft">
+      Hinter der Theke und in der Backstube steht ein kleines Team. Wer das im Einzelnen ist, stellen wir
+      dir hier vor, sobald Fotos und Namen final abgestimmt sind — bis dahin bleiben die Bilder
+      Platzhalter.
+    </p>
+    {/* TODO(kunde): Namen, Rollen und aktuelle Teamfotos ergänzen, sobald final freigegeben. Keine erfundenen Namen oder Gründungsjahre einsetzen. */}
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+    <SectionLabel number="03" label="Der Ort" />
+    <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16 md:items-center">
+      <div class="order-2 md:order-1">
+        <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Dünenstraße 1, Ostseebad Rerik</h2>
+        <p class="mt-4 max-w-[52ch] text-ink-soft">
+          Rerik liegt zwischen Ostsee und Salzhaff, ruhiger als seine größeren Nachbarorte an der Küste.
+          Für uns war das Grund genug, hier eine Backstube zu betreiben, die nicht nur an Sommertagen
+          trägt.
+        </p>
+        <a href={`${base}/besuch`} class:list={['mt-6', linkArrow]}>
+          Anfahrt und Öffnungszeiten
+          <span class={linkArrowIcon} aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="order-1 md:order-2">
+        <MaskImage motif="kueste" class="aspect-[16/10] w-full" sizes="(min-width: 768px) 45vw, 100vw" />
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-4 py-16 md:px-8 md:py-28">
+    <SectionLabel number="04" label="Wofür wir stehen" />
+    <div class="mt-8">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.5rem)]">Drei Dinge, die uns wichtig sind</h2>
+    </div>
+    <div class="mt-10 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12">
+      {WERTE.map((w, i) => (
+        <div class="border-t border-ink/20 pt-6" data-reveal style={`--reveal-delay: ${i * 80}ms`}>
+          <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">{String(i + 1).padStart(2, '0')}</p>
+          <h3 class="mt-2 text-2xl">{w.title}</h3>
+          <p class="mt-3 max-w-[46ch] text-ink-soft">{w.text}</p>
+          {w.link && (
+            <a href={w.link.href} class:list={['mt-4', linkArrow]}>
+              {w.link.label}
+              <span class={linkArrowIcon} aria-hidden="true">→</span>
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

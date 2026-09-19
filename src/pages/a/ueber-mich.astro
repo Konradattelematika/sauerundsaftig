@@ -1,0 +1,261 @@
+---
+/**
+ * /ueber-mich — Josies Seite (nur Variante A). Editorial: großes Porträt mit
+ * typografischer Überlagerung, Story, Urkunde als Erzählmoment, Philosophie als
+ * Typo-Sektion, Café/Theke mit Terrazzo-Übergang, Instagram-Feed, Besuch.
+ *
+ * Fakten nur aus vorhandenen Quellen (site.json, Über-uns-Story, Instagram-Captions,
+ * Auftrag: Name Josie + Urkunde „Bester Bäcker 2025 – Landkreis Rostock"). Alles andere
+ * steht als sichtbarer redaktioneller Platzhalter (TODO(kunde)) — nichts erfunden.
+ */
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import Figure from '../../variants/a-krume/components/Figure.astro';
+import InstagramFeed from '../../variants/a-krume/components/InstagramFeed.astro';
+import VisitModule from '../../variants/a-krume/components/VisitModule.astro';
+import site from '../../data/site.json';
+import { hasPhoto } from '../../lib/images';
+import { TERRAZZO_IS_PLACEHOLDER } from '../../lib/textures';
+import { btnSecondary, linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
+
+const base = '/a';
+const portraitIsPlaceholder = !hasPhoto('josie-portrait');
+
+/** Redaktionelle Lücken — sichtbar markiert statt erfunden. TODO(kunde) */
+const openQuestions = [
+  'Woher kommst du, und wie bist du zum Backen gekommen?',
+  'Seit wann führst du Sauer & Saftig — und was war der Anlass, das Café zu übernehmen?',
+  'Wer gehört zum Team in Backstube und Service?',
+];
+
+/** Philosophie — nur Aussagen, die die Website an anderer Stelle bereits trifft */
+const principles = [
+  { n: '01', text: 'Sauerteig statt Hefe — überall, wo es geht. Auch im Käsekuchen.' },
+  { n: '02', text: '18 Stunden für einen Laib. Kein Schritt wird abgekürzt.' },
+  { n: '03', text: 'Dienstag und Mittwoch bleibt der Ofen aus. Zwei Ruhetage, jede Woche.' },
+  { n: '04', text: `Was am Abend übrig ist, geht in die Too-Good-To-Go-Tüte — nicht in die Tonne.` },
+  { n: '05', text: 'Torten gibt es auf Bestellung. Jede anders, keine aus dem Katalog.' },
+];
+---
+
+<Layout
+  title="Über mich — Josie | Sauer & Saftig"
+  description="Moin, ich bin Josie. Ich backe in Ostseebad Rerik fast alles mit Sauerteig — und führe das Café dazu. Über die Backstube, die Theke und eine Urkunde."
+>
+  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Über mich', href: `${base}/ueber-mich` }]} />
+
+  <!-- HERO: links typografischer Stapel (Tag, „Moin, / ich bin / Josie.", Lead), rechts das Porträt im
+       versetzten Terrazzo-Passepartout. Headline bleibt auf jeder Breite ohne Scrollen sichtbar; das Gesicht
+       wird nie überlagert. Mobil: Tag, Headline, Lead, Bild. -->
+  <section class="about-hero overflow-x-clip bg-bg pb-14 pt-10 md:pb-24 md:pt-14">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-x-6">
+        <div class="flex flex-col md:col-span-5 md:min-h-full">
+          <p data-reveal><span class="tz-tag">Café &amp; Backstube · Ostseebad Rerik</span></p>
+          <h1
+            class="about-title mt-6 text-[clamp(3.25rem,8.5vw,8.5rem)] leading-[0.9] md:mt-8"
+            data-reveal
+            style="--reveal-delay:100ms"
+          >
+            Moin,<br />ich bin<br /><span class="tz-text">Josie.</span>
+          </h1>
+          <p class="prose-measure mt-8 text-lg text-ink-soft md:mt-auto md:pt-10 md:text-xl" data-reveal style="--reveal-delay:200ms">
+            Ich backe. Fast alles hier beginnt mit Sauerteig — auch der Käsekuchen. Und weil eine Backstube allein
+            noch kein Ort ist, gibt es das Café dazu: Frühstück, Kuchen, Suppe und Kaffee, Donnerstag bis Montag
+            in der Dünenstraße 1.
+          </p>
+        </div>
+
+        <div class="md:col-span-7 md:pl-6 lg:col-span-6 lg:col-start-7 lg:pl-0">
+          <div data-parallax="0.04">
+            <Figure
+              motif="josie-portrait"
+              aspect="aspect-[4/5]"
+              sizes="(min-width: 1440px) 680px, (min-width: 768px) 55vw, 100vw"
+              loading="eager"
+              fetchpriority="high"
+              mat="offset"
+              reveal
+              revealKind="image"
+              class="about-portrait"
+            />
+          </div>
+          <p class="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 font-mono text-[12px] uppercase tracking-widest text-ink-soft md:mt-6">
+            <span>Josie · Sauer &amp; Saftig, Dünenstraße 1</span>
+            {portraitIsPlaceholder && <span>Platzhalter — Porträt folgt</span>}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <span class="tz-band" aria-hidden="true"></span>
+
+  <!-- STORY -->
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div class="md:col-span-4" data-reveal>
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Wie das hier angefangen hat</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
+          <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)]">Ein Café, das viele schon kannten. Und eine Backstube, die neu ist.</h2>
+        </div>
+        <div class="prose-editorial md:col-span-7 md:col-start-6" data-reveal style="--reveal-delay:100ms">
+          <p class="lead text-ink">
+            Ich habe in Rerik ein Café übernommen, das viele hier schon lange kannten und mochten. Manches habe ich
+            bewusst verändert — allen voran den Sauerteig, der seitdem fast überall drinsteckt. Anderes braucht noch
+            Zeit.
+          </p>
+          <p class="prose-measure text-lg text-ink-soft">
+            Auf Instagram nenne ich das: die Reise zum Sauerteig-Café. Die Räume kennst du vielleicht noch von früher.
+            Neu dazugekommen ist eine Backstube, in der fast jeden Tag Sauerteig angesetzt wird — und eine Karte, die
+            sich Schritt für Schritt verändert, statt an einem Tag komplett neu zu sein.
+          </p>
+          <p class="prose-measure text-lg text-ink-soft">
+            Was dabei herauskommt: Brot, das 18 Stunden braucht. Schnecken aus demselben Teig. Käsekuchen mit
+            Sauerteig. Und Torten, die auf Bestellung entstehen — jede anders.
+          </p>
+
+          <!-- Redaktionelle Lücken — sichtbar, nicht erfunden -->
+          <div class="mt-10 rounded-card border border-dashed border-ink/30 bg-bg p-6 md:p-8">
+            <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">Redaktioneller Platzhalter — Josie ergänzt</p>
+            <ul class="mt-4 flex flex-col gap-3 text-ink-soft">
+              {openQuestions.map((q) => (
+                <li class="flex gap-3">
+                  <span class="mt-2 size-1.5 shrink-0 rounded-full bg-ink/40" aria-hidden="true"></span>
+                  <span>{q}</span>
+                </li>
+              ))}
+            </ul>
+            <!-- TODO(kunde): Antworten in Josies Worten einsetzen, Platzhalterbox danach entfernen. Keine Namen/Jahreszahlen erfinden. -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUSZEICHNUNG: leise erzählt, kein Badge -->
+  <section class="bg-bg py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
+        <div class="md:col-span-7" data-reveal>
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">2025</p>
+          <h2 class="mt-4 text-[clamp(2.25rem,5.5vw,4.25rem)]">Und dann war da plötzlich diese Urkunde.</h2>
+          <p class="prose-measure mt-6 text-lg text-ink-soft md:text-xl">
+            „Bester Bäcker 2025 – Landkreis Rostock" steht darauf. Auf dem Foto oben halte ich sie in den Händen,
+            und ehrlich gesagt weiß ich immer noch nicht genau, wohin damit. Geändert hat sich dadurch jedenfalls
+            nichts am Rezept: Der Teig braucht weiterhin seine 18 Stunden, und Dienstag und Mittwoch bleibt der
+            Ofen aus.
+          </p>
+          <p class="mt-4 font-mono text-[11px] uppercase tracking-widest text-ink-soft/80">
+            Platzhalter — wer die Auszeichnung vergeben hat und bei welchem Anlass, ergänzt Josie
+          </p>
+          <!-- TODO(kunde): Vergebende Stelle/Anlass der Auszeichnung bestätigen, dann den Platzhalter-Satz löschen. -->
+        </div>
+        <div class="md:col-span-4 md:col-start-9" data-reveal style="--reveal-delay:100ms">
+          <div class="tz-mat max-w-sm">
+            <div class="bg-paper px-6 py-8 text-center md:px-8 md:py-10">
+              <p class="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-soft">Urkunde</p>
+              <p class="mt-4 font-display text-3xl leading-tight md:text-4xl">Bester Bäcker<br />2025</p>
+              <p class="mt-3 font-mono text-sm uppercase tracking-widest text-ink-soft">Landkreis Rostock</p>
+              <span class="tz-rule mx-auto mt-6" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHIE: typografisch, keine Cards -->
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="max-w-3xl" data-reveal>
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Woran ich mich halte</p>
+        <span class="tz-rule mt-3" aria-hidden="true"></span>
+        <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)]">Fünf Sätze, die hier gelten</h2>
+      </div>
+      <ol class="mt-10 border-t border-ink/10 md:mt-14" role="list">
+        {principles.map((p, i) => (
+          <li
+            class="grid grid-cols-[3rem_1fr] items-baseline gap-4 border-b border-ink/10 py-7 md:grid-cols-12 md:gap-8 md:py-10"
+            data-reveal
+            style={`--reveal-delay:${(i % 3) * 100}ms`}
+          >
+            <span class="font-mono text-sm text-ink-soft md:col-span-1">{p.n}</span>
+            <p class="font-display text-[clamp(1.5rem,3.2vw,2.5rem)] leading-tight md:col-span-10">{p.text}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="mt-10 flex flex-wrap gap-4" data-reveal>
+        <a href={`${base}/sauerteig`} class={linkArrow}>
+          Der 18-Stunden-Prozess
+          <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+        <a href={`${base}/karte`} class={linkArrow}>
+          Die Karte
+          <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAFÉ / THEKE: Bild → Text → Terrazzo-Fläche → nächste Sektion -->
+  <section class="bg-bg pt-14 md:pt-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
+        <div class="md:col-span-6">
+          <Figure
+            motif="theke"
+            aspect="aspect-[4/5] md:aspect-[3/4]"
+            sizes="(min-width: 768px) 50vw, 100vw"
+            mat="flat"
+            reveal
+            revealKind="image"
+            hover
+          />
+        </div>
+        <div class="md:col-span-5 md:col-start-8" data-reveal style="--reveal-delay:100ms">
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Das Café</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
+          <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)]">Die Theke ist das Erste, was du siehst.</h2>
+          <p class="prose-measure mt-5 text-lg text-ink-soft">
+            Vitrine, Brotkörbe, die Tafel mit den Getränken — und obendrauf die helle Steinplatte mit den
+            Einsprengseln. Genau dieses Muster begegnet dir auf dieser Website immer wieder: als schmales Band
+            zwischen den Abschnitten, als Rahmen um Fotos, hinter der Überschrift.
+          </p>
+          <p class="prose-measure mt-4 text-lg text-ink-soft">
+            Es ist kein Website-Ornament. Es ist unsere Theke.
+          </p>
+          <a href={`${base}/besuch`} class:list={[btnSecondary, 'mt-8']}>
+            Anfahrt und Öffnungszeiten
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Übergang: großes Wort in Terrazzo-Textur, dann die Fläche selbst -->
+    <div class="mx-auto mt-12 max-w-[1440px] px-4 md:mt-20 md:px-8" data-reveal>
+      <p class="tz-text font-display text-[clamp(4.5rem,18vw,17rem)] leading-[0.85] tracking-[-0.03em]" aria-hidden="true">Theke</p>
+    </div>
+    <div class="tz-surface relative mt-[-0.2em] border-t border-ink/10">
+      <div class="mx-auto flex min-h-[clamp(120px,18vw,240px)] max-w-[1440px] items-end px-4 pb-4 md:px-8 md:pb-6">
+        <p class="rounded-card bg-paper/85 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-ink-soft backdrop-blur-[2px]">
+          Oberfläche der Theke, Dünenstraße 1{TERRAZZO_IS_PLACEHOLDER && ' · Platzhalter-Textur, echtes Foto folgt'}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <InstagramFeed tone="bg-alt" title="Frisch aus der Backstube" subline="Noch mehr Krümel gibt’s auf Instagram." />
+
+  <VisitModule base={base} variant="compact" />
+</Layout>
+
+<style>
+  /* Headline-Stapel: keine automatische Silbentrennung im Namen, Zeilen sind manuell gesetzt */
+  .about-title {
+    hyphens: manual;
+    -webkit-hyphens: manual;
+  }
+</style>

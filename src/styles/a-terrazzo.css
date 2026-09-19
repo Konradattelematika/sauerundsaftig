@@ -1,0 +1,173 @@
+/*
+ * Material „Theke" — Terrazzo-System für Variante A „Krume".
+ *
+ * Die Oberfläche der echten Café-Theke (helle Steinplatte mit Einsprengseln) wird als
+ * wiederkehrendes, zurückhaltendes Material eingesetzt. Ein Bild, viele Anwendungen:
+ * Bänder zwischen Sektionen, Passepartouts um Fotos, Tags, kleine Akzente, Textur in
+ * Display-Typo. Die Bild-URL liefert Layout.astro als CSS-Variable --tz-url (optimiertes
+ * Asset aus src/assets/textures/terrazzo.jpg — aktuell prozeduraler PLATZHALTER, s.
+ * scripts/generate-terrazzo.mjs; das echte Foto ersetzt nur die Datei).
+ *
+ * Regel: pro Viewport höchstens ein großes und wenige kleine Terrazzo-Elemente.
+ */
+
+/* ---------- Basisfläche ---------- */
+.tz-surface,
+.tz-band,
+.tz-mat,
+.tz-tag,
+.tz-rule,
+.tz-blob,
+.tz-offset::before,
+.tz-frame::after {
+  background-color: #d8dedb; /* Fallback, bis das Bild geladen ist */
+  background-image: var(--tz-url);
+  background-size: cover;
+  background-position: var(--tz-pos, 40% 40%);
+  background-repeat: no-repeat;
+}
+/* Für kleine Elemente: feinere Körnung (Bild kleiner skaliert, gekachelt) */
+.tz-tag,
+.tz-rule,
+.tz-blob,
+.tz-surface--fine {
+  background-size: 520px auto;
+  background-repeat: repeat;
+}
+
+/* ---------- Band / Divider zwischen Sektionen ---------- */
+.tz-band {
+  display: block;
+  height: clamp(12px, 1.6vw, 22px);
+  border-top: 1px solid rgb(36 27 20 / 0.08);
+  border-bottom: 1px solid rgb(36 27 20 / 0.08);
+}
+.tz-band--tall {
+  height: clamp(44px, 7vw, 96px);
+}
+.tz-band--fade {
+  border: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+/* ---------- Passepartout um Bilder ---------- */
+.tz-mat {
+  padding: clamp(10px, 1.6vw, 22px);
+  box-shadow: inset 0 0 0 1px rgb(36 27 20 / 0.08);
+}
+.tz-mat > * {
+  display: block;
+}
+
+/* Versetztes Passepartout: Terrazzo-Fläche liegt leicht verschoben hinter dem Bild */
+.tz-offset {
+  position: relative;
+  isolation: isolate;
+}
+.tz-offset::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(var(--tz-offset-x, 14px), var(--tz-offset-y, 14px));
+  box-shadow: inset 0 0 0 1px rgb(36 27 20 / 0.08);
+  transition: transform var(--dur-base) var(--ease-brand);
+}
+.tz-offset--left::before {
+  --tz-offset-x: -14px;
+}
+.tz-offset:hover::before {
+  transform: translate(calc(var(--tz-offset-x, 14px) * 1.35), calc(var(--tz-offset-y, 14px) * 1.35));
+}
+@media (max-width: 767px) {
+  .tz-offset::before {
+    --tz-offset-x: 8px;
+    --tz-offset-y: 8px;
+  }
+  .tz-offset--left::before {
+    --tz-offset-x: -8px;
+  }
+}
+
+/* ---------- Tag / Eyebrow-Plakette ---------- */
+.tz-tag {
+  background-image: linear-gradient(rgb(253 249 240 / 0.55), rgb(253 249 240 / 0.55)), var(--tz-url);
+  background-size: 520px auto, 520px auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.9rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid rgb(36 27 20 / 0.14);
+  border-radius: 2px;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+/* ---------- Kurze Regel unter Eyebrows / neben Headlines ---------- */
+.tz-rule {
+  display: block;
+  width: 4rem;
+  height: 0.5rem;
+  border-radius: 1px;
+  background-size: 180px auto;
+  box-shadow: inset 0 0 0 1px rgb(36 27 20 / 0.18);
+}
+
+/* ---------- Organische kleine Fläche (Akzent hinter Headlines) ---------- */
+.tz-blob {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 58% 42% 55% 45% / 48% 55% 45% 52%;
+  box-shadow: inset 0 0 0 1px rgb(36 27 20 / 0.06);
+}
+
+/* ---------- Textur in Display-Typografie ---------- */
+.tz-text {
+  color: var(--color-secondary);
+}
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .tz-text {
+    /* Textur mit Salzhaff-Tönung überlagert, damit das Wort auf hellem Grund steht */
+    background-color: #5b7479;
+    background-image: linear-gradient(rgb(62 92 99 / 0.62), rgb(62 92 99 / 0.62)), var(--tz-url);
+    background-size: cover, cover;
+    background-position: 50% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    /* Kontrast der Textur leicht erhöhen, damit die Form lesbar bleibt */
+    filter: contrast(1.2);
+  }
+}
+
+/* ---------- Hover-Rahmen (Instagram-Kacheln, Teaser) ---------- */
+.tz-frame {
+  position: relative;
+  isolation: isolate;
+}
+.tz-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  transform: translate(0, 0);
+  transition:
+    opacity var(--dur-fast) var(--ease-brand),
+    transform var(--dur-base) var(--ease-brand);
+}
+.tz-frame:hover::after,
+.tz-frame:focus-within::after,
+.group:hover .tz-frame::after {
+  opacity: 1;
+  transform: translate(8px, 8px);
+}
+
+/* Reduced Motion: shared.css setzt alle Transitions auf ~0 ms; die Endzustände bleiben nutzbar. */

@@ -2,6 +2,7 @@
 /** Workshop-Karte für /workshops: Titel, nächster Termin, Dauer, Preis, Restplatz-Badge. */
 import Figure from './Figure.astro';
 import { formatDateShort, formatMenuPrice } from '../../../lib/format';
+import { linkArrow, arrowIcon } from '../lib/ui';
 
 interface Props {
   base: string;
@@ -30,15 +31,15 @@ function badgeText(seatsLeft: number): string {
 ---
 
 <article
-  class="grid grid-cols-1 gap-5 border-b border-ink/10 py-8 md:grid-cols-12 md:items-center md:gap-8"
+  class="group grid grid-cols-1 gap-5 border-b border-ink/10 py-8 md:grid-cols-12 md:items-center md:gap-8"
   data-reveal
   style={`--reveal-delay:${revealDelay}ms`}
 >
   <div class="md:col-span-4">
-    <Figure motif={motif} aspect="aspect-[4/3]" sizes="(min-width: 1024px) 30vw, 90vw" />
+    <Figure motif={motif} aspect="aspect-[4/3]" sizes="(min-width: 1024px) 30vw, 90vw" hover />
   </div>
   <div class="md:col-span-8">
-    <h3 class="text-2xl md:text-3xl">{title}</h3>
+    <h3 class="text-2xl transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:text-primary-deep md:text-3xl">{title}</h3>
     <p class="prose-measure mt-2 text-ink-soft">{subtitle}</p>
     <dl class="mt-4 flex flex-wrap gap-x-8 gap-y-2 font-mono text-sm text-ink-soft">
       <div class="flex items-center gap-2">
@@ -62,8 +63,9 @@ function badgeText(seatsLeft: number): string {
           {badgeText(nextDate.seatsLeft)}
         </span>
       )}
-      <a href={`${base}/workshops/${slug}`} class="inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink">
+      <a href={`${base}/workshops/${slug}`} class={linkArrow}>
         Details ansehen
+        <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
       </a>
     </div>
   </div>

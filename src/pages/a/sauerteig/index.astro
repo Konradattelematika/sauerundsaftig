@@ -9,6 +9,7 @@ import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astr
 import Timeline from '../../../variants/a-krume/components/Timeline.astro';
 import Figure from '../../../variants/a-krume/components/Figure.astro';
 import { breadcrumbs } from '../../../lib/schema-org';
+import { linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
 
 const base = '/a';
 
@@ -46,6 +47,7 @@ const jsonLd = [
         eyebrow="Handwerk"
         title="18 Stunden, keine Abkürzung"
         intro="Ein Laib Sauerteigbrot hat, bis er im Regal liegt, schon einen ganzen Arbeitstag und eine Nacht hinter sich. Mehl, Wasser, Salz und Zeit — an der letzten Zutat lässt sich kaum rütteln."
+        rule
       />
 
       <dl class="mt-10 grid grid-cols-3 gap-4 border-t border-ink/10 pt-8 md:mt-16 md:gap-8" data-reveal style="--reveal-delay:100ms">
@@ -81,7 +83,7 @@ const jsonLd = [
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
       <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
         <div class="md:col-span-6" data-reveal>
-          <Figure motif="haende-teig" aspect="aspect-[4/5]" sizes="(min-width: 768px) 45vw, 100vw" />
+          <Figure motif="haende-teig" aspect="aspect-[4/5]" sizes="(min-width: 768px) 45vw, 100vw" mat="flat" hover />
         </div>
         <div class="md:col-span-5 md:col-start-8" data-reveal style="--reveal-delay:100ms">
           <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Warum so lange</p>
@@ -90,11 +92,9 @@ const jsonLd = [
             Kein Schritt lässt sich beschleunigen, ohne dass Krume oder Kruste darunter leiden. Wer weniger Zeit gibt,
             bekommt weniger Geschmack zurück — deshalb gibt es bei uns keinen Laib, der schneller geht als 18 Stunden.
           </p>
-          <a
-            href={`${base}/karte/brot`}
-            class="mt-6 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
-          >
+          <a href={`${base}/karte/brot`} class:list={[linkArrow, 'mt-6']}>
             Unsere Brote in der Karte
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </a>
         </div>
       </div>

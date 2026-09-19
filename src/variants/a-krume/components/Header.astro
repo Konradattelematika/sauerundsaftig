@@ -1,11 +1,14 @@
 ---
 /**
  * Header Variante A: schmale, ruhige Kopfzeile mit Logo, Hauptnavigation,
- * OpeningStatus (sm) und CTA. Mobil: <details>-Drawer (CSS-first, kein JS).
+ * OpeningStatus (sm) und CTA. Nav-Unterstreichung zieht beim Hover auf, Schatten
+ * erst nach dem Scrollen (Klasse is-scrolled). Mobil: <details>-Drawer (CSS-first),
+ * Links gestaffelt eingeblendet, Terrazzo-Band als Material-Zitat.
  */
 import Logo from '../../../components/shared/Logo.astro';
 import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
 import { NAV_MAIN, NAV_CTA } from '../../../lib/variants';
+import { btnPrimary } from '../lib/ui';
 
 interface Props {
   base: string;
@@ -17,22 +20,23 @@ function isActive(itemPath: string): boolean {
   const full = `${base}${itemPath}`;
   return path === full || path.startsWith(`${full}/`);
 }
+const isAbout = path.startsWith(`${base}/ueber-mich`) || path.startsWith(`${base}/ueber-uns`);
 ---
 
-<header class="sticky top-0 z-50 border-b border-ink/10 bg-paper/95 backdrop-blur">
+<header class="header-a sticky top-0 z-50 border-b border-ink/10 bg-paper lg:bg-paper/95 lg:backdrop-blur" data-header>
   <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-3 md:px-8">
-    <a href={base} class="shrink-0" aria-label="Sauer & Saftig — Startseite">
+    <a href={base} class="relative z-50 shrink-0" aria-label="Sauer & Saftig — Startseite">
       <Logo variant="lockup" tone="dark" width={140} loading="eager" />
     </a>
 
-    <nav aria-label="Hauptnavigation" class="hidden md:block">
+    <nav aria-label="Hauptnavigation" class="nav-a hidden lg:block">
       <ul class="flex items-center gap-7 font-mono text-sm uppercase tracking-widest">
         {NAV_MAIN.map((item) => (
           <li>
             <a
               href={`${base}${item.path}`}
               aria-current={isActive(item.path) ? 'page' : undefined}
-              class="inline-flex min-h-11 items-center border-b-2 border-transparent py-1 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:border-primary aria-[current=page]:border-primary aria-[current=page]:text-primary-deep"
+              class="inline-flex min-h-11 items-center py-1 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-primary-deep aria-[current=page]:text-primary-deep"
             >
               {item.label}
             </a>
@@ -41,19 +45,16 @@ function isActive(itemPath: string): boolean {
       </ul>
     </nav>
 
-    <div class="hidden items-center gap-6 md:flex">
-      <OpeningStatus size="sm" />
-      <a
-        href={`${base}${NAV_CTA.path}`}
-        class="inline-flex min-h-11 items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-sm text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep"
-      >
+    <div class="hidden items-center gap-6 lg:flex">
+      <OpeningStatus size="sm" class="max-xl:hidden" />
+      <a href={`${base}${NAV_CTA.path}`} class:list={[btnPrimary, 'px-5 py-2.5']}>
         {NAV_CTA.label}
       </a>
     </div>
 
-    <details class="mobile-nav md:hidden">
+    <details class="mobile-nav lg:hidden">
       <summary
-        class="grid size-11 cursor-pointer list-none place-items-center rounded-card border-2 border-ink text-ink"
+        class="relative z-50 grid size-11 cursor-pointer list-none place-items-center rounded-card border-2 border-ink bg-paper text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
         aria-label="Menü öffnen"
       >
         <svg class="icon-menu" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -63,28 +64,41 @@ function isActive(itemPath: string): boolean {
           <path d="M6 6l12 12M18 6L6 18" />
         </svg>
       </summary>
-      <div class="fixed inset-0 z-40 overflow-y-auto bg-paper pb-10 pt-24">
-        <nav aria-label="Mobile Navigation" class="mx-auto flex max-w-md flex-col gap-1 px-6">
+      <div class="fixed inset-0 z-40 overflow-y-auto bg-paper pb-10 pt-[128px]">
+        <span class="tz-band" aria-hidden="true"></span>
+        <nav aria-label="Mobile Navigation" class="mx-auto flex max-w-md flex-col gap-1 px-6 pt-4">
           <ul class="flex flex-col divide-y divide-ink/10 font-display text-3xl">
-            {NAV_MAIN.map((item) => (
-              <li>
+            {NAV_MAIN.map((item, i) => (
+              <li class="drawer-item" style={`--i:${i}`}>
                 <a
                   href={`${base}${item.path}`}
                   aria-current={isActive(item.path) ? 'page' : undefined}
-                  class="flex min-h-14 items-center py-3 text-ink aria-[current=page]:text-primary-deep"
+                  class="flex min-h-14 items-center justify-between py-3 text-ink aria-[current=page]:text-primary-deep"
                 >
                   {item.label}
+                  <span class="font-mono text-xs text-ink-soft" aria-hidden="true">0{i + 1}</span>
                 </a>
               </li>
             ))}
+            <li class="drawer-item" style={`--i:${NAV_MAIN.length}`}>
+              <a
+                href={`${base}/ueber-mich`}
+                aria-current={isAbout ? 'page' : undefined}
+                class="flex min-h-14 items-center justify-between py-3 text-ink aria-[current=page]:text-primary-deep"
+              >
+                Über mich
+                <span class="font-mono text-xs text-ink-soft" aria-hidden="true">0{NAV_MAIN.length + 1}</span>
+              </a>
+            </li>
           </ul>
           <a
             href={`${base}${NAV_CTA.path}`}
-            class="mt-6 inline-flex min-h-12 items-center justify-center rounded-card bg-ink px-5 py-3 font-mono text-sm text-bg"
+            class:list={[btnPrimary, 'drawer-item mt-6 min-h-12']}
+            style={`--i:${NAV_MAIN.length + 1}`}
           >
             {NAV_CTA.label}
           </a>
-          <div class="mt-6">
+          <div class="drawer-item mt-6" style={`--i:${NAV_MAIN.length + 2}`}>
             <OpeningStatus size="sm" />
           </div>
         </nav>
@@ -103,4 +117,21 @@ function isActive(itemPath: string): boolean {
   details.mobile-nav:not([open]) > summary .icon-close {
     display: none;
   }
+  /* Geschlossenes Panel wirklich aus dem Layout nehmen (Chrome hält es sonst mit content-visibility im Fluss → Overflow) */
+  details.mobile-nav:not([open]) > div {
+    display: none;
+  }
 </style>
+
+<script>
+  // Schatten unter dem Header erst, wenn gescrollt wurde (kein Layout-Shift, nur box-shadow).
+  function bindHeaderShadow() {
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    if (!header) return;
+    const paint = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    paint();
+    window.addEventListener('scroll', paint, { passive: true });
+  }
+  bindHeaderShadow();
+  document.addEventListener('astro:page-load', bindHeaderShadow);
+</script>

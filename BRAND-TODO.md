@@ -10,6 +10,18 @@ Priorisiert. Punkte mit ⛔ blockieren den Launch, ◻︎ sind vor Launch zu kl�
   `X-Robots-Tag`-Header löschen, `public/robots.txt` wieder auf `Allow` + Sitemap stellen,
   Passwort ändern oder `deploy/htpasswd` löschen. Danach Deploy anstoßen.
 
+## Neu seit 19.09.2026 — Variante A (Warm Krume), Details in docs/MATERIAL-THEKE.md
+
+- ⛔ **Zwei Bilder fehlen noch im Repo** (im Auftrag genannt, aber nicht beim Job angekommen):
+  1. Porträt von Josie mit der Urkunde → `src/assets/photos/josie-portrait.jpg`
+  2. Nahaufnahme der Terrazzo-Thekenoberfläche → `src/assets/textures/terrazzo.jpg`
+     (ersetzt den prozeduralen Platzhalter; danach `TERRAZZO_IS_PLACEHOLDER = false` in `src/lib/textures.ts`).
+- ◻︎ **Über-mich-Texte** (/a/ueber-mich): Herkunft/Weg zum Backen, Übernahme (seit wann, warum), Team,
+  vergebende Stelle + Anlass der Auszeichnung „Bester Bäcker 2025 – Landkreis Rostock". Platzhalterboxen sind
+  im Layout sichtbar markiert.
+- ○ **Instagram-Live-Feed**: Business/Creator-Konto + Access-Token (Instagram-API mit Instagram-Login) →
+  Build-Env `INSTAGRAM_ACCESS_TOKEN`; bis dahin läuft der Feed mit den 5 importierten Posts + Café-Fotos.
+
 ## Instagram-Befunde (Import 16.08.2026, Details in brand/sources.md)
 
 - ⛔ **„Kleine Brotpause diesen Sommer"** — der neueste Post (Shortcode DZws5d3MDjT) kündigt eine

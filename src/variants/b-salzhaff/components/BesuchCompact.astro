@@ -4,6 +4,7 @@ import site from '../../../data/site.json';
 import { telHref } from '../../../lib/format';
 import SectionLabel from './SectionLabel.astro';
 import WeekTable from './WeekTable.astro';
+import { linkArrow, linkArrowIcon } from '../lib/ui';
 
 interface Props {
   base: string;
@@ -19,15 +20,12 @@ const { base } = Astro.props;
       <p class="mt-4 max-w-[42ch] text-ink-soft">
         Dienstag und Mittwoch backen wir nicht — plan deinen Besuch drumherum.
       </p>
-      <a href={telHref(site.phone)} class="mt-6 block min-h-[44px] w-fit text-2xl text-ink">
+      <a href={telHref(site.phone)} class="mt-6 block min-h-[44px] w-fit text-2xl text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-primary">
         {site.phoneDisplay}
       </a>
-      <a
-        href={`${base}/besuch`}
-        class="group mt-6 inline-flex min-h-[44px] w-fit items-center gap-2 font-mono text-[15px] text-ink"
-      >
+      <a href={`${base}/besuch`} class:list={['mt-6', linkArrow]}>
         Alle Details zum Besuch
-        <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+        <span class={linkArrowIcon} aria-hidden="true">→</span>
       </a>
     </div>
     <WeekTable />

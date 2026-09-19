@@ -6,6 +6,7 @@
  * (nicht als Sonderfall /404.html) — passend zu deploy/nginx.conf.
  */
 import Layout from '../../variants/b-salzhaff/Layout.astro';
+import { btnPrimary, linkArrow, linkArrowIcon } from '../../variants/b-salzhaff/lib/ui';
 
 const base = '/b';
 ---
@@ -18,15 +19,12 @@ const base = '/b';
       Diese Seite ist nicht da — vielleicht war sie es nie. Weiter geht es hier.
     </p>
     <div class="mt-10 flex flex-wrap items-center gap-6">
-      <a
-        href={`${base}/karte`}
-        class="inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
-      >
+      <a href={`${base}/karte`} class={btnPrimary}>
         Zur Karte
       </a>
-      <a href={base} class="group inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink">
+      <a href={base} class={linkArrow}>
         Zur Startseite
-        <span class="transition-transform duration-[var(--dur-fast)] ease-[var(--ease-brand)] group-hover:translate-x-1" aria-hidden="true">→</span>
+        <span class={linkArrowIcon} aria-hidden="true">→</span>
       </a>
     </div>
   </section>

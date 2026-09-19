@@ -44,6 +44,18 @@ h1, h2 {
   letter-spacing: -0.015em;
 }
 
+/* Lange deutsche Komposita (z. B. "Sauerteigschnecke", "Nachtbackstube")
+   dürfen bei fluiden clamp()-Größen auf schmalen Screens nicht aus ihrer
+   Sektion laufen — brechen statt überlaufen, mit Sprachtrennung wo möglich. */
+h1, h2, h3 {
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+p, .prose-measure {
+  overflow-wrap: break-word;
+}
+
 /* ---------- Fermentationsblasen (Hintergrund-Leben) ---------- */
 /* GPU-schonend: nur transform/opacity, große Blur-Kreise, sehr langsam. */
 @keyframes bubble-drift {

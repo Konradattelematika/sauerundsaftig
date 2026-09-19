@@ -44,6 +44,43 @@ h1, h2 {
   font-weight: 800;
   letter-spacing: -0.01em;
   text-transform: none;
+  /* Lange (zusammengesetzte) Wörter in den großen Headlines nie über den Rand laufen lassen. */
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* ---------- Buttons: Motion-Profil „Ofen" ---------- */
+/* Print-Schatten-Buttons heben beim Hover/Fokus spürbar ab und schlagen beim Klick hart auf.
+   Nur transform/box-shadow (kein Layout-Jank); reduced-motion wird global in shared.css entschärft. */
+.btn-ofen {
+  --btn-shadow: var(--color-ink);
+  box-shadow: 4px 4px 0 var(--btn-shadow);
+  transition:
+    transform var(--dur-fast) var(--ease-brand),
+    box-shadow var(--dur-fast) var(--ease-brand);
+}
+.btn-ofen--paper {
+  --btn-shadow: var(--color-paper);
+}
+.btn-ofen:hover,
+.btn-ofen:focus-visible {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--btn-shadow);
+}
+.btn-ofen:active {
+  transform: translate(0, 2px);
+  box-shadow: none;
+}
+
+/* ---------- Duotone-Bilder: sanfter Wechsel, nur wenn Teil eines Links/einer Karte (.group) ---------- */
+.duotone-frame img {
+  transition:
+    transform var(--dur-slow) var(--ease-brand),
+    opacity var(--dur-slow) var(--ease-brand);
+}
+.group:hover .duotone-frame img {
+  transform: scale(1.045);
+  opacity: 1;
 }
 
 /* Marquee („Heute frisch"-Ticker) — läuft nur mit JS-Klasse und ohne reduced-motion */

@@ -46,11 +46,18 @@ const jsonLd = [menuSchema([{ title: section.data.title, items: section.data.ite
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
       <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
         <div class="md:col-span-5">
-          <SectionIntro as="h1" size="lg" eyebrow="Karte" title={section.data.title} intro={section.data.intro} />
+          <SectionIntro as="h1" size="lg" eyebrow="Karte" title={section.data.title} intro={section.data.intro} rule />
           {section.data.note && <p class="prose-measure mt-4 font-mono text-sm text-ink-soft">{section.data.note}</p>}
         </div>
         <div class="md:col-span-6 md:col-start-8" data-reveal style="--reveal-delay:100ms">
-          <Figure motif={heroMotif} aspect="aspect-[16/9]" sizes="(min-width: 768px) 45vw, 100vw" loading="eager" />
+          <Figure
+            motif={heroMotif}
+            aspect="aspect-[16/9]"
+            sizes="(min-width: 768px) 45vw, 100vw"
+            loading="eager"
+            mat="flat"
+            hover
+          />
         </div>
       </div>
 

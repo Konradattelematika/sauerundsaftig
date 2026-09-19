@@ -6,6 +6,7 @@ import MenuSection from '../../../variants/b-salzhaff/components/MenuSection.ast
 import MenuLegend from '../../../variants/b-salzhaff/components/MenuLegend.astro';
 import { MENU_SECTIONS } from '../../../lib/variants';
 import { menuSchema, breadcrumbs } from '../../../lib/schema-org';
+import { linkUnderline } from '../../../variants/b-salzhaff/lib/ui';
 
 const base = '/b';
 const all = await getCollection('menu');
@@ -32,7 +33,7 @@ const jsonLd = [
 
     <nav aria-label="Sprung zu Sektionen" class="mt-8 flex flex-wrap gap-x-6 gap-y-3">
       {sections.map((s) => (
-        <a href={`#${s.data.slug}`} class="min-h-[44px] font-mono text-[15px] text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink flex items-center">
+        <a href={`#${s.data.slug}`} class:list={['flex min-h-[44px] items-center font-mono text-[15px]', linkUnderline]}>
           {s.data.title}
         </a>
       ))}

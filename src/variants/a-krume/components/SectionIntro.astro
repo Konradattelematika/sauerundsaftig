@@ -1,20 +1,30 @@
 ---
-/** Editoriale Sektions-Einleitung: Mono-Eyebrow + große Fraunces-Zeile + optionaler Text. */
+/**
+ * Editoriale Sektions-Einleitung: Mono-Eyebrow + große Fraunces-Zeile + optionaler Text.
+ * `rule` setzt eine kurze Terrazzo-Regel unter den Eyebrow (Material „Theke"),
+ * `eyebrowStyle="tag"` rendert den Eyebrow als Terrazzo-Plakette.
+ */
 interface Props {
   eyebrow?: string;
   title: string;
   intro?: string;
   as?: 'h1' | 'h2';
   size?: 'md' | 'lg';
+  rule?: boolean;
+  eyebrowStyle?: 'text' | 'tag';
   class?: string;
 }
-const { eyebrow, title, intro, as = 'h2', size = 'md', class: cls = '' } = Astro.props;
+const { eyebrow, title, intro, as = 'h2', size = 'md', rule = false, eyebrowStyle = 'text', class: cls = '' } = Astro.props;
 const Tag = as;
 const titleClass = size === 'lg' ? 'text-[clamp(2.5rem,6vw,4.5rem)]' : 'text-[clamp(2rem,5vw,3.5rem)]';
 ---
 
 <div class:list={['max-w-3xl', cls]} data-reveal>
-  {eyebrow && <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">{eyebrow}</p>}
+  {eyebrow && eyebrowStyle === 'tag' && <p><span class="tz-tag">{eyebrow}</span></p>}
+  {eyebrow && eyebrowStyle === 'text' && (
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">{eyebrow}</p>
+  )}
+  {rule && <span class="tz-rule mt-3" aria-hidden="true"></span>}
   <Tag class:list={['mt-3', titleClass]}>{title}</Tag>
   {intro && <p class="prose-measure mt-4 text-lg text-ink-soft md:text-xl">{intro}</p>}
 </div>

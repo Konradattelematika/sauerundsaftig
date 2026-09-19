@@ -10,6 +10,7 @@ import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astr
 import Figure from '../../../variants/a-krume/components/Figure.astro';
 import NewsletterForm from '../../../components/shared/NewsletterForm.astro';
 import { formatDate } from '../../../lib/format';
+import { linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
 
 const base = '/a';
 const entries = (await getCollection('journal')).sort(
@@ -32,13 +33,20 @@ const CATEGORY_LABELS: Record<string, string> = {
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
-      <SectionIntro as="h1" size="lg" eyebrow="Journal" title="Notizen aus der Backstube" class="mb-10 md:mb-16" />
+      <SectionIntro as="h1" size="lg" eyebrow="Journal" title="Notizen aus der Backstube" rule class="mb-10 md:mb-16" />
 
       {featured && (
         <a href={`${base}/journal/${featured.id}`} class="group block" data-reveal>
           <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center">
             <div class="md:col-span-7">
-              <Figure motif={featured.data.motif} aspect="aspect-[16/10]" sizes="(min-width: 768px) 55vw, 100vw" loading="eager" />
+              <Figure
+                motif={featured.data.motif}
+                aspect="aspect-[16/10]"
+                sizes="(min-width: 768px) 55vw, 100vw"
+                loading="eager"
+                mat="flat"
+                hover
+              />
             </div>
             <div class="md:col-span-4 md:col-start-9">
               <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">
@@ -48,8 +56,9 @@ const CATEGORY_LABELS: Record<string, string> = {
                 {featured.data.title}
               </h2>
               <p class="prose-measure mt-3 text-lg text-ink-soft">{featured.data.description}</p>
-              <span class="mt-5 inline-flex min-h-11 items-center font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4">
+              <span class:list={[linkArrow, 'mt-5']}>
                 Weiterlesen
+                <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
               </span>
             </div>
           </div>

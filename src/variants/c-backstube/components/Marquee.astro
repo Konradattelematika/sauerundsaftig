@@ -23,7 +23,7 @@ function itemLabel(i: Item): string {
 }
 ---
 
-<div class="marquee-wrap overflow-hidden border-y-2 border-ink bg-secondary py-3.5 text-paper">
+<div class="marquee-wrap overflow-hidden overflow-x-clip border-y-2 border-ink bg-secondary py-3.5 text-paper">
   <div class="marquee-track" aria-hidden="true">
     {[0, 1].map(() => (
       <div class="flex shrink-0 items-center">

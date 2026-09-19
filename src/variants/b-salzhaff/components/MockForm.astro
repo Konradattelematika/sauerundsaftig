@@ -3,6 +3,8 @@
  * Formular-Mock (Kontakt/Gastgeber-Anfrage): reine Demo-UI, nichts wird übertragen.
  * Zustand lebt nur im Browser-Speicher des Scripts, kein localStorage.
  */
+import { btnSecondary } from '../lib/ui';
+
 interface Field {
   id: string;
   label: string;
@@ -51,7 +53,7 @@ const { formId, fields, submitLabel, successText } = Astro.props;
     <p class="mt-4 text-ink-soft">Demo-Formular — es wird nichts versendet. Ruf uns lieber direkt an.</p>
     <button
       type="submit"
-      class="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-card bg-ink px-6 py-3 font-mono text-[15px] text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)]"
+      class:list={['mt-5', btnSecondary]}
     >
       {submitLabel}
     </button>

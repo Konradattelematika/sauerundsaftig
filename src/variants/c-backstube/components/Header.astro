@@ -35,13 +35,16 @@ function isCurrent(itemPath: string): boolean {
     <details class="header-drawer lg:hidden" data-mobile-nav>
       <summary
         class="grid size-11 cursor-pointer list-none place-items-center border-2 border-ink bg-bg [&::-webkit-details-marker]:hidden"
-        aria-label="Menü öffnen"
+        aria-label="Menü"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <svg class="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
           <path d="M3 6h18M3 12h18M3 18h18" />
         </svg>
+        <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M5 5l14 14M19 5 5 19" />
+        </svg>
       </summary>
-      <div class="fixed inset-0 top-[57px] z-30 overflow-y-auto border-t-2 border-ink bg-bg p-6">
+      <div class="drawer-panel fixed inset-0 top-[57px] z-30 overflow-y-auto border-t-2 border-ink bg-bg p-6">
         <nav aria-label="Hauptnavigation (mobil)">
           <ul class="flex flex-col gap-1">
             {NAV_MAIN.map((item) => (
@@ -75,3 +78,23 @@ function isCurrent(itemPath: string): boolean {
     if (details) details.open = false;
   });
 </script>
+
+<style>
+  /* Hamburger/Schließen-Icon je nach Drawer-Zustand umschalten. */
+  .header-drawer:not([open]) summary .icon-close {
+    display: none;
+  }
+  .header-drawer[open] summary .icon-menu {
+    display: none;
+  }
+
+  /*
+   * Manche Browser behandeln ::details-content bei geschlossenem <details> als
+   * Containment-Box — dadurch kann das `position: fixed`-Drawer-Panel trotz
+   * geschlossenem Zustand einen winzigen Rest-Layoutbereich beanspruchen
+   * (horizontaler Mini-Overflow). Explizit erzwungenes display:none behebt das.
+   */
+  .header-drawer:not([open]) .drawer-panel {
+    display: none;
+  }
+</style>

@@ -49,6 +49,7 @@ const others = all
       <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>
         {CATEGORY_LABELS[category] ?? category} · {formatDate(date)}
       </p>
+      <span class="tz-rule mt-3" aria-hidden="true"></span>
       <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)]" data-reveal style="--reveal-delay:100ms">{title}</h1>
       <p class="prose-measure mt-5 text-xl text-ink-soft" data-reveal style="--reveal-delay:200ms">{description}</p>
     </div>
@@ -56,7 +57,7 @@ const others = all
 
   <section class="bg-bg-alt py-8 md:py-10">
     <div class="mx-auto max-w-[1200px] px-4 md:px-8">
-      <Figure motif={motif} aspect="aspect-[16/9]" sizes="(min-width: 900px) 1200px, 100vw" loading="eager" />
+      <Figure motif={motif} aspect="aspect-[16/9]" sizes="(min-width: 900px) 1200px, 100vw" loading="eager" mat="flat" />
     </div>
   </section>
 

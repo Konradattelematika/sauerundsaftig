@@ -1,0 +1,56 @@
+{
+  "_doc": "Lokaler Instagram-Fallback für die Feed-Sektion (Variante A). Quelle: brand/data/posts.json (Import 16.08.2026 via tools/brand-import, öffentliche Embed-Daten des eigenen Accounts). Captions sind wörtlich, nur um Hashtags/Emojis gekürzt. Bilder liegen in src/assets/instagram/<id>.jpg (Reel-Vorschaubilder, 640 px). Echte Live-Daten: siehe src/lib/instagram.ts.",
+  "profile": {
+    "username": "sauerundsaftig",
+    "url": "https://www.instagram.com/sauerundsaftig/",
+    "fetchedAt": "2026-08-16"
+  },
+  "posts": [
+    {
+      "id": "DZev-CbMF3J",
+      "permalink": "https://www.instagram.com/p/DZev-CbMF3J/",
+      "date": "2026-06-12",
+      "caption": "Meer & Frühling",
+      "image": "DZev-CbMF3J",
+      "alt": "Torte mit hellblauer Buttercreme, Wellenmuster und echten Gänseblümchen",
+      "isVideo": true
+    },
+    {
+      "id": "DViajs2jKPF",
+      "permalink": "https://www.instagram.com/p/DViajs2jKPF/",
+      "date": "2026-03-06",
+      "caption": "Last weeks recap",
+      "image": "DViajs2jKPF",
+      "alt": "Zwei Käsekuchen in der Theke: einer mit Himbeerspiegel, einer mit Maracuja",
+      "isVideo": true
+    },
+    {
+      "id": "DVTVQDlDKsn",
+      "permalink": "https://www.instagram.com/p/DVTVQDlDKsn/",
+      "date": "2026-02-28",
+      "caption": "Erdbeer-Mascarpone Vintagetorte",
+      "image": "DVTVQDlDKsn",
+      "alt": "Vintage-Torte mit rosa Buttercreme-Bögen und dunklen Schleifen",
+      "isVideo": true
+    },
+    {
+      "id": "DVN4rovjLik",
+      "permalink": "https://www.instagram.com/p/DVN4rovjLik/",
+      "date": "2026-02-26",
+      "caption": "Heute durfte wieder ein super süßer Kundenauftrag ausziehen",
+      "image": "DVN4rovjLik",
+      "alt": "Auftragstorte mit hellblauer Creme und bunten Streuseln auf einer Tortenplatte",
+      "isVideo": true
+    },
+    {
+      "id": "DVLQSKejP4W",
+      "permalink": "https://www.instagram.com/p/DVLQSKejP4W/",
+      "date": "2026-02-25",
+      "caption": "Wir sind bereit für Frühling. Seid ihr bereit für Matcha mit Erdbeerwolkenschaum?",
+      "image": "DVLQSKejP4W",
+      "alt": "Glas mit Matcha Latte, Erdbeerschicht und rosa Milchschaum, ein Löffel rührt um",
+      "isVideo": true
+    }
+  ],
+  "localFillers": ["hero-krume", "brotregal", "torte-blumen", "schnecke-saison", "gastraum-abend", "theke"]
+}

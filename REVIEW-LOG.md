@@ -60,3 +60,35 @@ Orchestrator-Prüfprotokoll. Ein Eintrag je Schritt: Datum, Prüfung, Abweichung
   Inszenierung stattdessen nativ (Ken-Burns auf Krume-Masken in D, bestehende
   Reveals/Parallax-Motion), dokumentiert für Konrad.
 - QA: build ok, test:routes 136/136 OK, vitest 16/16, astro check 0 Fehler. Push 51ea151.
+
+## 19.09.2026 — Vierter Lauf: Variante A weiterentwickelt (Material „Theke", Instagram, Über-mich)
+- Auftrag nannte zwei Bilder (Josie-Porträt, Terrazzo-Theke) — beide lagen nicht im Job/Upload-Ordner.
+  Umgesetzt mit Drop-in-Slots: `josie-portrait`-Motiv (Platzhalter-Pipeline) und prozedurale
+  Terrazzo-Textur (Farben aus theke.jpg gesampelt), echte Dateien ersetzen je genau eine Datei.
+- Terrazzo-System `src/styles/a-terrazzo.css` (tz-band/mat/offset/tag/rule/text/frame), URL via
+  Layout als `--tz-url`. Neue A-Bausteine: `lib/ui.ts` (Buttons/Links), Figure (hover/mat/Clip-Reveal),
+  SectionIntro (rule/tag), Header (Nav-Unterstreichung, Scroll-Schatten, Drawer gestaffelt),
+  Footer (Band, „Über mich"), HeuteFrisch editorial, Motion.astro: dezenter Parallax (`data-parallax`).
+- Instagram: `lib/instagram.ts` + `data/instagram-posts.json` (5 echte Posts, Live-Pfad dokumentiert),
+  `InstagramFeed.astro` (editorialer Scroller, Drag/Snap/Buttons/Cursor-Label, reduced-motion).
+- Neue Seite `/a/ueber-mich` (Hero mit Typo-Überlappung, Story, Urkunde, Philosophie, Theke → Terrazzo-Fläche,
+  Feed, Besuch), verlinkt aus Footer A, Drawer, Startseite, /a/ueber-uns.
+- Gefundene Altfehler behoben: Desktop-Nav A ab 768 px zu breit (Overflow) → ab lg; Mobil-Drawer A war durch
+  `backdrop-blur` (Containing Block für `position:fixed`) in den Header eingesperrt; geschlossenes
+  `<details>`-Panel erzeugte Overflow; „Sauerteigschnecken" ohne Trennung sprengte 768/1024 px →
+  `hyphens:auto` für h1–h3 in A. Screenshot-Tool: `--scroll` (Lazy-Bilder) und Hinweis auf `--reduced`.
+- Playwright-Checks: kein horizontaler Overflow auf 8 A-Seiten × 6 Breiten (375–1920); Feed-Buttons,
+  Drag, Klick-Unterdrückung nach Drag, Cursor-Label, Header-Schatten, Mobilmenü geprüft.
+- Varianten B/C/D und A-Unterseiten: Politur durch vier parallele Executive-Agenten (Sonnet), Ergebnis s. u.
+- Ergebnis der Executive-Agenten (Sonnet + GPT-Sol-Review), vom Orchestrator per Screenshot/Overflow-Matrix gegengeprüft:
+  - **A-Unterseiten:** ui.ts-Buttons/Links überall, `rule` am Haupt-Intro, je Seite max. ein großes Terrazzo-Element
+    (Passepartout am Aufmacher), Teaser mit group-Hover; Orchestrator-Nachbesserung: überlappende Karten
+    (schnecken, ueber-uns) über das positionierte Passepartout gehoben (`relative z-10`).
+  - **B:** `/b/ueber-uns` war im Repo ein Torso (nur Frontmatter → leere Seite) und wurde im B-Stil neu aufgebaut;
+    Header-Overflow 768/1024 behoben; zentrale `lib/ui.ts`; Hover-States (Footer, Formular, Telefon, FAQ, Karten).
+  - **C:** `.btn-ofen` (Print-Schatten-Button mit Anschlag), Karten-Hover, Drawer-Icon-Toggle + Overflow-Fix,
+    Team-Bilder mit Rahmen, Komposita-Trennung, Marquee geclippt.
+  - **D:** Öffnungsstatus-Sichtbarkeitskaskade im Header (auf allen Breiten sichtbar → riesiger Header, Overflow)
+    behoben; Komposita-Trennung; Gastgeber-Karten `min-w-0`; aria-current im Mobilmenü.
+- Abschluss: build 128 Seiten, test:routes 138/138, astro check 0 Fehler, vitest 16/16, Overflow-Matrix
+  A/B/C/D × 375–1920 grün. Deploy: Push + Coolify-Trigger (Vorschau hinter Basic Auth).

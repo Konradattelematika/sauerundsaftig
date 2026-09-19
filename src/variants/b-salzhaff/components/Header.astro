@@ -25,14 +25,14 @@ function isActive(itemPath: string): boolean {
       <Logo variant="lockup" tone="dark" width={150} loading="eager" />
     </a>
 
-    <nav class="hidden items-center gap-8 md:flex" aria-label="Hauptnavigation">
+    <nav class="hidden items-center gap-4 md:flex lg:gap-8" aria-label="Hauptnavigation">
       {NAV_MAIN.map((item) => (
         <a
           href={`${base}${item.path}`}
           aria-current={isActive(item.path) ? 'page' : undefined}
           class:list={[
-            'font-mono text-[15px] uppercase tracking-wide transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)]',
-            isActive(item.path) ? 'text-ink' : 'text-ink-soft hover:text-ink',
+            'nav-link relative font-mono text-[15px] uppercase tracking-wide text-ink-soft transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-ink',
+            isActive(item.path) && 'is-active text-ink',
           ]}
         >
           {item.label}
@@ -40,13 +40,19 @@ function isActive(itemPath: string): boolean {
       ))}
     </nav>
 
-    <div class="hidden items-center gap-6 md:flex">
-      <OpeningStatus size="sm" />
+    <div class="hidden items-center gap-4 md:flex lg:gap-6">
+      <span class="hidden whitespace-nowrap xl:inline-flex">
+        <OpeningStatus size="sm" />
+      </span>
       <a
         href={`${base}${NAV_CTA.path}`}
-        class="inline-flex min-h-[44px] items-center justify-center rounded-card bg-accent px-5 py-2.5 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink"
+        class="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-card bg-accent px-3.5 py-2.5 font-mono text-[15px] text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink lg:px-5"
       >
-        {NAV_CTA.label}
+        <svg class="lg:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 7h12l1 14H5L6 7Zm3 0a3 3 0 0 1 6 0" />
+        </svg>
+        <span class="hidden lg:inline">{NAV_CTA.label}</span>
+        <span class="sr-only lg:hidden">{NAV_CTA.label}</span>
       </a>
     </div>
 
@@ -93,4 +99,24 @@ function isActive(itemPath: string): boolean {
   /* Details/Summary: Browser-Standardpfeil entfernen, Fokus-Ring via globalem :focus-visible */
   .nav-drawer summary::-webkit-details-marker { display: none; }
   .nav-drawer[open] summary svg { transform: rotate(90deg); }
+
+  /* Nav-Unterstrich: dezente Linie wächst bei Hover, bleibt bei aria-current stehen. */
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-fast) var(--ease-brand);
+  }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+  .nav-link.is-active::after {
+    transform: scaleX(1);
+  }
 </style>

@@ -1,5 +1,9 @@
 ---
-/** "Heute frisch"-Board aus der heuteFrisch-Collection, mit Datum + soldOut-Markierung. */
+/**
+ * „Heute frisch"-Board aus der heuteFrisch-Collection — editorial statt Karten:
+ * Datum als Mono-Zeile, Motive mit sanfter Hover-Bewegung, Namen in Fraunces,
+ * soldOut als Badge + durchgestrichene Notiz. Gestaffeltes data-reveal.
+ */
 import { getCollection } from 'astro:content';
 import { formatDate } from '../../../lib/format';
 import Figure from './Figure.astro';
@@ -11,23 +15,33 @@ const today = entries[0];
 {today && (
   <section class="bg-bg-alt py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
-      <div data-reveal>
-        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Heute frisch</p>
-        <h2 class="mt-3 text-[clamp(2rem,5vw,3.25rem)]">Was heute aus dem Ofen kommt</h2>
-        <p class="prose-measure mt-4 text-lg text-ink-soft">{formatDate(today.data.date)}</p>
+      <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 border-b border-ink/10 pb-6" data-reveal>
+        <div>
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Heute frisch</p>
+          <h2 class="mt-3 text-[clamp(2rem,5vw,3.25rem)]">Was heute aus dem Ofen kommt</h2>
+        </div>
+        <p class="font-mono text-sm uppercase tracking-widest text-ink-soft">{formatDate(today.data.date)}</p>
       </div>
-      <ul class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <ol class="mt-8 grid grid-cols-2 items-end gap-x-4 gap-y-8 md:mt-12 md:gap-x-6 lg:grid-cols-4" role="list">
         {today.data.items.map((item, i) => (
           <li
-            class:list={['rounded-card border border-ink/10 bg-paper p-5', item.soldOut && 'opacity-60']}
+            class:list={['group', item.soldOut && 'opacity-60']}
             data-reveal
-            style={`--reveal-delay:${(i % 3) * 100}ms`}
+            style={`--reveal-delay:${(i % 4) * 100}ms`}
           >
             {item.motif && (
-              <Figure motif={item.motif} aspect="aspect-square" sizes="(min-width: 1024px) 22vw, 45vw" class="mb-4" />
+              <Figure
+                motif={item.motif}
+                aspect={i === 0 ? 'aspect-square lg:aspect-[4/5]' : 'aspect-square'}
+                sizes="(min-width: 1024px) 22vw, 45vw"
+                hover
+                class="mb-4"
+              />
             )}
-            <p class="flex items-start justify-between gap-2 text-lg">
-              <span>{item.name}</span>
+            <p class="flex items-start justify-between gap-2">
+              <span class="font-display text-xl leading-tight md:text-2xl">
+                <span class="mr-2 font-mono text-xs text-ink-soft align-middle">0{i + 1}</span>{item.name}
+              </span>
               {item.soldOut && (
                 <span class="shrink-0 rounded-full border border-closed px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-closed">
                   Vergriffen
@@ -39,7 +53,7 @@ const today = entries[0];
             )}
           </li>
         ))}
-      </ul>
+      </ol>
     </div>
   </section>
 )}

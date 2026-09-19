@@ -12,6 +12,7 @@ import OpeningStatus from '../../components/shared/OpeningStatus.astro';
 import site from '../../data/site.json';
 import { telHref } from '../../lib/format';
 import { localBusiness, breadcrumbs } from '../../lib/schema-org';
+import { linkUnderline, phoneLinkLg } from '../../variants/b-salzhaff/lib/ui';
 
 const base = '/b';
 const jsonLd = [
@@ -45,7 +46,7 @@ const jsonLd = [
       <div class="flex flex-col gap-8">
         <div>
           <p class="font-mono text-[15px] uppercase tracking-widest text-ink-soft">Telefon</p>
-          <a href={telHref(site.phone)} class="mt-2 block min-h-[44px] w-fit font-mono text-[clamp(2rem,7vw,3.5rem)] tabular text-ink">
+          <a href={telHref(site.phone)} class:list={['mt-2', phoneLinkLg]}>
             {site.phoneDisplay}
           </a>
         </div>
@@ -60,7 +61,7 @@ const jsonLd = [
             href={`https://www.instagram.com/${site.instagram}/`}
             target="_blank"
             rel="noopener"
-            class="mt-2 inline-flex min-h-[44px] items-center text-xl text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+            class:list={['mt-2 inline-flex min-h-[44px] items-center text-xl', linkUnderline]}
           >
             @{site.instagram}
           </a>

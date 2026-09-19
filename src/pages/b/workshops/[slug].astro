@@ -9,6 +9,7 @@ import WorkshopBooking from '../../../components/shared/WorkshopBooking.astro';
 import MaskImage from '../../../variants/b-salzhaff/components/MaskImage.astro';
 import SectionLabel from '../../../variants/b-salzhaff/components/SectionLabel.astro';
 import { breadcrumbs, workshopEvent } from '../../../lib/schema-org';
+import { linkBack } from '../../../variants/b-salzhaff/lib/ui';
 
 export async function getStaticPaths() {
   const entries = await getCollection('workshops');
@@ -46,7 +47,7 @@ const jsonLd = [
 
 <Layout title={`${title} — Workshop — Sauer & Saftig`} description={subtitle} jsonLd={jsonLd}>
   <section class="mx-auto max-w-[1440px] px-4 pt-10 md:px-8 md:pt-16">
-    <a href={`${base}/workshops`} class="inline-flex min-h-[44px] items-center gap-2 font-mono text-[15px] text-ink-soft hover:text-ink">
+    <a href={`${base}/workshops`} class={linkBack}>
       ← Alle Workshops
     </a>
     <p class="mt-6 font-mono text-[15px] uppercase tracking-widest text-ink-soft">{level}</p>
