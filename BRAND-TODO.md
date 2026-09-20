@@ -18,8 +18,12 @@ Priorisiert. Punkte mit ⛔ blockieren den Launch, ◻︎ sind vor Launch zu kl�
 - ◻︎ **Über-mich-Texte** (/a/ueber-mich): Herkunft/Weg zum Backen, Übernahme (seit wann, warum), Team,
   jeweils möglichst in Josies eigenen Worten. Die noch offene Platzhalterbox ist im Layout sichtbar markiert;
   die Auszeichnung ist durch das Foto als Leserumfrage der Ostsee-Zeitung belegt.
-- ○ **Instagram-Live-Feed**: Business/Creator-Konto + Access-Token (Instagram-API mit Instagram-Login) →
-  Build-Env `INSTAGRAM_ACCESS_TOKEN`; bis dahin läuft der Feed mit den 5 importierten Posts + Café-Fotos.
+- ○ **Instagram-Live-Feed — erst NACH der Übergabe** (Konrad, 20.09.2026): Die Website ist ein
+  Geburtstagsgeschenk für Josie und ihren Laden, sie weiß noch nichts davon. Der Access-Token setzt ihr
+  Instagram-Konto voraus und kommt deshalb erst nach dem Schenken. Bis dahin ist der lokale Fallback
+  (5 importierte Posts + Café-Fotos, verlinkt aufs Profil) der Zielzustand — auch für die Übergabe.
+  Danach: Business/Creator-Konto + Token → Build-Env `INSTAGRAM_ACCESS_TOKEN` (Coolify), Rebuild.
+  Aus demselben Grund können die offenen Über-mich-Texte (Punkt oben) erst nach der Übergabe von Josie kommen.
 
 ## Instagram-Befunde (Import 16.08.2026, Details in brand/sources.md)
 

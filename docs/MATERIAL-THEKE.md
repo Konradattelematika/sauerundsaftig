@@ -25,7 +25,8 @@ und die noch offenen redaktionellen Inhalte.
   (5 echte Posts des Brand-Imports vom 16.08.2026: Bild in `src/assets/instagram/<id>.jpg`,
   wörtliche Caption ohne Hashtags, Datum, Permalink) plus Café-Fotos als Füller, die aufs Profil verlinken.
   Bewusst weggelassen: der persönliche Post zur Brotpause/Mutterschutz (DZws5d3MDjT).
-- **Live-Anbindung:** komplett in `src/lib/instagram.ts` dokumentiert (Instagram-API mit
+- **Live-Anbindung (erst nach der Übergabe — die Site ist ein Geburtstagsgeschenk für Josie, Token kommt
+  danach):** komplett in `src/lib/instagram.ts` dokumentiert (Instagram-API mit
   Instagram-Login, Token als Build-Env `INSTAGRAM_ACCESS_TOKEN`, `image.remotePatterns` für die
   Instagram-CDN, Fallback bei Fehlern, Rebuild pro Deploy). Ohne Token bleibt der Live-Pfad inaktiv.
 - **Interaktion:** horizontaler Scroller mit Scroll-Snap, Maus-Drag (Klick nach Drag unterdrückt),
