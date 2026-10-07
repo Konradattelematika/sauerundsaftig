@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   RateLimiter,
   authenticate,
+  clientIp,
   clearSessionCookies,
   cookieDomainFor,
   createSessionToken,
@@ -74,22 +75,44 @@ describe('Session-Token', () => {
 
 describe('Cookies', () => {
   const config = loadConfig({ SUS_SESSION_SECRET: SECRET });
-  it('Domain nur auf *.sauerundsaftig.de, Secure außer localhost', () => {
-    expect(cookieDomainFor('checkliste.sauerundsaftig.de', config)).toBe('sauerundsaftig.de');
-    expect(cookieDomainFor('sauerundsaftig.de', config)).toBe('sauerundsaftig.de');
-    expect(cookieDomainFor('evilsauerundsaftig.de', config)).toBeNull();
-    expect(cookieDomainFor('sauerundsaftig.jawollja.gmbh', config)).toBeNull();
+  it('standardmäßig hostgebunden und Secure außer localhost', () => {
+    expect(config.cookieDomain).toBeNull();
+    expect(cookieDomainFor('checkliste.sauerundsaftig.de', config)).toBeNull();
     const live = sessionCookie('T', 'module.sauerundsaftig.de', config);
-    expect(live).toBe('sus_session=T; Path=/; Max-Age=2592000; HttpOnly; SameSite=Lax; Secure; Domain=.sauerundsaftig.de');
-    expect(sessionCookie('T', 'sauerundsaftig.jawollja.gmbh', config)).toBe('sus_session=T; Path=/; Max-Age=2592000; HttpOnly; SameSite=Lax; Secure');
+    expect(live).toBe('sus_session=T; Path=/; Max-Age=2592000; HttpOnly; SameSite=Lax; Secure');
     expect(sessionCookie('T', 'localhost', config)).not.toContain('Secure');
     expect(sessionCookie('T', '127.0.0.1', config)).not.toContain('Secure');
   });
-  it('Logout löscht Host- und Domain-Cookie', () => {
+  it('optionale Domain nur auf *.sauerundsaftig.de', () => {
+    const domainConfig = loadConfig({ SUS_SESSION_SECRET: SECRET, SUS_COOKIE_DOMAIN: 'sauerundsaftig.de' });
+    expect(cookieDomainFor('checkliste.sauerundsaftig.de', domainConfig)).toBe('sauerundsaftig.de');
+    expect(cookieDomainFor('sauerundsaftig.de', domainConfig)).toBe('sauerundsaftig.de');
+    expect(cookieDomainFor('evilsauerundsaftig.de', domainConfig)).toBeNull();
+    expect(cookieDomainFor('sauerundsaftig.jawollja.gmbh', domainConfig)).toBeNull();
+    const live = sessionCookie('T', 'module.sauerundsaftig.de', domainConfig);
+    expect(live).toBe('sus_session=T; Path=/; Max-Age=2592000; HttpOnly; SameSite=Lax; Secure; Domain=.sauerundsaftig.de');
+  });
+  it('Logout löscht beim Standard nur das Host-Cookie', () => {
     const c = clearSessionCookies('checkliste.sauerundsaftig.de', config);
+    expect(c).toHaveLength(1);
+    expect(c[0]).toContain('Max-Age=0');
+  });
+  it('Logout löscht bei konfigurierter Domain Host- und Domain-Cookie', () => {
+    const domainConfig = loadConfig({ SUS_SESSION_SECRET: SECRET, SUS_COOKIE_DOMAIN: 'sauerundsaftig.de' });
+    const c = clearSessionCookies('checkliste.sauerundsaftig.de', domainConfig);
     expect(c).toHaveLength(2);
     expect(c.every((x) => x.includes('Max-Age=0'))).toBe(true);
     expect(c[1]).toContain('Domain=.sauerundsaftig.de');
+  });
+});
+
+describe('clientIp hinter Traefik', () => {
+  it('nimmt den rechten, von Traefik angehängten Wert statt eines eingeschleusten linken Werts', () => {
+    const req = { headers: { 'x-forwarded-for': '198.51.100.10, 203.0.113.7' }, socket: { remoteAddress: '172.18.0.2' } };
+    expect(clientIp(req)).toBe('203.0.113.7');
+  });
+  it('fällt ohne X-Forwarded-For auf die Socket-Adresse zurück', () => {
+    expect(clientIp({ headers: {}, socket: { remoteAddress: '127.0.0.1' } })).toBe('127.0.0.1');
   });
 });
 

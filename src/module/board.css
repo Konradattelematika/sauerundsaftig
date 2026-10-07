@@ -199,6 +199,7 @@
   transition: background-color var(--dur-fast) var(--ease-brand), color var(--dur-fast) var(--ease-brand), border-color var(--dur-fast) var(--ease-brand);
 }
 .board-rate button:hover { border-color: var(--color-ink); }
+.board-rate button[disabled] { opacity: 0.5; cursor: wait; }
 .board-rate button[aria-pressed='true'] { border-color: var(--color-ink); background: var(--color-ink); color: var(--color-bg); }
 .board-rate button[data-rate='super'][aria-pressed='true'] { border-color: var(--color-accent); background: var(--color-accent); color: #fff; }
 .board-rate button[data-rate='nein'][aria-pressed='true'] { border-color: var(--color-ink-soft); background: var(--color-ink-soft); color: var(--color-bg); }

@@ -258,15 +258,13 @@ describe('Login-Flow', () => {
 
     const tool = await login(port, { host: CHECK, ip: '10.1.0.2', user: 'Josie', password: PASSWORDS.josie });
     expect(tool.res.headers.location).toBe('/');
-    expect(tool.setCookie[0]).toContain('; Secure; Domain=.sauerundsaftig.de');
+    expect(tool.setCookie[0]).toContain('; Secure');
+    expect(tool.setCookie[0]).not.toContain('Domain=');
 
     const prev = await login(port, { host: PREVIEW, ip: '10.1.0.3' });
     expect(prev.setCookie[0]).toContain('; Secure');
     expect(prev.setCookie[0]).not.toContain('Domain=');
 
-    // ein Login für alle Subdomains
-    const me = await request(port, { host: MODULE, path: '/api/me', headers: { Cookie: tool.cookie } });
-    expect(me.json).toEqual({ user: { id: 'josie', name: 'Josie', role: 'inhaberin' } });
   });
   it('Fehler: 303 /login?fehler=1&next=…', async () => {
     const res = await login(port, { ip: '10.2.0.1', password: 'falsch', next: '/karte' });
@@ -291,8 +289,8 @@ describe('Login-Flow', () => {
     const blocked = await login(port, { ip, next: '/karte' });
     expect(blocked.res.headers.location).toBe('/login?gesperrt=1&next=%2Fkarte');
     expect(blocked.setCookie).toEqual([]);
-    // andere IP ist nicht betroffen (erste Adresse aus X-Forwarded-For zählt)
-    expect((await login(port, { ip: '10.4.0.2, 10.4.0.1' })).res.headers.location).toBe('/');
+    // Ein eingeschleuster linker Wert ändert nichts; der rechte, von Traefik angehängte Client zählt.
+    expect((await login(port, { ip: '10.4.0.1, 10.4.0.2' })).res.headers.location).toBe('/');
     // nach 10 Minuten wieder frei
     srv.clock.advance(10 * 60 * 1000 + 1);
     try {
@@ -322,7 +320,7 @@ describe('Login-Flow', () => {
       expect(res.status).toBe(303);
       expect(res.headers.location).toBe('/login');
       const sc = [res.headers['set-cookie']].flat();
-      expect(sc).toHaveLength(2);
+      expect(sc).toHaveLength(1);
       expect(sc.every((c) => c.startsWith('sus_session=;') && c.includes('Max-Age=0'))).toBe(true);
     }
   });

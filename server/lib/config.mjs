@@ -17,7 +17,9 @@ export const DEFAULT_TOOL_HOSTS = {
   'checkliste.sauerundsaftig.de': 'checkliste',
   'module.sauerundsaftig.de': 'module',
 };
-export const DEFAULT_COOKIE_DOMAIN = 'sauerundsaftig.de';
+// Hostgebundene Cookies: www liegt bis zur DNS-Umstellung noch bei einem anderen Hoster.
+// Ein Domain-Cookie würde bei einem Besuch dort unnötig an dessen Server gesendet.
+export const DEFAULT_COOKIE_DOMAIN = null;
 export const SESSION_MAX_AGE_S = 30 * 24 * 60 * 60;
 export const ROLES = ['team', 'inhaberin'];
 

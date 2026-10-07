@@ -30,7 +30,7 @@ server/seed/checklist.json  Seed der Checkliste (gehört Agent C; fehlt sie → 
 | `SUS_LIVE_HOSTS` | `sauerundsaftig.de` | Kommaliste |
 | `SUS_WWW_HOSTS` | `www.sauerundsaftig.de` | 301 → `https://<erster Live-Host>` |
 | `SUS_TOOL_HOSTS` | `checkliste.sauerundsaftig.de=checkliste,module.sauerundsaftig.de=module` | Host=Präfix |
-| `SUS_COOKIE_DOMAIN` | `sauerundsaftig.de` | Cookie-Domain für Hosts, die darauf enden (ein Login für alle Subdomains); leer = nie |
+| `SUS_COOKIE_DOMAIN` | leer | Optionales Domain-Cookie. Standardmäßig bleibt die Sitzung aus Sicherheitsgründen hostgebunden; damit ist je Subdomain eine Anmeldung nötig |
 | `SUS_DIST_DIR` | `dist` (relativ zum Repo; Container `/app/dist`) | Build-Ausgabe |
 | `SUS_DATA_DIR` | `/data` | `checklist.json`, `module.json`, `events.jsonl` |
 | `SUS_SEED_FILE` | `server/seed/checklist.json` | Seed der Checkliste |
@@ -78,6 +78,6 @@ Tests: `pnpm test` (alle) bzw. `pnpm test:server` (nur Server, Fixtures unter `t
 - Domains der App: `sauerundsaftig.de`, `www.sauerundsaftig.de`, `checkliste.sauerundsaftig.de`,
   `module.sauerundsaftig.de`, `sauerundsaftig.jawollja.gmbh` (alle auf dieselbe App).
 - Env setzen: `SUS_USERS`, `SUS_SESSION_SECRET`, `SUS_EXPORT_TOKEN` (Rest = Defaults).
-- Traefik setzt `X-Forwarded-For`; der Server nimmt daraus die erste Adresse fürs Login-Rate-Limit.
+- Traefik hängt die direkte Client-Adresse rechts an `X-Forwarded-For`; der Server nimmt den letzten Wert fürs Login-Rate-Limit. Port 3000 bleibt ausschließlich im internen Proxy-Netz und erhält kein öffentliches Port-Mapping.
   `X-Forwarded-Host` wird bewusst ignoriert — nur der `Host`-Header zählt.
 - Go-Live passiert automatisch zur Uhrzeit in `SUS_GO_LIVE_AT` (kein Deploy nötig). Notbremse: `SUS_FORCE_PRIVATE=1`.

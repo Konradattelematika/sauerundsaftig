@@ -242,11 +242,16 @@ export class RateLimiter {
   }
 }
 
-/** Client-IP: erste Adresse aus X-Forwarded-For (Traefik setzt sie), sonst Socket. */
+/**
+ * Client-IP hinter genau einem vertrauenswürdigen Traefik-Hop: Traefik hängt die Adresse
+ * seines direkten Clients rechts an X-Forwarded-For an. Vom Browser vorangestellte Werte
+ * stehen links und dürfen den Rate-Limit-Schlüssel nicht bestimmen. Port 3000 darf deshalb
+ * nur im internen Proxy-Netz erreichbar sein.
+ */
 export function clientIp(req) {
   const xff = req.headers['x-forwarded-for'];
-  const first = typeof xff === 'string' ? xff.split(',')[0].trim() : '';
-  return first || req.socket?.remoteAddress || 'unbekannt';
+  const chain = typeof xff === 'string' ? xff.split(',').map((value) => value.trim()).filter(Boolean) : [];
+  return chain.at(-1) || req.socket?.remoteAddress || 'unbekannt';
 }
 
 /** Konstantzeit-Vergleich für Bearer-Token. */

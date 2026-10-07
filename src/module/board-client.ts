@@ -23,6 +23,11 @@ const POLL_MS = 30_000;
 let me: BoardUser | null = null;
 let state: State = { votes: [], choices: [] };
 let toastTimer = 0;
+let stateRevision = 0;
+let refreshSequence = 0;
+let mutationsInFlight = 0;
+const savingVotes = new Set<string>();
+const savingChoices = new Set<string>();
 
 /* ---------- Hilfen ---------- */
 
@@ -113,6 +118,10 @@ function setChoice(itemId: string, optionId: string | null): void {
   if (optionId && me) {
     state.choices.push({ itemId, optionId, userId: me.id, userName: me.name, updatedAt: new Date().toISOString() });
   }
+}
+
+function voteKey(itemId: string, optionId: string): string {
+  return `${itemId}:${optionId}`;
 }
 
 /* ---------- Vorschau-Fenster ---------- */
@@ -245,9 +254,12 @@ function renderItem(data: ItemData): void {
     const root = $<HTMLElement>(`[data-option="${option.id}"]`);
     if (!root) continue;
     const vote = myVote(item.id, option.id);
+    const voteSaving = savingVotes.has(voteKey(item.id, option.id));
+    const choiceSaving = savingChoices.has(item.id);
 
     for (const btn of $$<HTMLButtonElement>('[data-rate]', root)) {
       btn.setAttribute('aria-pressed', String(Boolean(vote?.rating) && btn.dataset.rate === vote?.rating));
+      btn.disabled = voteSaving;
     }
     root.classList.toggle('is-rejected', vote?.rating === 'nein');
 
@@ -259,11 +271,15 @@ function renderItem(data: ItemData): void {
     const chooseBtn = $<HTMLButtonElement>('[data-choose]', root);
     const chosen = choice?.optionId === option.id;
     if (chooseBtn) {
+      chooseBtn.disabled = choiceSaving;
       chooseBtn.setAttribute('aria-pressed', String(chosen));
       chooseBtn.textContent = chosen ? 'Deine Wahl ✓' : 'Das nehme ich';
       chooseBtn.title = chosen ? 'Nochmal tippen nimmt die Entscheidung zurück' : '';
     }
     root.classList.toggle('is-chosen', chosen);
+
+    const commentSave = $<HTMLButtonElement>('[data-comment-save]', root);
+    if (commentSave) commentSave.disabled = voteSaving;
 
     const others = $<HTMLElement>('[data-others]', root);
     if (others) {
@@ -316,11 +332,11 @@ function bindItem(data: ItemData): void {
         const rating = btn.dataset.rate as Rating;
         const prev = myVote(item.id, option.id);
         const next: Rating | null = prev?.rating === rating ? null : rating;
-        void saveVote(item.id, option.id, next, ta?.value ?? prev?.comment ?? '', data, prev);
+        void saveVote(item.id, option.id, next, ta?.value ?? prev?.comment ?? '', data, prev, statusEl ?? undefined, ta ?? undefined);
       });
     }
 
-    // Kommentar: speichert bei Blur oder Button (nur wenn geändert), Strg/Cmd+Enter
+    // Kommentar: speichert per Button oder Strg/Cmd+Enter (nur wenn geändert)
     if (ta) {
       ta.addEventListener('input', () => {
         const saved = myVote(item.id, option.id)?.comment ?? '';
@@ -338,7 +354,6 @@ function bindItem(data: ItemData): void {
         }
         void saveVote(item.id, option.id, prev?.rating ?? null, ta.value, data, prev, statusEl ?? undefined, ta);
       };
-      ta.addEventListener('blur', save);
       ta.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
           e.preventDefault();
@@ -368,6 +383,11 @@ async function saveVote(
   ta?: HTMLTextAreaElement,
 ): Promise<void> {
   if (!me) return;
+  const key = voteKey(itemId, optionId);
+  if (savingVotes.has(key)) return;
+  savingVotes.add(key);
+  mutationsInFlight += 1;
+  stateRevision += 1;
   const optimistic: Vote = { itemId, optionId, userId: me.id, userName: me.name, rating, comment, updatedAt: new Date().toISOString() };
   upsertVote(optimistic);
   if (ta) ta.dataset.dirty = '0';
@@ -380,25 +400,37 @@ async function saveVote(
     const saved = await api<Vote>('/api/module/votes', { method: 'PUT', body: JSON.stringify({ itemId, optionId, rating, comment }) });
     upsertVote({ ...optimistic, ...saved });
     if (statusEl) {
-      statusEl.textContent = 'Gespeichert ✓';
-      statusEl.classList.add('board-status--ok');
+      if (ta?.dataset.dirty === '1') {
+        statusEl.textContent = 'Noch nicht gespeichert';
+        statusEl.classList.remove('board-status--ok');
+      } else {
+        statusEl.textContent = 'Gespeichert ✓';
+        statusEl.classList.add('board-status--ok');
+      }
     }
   } catch (err) {
     // Rücknahme
     if (prev) upsertVote(prev);
     else state.votes = state.votes.filter((v) => !(v.itemId === itemId && v.optionId === optionId && v.userId === me?.id));
     if (ta) {
-      ta.value = comment;
       ta.dataset.dirty = '1';
     }
     if (statusEl) statusEl.textContent = 'Nicht gespeichert';
     renderItem(data);
     toast(`Konnte nicht speichern (${(err as Error).message}). Bitte nochmal versuchen.`, 'error');
+  } finally {
+    savingVotes.delete(key);
+    mutationsInFlight -= 1;
+    renderItem(data);
   }
 }
 
 async function saveChoice(itemId: string, optionId: string | null, data: ItemData, prev: Choice | undefined): Promise<void> {
   if (!me) return;
+  if (savingChoices.has(itemId)) return;
+  savingChoices.add(itemId);
+  mutationsInFlight += 1;
+  stateRevision += 1;
   setChoice(itemId, optionId);
   renderItem(data);
   try {
@@ -413,14 +445,23 @@ async function saveChoice(itemId: string, optionId: string | null, data: ItemDat
     setChoice(itemId, prev?.optionId ?? null);
     renderItem(data);
     toast(`Entscheidung konnte nicht gespeichert werden (${(err as Error).message}).`, 'error');
+  } finally {
+    savingChoices.delete(itemId);
+    mutationsInFlight -= 1;
+    renderItem(data);
   }
 }
 
 /* ---------- Laden & Polling ---------- */
 
 async function refresh(render: () => void): Promise<void> {
+  if (mutationsInFlight > 0) return;
+  const revision = stateRevision;
+  const sequence = ++refreshSequence;
   try {
-    state = await api<State>('/api/module/state');
+    const fresh = await api<State>('/api/module/state');
+    if (sequence !== refreshSequence || revision !== stateRevision || mutationsInFlight > 0) return;
+    state = fresh;
     render();
   } catch {
     /* Netzfehler beim Polling still ignorieren — nächster Versuch kommt */

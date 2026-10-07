@@ -130,6 +130,20 @@ describe('Store', () => {
     expect(store.checklist.items.map((i) => i.id)).toEqual(['ganz']);
   });
 
+  it('Auditfehler deutet einen bereits geschriebenen Commit nicht in einen API-Fehler um', async () => {
+    const throwingLog = { ...silentLog, error() { throw new Error('Logger ebenfalls kaputt'); } };
+    const store = await new Store({ dataDir: dir, log: throwingLog }).init();
+    await expect(
+      store.update('module', (draft) => {
+        draft.votes.push({ id: 'dauerhaft' });
+        // BigInt lässt sich im Audit-JSON nicht serialisieren und erzwingt den Fehlerpfad.
+        return { result: 'ok', event: { user: 'test', action: 'audit.fail', invalid: 1n } };
+      }),
+    ).resolves.toBe('ok');
+    expect(store.module.votes).toEqual([{ id: 'dauerhaft' }]);
+    expect(JSON.parse(await readFile(path.join(dir, 'module.json'), 'utf8')).votes).toEqual([{ id: 'dauerhaft' }]);
+  });
+
   it('kaputte Datendatei wird gesichert statt überschrieben', async () => {
     await writeFile(path.join(dir, 'checklist.json'), '{ nicht json');
     const store = await new Store({ dataDir: dir, log: silentLog }).init();

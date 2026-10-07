@@ -63,7 +63,8 @@ ihrem Präfix (`/module/…`, `/checkliste`), API-Aufrufe mit `/api/…`.
 - Benutzer aus Env `SUS_USERS` (JSON-Array `[{ "id":"konrad", "name":"Konrad", "role":"team", "hash":"scrypt$…" }]`),
   Rollen `team` | `inhaberin`. Hash-Werkzeug: `node server/hash-password.mjs <passwort>`.
 - Session-Cookie `sus_session`: HMAC-SHA256-signiert (`SUS_SESSION_SECRET`), HttpOnly, Secure (außer localhost),
-  SameSite=Lax, 30 Tage, auf `*.sauerundsaftig.de`-Hosts mit `Domain=.sauerundsaftig.de` (ein Login für alle Subdomains).
+  SameSite=Lax, 30 Tage und hostgebunden. Dadurch ist je Subdomain eine Anmeldung nötig; insbesondere wird die
+  Sitzung nicht an den bis zur DNS-Umstellung fremd gehosteten `www`-Host gesendet.
 - Login-Formular: Felder `user` (Benutzername, case-insensitive) + `password` + hidden `next`.
   Fehler → 303 auf `/login?fehler=1&next=…`. Einfaches Rate-Limit pro IP.
 

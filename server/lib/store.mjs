@@ -134,11 +134,17 @@ export class Store {
   }
 
   async #audit(event) {
-    const line = JSON.stringify({ at: this.now().toISOString(), ...event }) + '\n';
     try {
+      const line = JSON.stringify({ at: this.now().toISOString(), ...event }) + '\n';
       await appendFile(path.join(this.dataDir, 'events.jsonl'), line, { mode: 0o640 });
     } catch (err) {
-      this.log.error(`[store] events.jsonl nicht schreibbar: ${err.message}`);
+      // Der Zustands-Commit ist zu diesem Zeitpunkt bereits dauerhaft geschrieben. Ein
+      // Auditfehler darf deshalb keinen 500er und keinen falschen Client-Rollback auslösen.
+      try {
+        this.log.error?.(`[store] events.jsonl nicht schreibbar: ${err?.message ?? err}`);
+      } catch {
+        /* Auch ein fehlerhafter Logger darf einen erfolgreichen Commit nicht umdeuten. */
+      }
     }
   }
 
