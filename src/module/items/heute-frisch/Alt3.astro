@@ -1,0 +1,106 @@
+---
+/**
+ * Heute frisch Alt 3 „Schilder auf der Theke": Jedes Gebäck als kleines Papier-Aufstellschild auf der
+ * Terrazzo-Thekenplatte (Material „Theke"), leicht schief wie von Hand hingestellt; Hover richtet das
+ * Schild auf. Rundes Foto oben, Name in Fraunces, Notiz in Mono. Daten: heuteFrisch-Collection.
+ */
+import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import { formatDate } from '../../../lib/format';
+import { getAlt, getImage } from '../../../lib/images';
+import { safeWidths } from '../../../variants/a-krume/lib/picture';
+import { btnPrimary, arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+const entries = await getCollection('heuteFrisch');
+const today = entries[0];
+const TILT = [-2.5, 1.8, -1.2, 2.4, -1.8];
+const items = (today?.data.items ?? []).map((item, i) => {
+  const img = item.motif ? getImage('a', item.motif) : undefined;
+  return { ...item, img, widths: img ? safeWidths(img, [240, 480]) : [], tilt: TILT[i % TILT.length] };
+});
+const dateLabel = today ? formatDate(today.data.date, { weekday: 'long', year: undefined }) : '';
+---
+
+{today && (
+  <section class="bg-bg pt-14 md:pt-24" aria-labelledby="hf-alt3-title">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-end" data-reveal>
+        <div class="md:col-span-7">
+          <p><span class="tz-tag">Heute frisch · {dateLabel}</span></p>
+          <h2 id="hf-alt3-title" class="mt-4 text-[clamp(2rem,5vw,3.5rem)] leading-[1.05]">Das steht heute auf der Theke</h2>
+        </div>
+        <p class="prose-measure text-lg text-ink-soft md:col-span-4 md:col-start-9">
+          Frisch aus der Backstube, solange der Vorrat reicht. Brot kannst du auch vorbestellen.
+        </p>
+      </div>
+    </div>
+
+    <div class="theke-platte tz-surface relative mt-10 md:mt-14" style="--tz-pos: 55% 35%">
+      <div class="mx-auto max-w-[1440px] px-4 pb-12 pt-10 md:px-8 md:pb-16 md:pt-14">
+        <ul class="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-4 lg:gap-x-8" role="list">
+          {items.map((item, i) => (
+            <li class="schild-wrap" data-reveal style={`--reveal-delay:${(i % 4) * 100}ms`}>
+              <div class="schild relative flex h-full flex-col items-center rounded-[4px] bg-paper px-3 pb-5 pt-6 text-center sm:px-5" style={`--tilt:${item.tilt}deg`}>
+                <span class="schild-knick" aria-hidden="true"></span>
+                {item.img && (
+                  <span class:list={['block aspect-square w-[72%] max-w-[9.5rem] overflow-hidden rounded-full ring-1 ring-ink/10', item.soldOut && 'grayscale']}>
+                    <Picture
+                      src={item.img}
+                      widths={item.widths}
+                      sizes="(min-width: 1024px) 160px, 30vw"
+                      formats={['avif', 'webp']}
+                      alt={getAlt(item.motif!)}
+                      loading="lazy"
+                      class="h-full w-full object-cover"
+                    />
+                  </span>
+                )}
+                <p class:list={['mt-4 font-display text-xl leading-tight sm:text-2xl', item.soldOut && 'line-through decoration-closed']}>
+                  {item.name}
+                </p>
+                {item.note && <p class="mt-2 font-mono text-[13px] leading-snug text-ink-soft">{item.note}</p>}
+                {item.soldOut && (
+                  <p class="mt-3 rounded-full border border-closed px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-closed">Vergriffen</p>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div class="mt-10 flex justify-center md:mt-12">
+          <a href="/vorbestellen" class={btnPrimary}>
+            Brot vorbestellen
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .theke-platte {
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+    box-shadow: inset 0 14px 18px -14px color-mix(in srgb, var(--color-ink) 35%, transparent);
+  }
+  .schild {
+    transform: rotate(var(--tilt, 0deg));
+    transform-origin: 50% 100%;
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent),
+      0 14px 22px -14px color-mix(in srgb, var(--color-ink) 60%, transparent);
+    transition: transform var(--dur-base) var(--ease-brand), box-shadow var(--dur-base) var(--ease-brand);
+  }
+  .schild-wrap:hover .schild {
+    transform: rotate(0deg) translateY(-6px);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent),
+      0 24px 30px -18px color-mix(in srgb, var(--color-ink) 60%, transparent);
+  }
+  /* Knickkante des Aufstellschilds */
+  .schild-knick {
+    position: absolute;
+    inset: 0.55rem 0.6rem auto;
+    height: 1px;
+    background: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  }
+</style>

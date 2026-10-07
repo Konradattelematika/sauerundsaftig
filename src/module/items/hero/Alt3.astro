@@ -1,0 +1,104 @@
+---
+/**
+ * Hero Alt 3 „Große Schrift, kleine Bilder": der Claim aus site.json als riesige Typo-Bühne, echte
+ * Fotos als Kapseln mitten in der Zeile (dekorativ, alt=""), „saftig." mit Terrazzo-Textur.
+ * Darunter eine Terrazzo-„Theke", auf der eine Papierkarte mit Status, Adresse und Buttons liegt.
+ */
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import site from '../../../data/site.json';
+import { routeHref } from '../../../lib/format';
+import { getImage } from '../../../lib/images';
+import { safeWidths } from '../../../variants/a-krume/lib/picture';
+import { btnPrimary, btnSecondary, arrowIcon } from '../../../variants/a-krume/lib/ui';
+import Cap from './HeroCap.astro';
+
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+const pill = (motif: string) => {
+  const src = getImage('a', motif);
+  return { src, widths: safeWidths(src, [240, 480]) };
+};
+const p1 = pill('schnecke-blech');
+const p2 = pill('brot-laib');
+const p3 = pill('obsttorte');
+// „Sauer macht saftig." → Wörter einzeln, damit die Bildkapseln dazwischen sitzen
+const [w1, w2, w3] = site.claim.replace(/\.$/, '').split(' ');
+---
+
+<section class="relative overflow-hidden bg-bg pt-12 md:pt-20" aria-labelledby="hero-alt3-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>Café &amp; Backstube · Ostseebad Rerik</p>
+    <h1 id="hero-alt3-title" class="stage mt-6 text-[clamp(3.4rem,11vw,10rem)] leading-[0.95]" data-reveal style="--reveal-delay:100ms">
+      <span class="block"><span class="whitespace-nowrap">{w1}<Cap img={p1} cls="cap--a" /></span> {w2}</span>
+      <span class="block whitespace-nowrap md:pl-[1.4em]"><Cap img={p2} cls="cap--b" /><em class="tz-text">{w3}.</em><Cap img={p3} cls="cap--c" /></span>
+    </h1>
+
+    <div class="mt-8 grid grid-cols-1 gap-6 md:mt-12 md:grid-cols-12" data-reveal style="--reveal-delay:200ms">
+      <p class="font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-tight md:col-span-7">
+        Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen.
+      </p>
+      <p class="prose-measure text-lg text-ink-soft md:col-span-4 md:col-start-9 md:self-end">
+        Frühstück, Kuchen, Brot und Sauerteigschnecken — alles aus der eigenen Backstube in der Dünenstraße 1.
+      </p>
+    </div>
+  </div>
+
+  <!-- Terrazzo-Theke -->
+  <div class="tz-surface theke mt-12 md:mt-16" style="--tz-pos: 30% 60%">
+    <div class="mx-auto max-w-[1440px] px-4 py-6 md:px-8 md:py-10">
+      <div class="theke__card flex flex-col gap-6 rounded-card bg-paper p-5 md:flex-row md:items-center md:justify-between md:gap-10 md:p-7" data-reveal>
+        <div class="flex flex-col gap-2">
+          <OpeningStatus size="lg" />
+          <p class="font-mono text-sm text-ink-soft">{site.address.street} · {site.address.zip} {site.address.city}</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="/karte" class={btnPrimary}>
+            Karte ansehen
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+          <a href={route} target="_blank" rel="noopener" class={btnSecondary}>Route</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .stage {
+    font-variation-settings: 'SOFT' 80, 'WONK' 1, 'opsz' 144;
+    letter-spacing: -0.035em;
+    hyphens: manual;
+  }
+  .stage em {
+    font-style: italic;
+    padding-right: 0.06em; /* Kursiv-Überhang nicht abschneiden (background-clip:text) */
+  }
+  /* Bildkapseln in der Zeile */
+  .stage :global(.cap) {
+    display: inline-block;
+    vertical-align: 0.06em;
+    height: 0.72em;
+    width: 1.35em;
+    margin-inline: 0.12em;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-bg-alt);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 10%, transparent);
+    transition: transform var(--dur-base) var(--ease-brand), width var(--dur-base) var(--ease-brand);
+  }
+  .stage :global(.cap--a) { transform: rotate(-4deg); }
+  .stage :global(.cap--b) { width: 1.05em; margin-left: 0; transform: rotate(3deg); }
+  .stage :global(.cap--c) { width: 0.9em; transform: rotate(-3deg); }
+  .stage:hover :global(.cap) { transform: rotate(0deg); }
+  .stage:hover :global(.cap--a) { width: 1.6em; }
+  @media (max-width: 639px) {
+    .stage :global(.cap) { height: 0.66em; width: 1.1em; }
+    .stage :global(.cap--b) { width: 0.9em; }
+    .stage :global(.cap--c) { width: 0.8em; }
+  }
+  .theke {
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+  .theke__card {
+    box-shadow: 0 16px 36px -22px color-mix(in srgb, var(--color-ink) 55%, transparent);
+  }
+</style>

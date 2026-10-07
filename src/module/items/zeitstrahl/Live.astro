@@ -1,0 +1,14 @@
+---
+/**
+ * Live: 18-Stunden-Zeitleiste der Sauerteig-Seite (Variante A) — dieselbe Sektion wie auf
+ * /sauerteig (bg-bg-alt + Timeline), Etappen aus ./stages.ts (1:1 von der Seite übernommen).
+ */
+import Timeline from '../../../variants/a-krume/components/Timeline.astro';
+import { STAGES } from './stages';
+---
+
+<section class="bg-bg-alt py-14 md:py-24">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <Timeline stages={STAGES} />
+  </div>
+</section>

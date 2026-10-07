@@ -1,0 +1,155 @@
+---
+/**
+ * Besuch Alt 3 „Postkarte aus Rerik": eine Postkarte auf Salzhaff-Blau. Links die „Nachricht"
+ * (Öffnungszeiten, P.S. Reservierung, P.P.S. Hinweise), rechts Briefmarke mit echtem Theken-Foto,
+ * Poststempel und die Adresse auf Linien, dazu Anrufen/Route. Daten: site.json + lib/opening-hours.
+ */
+import { Picture } from 'astro:assets';
+import site from '../../../data/site.json';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import { getAlt, getImage } from '../../../lib/images';
+import { safeWidths } from '../../../variants/a-krume/lib/picture';
+import { btnPrimary, btnSecondary } from '../../../variants/a-krume/lib/ui';
+import { groupedWeek, phoneHref, route, HINTS, breakfastUntil, shortHours } from './data';
+
+const groups = groupedWeek();
+const stamp = getImage('a', 'theke');
+---
+
+<section class="postkarte-bg overflow-hidden bg-secondary py-14 md:py-24" aria-labelledby="bs-alt3-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="mx-auto max-w-5xl">
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-bg" data-reveal>Besuch</p>
+      <h2 id="bs-alt3-title" class="mt-3 text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.05] text-bg" data-reveal style="--reveal-delay:100ms">
+        Grüße aus der Dünenstraße
+      </h2>
+
+      <article class="karte mt-8 grid grid-cols-1 rounded-[4px] bg-paper text-ink md:mt-12 md:grid-cols-2" data-reveal style="--reveal-delay:150ms">
+        <!-- Nachricht -->
+        <div class="p-6 sm:p-8 md:border-r md:border-ink/15 md:p-10">
+          <p class="schrift text-[1.75rem] leading-tight md:text-[2.1rem]">Moin aus Rerik!</p>
+          <p class="schrift mt-4 text-xl leading-relaxed">
+            Bei uns gibt’s Frühstück bis {breakfastUntil} Uhr, dazu Kuchen, Brot und Sauerteigschnecken aus der eigenen Backstube.
+            Geöffnet haben wir:
+          </p>
+          <dl class="mt-4 flex flex-col font-mono text-lg">
+            {groups.map((g) => (
+              <div class="flex justify-between gap-4 border-b border-dashed border-ink/20 py-2">
+                <dt>{g.longLabel}</dt>
+                <dd class:list={['tabular', g.closed && 'text-closed']}>{shortHours(g.hours)}</dd>
+              </div>
+            ))}
+          </dl>
+          <p class="schrift mt-6 text-xl leading-relaxed">
+            <span class="font-mono text-sm not-italic text-ink-soft">P.S.</span> Reserviere deinen Tisch per Telefon:
+            <a href={phoneHref} class="link-ul inline-flex min-h-11 items-center font-mono text-lg not-italic text-ink">{site.phoneDisplay}</a>
+          </p>
+          <p class="schrift mt-3 text-lg leading-relaxed text-ink-soft">
+            <span class="font-mono text-sm not-italic">P.P.S.</span>
+            {HINTS.map((h) => h.text).join(' ')}
+          </p>
+        </div>
+
+        <!-- Adressseite -->
+        <div class="relative flex flex-col p-6 sm:p-8 md:p-10">
+          <div class="flex items-start justify-between gap-4">
+            <div class="poststempel relative mt-3 size-24 shrink-0 text-secondary md:size-28" aria-hidden="true">
+              <svg viewBox="0 0 120 120" class="h-full w-full" fill="none" stroke="currentColor">
+                <defs>
+                  <path id="bs-alt3-stempel" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0" />
+                </defs>
+                <circle cx="60" cy="60" r="56" stroke-width="2" />
+                <circle cx="60" cy="60" r="32" stroke-width="1.5" />
+                <text class="font-mono" font-size="10.5" letter-spacing="2" fill="currentColor" stroke="none">
+                  <textPath href="#bs-alt3-stempel" textLength="270" lengthAdjust="spacing">OSTSEEBAD RERIK · {site.address.zip} ·</textPath>
+                </text>
+                <text x="60" y="66" text-anchor="middle" class="font-display" font-size="17" font-style="italic" fill="currentColor" stroke="none">Moin</text>
+              </svg>
+              <svg class="absolute left-[70%] top-[30%] w-28 md:w-36" viewBox="0 0 140 40" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M0 8c12-6 23-6 35 0s23 6 35 0 23-6 35 0 23 6 35 0" />
+                <path d="M0 20c12-6 23-6 35 0s23 6 35 0 23-6 35 0 23 6 35 0" />
+                <path d="M0 32c12-6 23-6 35 0s23 6 35 0 23-6 35 0 23 6 35 0" />
+              </svg>
+            </div>
+            <figure class="marke relative w-28 shrink-0 rotate-3 md:w-36">
+              <Picture
+                src={stamp}
+                widths={safeWidths(stamp, [200, 400])}
+                sizes="144px"
+                formats={['avif', 'webp']}
+                alt={getAlt('theke')}
+                loading="lazy"
+                class="aspect-[4/5] w-full object-cover"
+              />
+              <figcaption class="absolute bottom-2.5 right-2.5 rounded-[2px] bg-paper px-1 font-mono text-[10px] uppercase tracking-wider text-ink">Rerik</figcaption>
+            </figure>
+          </div>
+
+          <address class="mt-8 flex flex-col not-italic md:mt-auto">
+            <span class="adresszeile">{site.name}</span>
+            <span class="adresszeile">{site.address.street}</span>
+            <span class="adresszeile">{site.address.zip} {site.address.city}</span>
+          </address>
+
+          <div class="mt-6"><OpeningStatus /></div>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a href={phoneHref} class={btnPrimary}>Anrufen</a>
+            <a href={route} target="_blank" rel="noopener" class={btnSecondary}>Route planen</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Leichte Wellenlinien (Ostsee) im Hintergrund — gleiche Farbe, nur heller gemischt */
+  .postkarte-bg {
+    background-image: repeating-radial-gradient(
+      circle at 100% 120%,
+      transparent 0 22px,
+      color-mix(in srgb, var(--color-bg) 7%, transparent) 22px 24px
+    );
+  }
+  .karte {
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 10%, transparent),
+      0 30px 60px -30px color-mix(in srgb, var(--color-ink) 80%, transparent);
+    transition: transform var(--dur-base) var(--ease-brand);
+  }
+  @media (min-width: 768px) {
+    .karte {
+      transform: rotate(-1deg);
+    }
+    .karte:hover,
+    .karte:focus-within {
+      transform: rotate(0deg);
+    }
+  }
+  .schrift {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 36;
+  }
+  .adresszeile {
+    display: block;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 30%, transparent);
+    padding: 0.6rem 0 0.35rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  /* Zackenrand der Briefmarke */
+  /* Papier mit Lochreihe: Löcher überall, das Foto deckt die Mitte ab — sichtbar bleibt nur der Rand.
+     Der Schlagschatten folgt der Lochkante und macht die Zähnung sichtbar. */
+  .marke {
+    margin: 0;
+    padding: 7px;
+    background: radial-gradient(circle at 5px 5px, transparent 3px, var(--color-bg) 3.5px) -5px -5px / 10px 10px;
+    filter: drop-shadow(0 3px 5px color-mix(in srgb, var(--color-ink) 30%, transparent));
+  }
+  .poststempel {
+    opacity: 0.8;
+    transform: rotate(-14deg);
+  }
+</style>

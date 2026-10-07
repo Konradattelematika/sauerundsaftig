@@ -1,0 +1,80 @@
+---
+/**
+ * Schnecken Alt 3 „Morgens am Blech": Magazin-Doppelseite — hohes Blechfoto mit Sanddorn-Stempel
+ * („Ofenfrisch am Vormittag"), daneben ein großer Erzählsatz mit Initiale (Text von der Signature-Seite)
+ * und die drei Sorten wie auf einer Speisekarte. Daten: menu/schnecken.json.
+ */
+import { getEntry } from 'astro:content';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { getAlt } from '../../../lib/images';
+import { btnPrimary, arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+const schnecken = await getEntry('menu', 'schnecken');
+---
+
+{schnecken && (
+  <section class="bg-bg-alt py-14 md:py-24" aria-labelledby="sn-alt3-title">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8">
+        <figure class="relative md:col-span-5 md:row-span-2" data-reveal>
+          <Figure motif="schnecke-blech" aspect="aspect-[4/5] md:aspect-[9/14]" sizes="(min-width: 768px) 40vw, 100vw" hover />
+          <p class="stempel absolute -right-2 -top-4 grid size-28 place-items-center rounded-full bg-accent p-3 text-center font-mono text-[11px] uppercase leading-tight tracking-wider text-ink md:-right-6 md:size-32">
+            Ofenfrisch<br />am Vormittag
+          </p>
+          <figcaption class="mt-3 font-mono text-xs uppercase tracking-widest text-ink-soft">{getAlt('schnecke-blech')}</figcaption>
+        </figure>
+
+        <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
+          <p class="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">
+            <span>Die Signature</span><span class="h-px w-10 bg-ink/30" aria-hidden="true"></span><span>Morgens am Blech</span>
+          </p>
+          <h2 id="sn-alt3-title" class="mt-4 text-[clamp(2.1rem,4.2vw,3.75rem)] leading-[1]">{schnecken.data.title}</h2>
+          <p class="initiale prose-measure mt-8 font-display text-[clamp(1.25rem,2vw,1.6rem)] leading-snug">
+            Sauerteig statt Hefe: Der Grundteig reift rund 18 Stunden, bevor er ausgerollt, gefüllt und aufgerollt wird.
+            Was er dadurch verliert, ist Eile — was er gewinnt, ist Struktur und Säure, die die süße Füllung ausbalanciert.
+          </p>
+        </div>
+
+        <div class="md:col-span-6 md:col-start-7 md:self-end" data-reveal style="--reveal-delay:200ms">
+          <div class="rounded-card bg-paper p-6 md:p-8">
+            <p class="text-center font-mono text-xs uppercase tracking-[0.3em] text-ink-soft">Dreimal gefüllt</p>
+            <ol class="mt-4 flex flex-col" role="list">
+              {schnecken.data.items.map((it, i) => (
+                <li class="border-t border-dashed border-ink/20 py-4 first:border-t-0">
+                  <p class="flex items-baseline gap-3">
+                    <span class="font-mono text-xs text-ink-soft">0{i + 1}</span>
+                    <span class="font-display text-2xl leading-tight">{it.name}</span>
+                    <span class="mb-1 flex-1 border-b border-dotted border-ink/30" aria-hidden="true"></span>
+                    <span class="font-mono text-xs uppercase tracking-wider text-ink-soft">{it.vegan ? 'vegan' : it.veggie ? 'vegetarisch' : ''}</span>
+                  </p>
+                  {it.description && <p class="mt-1 pl-8 italic text-ink-soft">{it.description}</p>}
+                </li>
+              ))}
+            </ol>
+          </div>
+          <a href="/karte/schnecken" class:list={[btnPrimary, 'mt-8']}>
+            Alle drei Sorten ansehen
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .stempel {
+    transform: rotate(12deg);
+    box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--color-ink) 60%, transparent);
+    outline: 1.5px dashed color-mix(in srgb, var(--color-ink) 45%, transparent);
+    outline-offset: -7px;
+  }
+  .initiale::first-letter {
+    float: left;
+    font-size: 4.4em;
+    line-height: 0.8;
+    padding: 0.06em 0.1em 0 0;
+    color: var(--color-primary);
+    font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+  }
+</style>

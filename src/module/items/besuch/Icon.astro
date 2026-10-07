@@ -1,0 +1,20 @@
+---
+/** Linien-Icon (24×24, currentColor) aus Pfaddaten in ./data.ts — immer dekorativ. */
+interface Props {
+  svg: string;
+  class?: string;
+}
+const { svg, class: cls = 'size-5' } = Astro.props;
+---
+
+<svg
+  class:list={['shrink-0', cls]}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  set:html={svg}
+></svg>

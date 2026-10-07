@@ -1,0 +1,126 @@
+---
+/**
+ * Hero Alt 1 „Vollbild am Morgen": Schneckenfoto randlos über die ganze Bühne, Text hell auf einem
+ * Verlauf aus Röstkern (Tokens, kein Hex). Öffnungsstatus auf einem Papier-Chip, damit der farbige
+ * Punkt auf dem dunklen Grund lesbar bleibt. Sanfter Einzoom einmalig beim Laden (reduced-motion: aus).
+ */
+import { getImage as optimize } from 'astro:assets';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import site from '../../../data/site.json';
+import { routeHref } from '../../../lib/format';
+import { getAlt, getImage, WIDTHS } from '../../../lib/images';
+import { safeWidths } from '../../../variants/a-krume/lib/picture';
+import { arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+// Art Direction: quer (Desktop) = hero-krume, hoch (Mobil) = schnecke-blech — je ein echtes Foto in passender
+// Ausrichtung, damit das Vollbild auf dem Handy nicht aus einem Querformat hochgezoomt wird.
+const wide = getImage('a', 'hero-krume');
+const tall = getImage('a', 'schnecke-blech');
+const [wideAvif, wideWebp, tallAvif, tallWebp] = await Promise.all([
+  optimize({ src: wide, format: 'avif', widths: safeWidths(wide, [...WIDTHS, wide.width]) }),
+  optimize({ src: wide, format: 'webp', widths: safeWidths(wide, [...WIDTHS, wide.width]) }),
+  optimize({ src: tall, format: 'avif', widths: safeWidths(tall, [400, 800, tall.width]) }),
+  optimize({ src: tall, format: 'webp', widths: safeWidths(tall, [400, 800, tall.width]) }),
+]);
+const fallback = await optimize({ src: wide, format: 'jpg', width: Math.min(1200, wide.width) });
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+const btn =
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-card px-6 py-3 font-mono text-sm transition-[background-color,color,border-color] duration-[var(--dur-fast)] ease-[var(--ease-brand)] active:translate-y-px';
+---
+
+<section class="hero-full relative isolate flex min-h-[min(92svh,920px)] items-end overflow-hidden bg-ink text-bg" aria-labelledby="hero-alt1-title">
+  <picture>
+    <source media="(min-width: 768px)" type="image/avif" srcset={wideAvif.srcSet.attribute} sizes="100vw" />
+    <source media="(min-width: 768px)" type="image/webp" srcset={wideWebp.srcSet.attribute} sizes="100vw" />
+    <source type="image/avif" srcset={tallAvif.srcSet.attribute} sizes="100vw" />
+    <source type="image/webp" srcset={tallWebp.srcSet.attribute} sizes="100vw" />
+    <img
+      src={fallback.src}
+      width={wide.width}
+      height={wide.height}
+      alt={getAlt('hero-krume')}
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+      class="hero-full__img absolute inset-0 -z-20 h-full w-full object-cover"
+    />
+  </picture>
+  <div class="hero-full__shade absolute inset-0 -z-10" aria-hidden="true"></div>
+
+  <div class="mx-auto w-full max-w-[1440px] px-4 pb-8 pt-40 md:px-8 md:pb-12">
+    <div class="max-w-[52rem]">
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-bg" data-reveal>
+        Café &amp; Backstube · Ostseebad Rerik
+      </p>
+      <h1 id="hero-alt1-title" class="mt-4 text-[clamp(2.6rem,7.4vw,6rem)] leading-[1.02]" data-reveal style="--reveal-delay:100ms">
+        Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen.
+      </h1>
+      <p class="prose-measure mt-5 text-lg text-bg md:text-xl" data-reveal style="--reveal-delay:200ms">{site.subline}</p>
+      <div class="mt-8 flex flex-wrap gap-3" data-reveal style="--reveal-delay:200ms">
+        <a href="/karte" class:list={[btn, 'bg-accent text-ink hover:bg-paper focus-visible:bg-paper']}>
+          Karte ansehen
+          <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+        <a href={route} target="_blank" rel="noopener" class:list={[btn, 'border-2 border-bg text-bg hover:bg-bg hover:text-ink']}>
+          Route planen
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-4 border-t border-bg/30 pt-5 sm:flex-row sm:items-center sm:justify-between md:mt-16" data-reveal style="--reveal-delay:200ms">
+      <span class="inline-flex w-fit items-center rounded-full bg-paper px-4 py-2 text-ink shadow-sm">
+        <OpeningStatus />
+      </span>
+      <p class="font-mono text-xs uppercase tracking-widest text-bg">
+        {site.address.street} · {site.address.zip} {site.address.city}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Verlauf: unten fast deckend (Textfläche), links etwas stärker für die Headline auf großen Screens */
+  .hero-full__shade {
+    background:
+      linear-gradient(
+        to top,
+        color-mix(in srgb, var(--color-ink) 92%, transparent) 0%,
+        color-mix(in srgb, var(--color-ink) 72%, transparent) 38%,
+        color-mix(in srgb, var(--color-ink) 18%, transparent) 72%,
+        color-mix(in srgb, var(--color-ink) 30%, transparent) 100%
+      );
+  }
+  @media (min-width: 768px) {
+    .hero-full__shade {
+      background:
+        linear-gradient(
+          to right,
+          color-mix(in srgb, var(--color-ink) 70%, transparent) 0%,
+          color-mix(in srgb, var(--color-ink) 25%, transparent) 55%,
+          transparent 80%
+        ),
+        linear-gradient(
+          to top,
+          color-mix(in srgb, var(--color-ink) 88%, transparent) 0%,
+          color-mix(in srgb, var(--color-ink) 45%, transparent) 40%,
+          transparent 75%
+        );
+    }
+  }
+  .hero-full__img {
+    animation: hero-full-zoom 1600ms var(--ease-brand) both;
+    transform-origin: 60% 40%;
+  }
+  @keyframes hero-full-zoom {
+    from {
+      transform: scale(1.07);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  /* Textlesbarkeit: dezenter Schatten nur für die Headline */
+  h1 {
+    text-shadow: 0 1px 24px color-mix(in srgb, var(--color-ink) 35%, transparent);
+  }
+</style>

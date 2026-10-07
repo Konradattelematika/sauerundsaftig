@@ -1,0 +1,117 @@
+---
+/**
+ * Hero Alt 2 „Tageszettel an der Theke": links die Begrüßung, rechts ein Foto der echten Theke, auf
+ * dem ein Papierzettel mit dem Tagesangebot (heuteFrisch-Collection) „klebt" — Terrazzo-Streifen als
+ * Klebeband. Mobil: erst Text, dann Foto mit überlappendem Zettel.
+ */
+import { getCollection } from 'astro:content';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import site from '../../../data/site.json';
+import { formatDate, routeHref } from '../../../lib/format';
+import { btnPrimary, btnSecondary, arrowIcon, linkArrow } from '../../../variants/a-krume/lib/ui';
+
+const entries = await getCollection('heuteFrisch');
+const today = entries[0];
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+const dateLabel = today ? formatDate(today.data.date, { weekday: 'long', year: undefined }) : '';
+---
+
+<section class="overflow-x-clip bg-bg pb-16 pt-8 md:pb-24 md:pt-14" aria-labelledby="hero-alt2-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center md:gap-8">
+      <div class="md:col-span-5">
+        <p data-reveal><span class="tz-tag">Café &amp; Backstube · Ostseebad Rerik</span></p>
+        <h1 id="hero-alt2-title" class="mt-5 text-[clamp(2.4rem,6vw,4.5rem)] leading-[1.04]" data-reveal style="--reveal-delay:100ms">
+          Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen.
+        </h1>
+        <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl" data-reveal style="--reveal-delay:200ms">
+          {site.subline}
+        </p>
+        <div class="mt-6" data-reveal style="--reveal-delay:200ms"><OpeningStatus size="lg" /></div>
+        <div class="mt-8 flex flex-wrap gap-4" data-reveal style="--reveal-delay:200ms">
+          <a href="/karte" class={btnPrimary}>
+            Karte ansehen
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+          <a href={route} target="_blank" rel="noopener" class={btnSecondary}>Route</a>
+        </div>
+      </div>
+
+      <div class="relative md:col-span-7 md:pl-4">
+        <div class="md:ml-[18%]" data-reveal>
+          <Figure
+            motif="theke"
+            aspect="aspect-[4/3] md:aspect-[4/5]"
+            sizes="(min-width: 768px) 46vw, 100vw"
+            loading="eager"
+            fetchpriority="high"
+            imgClass="object-[50%_35%]"
+          />
+        </div>
+
+        {today && (
+          <aside
+            class="zettel relative z-10 mx-3 -mt-20 rounded-[3px] bg-paper px-5 pb-5 pt-7 text-ink sm:mx-auto sm:max-w-sm md:absolute md:bottom-10 md:left-0 md:mx-0 md:mt-0 md:w-[22rem] md:max-w-none md:px-7 md:pb-7"
+            aria-labelledby="hero-alt2-zettel"
+            data-reveal
+            style="--reveal-delay:200ms"
+          >
+            <span class="zettel__tape tz-surface tz-surface--fine" aria-hidden="true"></span>
+            <div class="flex items-baseline justify-between gap-3 border-b border-dashed border-ink/25 pb-3">
+              <h2 id="hero-alt2-zettel" class="font-display text-2xl leading-none">Heute frisch</h2>
+              <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">{dateLabel}</p>
+            </div>
+            <ol class="mt-3 flex flex-col" role="list">
+              {today.data.items.map((item, i) => (
+                <li class="flex gap-3 border-b border-ink/10 py-2.5 last:border-b-0">
+                  <span class="pt-1 font-mono text-[11px] text-ink-soft">0{i + 1}</span>
+                  <span class="min-w-0 flex-1">
+                    <span class:list={['block font-display text-lg leading-snug', item.soldOut && 'line-through decoration-closed']}>
+                      {item.name}
+                    </span>
+                    {item.note && <span class="block font-mono text-xs leading-snug text-ink-soft">{item.note}</span>}
+                  </span>
+                  {item.soldOut && (
+                    <span class="h-fit shrink-0 rounded-full border border-closed px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-closed">
+                      Vergriffen
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ol>
+            <a href="/vorbestellen" class:list={[linkArrow, 'mt-2']}>
+              Brot vorbestellen
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+          </aside>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .zettel {
+    transform: rotate(-1.6deg);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 6%, transparent),
+      0 18px 40px -18px color-mix(in srgb, var(--color-ink) 45%, transparent);
+    transition: transform var(--dur-base) var(--ease-brand);
+  }
+  .zettel:hover,
+  .zettel:focus-within {
+    transform: rotate(0deg) translateY(-3px);
+  }
+  /* Klebestreifen aus Terrazzo oben mittig */
+  .zettel__tape {
+    position: absolute;
+    top: -0.7rem;
+    left: 50%;
+    width: 6.5rem;
+    height: 1.4rem;
+    transform: translateX(-50%) rotate(2.5deg);
+    opacity: 0.92;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+</style>

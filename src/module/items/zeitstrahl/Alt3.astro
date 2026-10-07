@@ -1,0 +1,56 @@
+---
+/** Zeitstrahl Alt 3 „Backstuben-Tagebuch": liniertes Protokoll mit Nacht-Trenner. */
+import { STAGES, spokenTime } from './stages';
+---
+
+<section class="bg-bg-alt py-14 md:py-24" aria-labelledby="zeit-alt3-title">
+  <div class="mx-auto max-w-5xl px-4 md:px-8">
+    <div class="rotate-[-0.35deg] rounded-card border border-ink/15 bg-paper shadow-[0_24px_55px_-38px_rgb(36_27_20/0.5)]" data-reveal>
+      <header class="grid grid-cols-[4.5rem_minmax(0,1fr)] border-b-2 border-ink px-4 py-7 md:grid-cols-[8rem_minmax(0,1fr)] md:px-10 md:py-10">
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">Protokoll</p>
+        <div>
+          <p><span class="tz-tag">18 Stunden Sauerteig</span></p>
+          <h2 id="zeit-alt3-title" class="mt-4 text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.02]">Backstuben-Tagebuch</h2>
+          <p class="prose-measure mt-3 text-lg text-ink-soft">Acht Einträge vom Ansetzen bis zur Theke — genau so, wie ein Arbeitstag über Nacht weiterläuft.</p>
+        </div>
+      </header>
+
+      <ol class="tagebuch" role="list">
+        {STAGES.map((stage, index) => (
+          <>
+            {index === 5 && (
+              <li class="nacht-ende grid grid-cols-[4.5rem_minmax(0,1fr)] px-4 py-3 md:grid-cols-[8rem_minmax(0,1fr)] md:px-10">
+                <span aria-hidden="true">☼</span>
+                <span class="font-mono text-xs uppercase tracking-[0.2em]">Die Nacht ist vorbei · der Ofen wird heiß</span>
+              </li>
+            )}
+            <li class="grid grid-cols-[4.5rem_minmax(0,1fr)] px-4 py-6 md:grid-cols-[8rem_minmax(0,1fr)] md:px-10 md:py-8" data-reveal>
+              <div class="border-r border-ink/15 pr-3 md:pr-6">
+                <p class="font-mono text-sm font-semibold text-primary-deep md:text-base" aria-label={spokenTime(stage.time)}>{stage.time}</p>
+                <p class="mt-2 font-mono text-[10px] uppercase tracking-widest text-ink-soft">#{String(index + 1).padStart(2, '0')}</p>
+              </div>
+              <div class="pl-4 md:pl-8">
+                <h3 class="text-2xl md:text-3xl">{stage.title}</h3>
+                <p class="prose-measure mt-3 leading-relaxed text-ink-soft">{stage.text}</p>
+              </div>
+            </li>
+          </>
+        ))}
+      </ol>
+
+      <footer class="grid grid-cols-[4.5rem_minmax(0,1fr)] border-t-2 border-ink px-4 py-7 md:grid-cols-[8rem_minmax(0,1fr)] md:px-10 md:py-9">
+        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Summe</p>
+        <p class="font-display text-3xl md:text-4xl">18 Stunden. Ein Laib. Viel Geduld.</p>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tagebuch {
+    background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 2.05rem, color-mix(in srgb, var(--color-secondary) 12%, transparent) 2.05rem, color-mix(in srgb, var(--color-secondary) 12%, transparent) calc(2.05rem + 1px));
+  }
+  .tagebuch > li:not(.nacht-ende) { border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent); }
+  .nacht-ende { align-items: center; background: var(--color-secondary); color: white; }
+  .nacht-ende > span:first-child { font-size: 1.35rem; }
+</style>

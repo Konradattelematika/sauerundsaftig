@@ -1,0 +1,128 @@
+---
+/**
+ * Instagram Alt 1 „Polaroid-Wand": die echten Beiträge (lokaler Import, lib/instagram.ts) als
+ * Sofortbilder mit Terrazzo-Klebestreifen, leicht schief und versetzt; Bildunterschrift + Datum
+ * darunter. Hover/Fokus hebt das Bild an und richtet es gerade.
+ */
+import { Picture } from 'astro:assets';
+import { getInstagramPosts, INSTAGRAM_PROFILE, INSTAGRAM_IS_LIVE } from '../../../lib/instagram';
+import { formatDate } from '../../../lib/format';
+import { safeWidths } from '../../../variants/a-krume/lib/picture';
+import { btnSecondary, arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+const posts = (await getInstagramPosts(10)).filter((p) => p.source === 'instagram').slice(0, 5);
+const handle = `@${INSTAGRAM_PROFILE.username}`;
+const TILT = ['-3deg', '2deg', '-1.5deg', '3deg', '-2deg'];
+const SHIFT = ['0', '2.5rem', '0.75rem', '3rem', '1rem'];
+---
+
+<section class="overflow-x-clip bg-bg-alt py-14 md:py-24" aria-labelledby="ig-alt1-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="flex flex-wrap items-end justify-between gap-6" data-reveal>
+      <div class="max-w-2xl">
+        <p><span class="tz-tag">Instagram · {handle}</span></p>
+        <h2 id="ig-alt1-title" class="mt-4 text-[clamp(2rem,5vw,3.5rem)] leading-[1.05]">Frisch an die Wand gepinnt</h2>
+        <p class="prose-measure mt-3 text-lg text-ink-soft md:text-xl">Torten, Käsekuchen und was sonst gerade aus der Backstube kommt.</p>
+      </div>
+      <a href={INSTAGRAM_PROFILE.url} target="_blank" rel="noopener" class={btnSecondary}>
+        {handle} folgen
+        <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+      </a>
+    </div>
+
+    <ul class="wand mt-12 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:mt-16 lg:grid-cols-5 lg:gap-x-6" role="list">
+      {posts.map((post, i) => (
+        <li class="polaroid-li" style={`--tilt:${TILT[i % TILT.length]};--shift:${SHIFT[i % SHIFT.length]}`} data-reveal>
+          <a
+            href={post.permalink}
+            target="_blank"
+            rel="noopener"
+            class="polaroid relative block bg-paper p-2.5 pb-4 sm:p-3 sm:pb-5"
+            aria-label={`Instagram-Beitrag öffnen: ${post.caption ?? post.alt}`}
+          >
+            <span class="klebe tz-surface tz-surface--fine" aria-hidden="true"></span>
+            <span class="relative block aspect-square overflow-hidden bg-bg-alt">
+              {typeof post.image === 'string' ? (
+                <img src={post.image} alt={post.alt} loading="lazy" decoding="async" class="h-full w-full object-cover" />
+              ) : (
+                <Picture
+                  src={post.image}
+                  widths={safeWidths(post.image, [320, 480, 640])}
+                  sizes="(min-width: 1024px) 18vw, 45vw"
+                  formats={['avif', 'webp']}
+                  alt={post.alt}
+                  loading="lazy"
+                  class="h-full w-full object-cover"
+                />
+              )}
+              {post.isVideo && (
+                <span class="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-ink/70 text-bg" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                </span>
+              )}
+            </span>
+            {post.caption && <span class="unterschrift mt-3 block text-base leading-snug sm:text-lg">{post.caption}</span>}
+            {post.date && <span class="mt-1.5 block font-mono text-[11px] uppercase tracking-widest text-ink-soft">{formatDate(post.date, { year: undefined })}</span>}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {!INSTAGRAM_IS_LIVE && (
+      <p class="mt-12 font-mono text-[11px] uppercase tracking-widest text-ink-soft">
+        Auswahl · Stand {formatDate(INSTAGRAM_PROFILE.fetchedAt, { month: 'short' })}
+      </p>
+    )}
+  </div>
+</section>
+
+<style>
+  /* Ungerade Anzahl: das letzte Bild mobil mittig */
+  @media (max-width: 1023px) {
+    .polaroid-li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: calc(50% - 0.75rem);
+    }
+  }
+  @media (min-width: 1024px) {
+    .polaroid-li {
+      margin-top: var(--shift, 0);
+    }
+  }
+  .polaroid {
+    transform: rotate(var(--tilt, 0deg));
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent),
+      0 16px 26px -18px color-mix(in srgb, var(--color-ink) 60%, transparent);
+    transition: transform var(--dur-base) var(--ease-brand), box-shadow var(--dur-base) var(--ease-brand);
+  }
+  .polaroid:hover,
+  .polaroid:focus-visible {
+    transform: rotate(0deg) translateY(-8px) scale(1.03);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent),
+      0 28px 40px -22px color-mix(in srgb, var(--color-ink) 60%, transparent);
+    z-index: 2;
+  }
+  .klebe {
+    position: absolute;
+    top: -0.65rem;
+    left: 50%;
+    z-index: 1;
+    width: 4.5rem;
+    height: 1.25rem;
+    transform: translateX(-50%) rotate(-4deg);
+    opacity: 0.92;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+  .unterschrift {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 24;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

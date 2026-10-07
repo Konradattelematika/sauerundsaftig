@@ -1,0 +1,60 @@
+---
+/**
+ * Gästestimmen Alt 1 „Die große Zahl": die Google-Note als riesige Fraunces-Ziffer in der Mitte,
+ * anteilig gefüllte Sterne, Anzahl + Link zu Google; darunter die Zitate groß in Anführungszeichen.
+ * Platzhalter-Zitate bleiben wie in Live sichtbar markiert.
+ */
+import Stars from './Stars.astro';
+import { rating, googleHref, getTestimonials, PLACEHOLDER_LABEL } from './data';
+import { linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+const testimonials = await getTestimonials();
+---
+
+<section class="bg-bg py-14 md:py-24" aria-labelledby="st-alt1-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="flex flex-col items-center text-center" data-reveal>
+      <h2 id="st-alt1-title" class="font-mono text-xs font-normal uppercase tracking-[0.25em] text-ink-soft" style="font-family: var(--font-mono); letter-spacing: 0.25em;">
+        Was Gäste sagen
+      </h2>
+      <p class="zahl mt-2 font-display leading-[0.85] text-[clamp(7rem,26vw,17rem)]">
+        <span class="sr-only">Note </span>{rating.display}<span class="sr-only"> von 5 Sternen</span>
+      </p>
+      <Stars fill={rating.fill} class="mt-8 h-8 md:mt-10 md:h-10" />
+      <p class="mt-4 text-lg text-ink-soft md:text-xl">aus {rating.count} {rating.source}-Bewertungen</p>
+      <a href={googleHref} target="_blank" rel="noopener" class:list={[linkArrow, 'mt-2']}>
+        Bewertungen auf {rating.source} ansehen
+        <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+      </a>
+    </div>
+
+    <span class="tz-band tz-band--fade mx-auto mt-12 max-w-3xl md:mt-16" aria-hidden="true"></span>
+
+    <ul class="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-12 md:mt-16 md:grid-cols-2 md:gap-16" role="list">
+      {testimonials.map((t, i) => (
+        <li class="relative border-l-2 border-primary/30 pl-6 md:pl-8" data-reveal style={`--reveal-delay:${i * 100}ms`}>
+          <figure class="m-0">
+            {t.isPlaceholder && (
+              <p class="relative mb-4 inline-block rounded-full border border-dashed border-ink/40 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">
+                {PLACEHOLDER_LABEL}
+              </p>
+            )}
+            <blockquote class:list={['relative font-display text-[clamp(1.5rem,2.6vw,2.15rem)] leading-snug', t.isPlaceholder && 'text-ink-soft']}>
+              „{t.quote}“
+            </blockquote>
+            <figcaption class="mt-5 flex items-center gap-3 font-mono text-sm text-ink-soft">
+              <span class="h-px w-8 bg-ink/30" aria-hidden="true"></span>{t.author}
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .zahl {
+    font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+    letter-spacing: -0.04em;
+  }
+</style>

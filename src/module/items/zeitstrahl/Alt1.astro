@@ -1,0 +1,97 @@
+---
+/** Zeitstrahl Alt 1 „Zifferblatt": 24-Stunden-Uhr plus nummerierte Etappen. */
+import { STAGES, parseRange, spokenTime } from './stages';
+
+const radii = [0.39, 0.39, 0.39, 0.33, 0.42, 0.42, 0.34, 0.42];
+const points = STAGES.map((stage, index) => ({
+  ...stage,
+  number: String(index + 1).padStart(2, '0'),
+  angle: (parseRange(stage.time).start / (24 * 60)) * 360,
+  radius: radii[index] ?? 0.39,
+}));
+---
+
+<section class="bg-bg-alt py-14 md:py-24" aria-labelledby="zeit-alt1-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start lg:gap-16">
+      <div class="lg:sticky lg:top-8 lg:col-span-5" data-reveal>
+        <p><span class="tz-tag">18 Stunden Sauerteig</span></p>
+        <h2 id="zeit-alt1-title" class="mt-4 text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.02]">Einmal durch die Nacht</h2>
+        <p class="prose-measure mt-4 text-lg text-ink-soft">Das Zifferblatt macht sichtbar, wie der Teig am Nachmittag beginnt und am nächsten Morgen in der Theke ankommt.</p>
+
+        <div class="uhr mx-auto mt-10" aria-label="24-Stunden-Zifferblatt mit acht Arbeitsschritten">
+          <span class="uhr-tag uhr-tag--0">00</span>
+          <span class="uhr-tag uhr-tag--6">06</span>
+          <span class="uhr-tag uhr-tag--12">12</span>
+          <span class="uhr-tag uhr-tag--18">18</span>
+          <span class="uhr-mitte"><strong>18 h</strong><small>vom Ansatz<br />bis zur Theke</small></span>
+          {points.map((p) => (
+            <span class="uhr-punkt" style={`--angle:${p.angle}deg;--radius:${p.radius}`} title={`${p.time} · ${p.title}`}>
+              <b style={`--gegen:${-p.angle}deg`}>{p.number}</b>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <ol class="lg:col-span-7" role="list">
+        {points.map((stage) => (
+          <li class="grid grid-cols-[3.25rem_minmax(0,1fr)] gap-4 border-t border-ink/15 py-5 first:border-t-0 md:grid-cols-[4rem_8rem_minmax(0,1fr)] md:gap-6" data-reveal>
+            <span class="grid size-10 place-items-center rounded-full border-2 border-primary bg-paper font-mono text-xs text-primary-deep">{stage.number}</span>
+            <p class="font-mono text-sm uppercase tracking-widest text-primary-deep" aria-label={spokenTime(stage.time)}>{stage.time}</p>
+            <div class="col-start-2 md:col-start-3">
+              <h3 class="text-xl md:text-2xl">{stage.title}</h3>
+              <p class="prose-measure mt-2 text-ink-soft">{stage.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .uhr {
+    --clock-size: min(80vw, 380px);
+    position: relative;
+    width: var(--clock-size);
+    height: var(--clock-size);
+    border: 2px solid var(--color-ink);
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at center, var(--color-paper) 0 42%, transparent 42.5%),
+      conic-gradient(from 0deg, color-mix(in srgb, var(--color-secondary) 20%, var(--color-paper)) 0 90deg, var(--color-paper) 90deg 322.5deg, color-mix(in srgb, var(--color-secondary) 20%, var(--color-paper)) 322.5deg 360deg);
+    box-shadow: inset 0 0 0 10px var(--color-bg-alt);
+  }
+  .uhr::before,
+  .uhr::after { content: ''; position: absolute; inset: 50% 8%; height: 1px; background: color-mix(in srgb, var(--color-ink) 16%, transparent); }
+  .uhr::after { transform: rotate(90deg); }
+  .uhr-tag { position: absolute; z-index: 2; font: 0.7rem var(--font-mono); color: var(--color-ink-soft); }
+  .uhr-tag--0 { left: 50%; top: 0.85rem; transform: translateX(-50%); }
+  .uhr-tag--6 { right: 0.85rem; top: 50%; transform: translateY(-50%); }
+  .uhr-tag--12 { left: 50%; bottom: 0.85rem; transform: translateX(-50%); }
+  .uhr-tag--18 { left: 0.85rem; top: 50%; transform: translateY(-50%); }
+  .uhr-mitte { position: absolute; inset: 36%; z-index: 2; display: grid; place-content: center; text-align: center; }
+  .uhr-mitte strong { font: 2rem/1 var(--font-display); }
+  .uhr-mitte small { margin-top: 0.35rem; font: 0.62rem/1.35 var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ink-soft); }
+  .uhr-punkt {
+    position: absolute;
+    z-index: 3;
+    left: calc(50% - 0.9rem);
+    top: calc(50% - 0.9rem);
+    width: 1.8rem;
+    height: 1.8rem;
+    transform: rotate(var(--angle)) translateY(calc(var(--clock-size) * var(--radius) * -1));
+  }
+  .uhr-punkt b {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: white;
+    font: 0.62rem var(--font-mono);
+    transform: rotate(var(--gegen));
+    box-shadow: 0 0 0 3px var(--color-paper);
+  }
+</style>

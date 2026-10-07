@@ -1,0 +1,128 @@
+---
+/**
+ * Instagram Alt 2 „Laufband": echte Beiträge ziehen ruhig durch die Sektion. Die zweite
+ * Kopie ist rein dekorativ und hält die Schleife nahtlos; Pause und Reduced Motion werden
+ * respektiert.
+ */
+import { Picture } from 'astro:assets';
+import { getInstagramPosts, INSTAGRAM_PROFILE } from '../../../lib/instagram';
+import { formatDate } from '../../../lib/format';
+import { safeWidths } from '../../../variants/a-krume/lib/picture';
+import { btnSecondary, arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+const posts = await getInstagramPosts(8);
+const handle = `@${INSTAGRAM_PROFILE.username}`;
+---
+
+<section class="lauf overflow-hidden bg-ink py-14 text-bg md:py-24" aria-labelledby="ig-alt2-title" data-marquee>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-4xl" data-reveal>
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-bg/65">Instagram · {handle}</p>
+        <h2 id="ig-alt2-title" class="mt-3 overflow-hidden text-[clamp(3rem,9vw,8rem)] leading-[0.88] tracking-[-0.04em]">
+          Frisch. Echt. {handle}
+        </h2>
+      </div>
+      <button
+        type="button"
+        class="pause inline-flex min-h-11 items-center gap-2 rounded-card border border-bg/35 px-4 font-mono text-sm text-bg transition-colors hover:border-bg"
+        data-marquee-toggle
+        aria-pressed="false"
+      >
+        <span aria-hidden="true">Ⅱ</span>
+        Bewegung anhalten
+      </button>
+    </div>
+  </div>
+
+  <div class="lauf-fenster mt-10 md:mt-14" data-reveal style="--reveal-delay:120ms">
+    <div class="lauf-track">
+      {[0, 1].map((copy) => (
+        <ul class="lauf-gruppe" role={copy === 0 ? 'list' : undefined} aria-hidden={copy === 1 ? 'true' : undefined}>
+          {posts.map((post, i) => (
+            <li class:list={['lauf-karte', i % 3 === 1 && 'lauf-karte--hoch']}>
+              <a
+                href={post.permalink}
+                target="_blank"
+                rel="noopener"
+                tabindex={copy === 1 ? -1 : undefined}
+                class="group block"
+                aria-label={`Instagram-Beitrag öffnen: ${post.caption ?? post.alt}`}
+              >
+                <span class="relative block aspect-[4/5] overflow-hidden rounded-card bg-bg-alt">
+                  {typeof post.image === 'string' ? (
+                    <img src={post.image} alt={copy === 0 ? post.alt : ''} loading="lazy" decoding="async" class="h-full w-full object-cover" />
+                  ) : (
+                    <Picture
+                      src={post.image}
+                      widths={safeWidths(post.image, [320, 480, 640])}
+                      sizes="(min-width: 768px) 300px, 68vw"
+                      formats={['avif', 'webp']}
+                      alt={copy === 0 ? post.alt : ''}
+                      loading="lazy"
+                      class="h-full w-full object-cover transition-transform duration-[var(--dur-slow)] ease-[var(--ease-brand)] group-hover:scale-[1.035]"
+                    />
+                  )}
+                  {post.isVideo && (
+                    <span class="absolute right-3 top-3 grid size-8 place-items-center rounded-full bg-ink/70 text-bg" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                    </span>
+                  )}
+                </span>
+                <span class="mt-3 flex items-baseline justify-between gap-3 font-mono text-[11px] uppercase tracking-widest text-bg/65">
+                  <span>{post.source === 'instagram' ? 'Beitrag' : handle}</span>
+                  {post.date && <span>{formatDate(post.date, { year: undefined, month: 'short' })}</span>}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
+
+  <div class="mx-auto mt-10 flex max-w-[1440px] justify-end px-4 md:px-8">
+    <a href={INSTAGRAM_PROFILE.url} target="_blank" rel="noopener" class:list={[btnSecondary, 'border-bg/45 text-bg hover:bg-bg hover:text-ink']}>
+      {handle} folgen
+      <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+    </a>
+  </div>
+</section>
+
+<style>
+  .lauf-fenster { overflow: hidden; }
+  .lauf-track {
+    display: flex;
+    width: max-content;
+    animation: ig-lauf 38s linear infinite;
+    will-change: transform;
+  }
+  .lauf.is-paused .lauf-track { animation-play-state: paused; }
+  .lauf-gruppe {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(0.8rem, 1.8vw, 1.5rem);
+    padding-right: clamp(0.8rem, 1.8vw, 1.5rem);
+  }
+  .lauf-karte { width: clamp(220px, 24vw, 340px); flex: 0 0 auto; }
+  .lauf-karte--hoch { margin-top: clamp(1.5rem, 4vw, 4rem); }
+  @keyframes ig-lauf { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .lauf-track { animation: none; }
+    .pause { display: none; }
+    .lauf-fenster { overflow-x: auto; scrollbar-width: thin; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((section) => {
+    const button = section.querySelector<HTMLButtonElement>('[data-marquee-toggle]');
+    if (!button || button.dataset.ready) return;
+    button.dataset.ready = '1';
+    button.addEventListener('click', () => {
+      const paused = section.classList.toggle('is-paused');
+      button.setAttribute('aria-pressed', String(paused));
+      button.innerHTML = `<span aria-hidden="true">${paused ? '▶' : 'Ⅱ'}</span>${paused ? 'Bewegung starten' : 'Bewegung anhalten'}`;
+    });
+  });
+</script>
