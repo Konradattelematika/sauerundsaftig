@@ -1,9 +1,21 @@
-# Für Coolify: Docker-Compose-Deployment (oder direkt Dockerfile-Buildpack nutzen)
+# Lokal bzw. als Doku — Coolify nutzt den Dockerfile-Buildpack (Port 3000, Persistent Storage /data).
+# Start: SUS_USERS='[…]' SUS_SESSION_SECRET=… docker compose up --build
 services:
   web:
     build: .
     restart: unless-stopped
-    # Coolify/Traefik übernimmt Routing + TLS für sauerundsaftig.jawollja.gmbh;
-    # der Container exponiert nur Port 80.
-    expose:
-      - "80"
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      SUS_DATA_DIR: /data
+      SUS_USERS: ${SUS_USERS:-[]}
+      SUS_SESSION_SECRET: ${SUS_SESSION_SECRET:-}
+      SUS_EXPORT_TOKEN: ${SUS_EXPORT_TOKEN:-}
+      SUS_GO_LIVE_AT: ${SUS_GO_LIVE_AT:-2026-10-10T16:00:00+02:00}
+      SUS_FORCE_PRIVATE: ${SUS_FORCE_PRIVATE:-0}
+    volumes:
+      - sus-data:/data
+
+volumes:
+  sus-data:

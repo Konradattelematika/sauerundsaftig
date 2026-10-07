@@ -1,3 +1,0 @@
-# Vorschau-Modus: nicht indexieren (vor Launch wieder freigeben + Sitemap eintragen)
-User-agent: *
-Disallow: /
