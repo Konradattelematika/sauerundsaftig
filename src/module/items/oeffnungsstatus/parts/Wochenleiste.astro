@@ -1,0 +1,126 @@
+---
+/**
+ * Wochenleiste: sieben Tagesfelder (Mo–So) mit Uhrzeiten, Ruhetage durchgestrichen, heutiger
+ * Tag hervorgehoben (Farbe = Status), darunter Statuszeile. `today` (mon…sun) + `view` für
+ * Beispiele; `live` + `schedule` → Browser-Update (data-woche-live) inkl. Markierung des
+ * heutigen Tags in Europe/Berlin.
+ */
+import type { StatusView } from './view';
+import type { WeekKey } from '../../../../lib/opening-hours';
+
+interface Day { key: WeekKey; short: string; hours: string; closed: boolean }
+interface Props {
+  days: Day[];
+  view: StatusView;
+  today?: WeekKey;
+  size?: 'sm' | 'lg';
+  live?: boolean;
+  schedule?: string;
+  class?: string;
+}
+const { days, view, today, size = 'lg', live = false, schedule, class: cls = '' } = Astro.props;
+---
+
+<div
+  class:list={['woche', size === 'sm' ? 'woche--sm' : 'woche--lg', cls]}
+  data-tone={view.tone}
+  data-woche-live={live ? '' : undefined}
+  data-schedule={live ? schedule : undefined}
+  role="status"
+  aria-live={live ? 'polite' : undefined}
+>
+  <ol class="woche-days" aria-label="Öffnungszeiten der Woche">
+    {days.map((d) => (
+      <li class="woche-day" data-day={d.key} data-closed={d.closed ? '' : undefined} aria-current={d.key === today ? 'date' : undefined}>
+        <span class="woche-short">{d.short}</span>
+        <span class="woche-hours">{d.hours}</span>
+      </li>
+    ))}
+  </ol>
+  <p class="woche-status">
+    <span class="woche-dot" aria-hidden="true"></span>
+    <span class="woche-text">{view.text}</span>
+  </p>
+</div>
+
+<style is:global>
+  .woche { --signal: var(--color-open); display: inline-flex; flex-direction: column; gap: 0.6rem; max-width: 100%; }
+  .woche[data-tone='soon'] { --signal: var(--color-accent); }
+  .woche[data-tone='closed'] { --signal: var(--color-closed); }
+
+  .woche-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .woche-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.2rem;
+    border-radius: var(--radius-card);
+    background: var(--color-paper);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 12%, transparent);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+    line-height: 1.1;
+  }
+  .woche-short { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .woche-hours { font-size: 0.7rem; color: var(--color-ink-soft); white-space: nowrap; }
+  .woche-day[data-closed] { background: var(--color-bg-alt); color: var(--color-ink-soft); }
+  .woche-day[data-closed] .woche-short { text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: var(--color-closed); }
+  .woche-day[aria-current='date'] {
+    background: var(--signal);
+    color: var(--color-paper);
+    box-shadow: 0 0 0 2px var(--signal);
+  }
+  .woche-day[aria-current='date'] .woche-hours { color: color-mix(in srgb, var(--color-paper) 85%, transparent); }
+  .woche-day[aria-current='date'] .woche-short { text-decoration: none; }
+  .woche[data-tone='soon'] .woche-day[aria-current='date'] { color: var(--color-ink); }
+  .woche[data-tone='soon'] .woche-day[aria-current='date'] .woche-hours { color: color-mix(in srgb, var(--color-ink) 80%, transparent); }
+
+  .woche-status { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .woche-dot { width: 0.625rem; height: 0.625rem; border-radius: 9999px; background: var(--signal); flex-shrink: 0; }
+
+  .woche--lg .woche-status { font-size: 1.1rem; }
+  .woche--lg .woche-day { min-height: 3.4rem; }
+  .woche--lg .woche-short { font-size: 0.9rem; }
+  .woche--lg .woche-hours { font-size: 0.75rem; }
+
+  .woche--sm { gap: 0.35rem; }
+  .woche--sm .woche-day { min-height: 1.75rem; padding: 0.2rem 0.1rem; border-radius: 3px; }
+  .woche--sm .woche-hours { display: none; }
+  .woche--sm .woche-short { font-size: 0.7rem; }
+  .woche--sm .woche-status { font-size: 0.85rem; }
+</style>
+
+<script>
+  import { getOpeningStatus, berlinParts, type Schedule } from '../../../../lib/opening-hours';
+  import { toView } from './view';
+
+  function paint() {
+    document.querySelectorAll<HTMLElement>('[data-woche-live]').forEach((el) => {
+      const schedule = JSON.parse(el.dataset.schedule ?? '{}') as Schedule;
+      const now = new Date();
+      const v = toView(getOpeningStatus(schedule, now));
+      const { weekday } = berlinParts(now);
+      el.dataset.tone = v.tone;
+      el.querySelectorAll<HTMLElement>('.woche-day').forEach((d) => {
+        if (d.dataset.day === weekday) d.setAttribute('aria-current', 'date');
+        else d.removeAttribute('aria-current');
+      });
+      const text = el.querySelector<HTMLElement>('.woche-text');
+      if (text) text.textContent = v.text;
+    });
+  }
+  paint();
+  setInterval(paint, 60_000);
+  document.addEventListener('astro:page-load', paint);
+</script>

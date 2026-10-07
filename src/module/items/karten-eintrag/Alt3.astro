@@ -1,0 +1,92 @@
+---
+/**
+ * Alternative 3 „Vitrinen-Schilder": jeder Eintrag als kleines Preisschild wie in der Theke —
+ * Papierkarte mit Lochung, Name groß in Fraunces, Preis groß in Mono, Details klein, leicht
+ * verdreht (abwechselnd). Hover: richtet sich auf. Liegt auf der Thekenoberfläche (tz-surface).
+ */
+import { formatMenuPrice } from '../../../lib/format';
+import Rahmen from './parts/Rahmen.astro';
+import { previewSections } from './parts/items';
+
+const sections = await previewSections();
+const tilts = ['-1.2deg', '0.8deg', '-0.6deg', '1.1deg', '-0.9deg', '0.5deg'];
+let n = 0;
+---
+
+<Rahmen
+  eyebrow="Alternative 3"
+  title="Vitrinen-Schilder"
+  lead="Kleine Preisschilder wie in der Theke: Name groß, Preis groß, Details klein, leicht verdreht. Beim Darüberfahren richtet sich das Schild auf. Backstube statt Restaurant."
+>
+  <div class="flex flex-col gap-10">
+    {sections.map((s) => (
+      <section>
+        <div class="flex items-baseline gap-4">
+          <h2 class="text-[clamp(1.75rem,4vw,2.5rem)]">{s.title}</h2>
+          <span class="h-px flex-1 bg-ink/15" aria-hidden="true"></span>
+        </div>
+        <div class="tz-surface tz-surface--fine mt-5 rounded-card p-4 shadow-[inset_0_0_0_1px_rgb(36_27_20/0.1)] md:p-6">
+          <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+            {s.items.map((item) => {
+              const tilt = tilts[n % tilts.length];
+              n += 1;
+              const price = formatMenuPrice(item.price, item.priceIsPlaceholder, item.priceSuffix);
+              return (
+                <li class="schild-eintrag" style={`--tilt:${tilt}`}>
+                  <span class="schild-loch" aria-hidden="true"></span>
+                  <div class="flex items-start justify-between gap-3">
+                    <h3 class="font-display text-[1.6rem] leading-[1.05]">{item.name}</h3>
+                    {item.highlight && <span class="shrink-0 rounded-full bg-accent px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink">Signature</span>}
+                  </div>
+                  {item.description && <p class="mt-2 text-[0.9rem] leading-snug text-ink-soft">{item.description}</p>}
+                  <div class="mt-4 flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-t border-dashed border-ink/25 pt-3">
+                    <p class="font-mono text-[11px] uppercase tracking-wider text-ink-soft">
+                      {[item.vegan ? 'Vegan' : item.veggie ? 'Veggie' : null, item.seasonal, item.allergens.length > 0 ? `Allergene ${item.allergens.join(', ')}` : null]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </p>
+                    <p class="font-mono text-2xl tabular">{price || <span class="text-base">auf Anfrage</span>}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+    ))}
+  </div>
+</Rahmen>
+
+<style>
+  .schild-eintrag {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.4rem 1.25rem 1.1rem;
+    background: var(--color-paper);
+    border-radius: 3px;
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
+      0 12px 22px -16px color-mix(in srgb, var(--color-ink) 70%, transparent);
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform var(--dur-base) var(--ease-brand), box-shadow var(--dur-base) var(--ease-brand);
+  }
+  .schild-eintrag:hover,
+  .schild-eintrag:focus-within {
+    transform: rotate(0deg) translateY(-2px);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
+      0 18px 28px -16px color-mix(in srgb, var(--color-ink) 75%, transparent);
+  }
+  .schild-loch {
+    position: absolute;
+    top: 0.5rem;
+    left: 50%;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 9999px;
+    background: var(--color-bg-alt);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-ink) 30%, transparent);
+    transform: translateX(-50%);
+  }
+</style>
