@@ -1,0 +1,158 @@
+---
+/**
+ * Muster-Tafel für Buttons & Links: dieselben Rollen, Beschriftungen und Beispiel-Situationen
+ * für Live und alle Alternativen — nur die Klassen unterscheiden sich. So vergleicht Josie
+ * Gleiches mit Gleichem. `hoverClass` zeigt den Zustand „beim Darüberfahren" statisch
+ * (wichtig am Handy, wo es kein Hover gibt).
+ */
+import site from '../../../../data/site.json';
+import { telHref, routeHref } from '../../../../lib/format';
+
+interface Classes {
+  primary: string;
+  accent: string;
+  secondary: string;
+  ghost: string;
+  link: string;
+  linkArrow: string;
+  arrow: string;
+}
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  classes: Classes;
+  /** Klasse, die den Hover-Zustand erzwingt — für die Demo-Spalte „beim Darüberfahren" */
+  hoverClass?: string;
+}
+const { eyebrow, title, lead, classes: c, hoverClass } = Astro.props;
+const phoneHref = telHref(site.phone);
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+const chips = ['Frühstück', 'Kuchen', 'Brot', 'Schnecken', 'Kaffee'];
+const arrowPath = 'M5 12h14M13 6l6 6-6 6';
+---
+
+<main class="mx-auto max-w-[1100px] px-4 py-10 md:px-8 md:py-14">
+  <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Buttons &amp; Links · {eyebrow}</p>
+  <h1 class="mt-2 text-[clamp(1.75rem,4vw,2.5rem)]">{title}</h1>
+  <p class="prose-measure mt-3 text-ink-soft">{lead}</p>
+
+  <div class="mt-10 flex flex-col divide-y divide-ink/10 border-y border-ink/10">
+    <!-- Hauptaktion -->
+    <div class="grid gap-4 py-7 md:grid-cols-[220px_1fr] md:gap-8">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Hauptaktion</p>
+        <p class="mt-1 text-sm text-ink-soft">Ein dunkler Knopf pro Abschnitt, z. B. Anrufen.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <a href={phoneHref} class={c.primary}>Jetzt anrufen</a>
+        <a href="/vorbestellen" class={c.primary}>Vorbestellen</a>
+        {hoverClass && (
+          <span class="flex items-center gap-3">
+            <span class:list={[c.primary, hoverClass]} aria-hidden="true">Jetzt anrufen</span>
+            <span class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">← beim Darüberfahren</span>
+          </span>
+        )}
+      </div>
+    </div>
+
+    <!-- Hervorhebung -->
+    <div class="grid gap-4 py-7 md:grid-cols-[220px_1fr] md:gap-8">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Hervorhebung</p>
+        <p class="mt-1 text-sm text-ink-soft">Sanddorn-Orange, höchstens zweimal pro Seite.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="/vorbestellen" class={c.accent}>Vorbestellen</a>
+        <a href="/karte" class={c.accent}>
+          Karte ansehen
+          <svg class={c.arrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={arrowPath} /></svg>
+        </a>
+        {hoverClass && (
+          <span class="flex items-center gap-3">
+            <span class:list={[c.accent, hoverClass]} aria-hidden="true">Vorbestellen</span>
+            <span class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">← beim Darüberfahren</span>
+          </span>
+        )}
+      </div>
+    </div>
+
+    <!-- Zweitaktion -->
+    <div class="grid gap-4 py-7 md:grid-cols-[220px_1fr] md:gap-8">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Zweitaktion</p>
+        <p class="mt-1 text-sm text-ink-soft">Steht neben der Hauptaktion, ohne zu drängeln.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <a href={route} target="_blank" rel="noopener" class={c.secondary}>Route</a>
+        <a href="/besuch" class={c.secondary}>Alle Infos zum Besuch</a>
+        {hoverClass && (
+          <span class="flex items-center gap-3">
+            <span class:list={[c.secondary, hoverClass]} aria-hidden="true">Route</span>
+            <span class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">← beim Darüberfahren</span>
+          </span>
+        )}
+      </div>
+    </div>
+
+    <!-- Leise Chips -->
+    <div class="grid gap-4 py-7 md:grid-cols-[220px_1fr] md:gap-8">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Leise Auswahl</p>
+        <p class="mt-1 text-sm text-ink-soft">Sprungmarken auf der Karte, Filter, Kleinkram.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        {chips.map((label, i) => (
+          <a href={`/karte#${label.toLowerCase().replace('ü', 'ue')}`} class:list={[c.ghost, hoverClass && i === 0 && hoverClass]}>{label}</a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Textlinks -->
+    <div class="grid gap-4 py-7 md:grid-cols-[220px_1fr] md:gap-8">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Textlinks</p>
+        <p class="mt-1 text-sm text-ink-soft">Im Fließtext und unter Abschnitten.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
+        <a href="/karte" class={c.linkArrow}>
+          Zur Karte
+          <svg class={c.arrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={arrowPath} /></svg>
+        </a>
+        <a href="/ueber-mich" class={c.link}>Mehr über mich und das Café</a>
+        {hoverClass && (
+          <span class="flex items-center gap-3">
+            <span class:list={[c.linkArrow, hoverClass]} aria-hidden="true">
+              Zur Karte
+              <svg class={c.arrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={arrowPath} /></svg>
+            </span>
+            <span class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">← beim Darüberfahren</span>
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <!-- Zusammenspiel: so stehen die Knöpfe wirklich auf der Seite -->
+  <section class="mt-12 rounded-card bg-bg-alt px-5 py-8 md:px-10 md:py-12">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Im Zusammenspiel · Besuch</p>
+    <span class="tz-rule mt-3" aria-hidden="true"></span>
+    <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.5rem)]">Wann du uns findest</h2>
+    <p class="prose-measure mt-4 text-lg text-ink-soft">
+      Dienstag und Mittwoch backen wir nicht — plan deinen Besuch drumherum.
+    </p>
+    <div class="mt-6 flex flex-wrap items-center gap-4">
+      <a href={phoneHref} class={c.primary}>{site.phoneDisplay}</a>
+      <a href="/vorbestellen" class={c.accent}>Vorbestellen</a>
+      <a href={route} target="_blank" rel="noopener" class={c.secondary}>Route</a>
+    </div>
+    <a href="/karte" class:list={[c.linkArrow, 'mt-6']}>
+      Zur Karte
+      <svg class={c.arrow} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={arrowPath} /></svg>
+    </a>
+  </section>
+
+  <p class="mt-8 font-mono text-xs text-ink-soft">
+    Alle Knöpfe sind mindestens 44 px hoch (gut zu treffen am Handy) und zeigen per Tastatur einen orangen Fokusrahmen.
+  </p>
+</main>
