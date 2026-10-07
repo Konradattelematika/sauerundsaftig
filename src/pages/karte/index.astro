@@ -1,16 +1,16 @@
 ---
 /** /karte — Übersicht mit Ankernavigation zu allen 5 Sektionen. */
 import { getCollection } from 'astro:content';
-import Layout from '../../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
-import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
-import MenuItemsList from '../../../variants/a-krume/components/MenuItemsList.astro';
-import Figure from '../../../variants/a-krume/components/Figure.astro';
-import { MENU_SECTIONS } from '../../../lib/variants';
-import { menuSchema } from '../../../lib/schema-org';
-import { btnGhost, linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
+import MenuItemsList from '../../variants/a-krume/components/MenuItemsList.astro';
+import Figure from '../../variants/a-krume/components/Figure.astro';
+import { MENU_SECTIONS } from '../../lib/variants';
+import { menuSchema } from '../../lib/schema-org';
+import { btnGhost, linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
 
-const base = '/a';
+const base = '';
 const allSections = await getCollection('menu');
 const sections = MENU_SECTIONS.map((slug) => allSections.find((s) => s.data.slug === slug)).filter(
   (s): s is NonNullable<typeof s> => Boolean(s),
@@ -29,7 +29,7 @@ const jsonLd = [
   description="Die ganze Karte von Sauer & Saftig: Frühstück, Kuchen, Brot, Sauerteigschnecken und Kaffee — alles aus der eigenen Backstube."
   jsonLd={jsonLd}
 >
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Karte', href: `${base}/karte` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Karte', href: `${base}/karte` }]} />
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
@@ -37,8 +37,7 @@ const jsonLd = [
         as="h1"
         size="lg"
         eyebrow="Die Karte"
-        title="Fünf Sektionen, ein Teig als Basis"
-        intro="Frühstück, Kuchen, Brot, Schnecken, Kaffee — fast überall steckt derselbe Sauerteig drin, nur anders verarbeitet."
+        title="Unsere Karte"
         rule
       />
       <nav aria-label="Sektionen der Karte" class="mt-8 flex flex-wrap gap-3" data-reveal style="--reveal-delay:100ms">

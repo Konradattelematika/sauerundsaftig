@@ -3,16 +3,16 @@
  * /kontakt — Adresse, Telefon, Instagram, OpeningStatus, ClickToLoadMap.
  * Bewusst KEIN Kontaktformular (nicht angeschlossen) — ehrlicher Hinweis statt Mock.
  */
-import Layout from '../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
-import ClickToLoadMap from '../../components/shared/ClickToLoadMap.astro';
-import OpeningStatus from '../../components/shared/OpeningStatus.astro';
-import site from '../../data/site.json';
-import { telHref } from '../../lib/format';
-import { localBusiness } from '../../lib/schema-org';
-import { linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
+import Layout from '../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
+import ClickToLoadMap from '../components/shared/ClickToLoadMap.astro';
+import OpeningStatus from '../components/shared/OpeningStatus.astro';
+import site from '../data/site.json';
+import { telHref } from '../lib/format';
+import { localBusiness } from '../lib/schema-org';
+import { linkArrow, arrowIcon } from '../variants/a-krume/lib/ui';
 
-const base = '/a';
+const base = '';
 const phoneHref = telHref(site.phone);
 const jsonLd = [localBusiness(String(Astro.site))];
 ---
@@ -22,7 +22,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
   description="Adresse, Telefon und Instagram von Sauer & Saftig, Dünenstraße 1, Ostseebad Rerik."
   jsonLd={jsonLd}
 >
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Kontakt', href: `${base}/kontakt` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Kontakt', href: `${base}/kontakt` }]} />
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">

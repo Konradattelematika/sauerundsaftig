@@ -1,20 +1,21 @@
 ---
 /**
  * /besuch — wichtigste Seite für Persona 62+: Öffnungszeiten sehr groß,
- * Telefon riesig, Anfahrt/Parken/Barrierefreiheit vorsichtig formuliert.
+ * Telefon riesig, Anfahrt/Parken vorsichtig formuliert; Barrierefreiheit, Hunde,
+ * Zahlungsmittel kundenbestätigt (10/2026).
  * Anfahrts-Richtungen bewusst nur als grobe Himmelsrichtung — nichts Genaues erfunden.
  */
-import Layout from '../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
-import ClickToLoadMap from '../../components/shared/ClickToLoadMap.astro';
-import OpeningStatus from '../../components/shared/OpeningStatus.astro';
-import site from '../../data/site.json';
-import { weekOverview, type Schedule } from '../../lib/opening-hours';
-import { telHref, routeHref } from '../../lib/format';
-import { localBusiness } from '../../lib/schema-org';
-import { btnSecondary } from '../../variants/a-krume/lib/ui';
+import Layout from '../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
+import ClickToLoadMap from '../components/shared/ClickToLoadMap.astro';
+import OpeningStatus from '../components/shared/OpeningStatus.astro';
+import site from '../data/site.json';
+import { weekOverview, type Schedule } from '../lib/opening-hours';
+import { telHref, routeHref } from '../lib/format';
+import { localBusiness } from '../lib/schema-org';
+import { btnSecondary } from '../variants/a-krume/lib/ui';
 
-const base = '/a';
+const base = '';
 // site.json wird als generisches JSON typisiert (string[][] statt Tupel) — Cast wie in lib/schema-org.ts.
 const week = weekOverview(site.openingHours as unknown as Schedule);
 const phoneHref = telHref(site.phone);
@@ -27,7 +28,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
   description="Öffnungszeiten, Adresse und Anreise nach Rerik, Dünenstraße 1. Reservierung nur telefonisch."
   jsonLd={jsonLd}
 >
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Besuch', href: `${base}/besuch` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Besuch', href: `${base}/besuch` }]} />
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
@@ -40,7 +41,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
         <OpeningStatus size="lg" />
       </div>
       <p class="prose-measure mt-4 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms">
-        Dienstag und Mittwoch backen wir nicht — plan deinen Besuch drumherum. Donnerstag bis Montag sind wir da.
+        Reserviere deinen Tisch per Telefon.
       </p>
       <a
         href={phoneHref}
@@ -72,13 +73,6 @@ const jsonLd = [localBusiness(String(Astro.site))];
         Zu Feiertagen wie Heiligabend und dem 1. Weihnachtstag bleibt bei uns geschlossen. Verlässlich ist immer
         der Stand hier auf der Website, nicht unbedingt Google oder Instagram.
       </p>
-      <div class="mt-6 max-w-xl rounded-card border border-ink/15 bg-paper p-6" data-reveal style="--reveal-delay:200ms">
-        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Too Good To Go</p>
-        <p class="mt-2 text-xl">
-          Überraschungstüte, rund {site.tooGoodToGo.bagValue} € Warenwert für {site.tooGoodToGo.bagPrice} €.
-        </p>
-        <p class="mt-1 text-ink-soft">Verfügbarkeit und Abholzeit siehst du direkt in der App.</p>
-      </div>
     </div>
   </section>
 
@@ -120,18 +114,11 @@ const jsonLd = [localBusiness(String(Astro.site))];
         </div>
         <div data-reveal style="--reveal-delay:100ms">
           <h2 class="text-xl">Barrierefreiheit</h2>
-          <p class="prose-measure mt-2 text-ink-soft">
-            Ob Café und Zugang barrierefrei sind, klären wir aktuell noch. Ruf am sichersten kurz vorher an, dann
-            sagen wir dir genau, was vor Ort geht.
-          </p>
-          {/* TODO(kunde): Barrierefreiheit (Stufen, Türbreite, WC) prüfen und hier konkret ergänzen. */}
+          <p class="prose-measure mt-2 text-ink-soft">Das Café ist nicht barrierefrei.</p>
         </div>
         <div data-reveal style="--reveal-delay:200ms">
           <h2 class="text-xl">Hunde</h2>
-          <p class="prose-measure mt-2 text-ink-soft">
-            Das prüfen wir gerade noch. Ruf am besten kurz an, bevor du mit Hund bei uns vorbeikommst.
-          </p>
-          {/* TODO(kunde): Hunde-Regelung bestätigen. */}
+          <p class="prose-measure mt-2 text-ink-soft">Hunde sind an der Leine erlaubt.</p>
         </div>
       </div>
       <div class="mt-10 grid grid-cols-1 gap-10 border-t border-ink/10 pt-8 md:grid-cols-3">
@@ -145,13 +132,7 @@ const jsonLd = [localBusiness(String(Astro.site))];
         </div>
         <div class="md:col-span-2" data-reveal style="--reveal-delay:100ms">
           <h2 class="text-xl">Zahlungsmittel</h2>
-          <p class="prose-measure mt-2 text-ink-soft">
-            Ob und mit welcher Karte du bei uns zahlen kannst, können wir dir gerade noch nicht mit Sicherheit
-            sagen. Ruf am besten kurz an unter{' '}
-            <a href={phoneHref} class="link-ul text-ink">{site.phoneDisplay}</a>,
-            dann sagen wir dir aktuell, welche Zahlungsmittel bei uns gehen.
-          </p>
-          {/* TODO(kunde): Zahlungsmittel final bestätigen (site.json → paymentTodoKunde). */}
+          <p class="prose-measure mt-2 text-ink-soft">Du kannst bar oder mit Karte bezahlen.</p>
         </div>
       </div>
     </div>

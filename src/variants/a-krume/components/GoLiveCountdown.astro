@@ -1,0 +1,286 @@
+---
+/**
+ * Go-Live-Countdown — ganz oben auf der Startseite, bis die Website offiziell online ist.
+ *
+ * - Zielzeit aus site.json → goLiveAt (Fallback); zusätzlich GET /api/golive
+ *   ({ goLiveAt, live, now }): Uhr wird auf die Serverzeit abgeglichen (Offset now − Date.now()),
+ *   Fehler werden ignoriert.
+ * - Build nach goLiveAt → Komponente wird gar nicht gerendert.
+ * - Zielzeit beim Laden schon vorbei → das Inline-Script direkt hinter dem Element blendet sie
+ *   vor dem ersten Paint aus (und malt sonst die aktuellen Ziffern, damit nichts springt).
+ * - Läuft sekundengenau (Timeout auf die nächste volle Sekunde); Screenreader hören nur
+ *   Minutenwechsel (aria-live="polite"), nicht jede Sekunde.
+ * - Bei 0: „Jetzt live." (Animation nur ohne prefers-reduced-motion), nach ~4 s location.reload().
+ * - ClientRouter: ein einziger Timer pro Seite — init() bei astro:page-load räumt vorher auf,
+ *   astro:before-swap stoppt ihn.
+ */
+import site from '../../../data/site.json';
+
+const goLiveAt: string = site.goLiveAt;
+const target = Date.parse(goLiveAt);
+const show = Number.isFinite(target) && Date.now() < target;
+
+const tz = 'Europe/Berlin';
+const dateLabel = Number.isFinite(target)
+  ? new Intl.DateTimeFormat('de-DE', { timeZone: tz, day: 'numeric', month: 'long', year: 'numeric' }).format(target)
+  : '';
+const timeLabel = Number.isFinite(target)
+  ? new Intl.DateTimeFormat('de-DE', { timeZone: tz, hour: '2-digit', minute: '2-digit' }).format(target)
+  : '';
+
+const units = [
+  { key: 'd', label: 'Tage' },
+  { key: 'h', label: 'Stunden' },
+  { key: 'm', label: 'Minuten' },
+  { key: 's', label: 'Sekunden' },
+] as const;
+---
+
+{show && (
+  <section class="golive bg-bg-alt" data-golive data-golive-at={goLiveAt} aria-labelledby="golive-title">
+    <div class="mx-auto max-w-[1440px] px-4 py-8 md:px-8 md:py-12">
+      <p id="golive-title"><span class="tz-tag">Bald offiziell online</span></p>
+
+      <div class="golive-clock mt-5 grid max-w-5xl grid-cols-4 md:mt-7" data-golive-clock>
+        {units.map((u, i) => (
+          <div class:list={['golive-cell min-w-0', i > 0 && 'border-l border-ink/15 pl-3 sm:pl-5 md:pl-8']}>
+            <span class="golive-num block font-display text-ink" data-golive-unit={u.key}>––</span>
+            <span class="mt-1 block font-mono text-[11px] uppercase tracking-[0.12em] text-ink-soft sm:text-xs sm:tracking-[0.2em]">{u.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <p class="golive-done font-display text-ink" data-golive-done hidden>Jetzt live.</p>
+
+      <p class="prose-measure mt-5 text-lg text-ink-soft md:mt-7 md:text-xl" data-golive-text>
+        Am {dateLabel} um {timeLabel} Uhr geht die neue Website live.
+      </p>
+      <p class="sr-only" aria-live="polite" aria-atomic="true" data-golive-sr></p>
+    </div>
+    <span class="tz-band" aria-hidden="true"></span>
+  </section>
+  <script is:inline>
+    // Vor dem ersten Paint: abgelaufen → ausblenden, sonst aktuelle Ziffern setzen.
+    (function () {
+      var el = document.querySelector('[data-golive]');
+      if (!el) return;
+      var left = Date.parse(el.getAttribute('data-golive-at')) - Date.now();
+      if (!(left > 0)) {
+        el.hidden = true;
+        return;
+      }
+      var s = Math.ceil(left / 1000);
+      var v = [Math.floor(s / 86400), Math.floor(s / 3600) % 24, Math.floor(s / 60) % 60, s % 60];
+      el.querySelectorAll('[data-golive-unit]').forEach(function (n, i) {
+        n.textContent = String(v[i]).padStart(2, '0');
+      });
+    })();
+  </script>
+)}
+
+<style>
+  .golive-num {
+    font-size: clamp(2.5rem, 11vw, 7rem);
+    line-height: 0.95;
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: 'tnum' 1, 'lnum' 1;
+    font-variation-settings: 'SOFT' 40, 'WONK' 0, 'opsz' 144;
+    letter-spacing: -0.02em;
+  }
+  .golive-done {
+    margin-top: 1.25rem;
+    font-size: clamp(2.5rem, 11vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 768px) {
+    .golive-done {
+      margin-top: 1.75rem;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .golive-done:not([hidden]) {
+      animation: golive-in 700ms var(--ease-brand) both;
+    }
+  }
+  @keyframes golive-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.25em) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  interface GoLiveApi {
+    goLiveAt?: unknown;
+    live?: unknown;
+    now?: unknown;
+  }
+
+  const TZ = 'Europe/Berlin';
+  const RELOAD_AFTER_MS = 4000;
+
+  let tickTimer: number | undefined;
+  let reloadTimer: number | undefined;
+  /** Generation je init(): ältere Durchläufe (vorherige Seite, doppelter Start) ticken nie weiter */
+  let generation = 0;
+  /** Serverzeit − Clientzeit in ms (0, solange /api/golive nicht geantwortet hat) */
+  let offset = 0;
+  /** Einmal pro Sitzung (Modul-Lebensdauer) abfragen, auch über ClientRouter-Navigationen hinweg */
+  let apiPromise: Promise<GoLiveApi | null> | null = null;
+
+  const now = () => Date.now() + offset;
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  function fetchGoLive(): Promise<GoLiveApi | null> {
+    if (apiPromise) return apiPromise;
+    apiPromise = (async () => {
+      const ctrl = new AbortController();
+      const abort = window.setTimeout(() => ctrl.abort(), 4000);
+      try {
+        const t0 = Date.now();
+        const res = await fetch('/api/golive', {
+          cache: 'no-store',
+          headers: { accept: 'application/json' },
+          signal: ctrl.signal,
+        });
+        const t1 = Date.now();
+        if (!res.ok) return null;
+        const data = (await res.json()) as GoLiveApi;
+        const serverNow = typeof data.now === 'string' ? Date.parse(data.now) : NaN;
+        // Laufzeit halbieren: Serverzeit gilt für die Mitte der Anfrage
+        if (Number.isFinite(serverNow)) offset = serverNow - (t0 + t1) / 2;
+        return data;
+      } catch {
+        return null;
+      } finally {
+        window.clearTimeout(abort);
+      }
+    })();
+    return apiPromise;
+  }
+
+  function stop() {
+    if (tickTimer !== undefined) window.clearTimeout(tickTimer);
+    if (reloadTimer !== undefined) window.clearTimeout(reloadTimer);
+    tickTimer = undefined;
+    reloadTimer = undefined;
+  }
+
+  function init() {
+    stop();
+    const gen = ++generation;
+    const root = document.querySelector<HTMLElement>('[data-golive]');
+    if (!root) return;
+
+    const units = root.querySelectorAll<HTMLElement>('[data-golive-unit]');
+    const clock = root.querySelector<HTMLElement>('[data-golive-clock]');
+    const done = root.querySelector<HTMLElement>('[data-golive-done]');
+    const text = root.querySelector<HTMLElement>('[data-golive-text]');
+    const sr = root.querySelector<HTMLElement>('[data-golive-sr]');
+
+    let target = Date.parse(root.dataset.goliveAt ?? '');
+    let lastMinuteKey = '';
+    let finished = false;
+
+    function remaining(): number {
+      return target - now();
+    }
+
+    function announce(msg: string) {
+      if (sr) sr.textContent = msg;
+    }
+
+    function finish() {
+      finished = true;
+      stop();
+      units.forEach((u) => (u.textContent = '00'));
+      if (clock) clock.hidden = true;
+      if (done) done.hidden = false;
+      announce('Jetzt live.');
+      reloadTimer = window.setTimeout(() => location.reload(), RELOAD_AFTER_MS);
+    }
+
+    function paint() {
+      const total = Math.max(0, Math.ceil(remaining() / 1000));
+      const d = Math.floor(total / 86400);
+      const h = Math.floor(total / 3600) % 24;
+      const m = Math.floor(total / 60) % 60;
+      const s = total % 60;
+      const values = [d, h, m, s];
+      units.forEach((u, i) => {
+        const v = pad(values[i] ?? 0);
+        if (u.textContent !== v) u.textContent = v;
+      });
+      // Nur Minutenwechsel vorlesen — der erste Stand nach dem Laden wird nicht angesagt
+      const key = `${d}-${h}-${m}`;
+      if (lastMinuteKey && key !== lastMinuteKey && total > 0) {
+        const parts = [
+          d > 0 ? `${d} ${d === 1 ? 'Tag' : 'Tage'}` : '',
+          h > 0 ? `${h} ${h === 1 ? 'Stunde' : 'Stunden'}` : '',
+          `${m} ${m === 1 ? 'Minute' : 'Minuten'}`,
+        ].filter(Boolean);
+        const list = parts.length > 1 ? `${parts.slice(0, -1).join(', ')} und ${parts[parts.length - 1]}` : parts[0];
+        announce(`Noch ${list} bis zum Go-Live.`);
+      }
+      lastMinuteKey = key;
+    }
+
+    function tick() {
+      if (finished || gen !== generation) return;
+      if (remaining() <= 0) {
+        finish();
+        return;
+      }
+      paint();
+      // Auf die nächste volle Sekunde (Serverzeit) ausrichten — kein Driften, kein Doppel-Intervall
+      const delay = 1000 - (((now() % 1000) + 1000) % 1000) + 15;
+      tickTimer = window.setTimeout(tick, delay);
+    }
+
+    function updateText() {
+      if (!text || !Number.isFinite(target)) return;
+      const date = new Intl.DateTimeFormat('de-DE', { timeZone: TZ, day: 'numeric', month: 'long', year: 'numeric' }).format(target);
+      const time = new Intl.DateTimeFormat('de-DE', { timeZone: TZ, hour: '2-digit', minute: '2-digit' }).format(target);
+      text.textContent = `Am ${date} um ${time} Uhr geht die neue Website live.`;
+    }
+
+    if (!Number.isFinite(target) || remaining() <= 0) {
+      // Beim Laden schon vorbei: ausgeblendet lassen (das Inline-Script hat das meist schon erledigt)
+      root.hidden = true;
+    } else {
+      root.hidden = false;
+      tick();
+    }
+
+    // Serverzeit/-zielzeit abgleichen. Läuft der Countdown nicht mehr (Seite gewechselt), nichts tun.
+    void fetchGoLive().then((data) => {
+      if (!data || gen !== generation || !root.isConnected || finished) return;
+      const apiTarget = typeof data.goLiveAt === 'string' ? Date.parse(data.goLiveAt) : NaN;
+      if (Number.isFinite(apiTarget) && apiTarget !== target) {
+        target = apiTarget;
+        updateText();
+      }
+      stop();
+      if (data.live === true || !Number.isFinite(target) || remaining() <= 0) {
+        // Server ist schon live (oder die Zeit ist um, Seite aber noch privat): kein Countdown, kein Reload
+        root.hidden = true;
+        return;
+      }
+      root.hidden = false;
+      tick();
+    });
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', () => {
+    generation++;
+    stop();
+  });
+</script>

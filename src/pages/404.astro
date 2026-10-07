@@ -1,35 +1,35 @@
 ---
-/** Root-404 (außerhalb der Varianten) — nginx liefert sie für unbekannte Pfade ohne /a|b|c-Prefix. */
-import SeoHead from '../components/shared/SeoHead.astro';
+/**
+ * /404 — Variante A: editorial gesetzte 404 mit Sauerteig-Bild, Links zu
+ * Karte und Startseite. Baut nach dist/404.html — der Server liefert sie für unbekannte Pfade (Status 404).
+ */
+import Layout from '../variants/a-krume/Layout.astro';
+import { btnAccent, btnSecondary, arrowIcon } from '../variants/a-krume/lib/ui';
+
+const base = '';
 ---
 
-<!doctype html>
-<html lang="de">
-  <head>
-    <SeoHead title="Seite nicht gefunden — Sauer & Saftig" description="Diese Seite gibt es nicht." noindex />
-  </head>
-  <body>
-    <main>
-      <img src="/brand/logo-lockup-ink-640.png" alt="Sauer & Saftig — Brot und Kuchen" width="180" height="130" />
-      <h1>Diese Seite ist wie ein Sauerteig ohne Fütterung.</h1>
-      <p>Nicht mehr da. Aber die Übersicht der drei Design-Varianten wartet.</p>
-      <a href="/">Zur Übersicht</a>
-    </main>
-    <style>
-      * { box-sizing: border-box; margin: 0; }
-      body {
-        background: #faf8f4; color: #1c1917;
-        font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;
-        min-height: 100vh; display: grid; place-items: center;
-      }
-      main { text-align: center; padding: 32px; max-width: 56ch; display: grid; gap: 16px; justify-items: center; }
-      img { height: auto; }
-      h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.2; }
-      a {
-        background: #1c1917; color: #faf8f4; text-decoration: none;
-        padding: 12px 22px; border-radius: 6px; min-height: 44px; display: inline-flex; align-items: center;
-      }
-      a:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
-    </style>
-  </body>
-</html>
+<Layout title="Seite nicht gefunden — Sauer & Saftig" description="Diese Seite gibt es nicht." noindex>
+  <section class="bg-bg py-20 md:py-32">
+    <div class="mx-auto flex max-w-3xl flex-col items-center px-4 text-center md:px-8">
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>404</p>
+      <span class="tz-rule mx-auto mt-3" aria-hidden="true"></span>
+      <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)]" data-reveal style="--reveal-delay:100ms">
+        Diese Seite ist wie ein Sauerteig ohne Fütterung — nicht mehr da.
+      </h1>
+      <p class="prose-measure mt-5 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        Der Link, dem du gefolgt bist, führt ins Leere. Vielleicht findest du, wonach du suchst, auf der Karte
+        oder auf der Startseite.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4" data-reveal style="--reveal-delay:200ms">
+        <a href={`${base}/karte`} class={btnAccent}>
+          Zur Karte
+          <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+        <a href={base || '/'} class={btnSecondary}>
+          Zur Startseite
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

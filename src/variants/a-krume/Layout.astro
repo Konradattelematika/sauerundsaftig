@@ -2,7 +2,7 @@
 /**
  * Basis-Layout Variante A „Krume" — Editorial Warm.
  * Bindet Tokens (a.css), Header/Footer, Sticky-Bar, Motion und View-Transitions.
- * Jede Seite unter /a nutzt dieses Layout.
+ * Jede Seite der Live-Site (Variante A im Wurzelpfad) nutzt dieses Layout.
  */
 import '../../styles/a.css';
 import { ClientRouter } from 'astro:transitions';
@@ -21,7 +21,7 @@ interface Props {
   noindex?: boolean;
 }
 const { title, description, jsonLd = [], ogImage, noindex = false } = Astro.props;
-const base = '/a';
+const base = '';
 // Material Theke: eine optimierte Textur-URL fuer alle .tz-*-Klassen (s. styles/a-terrazzo.css)
 const tzUrl = await terrazzoCssUrl();
 ---

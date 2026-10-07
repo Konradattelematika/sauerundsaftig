@@ -59,13 +59,13 @@ export const DATENSCHUTZ: LegalSection[] = [
   {
     heading: 'Externe Links',
     paragraphs: [
-      'Links zu Instagram, Google Maps und Too Good To Go führen zu externen Anbietern. Für deren Datenverarbeitung gelten die dortigen Datenschutzerklärungen.',
+      'Links zu Instagram und Google Maps führen zu externen Anbietern. Für deren Datenverarbeitung gelten die dortigen Datenschutzerklärungen.',
     ],
   },
   {
     heading: 'Formulare (Demo-Betrieb)',
     paragraphs: [
-      'Vorbestellung, Workshop-Reservierung, Gutschein und Newsletter befinden sich im Demo-Betrieb: Eingaben werden derzeit nicht an uns übertragen und nicht gespeichert. Vor Aktivierung echter Bestell- und Versandfunktionen wird diese Erklärung aktualisiert. TODO(kunde): bei Anbindung (Shopify/Brevo o. ä.) ergänzen.',
+      'Vorbestellung, Gutschein und Newsletter befinden sich im Demo-Betrieb: Eingaben werden derzeit nicht an uns übertragen und nicht gespeichert. Vor Aktivierung echter Bestell- und Versandfunktionen wird diese Erklärung aktualisiert. TODO(kunde): bei Anbindung (Shopify/Brevo o. ä.) ergänzen.',
     ],
   },
   {

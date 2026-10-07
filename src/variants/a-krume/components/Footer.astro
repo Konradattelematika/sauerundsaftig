@@ -1,25 +1,23 @@
 ---
 /**
  * Footer Variante A: Terrazzo-Band als Übergang (Material „Theke"), dunkler Abschluss
- * (bg-ink), NAV_FOOTER + „Über mich" (nur A), NAV_LEGAL, Öffnungszeiten kompakt,
- * Instagram, TGTG-Zeile, Claim.
+ * (bg-ink), NAV_FOOTER_A (inkl. „Über mich"), NAV_LEGAL, Öffnungszeiten kompakt,
+ * Instagram, Claim.
  */
 import Logo from '../../../components/shared/Logo.astro';
 import site from '../../../data/site.json';
-import { NAV_FOOTER, NAV_LEGAL } from '../../../lib/variants';
+import { NAV_FOOTER_A, NAV_LEGAL } from '../../../lib/variants';
 import { weekOverview, type Schedule } from '../../../lib/opening-hours';
 import { telHref } from '../../../lib/format';
 
 interface Props {
+  /** Pfad-Präfix der Links; Live-Site im Wurzelpfad = '' */
   base: string;
 }
 const { base } = Astro.props;
 const week = weekOverview(site.openingHours as unknown as Schedule);
 const phoneHref = telHref(site.phone);
-// „Über mich" (Josie) gibt es nur in Variante A — direkt hinter „Über uns" einsortieren
-const footerNav = NAV_FOOTER.flatMap((item) =>
-  item.path === '/ueber-uns' ? [item, { label: 'Über mich', path: '/ueber-mich' }] : [item],
-);
+const footerNav = NAV_FOOTER_A;
 ---
 
 <footer class="bg-ink text-bg">
@@ -66,9 +64,6 @@ const footerNav = NAV_FOOTER.flatMap((item) =>
       <a href={phoneHref} class="link-ul link-ul--light mt-5 inline-flex min-h-11 items-center font-mono text-xl">
         {site.phoneDisplay}
       </a>
-      <p class="mt-4 max-w-[38ch] text-sm text-bg/70">
-        Bei Too Good To Go dabei: Überraschungstüte für {site.tooGoodToGo.bagPrice} € statt rund {site.tooGoodToGo.bagValue} € Warenwert, solange Vorrat reicht.
-      </p>
     </div>
   </div>
 

@@ -7,7 +7,7 @@ export interface VariantMeta {
   name: string;
   workingTitle: string; // „Krume" etc.
   stance: string; // Haltung in einem Satz (für die Wähler-Seite)
-  base: string; // Basis-Pfad, z. B. "/a"
+  base: string; // Einstiegspfad: A (Live-Site) liegt im Wurzelpfad "/", B/C/D unter "/b" usw.
   swatches: string[]; // Farbfelder für die Wähler-Seite
   typeSample: { display: string; body: string };
   motion: string;
@@ -19,7 +19,7 @@ export const VARIANTS: Record<VariantKey, VariantMeta> = {
     name: 'Krume',
     workingTitle: 'Editorial Warm',
     stance: 'Warm, sinnlich, redaktionell — ein Magazin über gutes Backen.',
-    base: '/a',
+    base: '/',
     swatches: ['#F7F2E8', '#7A4A26', '#241B14', '#E07A1F', '#5B8C3E'],
     typeSample: { display: 'Fraunces', body: 'General Sans' },
     motion: 'Teig — langsam, weich, 500–700 ms',
@@ -56,7 +56,7 @@ export const VARIANTS: Record<VariantKey, VariantMeta> = {
   },
 };
 
-/** Navigations-Struktur, identisch je Variante (Pfade relativ zur Basis). */
+/** Navigations-Struktur der alten Varianten B/C/D (Pfade relativ zur Basis). */
 export const NAV_MAIN = [
   { label: 'Karte', path: '/karte' },
   { label: 'Sauerteig', path: '/sauerteig' },
@@ -65,10 +65,32 @@ export const NAV_MAIN = [
   { label: 'Besuch', path: '/besuch' },
 ] as const;
 
+/**
+ * Hauptnavigation der Live-Site (Variante A „Krume" im Wurzelpfad) — ohne Workshops
+ * und Journal (Kunden-Feedback 10/2026), dafür mit „Über mich" (Josie).
+ */
+export const NAV_MAIN_A = [
+  { label: 'Karte', path: '/karte' },
+  { label: 'Sauerteig', path: '/sauerteig' },
+  { label: 'Über mich', path: '/ueber-mich' },
+  { label: 'Besuch', path: '/besuch' },
+] as const;
+
 export const NAV_CTA = { label: 'Vorbestellen', path: '/vorbestellen' } as const;
 
 export const NAV_FOOTER = [
   { label: 'Über uns', path: '/ueber-uns' },
+  { label: 'Shop & Gutscheine', path: '/shop' },
+  { label: 'Für Gastgeber', path: '/gastgeber' },
+  { label: 'FAQ', path: '/faq' },
+  { label: 'Kontakt', path: '/kontakt' },
+  { label: 'Jobs', path: '/jobs' },
+] as const;
+
+/** Footer-Navigation der Live-Site (A): wie NAV_FOOTER, plus „Über mich" direkt hinter „Über uns". */
+export const NAV_FOOTER_A = [
+  { label: 'Über uns', path: '/ueber-uns' },
+  { label: 'Über mich', path: '/ueber-mich' },
   { label: 'Shop & Gutscheine', path: '/shop' },
   { label: 'Für Gastgeber', path: '/gastgeber' },
   { label: 'FAQ', path: '/faq' },

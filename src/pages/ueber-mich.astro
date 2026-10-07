@@ -9,16 +9,16 @@
  * Ostsee-Zeitung). Alles andere
  * steht als sichtbarer redaktioneller Platzhalter (TODO(kunde)) — nichts erfunden.
  */
-import Layout from '../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
-import Figure from '../../variants/a-krume/components/Figure.astro';
-import InstagramFeed from '../../variants/a-krume/components/InstagramFeed.astro';
-import VisitModule from '../../variants/a-krume/components/VisitModule.astro';
-import { hasPhoto } from '../../lib/images';
-import { TERRAZZO_IS_PLACEHOLDER } from '../../lib/textures';
-import { btnSecondary, linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
+import Layout from '../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
+import Figure from '../variants/a-krume/components/Figure.astro';
+import InstagramFeed from '../variants/a-krume/components/InstagramFeed.astro';
+import VisitModule from '../variants/a-krume/components/VisitModule.astro';
+import { hasPhoto } from '../lib/images';
+import { TERRAZZO_IS_PLACEHOLDER } from '../lib/textures';
+import { btnSecondary, linkArrow, arrowIcon } from '../variants/a-krume/lib/ui';
 
-const base = '/a';
+const base = '';
 const portraitIsPlaceholder = !hasPhoto('josie-portrait');
 
 /** Redaktionelle Lücken — sichtbar markiert statt erfunden. TODO(kunde) */
@@ -33,8 +33,7 @@ const principles = [
   { n: '01', text: 'Sauerteig statt Hefe — überall, wo es geht. Auch im Käsekuchen.' },
   { n: '02', text: '18 Stunden für einen Laib. Kein Schritt wird abgekürzt.' },
   { n: '03', text: 'Dienstag und Mittwoch bleibt der Ofen aus. Zwei Ruhetage, jede Woche.' },
-  { n: '04', text: `Was am Abend übrig ist, geht in die Too-Good-To-Go-Tüte — nicht in die Tonne.` },
-  { n: '05', text: 'Torten gibt es auf Bestellung. Jede anders, keine aus dem Katalog.' },
+  { n: '04', text: 'Torten gibt es auf Bestellung. Jede anders, keine aus dem Katalog.' },
 ];
 ---
 
@@ -42,7 +41,7 @@ const principles = [
   title="Über mich — Josie | Sauer & Saftig"
   description="Moin, ich bin Josie. Ich backe in Ostseebad Rerik fast alles mit Sauerteig — und führe das Café dazu. Über die Backstube, die Theke und eine Urkunde."
 >
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Über mich', href: `${base}/ueber-mich` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Über mich', href: `${base}/ueber-mich` }]} />
 
   <!-- HERO: links typografischer Stapel (Tag, „Moin, / ich bin / Josie.", Lead), rechts das Porträt im
        versetzten Terrazzo-Passepartout. Headline bleibt auf jeder Breite ohne Scrollen sichtbar; das Gesicht
@@ -169,7 +168,7 @@ const principles = [
       <div class="max-w-3xl" data-reveal>
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Woran ich mich halte</p>
         <span class="tz-rule mt-3" aria-hidden="true"></span>
-        <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)]">Fünf Sätze, die hier gelten</h2>
+        <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)]">Vier Sätze, die hier gelten</h2>
       </div>
       <ol class="mt-10 border-t border-ink/10 md:mt-14" role="list">
         {principles.map((p, i) => (

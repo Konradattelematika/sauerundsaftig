@@ -3,15 +3,20 @@
  * /faq — alle Einträge aus der faq-Collection (nach order) als natives
  * <details>-Accordion, FAQPage-JSON-LD via faqPage(). Einträge mit `todoKunde`
  * bekommen einen dezenten Badge, statt die Unsicherheit zu verstecken.
+ * Einträge in HIDDEN_FAQ sind auf der Live-Site kein Thema mehr (Kunden-Feedback 10/2026) —
+ * sie bleiben in der Collection (B/C/D nutzen sie), werden hier aber ausgefiltert.
  */
 import { getCollection, render } from 'astro:content';
-import Layout from '../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
-import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
-import { faqPage } from '../../lib/schema-org';
+import Layout from '../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../variants/a-krume/components/SectionIntro.astro';
+import { faqPage } from '../lib/schema-org';
 
-const base = '/a';
-const entries = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+const base = '';
+const HIDDEN_FAQ = new Set(['too-good-to-go']);
+const entries = (await getCollection('faq'))
+  .filter((e) => !HIDDEN_FAQ.has(e.id))
+  .sort((a, b) => a.data.order - b.data.order);
 
 const withHtml = await Promise.all(
   entries.map(async (e) => {
@@ -26,7 +31,7 @@ const jsonLd = [
 ---
 
 <Layout title="Häufige Fragen — Sauer & Saftig" description="Antworten auf häufige Fragen: Öffnungszeiten, Reservierung, Zahlungsmittel, Hunde, Vorbestellung und mehr." jsonLd={jsonLd}>
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'FAQ', href: `${base}/faq` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'FAQ', href: `${base}/faq` }]} />
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
