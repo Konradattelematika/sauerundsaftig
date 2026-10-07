@@ -98,6 +98,28 @@ export function parseUsers(value, warnings = []) {
   return users;
 }
 
+/**
+ * Coolify-Versionen können `$` in scrypt-Hashes trotz Literal-Markierung verändern.
+ * SUS_USERS_B64 transportiert dasselbe JSON deshalb als kanonisches Base64url ohne
+ * interpolierbare Zeichen. Ist die Variable gesetzt, hat sie Vorrang vor SUS_USERS.
+ */
+export function usersConfigValue(env, warnings = []) {
+  const encoded = env.SUS_USERS_B64?.trim();
+  if (!encoded) return env.SUS_USERS;
+  if (encoded.length > 64 * 1024 || !/^[A-Za-z0-9_-]+$/.test(encoded)) {
+    warnings.push('SUS_USERS_B64 ist kein gültiges Base64url — niemand kann sich anmelden.');
+    return undefined;
+  }
+  try {
+    const decoded = Buffer.from(encoded, 'base64url');
+    if (decoded.toString('base64url') !== encoded) throw new Error('nicht kanonisch');
+    return decoded.toString('utf8');
+  } catch {
+    warnings.push('SUS_USERS_B64 ist kein gültiges Base64url — niemand kann sich anmelden.');
+    return undefined;
+  }
+}
+
 function parseBool(value) {
   return value !== undefined && ['1', 'true', 'yes', 'ja', 'on'].includes(value.trim().toLowerCase());
 }
@@ -135,7 +157,7 @@ export function loadConfig(env = process.env, opts = {}) {
     warnings.push('SUS_EXPORT_TOKEN ist kürzer als 24 Zeichen — bitte ein längeres Token setzen.');
   }
 
-  const users = parseUsers(env.SUS_USERS, warnings);
+  const users = parseUsers(usersConfigValue(env, warnings), warnings);
 
   const cookieDomainRaw = env.SUS_COOKIE_DOMAIN?.trim().toLowerCase().replace(/^\./, '');
   const cookieDomain = cookieDomainRaw === undefined ? DEFAULT_COOKIE_DOMAIN : cookieDomainRaw || null;

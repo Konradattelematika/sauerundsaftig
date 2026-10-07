@@ -60,8 +60,10 @@ ihrem Präfix (`/module/…`, `/checkliste`), API-Aufrufe mit `/api/…`.
 
 ### 2.3 Login
 
-- Benutzer aus Env `SUS_USERS` (JSON-Array `[{ "id":"konrad", "name":"Konrad", "role":"team", "hash":"scrypt$…" }]`),
-  Rollen `team` | `inhaberin`. Hash-Werkzeug: `node server/hash-password.mjs <passwort>`.
+- Benutzer aus Env `SUS_USERS_B64` (Base64url eines JSON-Arrays
+  `[{ "id":"konrad", "name":"Konrad", "role":"team", "hash":"scrypt$…" }]`), Rollen `team` | `inhaberin`.
+  Base64url verhindert die in Coolify beobachtete `$`-Interpolation der Hashes; unkodiertes `SUS_USERS` bleibt
+  als lokaler Fallback unterstützt. Hash-Werkzeug: `node server/hash-password.mjs <passwort>`.
 - Session-Cookie `sus_session`: HMAC-SHA256-signiert (`SUS_SESSION_SECRET`), HttpOnly, Secure (außer localhost),
   SameSite=Lax, 30 Tage und hostgebunden. Dadurch ist je Subdomain eine Anmeldung nötig; insbesondere wird die
   Sitzung nicht an den bis zur DNS-Umstellung fremd gehosteten `www`-Host gesendet.

@@ -23,6 +23,7 @@ server/seed/checklist.json  Seed der Checkliste (gehört Agent C; fehlt sie → 
 | `PORT` | `3000` | HTTP-Port |
 | `HOST` | `0.0.0.0` | Listen-Adresse |
 | `SUS_USERS` | — | JSON-Array `[{"id":"konrad","name":"Konrad","role":"team","hash":"scrypt$…"}]`, Rollen `team` \| `inhaberin`. Leer/kaputt → niemand kann sich anmelden (Warnung im Log) |
+| `SUS_USERS_B64` | — | Dasselbe JSON als kanonisches Base64url; hat Vorrang vor `SUS_USERS` und umgeht `$`-Interpolation durch Deployment-Plattformen |
 | `SUS_SESSION_SECRET` | zufällig | HMAC-Schlüssel für Cookies (≥ 32 Zeichen). Fehlt er, gelten Sessions nur bis zum Neustart |
 | `SUS_EXPORT_TOKEN` | — | Bearer-Token für `/api/export(.md)` ohne Login (≥ 24 Zeichen) |
 | `SUS_GO_LIVE_AT` | `2026-10-10T16:00:00+02:00` | Ab dann ist der Live-Host öffentlich. Ungültig → bleibt privat |
@@ -77,7 +78,7 @@ Tests: `pnpm test` (alle) bzw. `pnpm test:server` (nur Server, Fixtures unter `t
   Der Entrypoint macht `/data` für den Benutzer `node` beschreibbar und startet den Server ohne Root.
 - Domains der App: `sauerundsaftig.de`, `www.sauerundsaftig.de`, `checkliste.sauerundsaftig.de`,
   `module.sauerundsaftig.de`, `sauerundsaftig.jawollja.gmbh` (alle auf dieselbe App).
-- Env setzen: `SUS_USERS`, `SUS_SESSION_SECRET`, `SUS_EXPORT_TOKEN` (Rest = Defaults).
+- Env setzen: `SUS_USERS_B64`, `SUS_SESSION_SECRET`, `SUS_EXPORT_TOKEN` (Rest = Defaults). Erzeugen: `printf '%s' "$SUS_USERS" | base64 -w0 | tr '+/' '-_' | tr -d '='`.
 - Traefik hängt die direkte Client-Adresse rechts an `X-Forwarded-For`; der Server nimmt den letzten Wert fürs Login-Rate-Limit. Port 3000 bleibt ausschließlich im internen Proxy-Netz und erhält kein öffentliches Port-Mapping.
   `X-Forwarded-Host` wird bewusst ignoriert — nur der `Host`-Header zählt.
 - Go-Live passiert automatisch zur Uhrzeit in `SUS_GO_LIVE_AT` (kein Deploy nötig). Notbremse: `SUS_FORCE_PRIVATE=1`.

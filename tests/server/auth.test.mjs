@@ -15,7 +15,7 @@ import {
   verifyPassword,
   verifySession,
 } from '../../server/lib/auth.mjs';
-import { loadConfig, parseUsers } from '../../server/lib/config.mjs';
+import { loadConfig, parseUsers, usersConfigValue } from '../../server/lib/config.mjs';
 
 const SECRET = 'geheimnis-'.padEnd(40, 'z');
 
@@ -173,6 +173,20 @@ describe('parseUsers', () => {
     expect(c.sessionSecret.length).toBeGreaterThan(30);
     expect(c.sessionSecretEphemeral).toBe(true);
     expect(c.warnings.join(' ')).toMatch(/SUS_SESSION_SECRET/);
+  });
+  it('SUS_USERS_B64 dekodiert kanonisches Base64url und hat Vorrang', () => {
+    const raw = JSON.stringify([{ id: 'b64', name: 'Base 64', role: 'team', hash: 'scrypt$1024$8$1$a$b' }]);
+    const encoded = Buffer.from(raw).toString('base64url');
+    expect(usersConfigValue({ SUS_USERS_B64: encoded, SUS_USERS: '{kaputt' }, [])).toBe(raw);
+    const config = loadConfig({ SUS_USERS_B64: encoded, SUS_USERS: '{kaputt', SUS_SESSION_SECRET: SECRET });
+    expect(config.users).toHaveLength(1);
+    expect(config.users[0]).toMatchObject({ id: 'b64', name: 'Base 64' });
+  });
+  it('ungültiges SUS_USERS_B64 schlägt geschlossen fehl', () => {
+    const warnings = [];
+    expect(usersConfigValue({ SUS_USERS_B64: '***', SUS_USERS: '[]' }, warnings)).toBeUndefined();
+    expect(warnings.join(' ')).toMatch(/SUS_USERS_B64/);
+    expect(loadConfig({ SUS_USERS_B64: '***', SUS_SESSION_SECRET: SECRET }).users).toEqual([]);
   });
 });
 
