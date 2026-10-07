@@ -46,7 +46,14 @@ node server/hash-password.mjs 'langes-passwort'          # oder: printf '%s' '�
 # → scrypt$32768$8$1$<salt>$<hash>  in SUS_USERS als "hash" eintragen
 ```
 
-Passwort ändern = neuen Hash eintragen → alte Sessions dieses Benutzers werden ungültig.
+Passwort ändern — zwei Wege:
+
+- **Selbst:** angemeldet `/passwort` aufrufen (auf jedem Host; Links in Checkliste und Modul-Board).
+  Der neue Hash landet in `/data/passwords.json` und gilt, solange der Hash in `SUS_USERS` unverändert ist.
+- **Admin-Reset** (Passwort vergessen): neuen Hash in `SUS_USERS` eintragen und neu deployen — ein geänderter
+  Env-Hash hat Vorrang vor dem selbst gesetzten Passwort.
+
+In beiden Fällen werden alte Sessions dieses Benutzers ungültig.
 
 ## Lokal starten
 
