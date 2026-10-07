@@ -1,5 +1,5 @@
 /**
- * Etappen der 18-Stunden-Zeitleiste — 1:1 aus src/pages/a/sauerteig/index.astro (Konstante `stages`,
+ * Etappen der 18-Stunden-Zeitleiste — 1:1 aus src/pages/sauerteig/index.astro (Konstante `stages`,
  * Quelle dort: Journal-Artikel „achtzehn-stunden"). Bei Textänderungen auf der Seite hier nachziehen.
  */
 export interface Stage {

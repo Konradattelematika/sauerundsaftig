@@ -1,0 +1,98 @@
+---
+/** Instagram Alt 3 „Großes Bild und Raster": ein Leitbeitrag, vier kleinere Posts und CTA. */
+import { Picture } from 'astro:assets';
+import { getInstagramPosts, INSTAGRAM_PROFILE, INSTAGRAM_IS_LIVE } from '../../../lib/instagram';
+import { formatDate } from '../../../lib/format';
+import { safeWidths } from '../../../variants/a-krume/lib/picture';
+import { arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+const posts = await getInstagramPosts(5);
+const lead = posts[0];
+const rest = posts.slice(1, 5);
+const handle = `@${INSTAGRAM_PROFILE.username}`;
+---
+
+<section class="bg-bg py-14 md:py-24" aria-labelledby="ig-alt3-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+      <div class="lg:col-span-5" data-reveal>
+        <p><span class="tz-tag">Instagram · {handle}</span></p>
+        <h2 id="ig-alt3-title" class="mt-4 text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.02]">Der neueste Blick in die Backstube</h2>
+        <p class="prose-measure mt-4 text-lg text-ink-soft">Ein Beitrag bekommt die große Bühne. Daneben bleibt Platz zum Stöbern.</p>
+
+        {lead && (
+          <a href={lead.permalink} target="_blank" rel="noopener" class="group mt-8 block" aria-label={`Instagram-Beitrag öffnen: ${lead.caption ?? lead.alt}`}>
+            <figure class="m-0">
+              <div class="tz-frame relative aspect-[4/5] overflow-hidden rounded-card bg-bg-alt">
+                {typeof lead.image === 'string' ? (
+                  <img src={lead.image} alt={lead.alt} loading="eager" decoding="async" class="h-full w-full object-cover" />
+                ) : (
+                  <Picture
+                    src={lead.image}
+                    widths={safeWidths(lead.image, [480, 640, 800, 960])}
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                    formats={['avif', 'webp']}
+                    alt={lead.alt}
+                    loading="eager"
+                    class="h-full w-full object-cover transition-transform duration-[var(--dur-slow)] ease-[var(--ease-brand)] group-hover:scale-[1.025]"
+                  />
+                )}
+                {lead.isVideo && <span class="absolute right-4 top-4 rounded-full bg-ink/75 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-bg">Reel ▶</span>}
+              </div>
+              <figcaption class="mt-4">
+                {lead.caption && <span class="block text-lg leading-relaxed text-ink">{lead.caption}</span>}
+                <span class="mt-2 block font-mono text-[11px] uppercase tracking-widest text-ink-soft">
+                  {lead.date ? formatDate(lead.date, { year: undefined }) : handle}
+                </span>
+              </figcaption>
+            </figure>
+          </a>
+        )}
+      </div>
+
+      <div class="lg:col-span-7 lg:pt-20" data-reveal style="--reveal-delay:120ms">
+        <ul class="grid grid-cols-2 gap-3 sm:gap-5" role="list">
+          {rest.map((post) => (
+            <li>
+              <a href={post.permalink} target="_blank" rel="noopener" class="group block" aria-label={`Instagram-Beitrag öffnen: ${post.caption ?? post.alt}`}>
+                <span class="relative block aspect-square overflow-hidden rounded-card bg-bg-alt">
+                  {typeof post.image === 'string' ? (
+                    <img src={post.image} alt={post.alt} loading="lazy" decoding="async" class="h-full w-full object-cover" />
+                  ) : (
+                    <Picture
+                      src={post.image}
+                      widths={safeWidths(post.image, [320, 480, 640])}
+                      sizes="(min-width: 1024px) 25vw, 48vw"
+                      formats={['avif', 'webp']}
+                      alt={post.alt}
+                      loading="lazy"
+                      class="h-full w-full object-cover transition-transform duration-[var(--dur-slow)] ease-[var(--ease-brand)] group-hover:scale-[1.04]"
+                    />
+                  )}
+                  <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent px-3 pb-3 pt-10 font-mono text-[10px] uppercase tracking-widest text-bg">
+                    {post.date ? formatDate(post.date, { year: undefined, month: 'short' }) : handle}
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+          <li class="col-span-2">
+            <a
+              href={INSTAGRAM_PROFILE.url}
+              target="_blank"
+              rel="noopener"
+              class="tz-surface flex min-h-36 items-center justify-between gap-5 rounded-card p-5 text-ink transition-transform duration-[var(--dur-fast)] hover:-translate-y-1 md:p-7"
+            >
+              <span>
+                <span class="font-mono text-xs uppercase tracking-[0.2em]">Mehr davon</span>
+                <span class="mt-2 block font-display text-2xl md:text-3xl">{handle} folgen</span>
+                {!INSTAGRAM_IS_LIVE && <span class="mt-2 block text-sm text-ink-soft">Auswahl aus den zuletzt importierten Beiträgen</span>}
+              </span>
+              <svg class:list={[arrowIcon, 'size-7 shrink-0']} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
