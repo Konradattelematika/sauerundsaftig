@@ -1,0 +1,124 @@
+---
+/**
+ * /login — Anmeldung für alle Hosts (server/index.mjs liefert dist/login/index.html aus;
+ * POST /login übernimmt der Server). Design von Variante A „Krume", bewusst neutral:
+ * keine Hinweise auf Anlass oder Termine. Fehler-/Sperrhinweis und next per Query-Parameter.
+ */
+import '../styles/a.css';
+import Logo from '../components/shared/Logo.astro';
+import { terrazzoCssUrl } from '../lib/textures';
+import { btnPrimary } from '../variants/a-krume/lib/ui';
+
+const tzUrl = await terrazzoCssUrl();
+const field =
+  'mt-2 block min-h-12 w-full rounded-card border-2 border-ink/20 bg-paper px-4 py-3 text-base text-ink ' +
+  'transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:border-ink/40 focus:border-ink';
+---
+
+<!doctype html>
+<html lang="de" style={`--tz-url:${tzUrl}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Anmelden — Sauer & Saftig</title>
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="referrer" content="same-origin" />
+    <meta name="theme-color" content="#F7F2E8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/brand/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/favicon-180.png" />
+  </head>
+  <body class="flex min-h-dvh flex-col bg-bg font-body text-ink antialiased">
+    <span class="tz-band tz-band--tall" aria-hidden="true"></span>
+    <main class="flex flex-1 items-start justify-center px-4 py-10 sm:items-center sm:py-16">
+      <div class="w-full max-w-sm">
+        <div class="flex justify-center">
+          <Logo variant="lockup" tone="dark" width={150} loading="eager" />
+        </div>
+
+        <div class="mt-8 rounded-card border border-ink/10 bg-paper p-6 shadow-[0_1px_0_rgb(36_27_20/0.04),0_12px_32px_-18px_rgb(36_27_20/0.35)] sm:p-8">
+          <h1 class="text-[clamp(2rem,8vw,2.5rem)] leading-tight">Anmelden</h1>
+          <span class="tz-rule mt-3 block" aria-hidden="true"></span>
+
+          <p
+            id="login-error"
+            class="mt-5 rounded-card border-l-4 border-closed bg-closed/10 px-4 py-3 text-sm text-ink"
+            role="alert"
+            data-msg="fehler"
+            hidden
+          >
+            Benutzername oder Passwort stimmt nicht.
+          </p>
+          <p
+            id="login-locked"
+            class="mt-5 rounded-card border-l-4 border-closed bg-closed/10 px-4 py-3 text-sm text-ink"
+            role="alert"
+            data-msg="gesperrt"
+            hidden
+          >
+            Zu viele Versuche, bitte in ein paar Minuten nochmal.
+          </p>
+
+          <form method="post" action="/login" class="mt-6 grid gap-5" data-login-form>
+            <div>
+              <label for="login-user" class="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">Benutzername</label>
+              <input
+                id="login-user"
+                name="user"
+                type="text"
+                class={field}
+                autocomplete="username"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                inputmode="text"
+                maxlength="64"
+                required
+              />
+            </div>
+            <div>
+              <label for="login-password" class="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">Passwort</label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                class={field}
+                autocomplete="current-password"
+                maxlength="1024"
+                required
+              />
+            </div>
+            <input type="hidden" name="next" value="/" data-next />
+            <button type="submit" class:list={[btnPrimary, 'mt-1 w-full']}>Anmelden</button>
+          </form>
+        </div>
+      </div>
+    </main>
+    <span class="tz-band" aria-hidden="true"></span>
+
+    <script is:inline>
+      (function () {
+        var q = new URLSearchParams(location.search);
+        var next = q.get('next');
+        // Nur relative Pfade übernehmen — der Server prüft zusätzlich.
+        if (next && next.charAt(0) === '/' && next.charAt(1) !== '/' && next.indexOf('\\') < 0) {
+          document.querySelector('[data-next]').value = next;
+        }
+        var msg = q.get('gesperrt') === '1' ? 'gesperrt' : q.get('fehler') === '1' ? 'fehler' : null;
+        var user = document.getElementById('login-user');
+        if (msg) {
+          document.querySelector('[data-msg="' + msg + '"]').hidden = false;
+          var ref = msg === 'fehler' ? 'login-error' : 'login-locked';
+          user.setAttribute('aria-describedby', ref);
+          document.getElementById('login-password').setAttribute('aria-describedby', ref);
+        }
+        // Fehlermeldung nicht bei jedem Reload wieder zeigen
+        if (msg && history.replaceState) {
+          var clean = next ? '/login?next=' + encodeURIComponent(next) : '/login';
+          history.replaceState(null, '', clean);
+        }
+        user.focus();
+      })();
+    </script>
+  </body>
+</html>

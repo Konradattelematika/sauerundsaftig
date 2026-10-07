@@ -1,0 +1,30 @@
+{
+  "items": [
+    {
+      "id": "dns-www",
+      "title": "www-Domain auf Coolify umziehen",
+      "description": "DNS bei All-Inkl ändern.",
+      "phase": "vor",
+      "owner": "team",
+      "priority": "blocker",
+      "category": "technik"
+    },
+    {
+      "id": "fotos-josie",
+      "title": "Fotos freigeben",
+      "phase": "nach",
+      "owner": "josie",
+      "category": "inhalte"
+    },
+    {
+      "id": "kaputt",
+      "phase": "vor"
+    },
+    {
+      "id": "dns-www",
+      "title": "Doppelt — wird ignoriert",
+      "phase": "vor",
+      "owner": "team"
+    }
+  ]
+}

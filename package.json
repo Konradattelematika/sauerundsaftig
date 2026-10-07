@@ -14,7 +14,10 @@
     "test:routes": "node scripts/test-routes.mjs",
     "brand": "node scripts/generate-brand.mjs",
     "brand:import": "node tools/brand-import/import.mjs",
-    "placeholders": "node scripts/generate-placeholders.mjs"
+    "placeholders": "node scripts/generate-placeholders.mjs",
+    "start": "node server/index.mjs",
+    "hash-password": "node server/hash-password.mjs",
+    "test:server": "vitest run tests/server"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
