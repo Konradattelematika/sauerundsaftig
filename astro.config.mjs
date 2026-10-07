@@ -9,7 +9,7 @@ import tailwindcss from '@tailwindcss/vite';
  */
 const SITEMAP_EXCLUDE = [
   /^\/(b|c|d|dev|module|checkliste)(\/|$)/,
-  /^\/(varianten|login)$/,
+  /^\/(varianten|login|passwort)$/,
   /^\/404(\/|\.html)?$/,
   /^\/(impressum|datenschutz)$/,
 ];

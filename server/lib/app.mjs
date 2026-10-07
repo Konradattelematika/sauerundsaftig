@@ -11,15 +11,19 @@ import {
   clientIp,
   createSessionToken,
   getSessionUser,
+  hashPassword,
   safeNext,
   sessionCookie,
+  verifyPassword,
 } from './auth.mjs';
 import { encodePath, isGoLive, normalizeHost, route } from './host-policy.mjs';
 import { HttpError, applyBaseHeaders, isSameOrigin, mediaType, readBody, redirect, sendJson, sendText } from './http.mjs';
+import { PasswordOverrides } from './passwords.mjs';
 import { StaticFiles } from './static.mjs';
 import { Store } from './store.mjs';
 
 const LOGIN_BODY_LIMIT = 8 * 1024;
+const PASSWORD_MIN_LENGTH = 10;
 
 /** Notfall-Login, falls dist/login/index.html fehlt (Build ohne Login-Seite). */
 const FALLBACK_LOGIN = `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Anmelden</title></head>
@@ -59,10 +63,16 @@ async function readLoginForm(req) {
   return { user: params.get('user'), password: params.get('password'), next: params.get('next') };
 }
 
+async function readPasswordForm(req) {
+  const buf = await readBody(req, LOGIN_BODY_LIMIT);
+  const params = new URLSearchParams(buf.toString('utf8'));
+  return { current: params.get('current'), password: params.get('password'), password2: params.get('password2') };
+}
+
 /**
- * @param {{ config: object, store: Store, staticFiles: StaticFiles, now?: () => Date, log?: Console }} deps
+ * @param {{ config: object, store: Store, staticFiles: StaticFiles, passwords?: PasswordOverrides, now?: () => Date, log?: Console }} deps
  */
-export function createApp({ config, store, staticFiles, now = () => new Date(), log = console }) {
+export function createApp({ config, store, staticFiles, passwords, now = () => new Date(), log = console }) {
   const nowMs = () => now().getTime();
   const loginLimiter = new RateLimiter(config.loginRateLimit, nowMs);
   const writeLimiter = new RateLimiter(config.writeRateLimit, nowMs);
@@ -127,6 +137,65 @@ export function createApp({ config, store, staticFiles, now = () => new Date(), 
     redirect(res, 303, next, { 'Set-Cookie': sessionCookie(token, host, config) });
   }
 
+  /** /passwort: eigenes Passwort ändern (GET = Seite, POST = Änderung). Nur angemeldet. */
+  async function handlePassword(req, res, host, user) {
+    const toLogin = '/login?next=%2Fpasswort';
+    if (req.method === 'GET' || req.method === 'HEAD') {
+      if (!user) {
+        redirect(res, 302, toLogin, { 'Cache-Control': 'private, no-store' });
+        return;
+      }
+      const page = await staticFiles.find(['/passwort/index.html', '/passwort.html']);
+      if (!page) {
+        sendText(res, 404, 'Nicht gefunden');
+        return;
+      }
+      await staticFiles.serve(req, res, page, { cacheControl: 'private, no-store' });
+      return;
+    }
+    if (req.method !== 'POST') {
+      sendText(res, 405, 'Methode nicht erlaubt', { Allow: 'GET, HEAD, POST' });
+      return;
+    }
+    if (!isSameOrigin(req)) {
+      sendText(res, 403, 'Anfrage von fremder Herkunft abgelehnt');
+      return;
+    }
+    if (!user) {
+      redirect(res, 303, toLogin);
+      return;
+    }
+    const account = config.users.find((u) => u.id === user.id);
+    if (!passwords || !account) {
+      sendText(res, 503, 'Passwortänderung ist gerade nicht möglich');
+      return;
+    }
+    const back = (code) => redirect(res, 303, `/passwort?fehler=${code}`, { 'Cache-Control': 'private, no-store' });
+    const ip = clientIp(req);
+    if (loginLimiter.isBlocked(ip)) {
+      back('gesperrt');
+      return;
+    }
+    const form = await readPasswordForm(req);
+    const current = typeof form.current === 'string' ? form.current : '';
+    if (current.length === 0 || current.length > 1024 || !(await verifyPassword(current, account.hash))) {
+      const blocked = loginLimiter.hit(ip);
+      log.warn(`[passwort] aktuelles Passwort falsch user=${account.id} ip=${ip}${blocked ? ' (jetzt gesperrt)' : ''}`);
+      back(blocked ? 'gesperrt' : 'aktuell');
+      return;
+    }
+    const pw = typeof form.password === 'string' ? form.password : '';
+    if ([...pw.normalize('NFC')].length < PASSWORD_MIN_LENGTH) return back('kurz');
+    if (pw.length > 1024) return back('lang');
+    if (pw !== form.password2) return back('ungleich');
+    if (pw === current) return back('gleich');
+    await passwords.set(account.id, await hashPassword(pw));
+    log.info?.(`[passwort] geändert user=${account.id} host=${host}`);
+    // Alte Sessions sind jetzt ungültig (Fingerabdruck) — die aktuelle bekommt ein neues Cookie
+    const token = createSessionToken(account, config, nowMs());
+    redirect(res, 303, '/passwort?ok=1', { 'Set-Cookie': sessionCookie(token, host, config), 'Cache-Control': 'private, no-store' });
+  }
+
   async function handle(req, res) {
     const host = normalizeHost(req.headers.host);
     const { rawPath, search } = splitUrl(req.url);
@@ -164,6 +233,9 @@ export function createApp({ config, store, staticFiles, now = () => new Date(), 
         return;
       case 'login':
         await handleLogin(req, res, decision, host, search, user());
+        return;
+      case 'password':
+        await handlePassword(req, res, host, user());
         return;
       case 'logout':
         if (!isRead && req.method !== 'POST') {
@@ -226,7 +298,8 @@ export function createApp({ config, store, staticFiles, now = () => new Date(), 
 export async function startServer(config, { now = () => new Date(), log = console, port = config.port, host = config.listenHost } = {}) {
   const store = await new Store({ dataDir: config.dataDir, seedFile: config.seedFile, now, log }).init();
   const staticFiles = await new StaticFiles(config.distDir, { log }).init();
-  const handler = createApp({ config, store, staticFiles, now, log });
+  const passwords = await new PasswordOverrides({ dataDir: config.dataDir, users: config.users, now, log }).init();
+  const handler = createApp({ config, store, staticFiles, passwords, now, log });
   const server = http.createServer(handler);
   server.keepAliveTimeout = 65_000;
   server.headersTimeout = 66_000;

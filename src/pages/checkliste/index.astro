@@ -55,7 +55,14 @@ const label = 'mb-1.5 block font-mono text-xs uppercase tracking-[0.2em] text-in
           <span class="border-l border-ink/20 pl-3 font-mono text-xs uppercase tracking-[0.2em] text-ink">Checkliste</span>
         </a>
         <div class="flex min-w-0 items-center gap-1 sm:gap-3">
-          <span id="cl-user" class="min-w-0 max-w-[6.5rem] truncate font-mono text-xs text-ink-soft sm:max-w-[14rem] sm:text-sm"></span>
+          <span id="cl-user" class="hidden min-w-0 max-w-[6.5rem] truncate sm:inline font-mono text-xs text-ink-soft sm:max-w-[14rem] sm:text-sm"></span>
+          <a
+            href="/passwort"
+            title="Eigenes Passwort ändern"
+            class="inline-flex min-h-11 shrink-0 items-center rounded-card px-3 font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 transition-colors duration-[var(--dur-fast)] hover:bg-bg-alt hover:decoration-ink"
+          >
+            Passwort
+          </a>
           <a
             href="/logout"
             class="inline-flex min-h-11 shrink-0 items-center rounded-card px-3 font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 transition-colors duration-[var(--dur-fast)] hover:bg-bg-alt hover:decoration-ink"

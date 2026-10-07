@@ -41,7 +41,8 @@ const json = JSON.stringify(data).replace(/</g, '\\u003c');
         </a>
         <p class="hidden font-mono text-xs uppercase tracking-[0.25em] text-ink-soft sm:block">Modul-Board</p>
         <div class="flex items-center gap-2 sm:gap-4">
-          <span class="max-w-[9rem] truncate font-mono text-sm text-ink-soft sm:max-w-none" data-board-user></span>
+          <span class="hidden max-w-[9rem] truncate font-mono text-sm text-ink-soft sm:inline sm:max-w-none" data-board-user></span>
+          <a href="/passwort" class="board-btn board-btn--ghost" title="Eigenes Passwort ändern">Passwort</a>
           <a href="/logout" class="board-btn board-btn--ghost">Abmelden</a>
         </div>
       </div>

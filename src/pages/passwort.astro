@@ -1,0 +1,120 @@
+---
+/**
+ * /passwort — eigenes Passwort ändern, auf allen Hosts (nur angemeldet; GET und POST
+ * übernimmt server/lib/app.mjs → handlePassword). Erfolg/Fehler kommen als Query-Parameter
+ * (?ok=1 bzw. ?fehler=aktuell|kurz|lang|ungleich|gleich|gesperrt). Design wie /login.
+ */
+import '../styles/a.css';
+import Logo from '../components/shared/Logo.astro';
+import { terrazzoCssUrl } from '../lib/textures';
+import { btnPrimary } from '../variants/a-krume/lib/ui';
+
+const tzUrl = await terrazzoCssUrl();
+const minLength = 10; // = PASSWORD_MIN_LENGTH in server/lib/app.mjs
+const errors: Record<string, string> = {
+  aktuell: 'Dein aktuelles Passwort stimmt nicht.',
+  kurz: `Das neue Passwort ist zu kurz — bitte mindestens ${minLength} Zeichen.`,
+  lang: 'Das neue Passwort ist zu lang.',
+  ungleich: 'Die beiden neuen Passwörter sind nicht gleich.',
+  gleich: 'Das neue Passwort ist dasselbe wie das alte.',
+  gesperrt: 'Zu viele Versuche, bitte in ein paar Minuten nochmal.',
+};
+const field =
+  'mt-2 block min-h-12 w-full rounded-card border-2 border-ink/20 bg-paper px-4 py-3 text-base text-ink ' +
+  'transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:border-ink/40 focus:border-ink';
+---
+
+<!doctype html>
+<html lang="de" style={`--tz-url:${tzUrl}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Passwort ändern — Sauer & Saftig</title>
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="referrer" content="same-origin" />
+    <meta name="theme-color" content="#F7F2E8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/brand/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/favicon-180.png" />
+  </head>
+  <body class="flex min-h-dvh flex-col bg-bg font-body text-ink antialiased">
+    <span class="tz-band tz-band--tall" aria-hidden="true"></span>
+    <main class="flex flex-1 items-start justify-center px-4 py-10 sm:items-center sm:py-16">
+      <div class="w-full max-w-sm">
+        <div class="flex justify-center">
+          <a href="/" aria-label="Zurück"><Logo variant="lockup" tone="dark" width={150} loading="eager" /></a>
+        </div>
+
+        <div class="mt-8 rounded-card border border-ink/10 bg-paper p-6 shadow-[0_1px_0_rgb(36_27_20/0.04),0_12px_32px_-18px_rgb(36_27_20/0.35)] sm:p-8">
+          <h1 class="text-[clamp(2rem,8vw,2.5rem)] leading-tight">Passwort ändern</h1>
+          <span class="tz-rule mt-3 block" aria-hidden="true"></span>
+
+          <p id="pw-ok" class="mt-5 rounded-card border-l-4 border-open bg-open/10 px-4 py-3 text-sm text-ink" role="status" data-msg="ok" hidden>
+            Gespeichert. Ab jetzt gilt dein neues Passwort — auf allen Geräten, auf denen du noch angemeldet warst, musst du dich neu anmelden.
+          </p>
+          {Object.entries(errors).map(([code, text]) => (
+            <p class="mt-5 rounded-card border-l-4 border-closed bg-closed/10 px-4 py-3 text-sm text-ink" role="alert" data-msg={code} hidden>
+              {text}
+            </p>
+          ))}
+
+          <form method="post" action="/passwort" class="mt-6 grid gap-5" data-pw-form>
+            <div>
+              <label for="pw-current" class="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">Aktuelles Passwort</label>
+              <input id="pw-current" name="current" type="password" class={field} autocomplete="current-password" maxlength="1024" required />
+            </div>
+            <div>
+              <label for="pw-new" class="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">Neues Passwort</label>
+              <input
+                id="pw-new"
+                name="password"
+                type="password"
+                class={field}
+                autocomplete="new-password"
+                minlength={minLength}
+                maxlength="1024"
+                aria-describedby="pw-hint"
+                required
+              />
+              <p id="pw-hint" class="mt-2 text-sm text-ink-soft">
+                Mindestens {minLength} Zeichen. Tipp: drei Wörter mit Bindestrich lassen sich gut merken.
+              </p>
+            </div>
+            <div>
+              <label for="pw-repeat" class="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft">Neues Passwort wiederholen</label>
+              <input id="pw-repeat" name="password2" type="password" class={field} autocomplete="new-password" minlength={minLength} maxlength="1024" required />
+            </div>
+            <button type="submit" class:list={[btnPrimary, 'mt-1 w-full']}>Passwort speichern</button>
+          </form>
+        </div>
+
+        <p class="mt-6 flex justify-center gap-6 font-mono text-sm">
+          <a href="/" class="link-ul inline-flex min-h-11 items-center text-ink">Zurück</a>
+          <a href="/logout" class="link-ul inline-flex min-h-11 items-center text-ink">Abmelden</a>
+        </p>
+      </div>
+    </main>
+    <span class="tz-band" aria-hidden="true"></span>
+
+    <script is:inline>
+      (function () {
+        var q = new URLSearchParams(location.search);
+        var code = q.get('ok') === '1' ? 'ok' : q.get('fehler');
+        var el = code ? document.querySelector('[data-msg="' + code.replace(/[^a-z]/g, '') + '"]') : null;
+        if (el) el.hidden = false;
+        // Meldung nicht bei jedem Reload wieder zeigen
+        if (code && history.replaceState) history.replaceState(null, '', '/passwort');
+        var form = document.querySelector('[data-pw-form]');
+        var repeat = document.getElementById('pw-repeat');
+        var fresh = document.getElementById('pw-new');
+        function check() {
+          repeat.setCustomValidity(repeat.value && repeat.value !== fresh.value ? 'Die beiden neuen Passwörter sind nicht gleich.' : '');
+        }
+        fresh.addEventListener('input', check);
+        repeat.addEventListener('input', check);
+        form.addEventListener('submit', check);
+        if (code !== 'ok') document.getElementById('pw-current').focus();
+      })();
+    </script>
+  </body>
+</html>

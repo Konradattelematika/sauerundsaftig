@@ -122,6 +122,7 @@ export function route(req, config, now) {
   if (p === '/robots.txt') return { ...base, type: 'robots', body: robotsTxt(publicLive, host) };
   if (p === '/login') return { ...base, type: 'login', noindex: true, privateCache: true };
   if (p === '/logout') return { ...base, type: 'logout', noindex: true, privateCache: true };
+  if (p === '/passwort') return { ...base, type: 'password', noindex: true, privateCache: true };
 
   // Alte Vorschau-Links /a/… → ohne Präfix (Query bleibt erhalten)
   if (segments[0] === 'a') {
