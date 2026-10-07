@@ -4,14 +4,17 @@
  * Workshop — mit Live-Vorschau als gestaltete Karte. Reine Mock-Datenschicht:
  * Der „Kauf" überträgt nichts, Zahlung folgt später über Shopify. Zustand nur
  * im Browser-Speicher des Scripts, kein localStorage/sessionStorage.
+ * `workshops={false}` (Live-Site A): nur Betrags-Gutscheine, keine Modus-Auswahl.
  */
 import { formatMenuPrice, formatPrice } from '../../lib/format';
 
 interface Props {
-  /** Varianten-Basispfad, z. B. "/a" — für den Rücksprung nach Erfolg. */
+  /** Varianten-Basispfad, z. B. "/b" (Live-Site A: '') — für den Rücksprung nach Erfolg. */
   base: string;
+  /** Workshop-Gutscheine anbieten (Default true; Live-Site A: false) */
+  workshops?: boolean;
 }
-const { base } = Astro.props;
+const { base, workshops: withWorkshops = true } = Astro.props;
 
 const AMOUNT_TILES = [20, 35, 50];
 const WORKSHOPS = [
@@ -25,6 +28,7 @@ const btnPrimary =
 
 <div class="voucher-configurator grid gap-6 md:grid-cols-2" data-voucher-configurator>
   <form data-voucher-form novalidate>
+    {withWorkshops && (
     <fieldset>
       <legend class="font-mono text-sm uppercase tracking-widest text-ink-soft">Art des Gutscheins</legend>
       <div class="mt-3 grid grid-cols-2 gap-3">
@@ -38,8 +42,9 @@ const btnPrimary =
         </label>
       </div>
     </fieldset>
+    )}
 
-    <div class="mt-6" data-panel-amount>
+    <div class:list={[withWorkshops && 'mt-6']} data-panel-amount>
       <fieldset>
         <legend class="font-mono text-sm uppercase tracking-widest text-ink-soft">Betrag wählen</legend>
         <div class="mt-3 grid grid-cols-3 gap-3">
@@ -69,6 +74,7 @@ const btnPrimary =
       </fieldset>
     </div>
 
+    {withWorkshops && (
     <div class="mt-6" data-panel-workshop hidden>
       <fieldset>
         <legend class="font-mono text-sm uppercase tracking-widest text-ink-soft">Workshop wählen</legend>
@@ -84,6 +90,7 @@ const btnPrimary =
         <p id="voucher-workshop-error" class="mt-2 text-sm text-closed" data-error-for="workshop" aria-live="polite" hidden></p>
       </fieldset>
     </div>
+    )}
 
     <div class="mt-6">
       <label for="voucher-for" class="block text-sm text-ink-soft">Für (optional)</label>
@@ -104,7 +111,7 @@ const btnPrimary =
     <div class="success-panel mt-6" data-success hidden tabindex="-1" aria-live="polite">
       <p class="text-xl">Demo — der Gutschein wurde nicht gekauft.</p>
       <p class="mt-2 text-base">Zahlung folgt in der Shop-Phase (Shopify).</p>
-      <a href={base} class="mt-4 inline-block font-mono text-sm text-ink-soft underline">Zurück zur Startseite</a>
+      <a href={base || '/'} class="mt-4 inline-block font-mono text-sm text-ink-soft underline">Zurück zur Startseite</a>
     </div>
   </form>
 
@@ -127,14 +134,15 @@ const btnPrimary =
 
     const form = root.querySelector<HTMLFormElement>('[data-voucher-form]')!;
     const panelAmount = root.querySelector<HTMLElement>('[data-panel-amount]')!;
-    const panelWorkshop = root.querySelector<HTMLElement>('[data-panel-workshop]')!;
+    // Workshop-Panel/-Fehler fehlen bei workshops={false}
+    const panelWorkshop = root.querySelector<HTMLElement>('[data-panel-workshop]');
     const customAmount = root.querySelector<HTMLInputElement>('[data-custom-amount]')!;
     const forName = root.querySelector<HTMLInputElement>('[data-for-name]')!;
     const previewValue = root.querySelector<HTMLElement>('[data-preview-value]')!;
     const previewSub = root.querySelector<HTMLElement>('[data-preview-sub]')!;
     const previewFor = root.querySelector<HTMLElement>('[data-preview-for]')!;
     const amountError = root.querySelector<HTMLElement>('[data-error-for="amount"]')!;
-    const workshopError = root.querySelector<HTMLElement>('[data-error-for="workshop"]')!;
+    const workshopError = root.querySelector<HTMLElement>('[data-error-for="workshop"]');
     const successEl = root.querySelector<HTMLElement>('[data-success]')!;
 
     function currentType(): 'amount' | 'workshop' {
@@ -153,7 +161,7 @@ const btnPrimary =
     function updatePreview() {
       const type = currentType();
       panelAmount.hidden = type !== 'amount';
-      panelWorkshop.hidden = type !== 'workshop';
+      if (panelWorkshop) panelWorkshop.hidden = type !== 'workshop';
 
       if (type === 'amount') {
         const amount = selectedAmount();
@@ -194,7 +202,7 @@ const btnPrimary =
       let valid = true;
 
       amountError.hidden = true;
-      workshopError.hidden = true;
+      if (workshopError) workshopError.hidden = true;
 
       if (type === 'amount') {
         if (!selectedAmount()) {
@@ -204,7 +212,7 @@ const btnPrimary =
         }
       } else {
         const checked = form.querySelector<HTMLInputElement>('input[name="voucher-workshop"]:checked');
-        if (!checked) {
+        if (!checked && workshopError) {
           workshopError.textContent = 'Wähl einen Workshop aus, bevor du fortfährst.';
           workshopError.hidden = false;
           valid = false;

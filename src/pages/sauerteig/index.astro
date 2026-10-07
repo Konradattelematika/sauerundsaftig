@@ -1,17 +1,17 @@
 ---
 /**
  * /sauerteig — Handwerksseite mit 18-Stunden-Zeitleiste. Uhrzeiten/Temperaturen
- * 1:1 aus dem Journal-Artikel „achtzehn-stunden" übernommen (keine erfundenen Fakten).
+ * 1:1 aus dem Blogartikel „achtzehn-stunden" der Alt-Varianten übernommen (keine erfundenen Fakten).
  */
-import Layout from '../../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
-import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
-import Timeline from '../../../variants/a-krume/components/Timeline.astro';
-import Figure from '../../../variants/a-krume/components/Figure.astro';
-import { breadcrumbs } from '../../../lib/schema-org';
-import { linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
+import Timeline from '../../variants/a-krume/components/Timeline.astro';
+import Figure from '../../variants/a-krume/components/Figure.astro';
+import { breadcrumbs } from '../../lib/schema-org';
+import { linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
 
-const base = '/a';
+const base = '';
 
 const stages = [
   { time: '14:00', title: 'Ansetzen', text: 'Der Sauerteig kommt aus dem Glas, wird mit Mehl und Wasser aufgefrischt. Parallel ruht das Mehl für den Hauptteig eine Stunde im Wasser — Autolyse.' },
@@ -26,7 +26,7 @@ const stages = [
 
 const jsonLd = [
   breadcrumbs([
-    { name: 'Start', url: new URL(base, Astro.site).toString() },
+    { name: 'Start', url: new URL(base || '/', Astro.site).toString() },
     { name: 'Sauerteig', url: new URL(`${base}/sauerteig`, Astro.site).toString() },
   ]),
 ];
@@ -37,7 +37,7 @@ const jsonLd = [
   description="Kein Schritt lässt sich abkürzen: 18 Stunden von Mehl, Wasser und Zeit bis zum fertigen Sauerteiglaib — Etappe für Etappe."
   jsonLd={jsonLd}
 >
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Sauerteig', href: `${base}/sauerteig` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Sauerteig', href: `${base}/sauerteig` }]} />
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">

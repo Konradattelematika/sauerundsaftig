@@ -1,141 +1,162 @@
 ---
 /**
- * Variantenwähler — Präsentationsseite für die Kundenentscheidung (Master-Prompt §12 Schritt 9).
- * Bewusst themenneutral gehalten (keine Varianten-Tokens), damit keine Richtung bevorzugt wirkt.
- * Lädt nur die drei Display-Schriften für die Typo-Proben.
+ * Startseite Variante A „Krume" (Live-Site im Wurzelpfad) — Magazin-Cover-Konzept:
+ * bis zum Go-Live ganz oben der Countdown (GoLiveCountdown, rendert/zeigt sich danach nicht mehr),
+ * links H1+Subline+Status+CTAs, rechts hochformatig beschnittenes Hero-Bild im versetzten
+ * Terrazzo-Passepartout (Material „Theke"). Danach: Heute frisch, Signature, Josie-Teaser,
+ * Instagram-Feed, Besuch, Social Proof, Brotbrief.
  */
-import '@fontsource-variable/fraunces/full.css';
-import '@fontsource/instrument-serif/400.css';
-import '@fontsource-variable/bricolage-grotesque/standard.css';
-import '../styles/fonts-clash-display.css';
-import SeoHead from '../components/shared/SeoHead.astro';
-import { VARIANTS } from '../lib/variants';
+import Layout from '../variants/a-krume/Layout.astro';
+import Figure from '../variants/a-krume/components/Figure.astro';
+import GoLiveCountdown from '../variants/a-krume/components/GoLiveCountdown.astro';
+import HeuteFrischBoard from '../variants/a-krume/components/HeuteFrischBoard.astro';
+import SchneckenTeaser from '../variants/a-krume/components/SchneckenTeaser.astro';
+import VisitModule from '../variants/a-krume/components/VisitModule.astro';
+import SocialProof from '../variants/a-krume/components/SocialProof.astro';
+import InstagramFeed from '../variants/a-krume/components/InstagramFeed.astro';
+import NewsletterForm from '../components/shared/NewsletterForm.astro';
+import OpeningStatus from '../components/shared/OpeningStatus.astro';
+import site from '../data/site.json';
+import { routeHref } from '../lib/format';
+import { localBusiness } from '../lib/schema-org';
+import { getAlt, hasPhoto } from '../lib/images';
+import { btnAccent, btnSecondary, linkArrow, arrowIcon } from '../variants/a-krume/lib/ui';
 
-const variants = Object.values(VARIANTS);
-const displayFont: Record<string, string> = {
-  a: "'Fraunces Variable', Georgia, serif",
-  b: "'Instrument Serif', Georgia, serif",
-  c: "'Bricolage Grotesque Variable', Arial, sans-serif",
-  d: "'Clash Display', Arial, sans-serif",
-};
-const sample: Record<string, string> = {
-  a: 'Sauer macht saftig.',
-  b: 'Sauer macht saftig.',
-  c: 'SAUER MACHT SAFTIG.',
-  d: 'Sauer macht saftig.',
-};
-const personas: Record<string, string> = {
-  a: 'Breiteste Zielgruppe · die sichere Wahl',
-  b: 'Urban, Instagram-affin · Premium durch Ruhe',
-  c: 'Maximale Wiedererkennung · bewusst mutig',
-  d: 'Digital-first, animiert · die experimentelle Option',
-};
-const stand = new Date().toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' });
+const base = '';
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+const jsonLd = [localBusiness(String(Astro.site))];
+const portraitIsPlaceholder = !hasPhoto('josie-portrait');
 ---
 
-<!doctype html>
-<html lang="de">
-  <head>
-    <SeoHead
-      title="Sauer & Saftig — vier Design-Richtungen zur Auswahl"
-      description="Interne Präsentationsseite: vier gestalterische Varianten der neuen Website für das Café Sauer & Saftig in Ostseebad Rerik."
-      noindex
-    />
-  </head>
-  <body>
-    <main>
-      <header class="intro">
-        <img src="/brand/logo-lockup-ink-640.png" alt="Sauer & Saftig — Brot und Kuchen" width="200" height="144" />
-        <h1>Eine Website, vier Richtungen.</h1>
-        <p>
-          Gleicher Inhalt, gleiche Struktur, gleiche Funktionen — viermal anders gestaltet.
-          Tippe dich in jede Variante hinein; alles ist klickbar, vom Frühstück bis zum Gutschein.
-        </p>
-        <p class="note">Frühstücks- und Brotpreise sind echt; übrige Preise (°) sind Beispielwerte. Echte Café-Fotos sind eingebunden, restliche Motive markierte Platzhalter.</p>
-      </header>
+<Layout
+  title="Sauer & Saftig — Café und Backstube in Ostseebad Rerik"
+  description="Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen. Café und Backstube in der Dünenstraße 1, Ostseebad Rerik."
+  jsonLd={jsonLd}
+>
+  <GoLiveCountdown />
 
-      <section class="cards" aria-label="Die drei Design-Varianten">
-        {variants.map((v) => (
-          <a class="card" href={v.base} data-variant={v.key}>
-            <p class="kicker">Variante {v.key.toUpperCase()} · {v.workingTitle}</p>
-            <h2 style={`font-family:${displayFont[v.key]}`}>{v.name}</h2>
-            <p class="specimen" style={`font-family:${displayFont[v.key]}`}>{sample[v.key]}</p>
-            <p class="stance">{v.stance}</p>
-            <ul class="swatches" role="img" aria-label={`Farbpalette Variante ${v.name}`}>
-              {v.swatches.map((s) => (
-                <li style={`background:${s}`}></li>
-              ))}
-            </ul>
-            <dl class="meta">
-              <div><dt>Schrift</dt><dd>{v.typeSample.display} + {v.typeSample.body}</dd></div>
-              <div><dt>Bewegung</dt><dd>{v.motion}</dd></div>
-              <div><dt>Für wen</dt><dd>{personas[v.key]}</dd></div>
-            </dl>
-            <span class="cta">Variante ansehen →</span>
+  <section class="bg-bg pb-14 pt-8 md:pb-24 md:pt-14">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center md:gap-6">
+        <div class="order-2 md:order-1 md:col-span-5">
+          <p data-reveal><span class="tz-tag">Café &amp; Backstube · Ostseebad Rerik</span></p>
+          <h1 class="mt-5 text-[clamp(2.5rem,7vw,4.75rem)]" data-reveal style="--reveal-delay:100ms">
+            Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen.
+          </h1>
+          <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl" data-reveal style="--reveal-delay:200ms">
+            {site.subline}
+          </p>
+          <div class="mt-6" data-reveal style="--reveal-delay:200ms">
+            <OpeningStatus size="lg" />
+          </div>
+          <div class="mt-8 flex flex-wrap gap-4" data-reveal style="--reveal-delay:200ms">
+            <a href={`${base}/karte`} class={btnAccent}>
+              Karte ansehen
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+            <a href={route} target="_blank" rel="noopener" class={btnSecondary}>Route</a>
+          </div>
+        </div>
+
+        <div class="order-1 md:order-2 md:col-span-7 md:pl-6">
+          <div class="hero-zoom-frame tz-offset">
+            <div class="overflow-hidden rounded-card bg-bg-alt">
+              <Figure
+                motif="hero-krume"
+                aspect="aspect-[4/5] md:aspect-[3/4]"
+                sizes="(min-width: 768px) 55vw, 100vw"
+                loading="eager"
+                fetchpriority="high"
+                imgClass="hero-zoom-img h-full w-full object-cover"
+              />
+            </div>
+          </div>
+          <p class="mt-4 flex items-center justify-between gap-4 font-mono text-[12px] uppercase tracking-widest text-ink-soft md:mt-6">
+            <span>{getAlt('hero-krume')}</span>
+            <span class="hidden shrink-0 sm:inline">Dünenstraße 1</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <span class="tz-band" aria-hidden="true"></span>
+
+  <HeuteFrischBoard />
+  <SchneckenTeaser base={base} />
+
+  <!-- Josie-Teaser: Porträt im versetzten Passepartout, typografischer Gruß, Link zur Über-mich-Seite -->
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 items-center gap-10 md:grid-cols-12">
+        <div class="md:col-span-4 md:col-start-2">
+          <Figure
+            motif="josie-portrait"
+            aspect="aspect-[4/5]"
+            sizes="(min-width: 1024px) 30vw, (min-width: 768px) 40vw, 80vw"
+            mat="offset-left"
+            reveal
+            revealKind="image"
+            hover
+            class="max-w-[420px]"
+          />
+          {portraitIsPlaceholder && (
+            <p class="mt-3 font-mono text-[11px] uppercase tracking-widest text-ink-soft">Platzhalter — das Porträt folgt</p>
+          )}
+        </div>
+        <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Wer hier bäckt</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
+          <h2 class="mt-4 text-[clamp(2.25rem,5.5vw,4rem)]">Moin, ich bin Josie.</h2>
+          <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">
+            Ich habe in Rerik ein Café übernommen, das viele schon lange kannten — und eine Backstube
+            hineingestellt, in der fast alles mit Sauerteig beginnt. Warum, wie und was die Urkunde damit zu tun
+            hat, steht auf meiner Seite.
+          </p>
+          <a href={`${base}/ueber-mich`} class:list={[linkArrow, 'mt-6']}>
+            Mehr über mich und das Café
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </a>
-        ))}
-      </section>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <footer class="outro">
-        <p>Sauer &amp; Saftig · Dünenstraße 1 · 18230 Ostseebad Rerik — Entwurfsstand {stand}</p>
-      </footer>
-    </main>
+  <InstagramFeed tone="bg" />
 
-    <style>
-      :root {
-        --paper: #faf8f4;
-        --ink: #1c1917;
-        --line: #e2ddd3;
-      }
-      * { box-sizing: border-box; margin: 0; }
-      html { -webkit-text-size-adjust: 100%; }
-      body {
-        background: var(--paper);
-        color: var(--ink);
-        font-family: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        line-height: 1.6;
-      }
-      main { max-width: 1360px; margin: 0 auto; padding: clamp(24px, 4vw, 64px); }
-      .intro { text-align: center; max-width: 62ch; margin: 0 auto clamp(32px, 5vw, 72px); }
-      .intro img { margin: 0 auto 24px; height: auto; }
-      .intro h1 { font-size: clamp(1.9rem, 4.5vw, 3.4rem); line-height: 1.15; margin-bottom: 16px; letter-spacing: -0.01em; }
-      .intro p { font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
-      .intro .note { margin-top: 12px; font-size: 0.95rem; color: #6d675e; }
-      .cards { display: grid; gap: clamp(16px, 2.5vw, 32px); grid-template-columns: 1fr; }
-      @media (min-width: 900px) { .cards { grid-template-columns: repeat(3, 1fr); } }
-      .card {
-        display: flex; flex-direction: column; gap: 14px;
-        background: #fff; border: 1px solid var(--line); border-radius: 10px;
-        padding: clamp(20px, 2.5vw, 36px);
-        text-decoration: none; color: inherit;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-      }
-      .card:hover, .card:focus-visible { transform: translateY(-4px); box-shadow: 0 12px 32px rgb(28 25 23 / 0.10); }
-      .card:focus-visible { outline: 3px solid #b45309; outline-offset: 3px; }
-      @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
-      .kicker { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: #6d675e; }
-      .card h2 { font-size: clamp(2rem, 3.2vw, 2.9rem); line-height: 1.05; }
-      .specimen { font-size: clamp(1.3rem, 2vw, 1.8rem); line-height: 1.2; border-block: 1px solid var(--line); padding: 14px 0; }
-      .stance { font-size: 1.02rem; min-height: 3.2em; }
-      .swatches { display: flex; gap: 6px; list-style: none; padding: 0; }
-      .swatches li { width: 44px; height: 28px; border-radius: 5px; border: 1px solid rgb(0 0 0 / 0.08); }
-      .meta { display: grid; gap: 6px; font-size: 0.92rem; }
-      .meta div { display: grid; grid-template-columns: 86px 1fr; gap: 8px; }
-      .meta dt { color: #6d675e; }
-      .cta {
-        margin-top: auto; align-self: flex-start;
-        background: var(--ink); color: var(--paper);
-        padding: 12px 20px; border-radius: 6px; font-size: 1rem; min-height: 44px;
-        display: inline-flex; align-items: center;
-      }
-      .outro { margin-top: clamp(40px, 6vw, 80px); text-align: center; color: #6d675e; font-size: 0.9rem; }
-      /* Variante D zeigt sich authentisch dunkel */
-      .card[data-variant='d'] { background: #16110d; color: #f4ebdd; border-color: #3a2a1a; }
-      .card[data-variant='d'] .kicker, .card[data-variant='d'] .meta dt, .card[data-variant='d'] .stance { color: #cbbba6; }
-      .card[data-variant='d'] .specimen { border-color: #3a2a1a; color: #e8a253; }
-      .card[data-variant='d'] .cta { background: #f27a1f; color: #16110d; }
-      @media (min-width: 900px) and (max-width: 1279px) { .cards { grid-template-columns: repeat(2, 1fr); } }
-      @media (min-width: 1280px) { .cards { grid-template-columns: repeat(4, 1fr); } }
-    </style>
-  </body>
-</html>
+  <VisitModule base={base} variant="compact" />
+  <SocialProof />
+
+  <section class="bg-bg-alt py-14 md:py-24">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div class="md:col-span-5" data-reveal>
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Der Brotbrief</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
+          <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.5rem)]">Einmal im Monat Post aus der Backstube</h2>
+        </div>
+        <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
+          <NewsletterForm base={base} />
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-zoom-frame {
+    display: block;
+  }
+  :global(.hero-zoom-img) {
+    animation: hero-zoom 1200ms var(--ease-brand) both;
+    transform-origin: center;
+  }
+  @keyframes hero-zoom {
+    from {
+      transform: scale(1.04);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+</style>

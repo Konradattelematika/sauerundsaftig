@@ -4,14 +4,14 @@
  * Preise bewusst „auf Anfrage" (VARIANT-BRIEF §5: keine erfundene Preisliste) —
  * Kontakt läuft über den Anruf-CTA statt über ein Formular.
  */
-import Layout from '../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
-import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
-import Figure from '../../variants/a-krume/components/Figure.astro';
-import site from '../../data/site.json';
-import { telHref } from '../../lib/format';
+import Layout from '../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../variants/a-krume/components/SectionIntro.astro';
+import Figure from '../variants/a-krume/components/Figure.astro';
+import site from '../data/site.json';
+import { telHref } from '../lib/format';
 
-const base = '/a';
+const base = '';
 const phoneHref = telHref(site.phone);
 
 const ANGEBOTE = [
@@ -26,7 +26,7 @@ const ANGEBOTE = [
   title="Für Gastgeber — Sauer & Saftig"
   description="Willkommensbrot, Frühstückskörbe, Gutscheine und ein kostenloser Kartenständer für Ferienwohnungs-Vermieter in Rerik."
 >
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Für Gastgeber', href: `${base}/gastgeber` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Für Gastgeber', href: `${base}/gastgeber` }]} />
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">

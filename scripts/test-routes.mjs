@@ -4,29 +4,29 @@
  * (Master-Prompt-Anforderung). Baut NICHT selbst: erwartet ein fertiges dist/
  * (Parameter --dist <dir>, Default "dist").
  *
- * Nur Bordmittel: node:http (lokaler Static-Server, bildet nginx-Verhalten aus
- * deploy/nginx.conf nach), node:fs, fetch (nativ ab Node 18+). Keine neuen Dependencies.
+ * Nur Bordmittel: node:http (lokaler Static-Server), node:fs, fetch (nativ ab Node 18+).
+ * Keine neuen Dependencies.
  *
- * Verhalten des lokalen Servers (nachgebildet aus deploy/nginx.conf):
- *   - $uri: existiert unter <dist>/<pfad> eine Datei → 200, diese Datei.
- *   - $uri/index.html: sonst existiert <dist>/<pfad>/index.html → 200, diese Datei.
- *   - sonst, wenn der Pfad mit /a/, /b/, /c/ oder /d/ beginnt: <prefix>404/index.html
- *     mit Status 404 (error_page 404 <prefix>404/index.html; im jeweiligen
- *     location-Block, try_files endet dort auf =404).
- *   - sonst (kein Varianten-Prefix): /404.html mit Status 404.
- *   - Fehlt auch DIESE Datei (die von error_page angesteuerte 404-Seite selbst),
- *     bleibt es bei nginx TROTZDEM bei Status 404 (nicht 500!): nginx' Default
- *     `recursive_error_pages off` verhindert, dass ein zweiter 404-Fehler beim
- *     Ausliefern der Fehlerseite selbst erneut error_page auslöst — genau das
- *     steht auch im Kommentar in deploy/nginx.conf ("liefert nginx dann ein
- *     schlichtes 404 statt eines 500"). Ein Routing-bedingtes 500 ist mit dieser
- *     Konfiguration praktisch ausgeschlossen; „echte" 500 in diesem Skript
- *     bedeuten daher einen Fetch-/Serverfehler unseres lokalen Nachbaus, nicht
- *     eine nginx-Fehlerkaskade.
- *   - WICHTIG deshalb: eine fehlende `<prefix>404/index.html` ist trotzdem ein
- *     echter Mangel (VARIANT-BRIEF verlangt eine eigene, gestaltete 404-Seite
- *     je Variante) — dafür gibt es unten einen eigenen, dateisystembasierten
- *     Check je Variante (unabhängig vom simulierten HTTP-Status).
+ * Struktur seit dem Live-Gang (docs/LIVE-PLAN.md §2.1):
+ *   - Variante A „Krume" ist die Live-Site im WURZELPFAD (/karte, /besuch, …), ihre 404 liegt
+ *     unter dist/404.html. Journal und Workshops gibt es in A nicht mehr.
+ *   - Alte Varianten B/C/D liegen weiter unter /b, /c, /d (nur Vorschau-Host), je mit eigener
+ *     404 unter <v>/404/index.html; der Variantenwähler unter /varianten.
+ *
+ * Verhalten des lokalen Servers (Dateiauflösung wie server/ bzw. LIVE-PLAN §2.2, Vorschau-Host
+ * ohne Login):
+ *   - /a und /a/* → 301 auf den Pfad ohne /a (alte Vorschau-Links).
+ *   - Existiert <dist>/<pfad> als Datei → 200, diese Datei.
+ *   - sonst <dist>/<pfad>/index.html → 200, diese Datei.
+ *   - sonst, wenn der Pfad mit /b/, /c/ oder /d/ beginnt und es <v>/404/index.html gibt:
+ *     diese Datei mit Status 404 (gestaltete 404 der alten Variante).
+ *   - sonst /404.html (404 der Live-Site A) mit Status 404; fehlt sie, ein schlichtes 404.
+ *   Ein 500 entsteht durch diese Logik nie — 500 hieße Fetch-/Serverfehler dieses Nachbaus.
+ *
+ * Zusätzlich (Live-Hygiene, nur Seiten der Live-Site, also nicht /b, /c, /d, /dev, /varianten):
+ *   - kein leeres href="" und kein Link auf /a, /a/…, /journal…, /workshops…
+ *   - /journal, /workshops und ihre Content-Slugs liefern im Wurzelpfad 404
+ *   - dist/a existiert nicht mehr
  */
 
 import { createServer } from 'node:http';
@@ -60,7 +60,7 @@ if (!existsSync(DIST_ROOT) || !statSync(DIST_ROOT).isDirectory()) {
 }
 
 // ---------------------------------------------------------------------------
-// Statischer Server, bildet deploy/nginx.conf nach
+// Statischer Server (Dateiauflösung wie LIVE-PLAN §2.2, ohne Login/Host-Routing)
 // ---------------------------------------------------------------------------
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -85,8 +85,11 @@ function mimeFor(filePath) {
   return MIME_TYPES[path.extname(filePath).toLowerCase()] ?? 'application/octet-stream';
 }
 
-const VARIANT_PREFIX_RE = /^\/(a|b|c|d)\//;
-const KNOWN_VARIANTS = ['a', 'b', 'c', 'd'];
+/** Alte Varianten mit eigenem Präfix (A liegt seit dem Live-Gang im Wurzelpfad) */
+const LEGACY_VARIANTS = ['b', 'c', 'd'];
+const LEGACY_PREFIX_RE = /^\/(b|c|d)\//;
+/** Pfade, die NICHT zur Live-Site gehören (für die Live-Hygiene-Prüfung) */
+const NON_LIVE_RE = /^\/(b|c|d|dev|varianten|module|checkliste)(\/|$)/;
 
 /** Prüft, ob `candidate` unterhalb von DIST_ROOT liegt und eine reguläre Datei ist. */
 function fileIfExists(candidate) {
@@ -101,22 +104,22 @@ function fileIfExists(candidate) {
   return null;
 }
 
-const GENERIC_404_BODY = '404 Not Found (nginx-Default — keine eigene 404-Datei gefunden)';
+const GENERIC_404_BODY = '404 Not Found (keine eigene 404-Datei gefunden)';
 
 /**
- * Bildet `try_files $uri $uri/index.html =404;` + die error_page-404-Behandlung
- * aus deploy/nginx.conf nach (siehe Kommentar oben zu recursive_error_pages).
- * Liefert IMMER { status, filePath | body }, nie ein "echtes" 500 — 500 kommt in
- * diesem Skript ausschließlich aus Fetch-/Serverfehlern, nicht aus dieser Logik.
+ * Löst einen Pfad wie der Server auf. Liefert { status, filePath | body | location }.
  */
-function resolveNginx(pathname) {
+function resolveRoute(pathname) {
   let safePath;
   try {
     safePath = path.posix.normalize(decodeURIComponent(pathname));
   } catch {
-    // Kaputte Prozent-Kodierung: nginx würde die Anfrage ablehnen (400); wir
-    // werten das konservativ als "nicht gefunden", damit der Server nicht abstürzt.
     return { status: 400, body: 'Bad Request (ungültige URI-Kodierung)' };
+  }
+
+  // Alte Vorschau-Links /a/… → 301 auf den Pfad ohne /a
+  if (safePath === '/a' || safePath.startsWith('/a/')) {
+    return { status: 301, location: safePath.slice(2) || '/' };
   }
 
   const asFile = fileIfExists(path.join(DIST_ROOT, safePath));
@@ -125,11 +128,10 @@ function resolveNginx(pathname) {
   const asIndex = fileIfExists(path.join(DIST_ROOT, safePath, 'index.html'));
   if (asIndex) return { status: 200, filePath: asIndex };
 
-  const prefixMatch = safePath.match(VARIANT_PREFIX_RE);
+  const prefixMatch = safePath.match(LEGACY_PREFIX_RE);
   if (prefixMatch) {
     const variant404 = fileIfExists(path.join(DIST_ROOT, prefixMatch[1], '404', 'index.html'));
     if (variant404) return { status: 404, filePath: variant404 };
-    return { status: 404, body: GENERIC_404_BODY };
   }
 
   const root404 = fileIfExists(path.join(DIST_ROOT, '404.html'));
@@ -140,8 +142,11 @@ function resolveNginx(pathname) {
 function startServer() {
   const server = createServer((req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
-    const result = resolveNginx(url.pathname);
-    if (result.filePath) {
+    const result = resolveRoute(url.pathname);
+    if (result.location) {
+      res.writeHead(result.status, { Location: result.location + url.search });
+      res.end();
+    } else if (result.filePath) {
       res.writeHead(result.status, { 'Content-Type': mimeFor(result.filePath) });
       res.end(readFileSync(result.filePath));
     } else {
@@ -158,8 +163,8 @@ function startServer() {
 // Link-Extraktion (Regex, kein HTML-Parser — reicht für statisches Astro-Markup)
 // ---------------------------------------------------------------------------
 // Negative Lookbehind verhindert Treffer auf `data-href=`, `x-href=` u. Ä.
-const HREF_RE = /(?<![\w-])href\s*=\s*["']([^"']+)["']/gi;
-const SITE_ORIGIN = 'https://sauerundsaftig.jawollja.gmbh'; // astro.config.mjs `site`
+const HREF_RE = /(?<![\w-])href\s*=\s*["']([^"']*)["']/gi;
+const SITE_ORIGIN = 'https://sauerundsaftig.de'; // astro.config.mjs `site`
 
 /**
  * Normalisiert einen href-Wert zu einem same-origin Pfad oder gibt null zurück
@@ -176,34 +181,39 @@ function toInternalPath(href) {
     return null; // externe Domain
   }
   if (!h.startsWith('/')) return null; // relative Pfade kommen im Markup nicht vor
-  h = h.split('#')[0]; // Anker abschneiden
+  h = h.split('#')[0].split('?')[0]; // Anker/Query abschneiden
   if (h === '') return null;
   return h;
 }
 
+/** Liefert { links: string[], emptyHrefs: number } */
 function extractLinks(html) {
-  const out = [];
+  const links = [];
+  let emptyHrefs = 0;
   let m;
   HREF_RE.lastIndex = 0;
   while ((m = HREF_RE.exec(html))) {
+    if (m[1].trim() === '') emptyHrefs++;
     const p = toInternalPath(m[1]);
-    if (p) out.push(p);
+    if (p) links.push(p);
   }
-  return out;
+  return { links, emptyHrefs };
 }
 
 // ---------------------------------------------------------------------------
 // Ergebnis-Speicher
 // ---------------------------------------------------------------------------
-// path -> { status, sources: Set<string>, pflicht: boolean, kind: 'page'|'404check'|'404file' }
+// path -> { status, sources: Set<string>, pflicht: boolean, kind: 'page'|'404file'|'expect404' }
 const results = new Map();
+/** Verstöße gegen die Live-Hygiene: { page, problem } */
+const hygiene = [];
 
 async function fetchRoute(baseUrl, routePath) {
-  const res = await fetch(baseUrl + routePath);
+  const res = await fetch(baseUrl + routePath); // folgt Redirects (z. B. /a/… → …)
   const contentType = res.headers.get('content-type') ?? '';
   const isHtml = contentType.includes('text/html');
   const body = isHtml ? await res.text() : '';
-  return { status: res.status, isHtml, body };
+  return { status: res.status, isHtml, body, redirected: res.redirected };
 }
 
 function recordResult(routePath, status, { source, pflicht = false, kind = 'page' } = {}) {
@@ -220,9 +230,34 @@ function recordResult(routePath, status, { source, pflicht = false, kind = 'page
 }
 
 // ---------------------------------------------------------------------------
-// Statische Pflichtliste (VARIANT-BRIEF-IA je Variante) + Content-Slugs
+// Pflichtlisten
 // ---------------------------------------------------------------------------
-const PFLICHT_ROUTES = [
+/** Live-Site (Variante A) im Wurzelpfad */
+const LIVE_ROUTES = [
+  '/',
+  '/karte',
+  '/karte/fruehstueck',
+  '/karte/kuchen',
+  '/karte/brot',
+  '/karte/schnecken',
+  '/karte/kaffee',
+  '/sauerteig',
+  '/ueber-uns',
+  '/ueber-mich',
+  '/vorbestellen',
+  '/shop',
+  '/gastgeber',
+  '/besuch',
+  '/faq',
+  '/kontakt',
+  '/jobs',
+  '/impressum',
+  '/datenschutz',
+  '/varianten',
+];
+
+/** Alte Varianten B/C/D (VARIANT-BRIEF-IA, inkl. Workshops/Journal) */
+const LEGACY_ROUTES = [
   '/karte',
   '/karte/fruehstueck',
   '/karte/kuchen',
@@ -244,8 +279,8 @@ const PFLICHT_ROUTES = [
   '/datenschutz',
 ];
 
-function detectVariants() {
-  return KNOWN_VARIANTS.filter(
+function detectLegacyVariants() {
+  return LEGACY_VARIANTS.filter(
     (v) => existsSync(path.join(DIST_ROOT, v)) && statSync(path.join(DIST_ROOT, v)).isDirectory(),
   );
 }
@@ -261,21 +296,32 @@ function readSlugs(contentDir) {
 function buildPflichtRoutes(variants) {
   const workshopSlugs = readSlugs('workshops');
   const journalSlugs = readSlugs('journal');
-  const routes = ['/'];
+  const routes = [...LIVE_ROUTES];
   for (const v of variants) {
     routes.push(`/${v}`);
-    for (const r of PFLICHT_ROUTES) routes.push(`/${v}${r}`);
+    for (const r of LEGACY_ROUTES) routes.push(`/${v}${r}`);
     for (const slug of workshopSlugs) routes.push(`/${v}/workshops/${slug}`);
     for (const slug of journalSlugs) routes.push(`/${v}/journal/${slug}`);
   }
   return routes;
 }
 
+/** In der Live-Site entfernte Routen — müssen 404 liefern */
+function buildRemovedRoutes() {
+  return [
+    '/journal',
+    '/workshops',
+    ...readSlugs('journal').map((s) => `/journal/${s}`),
+    ...readSlugs('workshops').map((s) => `/workshops/${s}`),
+  ];
+}
+
 // ---------------------------------------------------------------------------
-// Crawl: BFS ab "/" + allen Pflichtrouten (damit auch Links, die nur von
-// Pflichtseiten aus erreichbar sind, entdeckt werden — nicht nur von der
-// Startseite aus).
+// Crawl: BFS ab allen Pflichtrouten (damit auch Links, die nur von Pflichtseiten aus
+// erreichbar sind, entdeckt werden — nicht nur von der Startseite aus).
 // ---------------------------------------------------------------------------
+const FORBIDDEN_LIVE_LINK_RE = /^\/(a|journal|workshops)(\/|$)/;
+
 async function crawl(baseUrl, seedRoutes) {
   const visited = new Set();
   const queue = [...seedRoutes];
@@ -297,7 +343,15 @@ async function crawl(baseUrl, seedRoutes) {
     recordResult(current, fetched.status, { pflicht: pflichtSet.has(current) });
 
     if (fetched.isHtml) {
-      for (const link of extractLinks(fetched.body)) {
+      const { links, emptyHrefs } = extractLinks(fetched.body);
+      const isLivePage = !NON_LIVE_RE.test(current) && fetched.status === 200;
+      if (isLivePage) {
+        if (emptyHrefs > 0) hygiene.push({ page: current, problem: `${emptyHrefs}× href=""` });
+        for (const link of new Set(links)) {
+          if (FORBIDDEN_LIVE_LINK_RE.test(link)) hygiene.push({ page: current, problem: `Link auf ${link}` });
+        }
+      }
+      for (const link of links) {
         recordResult(link, results.get(link)?.status ?? -1, { source: current });
         if (!visited.has(link) && !queue.includes(link)) queue.push(link);
       }
@@ -305,32 +359,45 @@ async function crawl(baseUrl, seedRoutes) {
   }
 }
 
-/**
- * 404-Datei-Existenz je Variante: dateisystembasiert (nicht per HTTP-Statuscode) —
- * VARIANT-BRIEF verlangt eine eigene, gestaltete 404-Seite je Variante; nginx
- * liefert per Default-Fallback so oder so 404 (siehe Kommentar oben), daher ist
- * die reine Existenz der Datei der aussagekräftigere Check.
- */
-function checkVariant404Files(variants) {
-  for (const v of variants) {
-    const routeLabel = `/${v}/404 (Datei-Existenz)`;
-    const exists = fileIfExists(path.join(DIST_ROOT, v, '404', 'index.html')) !== null;
-    recordResult(routeLabel, exists ? 200 : 404, { pflicht: true, kind: '404file' });
+/** Entfernte Live-Routen müssen 404 liefern (und dabei die 404 der Live-Site zeigen). */
+async function checkRemovedRoutes(baseUrl) {
+  for (const route of buildRemovedRoutes()) {
+    const label = `${route} (muss 404 sein)`;
+    try {
+      const res = await fetch(baseUrl + route);
+      recordResult(label, res.status === 404 ? 200 : res.status, { pflicht: true, kind: 'expect404' });
+    } catch {
+      recordResult(label, 0, { pflicht: true, kind: 'expect404' });
+    }
   }
+}
+
+/**
+ * 404-Dateien: Live-Site → dist/404.html; alte Varianten → <v>/404/index.html.
+ * Außerdem darf es dist/a nicht mehr geben (A liegt im Wurzelpfad).
+ */
+function check404Files(variants) {
   const rootExists = fileIfExists(path.join(DIST_ROOT, '404.html')) !== null;
-  recordResult('/404.html (Datei-Existenz)', rootExists ? 200 : 404, { pflicht: true, kind: '404file' });
+  recordResult('/404.html (Datei-Existenz, Live-Site)', rootExists ? 200 : 404, { pflicht: true, kind: '404file' });
+  for (const v of variants) {
+    const exists = fileIfExists(path.join(DIST_ROOT, v, '404', 'index.html')) !== null;
+    recordResult(`/${v}/404 (Datei-Existenz)`, exists ? 200 : 404, { pflicht: true, kind: '404file' });
+  }
+  const aGone = !existsSync(path.join(DIST_ROOT, 'a'));
+  recordResult('dist/a (darf nicht existieren)', aGone ? 200 : 404, { pflicht: true, kind: '404file' });
 }
 
 // ---------------------------------------------------------------------------
 // Report
 // ---------------------------------------------------------------------------
 function statusLabel(entry) {
-  if (entry.kind === '404file') return entry.status === 200 ? 'OK (vorhanden)' : 'FAIL (fehlt)';
+  if (entry.kind === '404file') return entry.status === 200 ? 'OK' : 'FAIL';
+  if (entry.kind === 'expect404') return entry.status === 200 ? 'OK (404)' : `FAIL (${entry.status || 'kein Fetch'})`;
   if (entry.status >= 200 && entry.status < 400) return `OK (${entry.status})`;
   return `FAIL (${entry.status || 'kein Fetch'})`;
 }
 function isFailing(entry) {
-  if (entry.kind === '404file') return entry.status !== 200;
+  if (entry.kind === '404file' || entry.kind === 'expect404') return entry.status !== 200;
   return !(entry.status >= 200 && entry.status < 400);
 }
 
@@ -339,18 +406,19 @@ function printReport(variants) {
 
   console.log('\n=== Route-Smoke-Test — Sauer & Saftig ===');
   console.log(`dist: ${DIST_ROOT}`);
-  console.log(`Gefundene Varianten in dist/: ${variants.length ? variants.join(', ') : '(keine)'}\n`);
+  console.log(`Live-Site: Variante A im Wurzelpfad · alte Varianten in dist/: ${variants.length ? variants.join(', ') : '(keine)'}\n`);
 
   console.log('--- Routen-Tabelle ---');
   const colWidth = Math.min(60, Math.max(...rows.map(([r]) => r.length), 10));
   for (const [route, entry] of rows) {
-    const tag = entry.kind === '404file' ? '[404-datei]' : entry.pflicht ? '[pflicht]' : '[crawl]';
+    const tag =
+      entry.kind === '404file' ? '[datei]' : entry.kind === 'expect404' ? '[entfernt]' : entry.pflicht ? '[pflicht]' : '[crawl]';
     console.log(`${route.padEnd(colWidth)}  ${statusLabel(entry).padEnd(16)} ${tag}`);
   }
 
   const brokenCrawlLinks = [];
   for (const [route, entry] of rows) {
-    if (entry.kind === '404file') continue;
+    if (entry.kind !== 'page') continue;
     if (isFailing(entry) && entry.sources.size > 0) {
       for (const source of entry.sources) brokenCrawlLinks.push({ source, target: route, status: entry.status });
     }
@@ -359,9 +427,7 @@ function printReport(variants) {
   if (brokenCrawlLinks.length === 0) {
     console.log('(keine)');
   } else {
-    for (const b of brokenCrawlLinks) {
-      console.log(`${b.source} → ${b.target}  [${b.status || 'kein Fetch'}]`);
-    }
+    for (const b of brokenCrawlLinks) console.log(`${b.source} → ${b.target}  [${b.status || 'kein Fetch'}]`);
   }
 
   const failedPflicht = rows.filter(([, e]) => e.pflicht && e.kind === 'page' && isFailing(e));
@@ -374,17 +440,23 @@ function printReport(variants) {
     }
   }
 
-  const failed404Files = rows.filter(([, e]) => e.kind === '404file' && isFailing(e));
-  console.log('\n--- 404-Datei-Existenz je Variante (VARIANT-BRIEF verlangt eigene 404-Seite) ---');
-  if (failed404Files.length === 0) {
-    console.log('(alle vorhanden)');
+  const failedStructure = rows.filter(([, e]) => (e.kind === '404file' || e.kind === 'expect404') && isFailing(e));
+  console.log('\n--- Struktur (404-Dateien, entfernte Routen, kein dist/a) ---');
+  if (failedStructure.length === 0) {
+    console.log('(alles in Ordnung)');
   } else {
-    for (const [route] of failed404Files) {
-      console.log(`${route}  FEHLT`);
-    }
+    for (const [route, entry] of failedStructure) console.log(`${route}  ${statusLabel(entry)}`);
   }
 
-  const anyFailure = brokenCrawlLinks.length > 0 || failedPflicht.length > 0 || failed404Files.length > 0;
+  console.log('\n--- Live-Hygiene (kein href="", keine Links auf /a, /journal, /workshops) ---');
+  if (hygiene.length === 0) {
+    console.log('(sauber)');
+  } else {
+    for (const h of hygiene) console.log(`${h.page}: ${h.problem}`);
+  }
+
+  const anyFailure =
+    brokenCrawlLinks.length > 0 || failedPflicht.length > 0 || failedStructure.length > 0 || hygiene.length > 0;
 
   console.log(`\n=== Ergebnis: ${anyFailure ? 'FEHLGESCHLAGEN' : 'OK'} (${rows.length} Routen geprüft) ===\n`);
   return anyFailure;
@@ -398,10 +470,11 @@ const { port } = server.address();
 const baseUrl = `http://127.0.0.1:${port}`;
 
 try {
-  const variants = detectVariants();
+  const variants = detectLegacyVariants();
   const seedRoutes = buildPflichtRoutes(variants);
   await crawl(baseUrl, seedRoutes);
-  checkVariant404Files(variants);
+  await checkRemovedRoutes(baseUrl);
+  check404Files(variants);
   const failed = printReport(variants);
   process.exitCode = failed ? 1 : 0;
 } finally {

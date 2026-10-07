@@ -8,7 +8,7 @@ import site from '../../data/site.json';
 import { routeHref, telHref } from '../../lib/format';
 
 interface Props {
-  base: string; // "/a" | "/b" | "/c"
+  base: string; // "" (Live-Site A im Wurzelpfad) | "/b" | "/c" | "/d"
 }
 const { base } = Astro.props;
 const items = [

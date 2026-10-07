@@ -7,10 +7,11 @@
  */
 import Logo from '../../../components/shared/Logo.astro';
 import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
-import { NAV_MAIN, NAV_CTA } from '../../../lib/variants';
+import { NAV_MAIN_A, NAV_CTA } from '../../../lib/variants';
 import { btnPrimary } from '../lib/ui';
 
 interface Props {
+  /** Pfad-Präfix der Links; Live-Site im Wurzelpfad = '' */
   base: string;
 }
 const { base } = Astro.props;
@@ -20,18 +21,17 @@ function isActive(itemPath: string): boolean {
   const full = `${base}${itemPath}`;
   return path === full || path.startsWith(`${full}/`);
 }
-const isAboutMe = path.startsWith(`${base}/ueber-mich`);
 ---
 
 <header class="header-a sticky top-0 z-50 border-b border-ink/10 bg-paper lg:bg-paper/95 lg:backdrop-blur" data-header>
   <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-3 md:px-8">
-    <a href={base} class="relative z-50 shrink-0" aria-label="Sauer & Saftig — Startseite">
+    <a href={base || '/'} class="relative z-50 shrink-0" aria-label="Sauer & Saftig — Startseite">
       <Logo variant="lockup" tone="dark" width={140} loading="eager" />
     </a>
 
     <nav aria-label="Hauptnavigation" class="nav-a hidden lg:block">
       <ul class="flex items-center gap-7 font-mono text-sm uppercase tracking-widest">
-        {NAV_MAIN.map((item) => (
+        {NAV_MAIN_A.map((item) => (
           <li>
             <a
               href={`${base}${item.path}`}
@@ -68,7 +68,7 @@ const isAboutMe = path.startsWith(`${base}/ueber-mich`);
         <span class="tz-band" aria-hidden="true"></span>
         <nav aria-label="Mobile Navigation" class="mx-auto flex max-w-md flex-col gap-1 px-6 pt-4">
           <ul class="flex flex-col divide-y divide-ink/10 font-display text-3xl">
-            {NAV_MAIN.map((item, i) => (
+            {NAV_MAIN_A.map((item, i) => (
               <li class="drawer-item" style={`--i:${i}`}>
                 <a
                   href={`${base}${item.path}`}
@@ -80,25 +80,15 @@ const isAboutMe = path.startsWith(`${base}/ueber-mich`);
                 </a>
               </li>
             ))}
-            <li class="drawer-item" style={`--i:${NAV_MAIN.length}`}>
-              <a
-                href={`${base}/ueber-mich`}
-                aria-current={isAboutMe ? 'page' : undefined}
-                class="flex min-h-14 items-center justify-between py-3 text-ink aria-[current=page]:text-primary-deep"
-              >
-                Über mich
-                <span class="font-mono text-xs text-ink-soft" aria-hidden="true">0{NAV_MAIN.length + 1}</span>
-              </a>
-            </li>
           </ul>
           <a
             href={`${base}${NAV_CTA.path}`}
             class:list={[btnPrimary, 'drawer-item mt-6 min-h-12']}
-            style={`--i:${NAV_MAIN.length + 1}`}
+            style={`--i:${NAV_MAIN_A.length}`}
           >
             {NAV_CTA.label}
           </a>
-          <div class="drawer-item mt-6" style={`--i:${NAV_MAIN.length + 2}`}>
+          <div class="drawer-item mt-6" style={`--i:${NAV_MAIN_A.length + 1}`}>
             <OpeningStatus size="sm" />
           </div>
         </nav>

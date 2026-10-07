@@ -12,7 +12,7 @@ import site from '../../data/site.json';
 import { formatMenuPrice } from '../../lib/format';
 
 interface Props {
-  /** Varianten-Basispfad, z. B. "/a" — für den Rücksprung nach Erfolg. */
+  /** Varianten-Basispfad, z. B. "/b" (Live-Site A: "") — für den Rücksprung nach Erfolg. */
   base: string;
 }
 const { base } = Astro.props;
@@ -212,7 +212,7 @@ const btnSecondary =
       <p class="mt-2 text-base">
         Demo — die Bestellung wurde nicht übertragen. Ruf uns an: <a class="underline" href={`tel:${site.phone.replace(/[^+\d]/g, '')}`}>{site.phoneDisplay}</a>
       </p>
-      <a href={base} class="mt-4 inline-block font-mono text-sm text-ink-soft underline">Zurück zur Startseite</a>
+      <a href={base || '/'} class="mt-4 inline-block font-mono text-sm text-ink-soft underline">Zurück zur Startseite</a>
     </div>
   </form>
 </div>

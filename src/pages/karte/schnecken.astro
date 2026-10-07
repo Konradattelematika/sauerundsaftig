@@ -5,14 +5,14 @@
  * Mono-Hinweisband, Querschnitt-Motiv, CTA Vorbestellen.
  */
 import { getEntry } from 'astro:content';
-import Layout from '../../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../../variants/a-krume/components/Breadcrumbs.astro';
-import Figure from '../../../variants/a-krume/components/Figure.astro';
-import { formatMenuPrice } from '../../../lib/format';
-import { menuSchema } from '../../../lib/schema-org';
-import { btnAccent, arrowIcon } from '../../../variants/a-krume/lib/ui';
+import Layout from '../../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
+import Figure from '../../variants/a-krume/components/Figure.astro';
+import { formatMenuPrice } from '../../lib/format';
+import { menuSchema } from '../../lib/schema-org';
+import { btnAccent, arrowIcon } from '../../variants/a-krume/lib/ui';
 
-const base = '/a';
+const base = '';
 const schnecken = await getEntry('menu', 'schnecken');
 const items = schnecken!.data.items;
 const [pistazie, lotus, haselnuss] = items;
@@ -27,7 +27,7 @@ const jsonLd = [menuSchema([{ title: schnecken!.data.title, items }], String(Ast
 >
   <Breadcrumbs
     items={[
-      { label: 'Start', href: base },
+      { label: 'Start', href: base || '/' },
       { label: 'Karte', href: `${base}/karte` },
       { label: 'Schnecken', href: `${base}/karte/schnecken` },
     ]}

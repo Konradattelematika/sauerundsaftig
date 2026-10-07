@@ -3,12 +3,12 @@
  * /jobs — ehrlich: keine erfundenen offenen Stellen, nur allgemeiner Aufruf +
  * Telefon. TODO(kunde): echte Stellenausschreibungen ergänzen, sobald vorhanden.
  */
-import Layout from '../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
-import site from '../../data/site.json';
-import { telHref } from '../../lib/format';
+import Layout from '../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
+import site from '../data/site.json';
+import { telHref } from '../lib/format';
 
-const base = '/a';
+const base = '';
 const phoneHref = telHref(site.phone);
 ---
 
@@ -16,7 +16,7 @@ const phoneHref = telHref(site.phone);
   title="Jobs — Sauer & Saftig"
   description="Wir wachsen mit der Saison — melde dich, wenn du in Backstube oder Service anpacken kannst."
 >
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Jobs', href: `${base}/jobs` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Jobs', href: `${base}/jobs` }]} />
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-3xl px-4 md:px-8">

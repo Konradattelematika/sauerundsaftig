@@ -26,6 +26,7 @@ export function localBusiness(siteUrl: string) {
     url: siteUrl,
     telephone: site.phone,
     priceRange: site.priceRange,
+    paymentAccepted: 'Cash, Credit Card',
     servesCuisine: 'Café, Backwaren, Frühstück',
     address: {
       '@type': 'PostalAddress',
@@ -63,7 +64,8 @@ export function menuSchema(sections: MenuSectionData[], siteUrl: string) {
     '@context': 'https://schema.org',
     '@type': 'Menu',
     name: `Karte — ${site.name}`,
-    url: `${siteUrl}/karte`,
+    // siteUrl = Basis-URL der Variante (A: Astro.site mit abschließendem "/") — keine Doppel-Slashes
+    url: `${siteUrl.replace(/\/+$/, '')}/karte`,
     hasMenuSection: sections.map((s) => ({
       '@type': 'MenuSection',
       name: s.title,

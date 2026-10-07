@@ -4,21 +4,20 @@
  * Keine erfundenen Namen/Jahreszahlen: TODO(kunde)-Kommentar markiert, wo die
  * echte Teamvorstellung nachgereicht wird.
  */
-import Layout from '../../variants/a-krume/Layout.astro';
-import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
-import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
-import Figure from '../../variants/a-krume/components/Figure.astro';
-import site from '../../data/site.json';
-import { linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
+import Layout from '../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
+import SectionIntro from '../variants/a-krume/components/SectionIntro.astro';
+import Figure from '../variants/a-krume/components/Figure.astro';
+import { linkArrow, arrowIcon } from '../variants/a-krume/lib/ui';
 
-const base = '/a';
+const base = '';
 ---
 
 <Layout
   title="Über uns — Sauer & Saftig"
   description="Wir haben ein Café in Ostseebad Rerik übernommen und backen seitdem fast alles mit eigenem Sauerteig. Die Übernahme, der Ort, unsere Werte."
 >
-  <Breadcrumbs items={[{ label: 'Start', href: base }, { label: 'Über uns', href: `${base}/ueber-uns` }]} />
+  <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Über uns', href: `${base}/ueber-uns` }]} />
 
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
@@ -103,8 +102,8 @@ const base = '/a';
   <!-- Werte -->
   <section class="bg-bg py-14 md:py-24">
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
-      <SectionIntro eyebrow="Wofür wir stehen" title="Drei Dinge, die uns wichtig sind" class="mb-10 md:mb-14" />
-      <div class="grid grid-cols-1 gap-8 border-t border-ink/10 pt-8 md:grid-cols-3 md:gap-10">
+      <SectionIntro eyebrow="Wofür wir stehen" title="Zwei Dinge, die uns wichtig sind" class="mb-10 md:mb-14" />
+      <div class="grid grid-cols-1 gap-8 border-t border-ink/10 pt-8 md:grid-cols-2 md:gap-10">
         <div data-reveal>
           <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">01</p>
           <h3 class="mt-2 text-2xl">Handwerk &amp; Zeit</h3>
@@ -120,17 +119,8 @@ const base = '/a';
           <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">02</p>
           <h3 class="mt-2 text-2xl">Ehrlichkeit</h3>
           <p class="prose-measure mt-3 text-ink-soft">
-            Preise, Termine und offene Fragen markieren wir dort, wo wir selbst noch nicht alles final haben —
+            Preise und offene Fragen markieren wir dort, wo wir selbst noch nicht alles final haben —
             lieber ehrlich mit einem ° oder einem TODO als glattgebügelt.
-          </p>
-        </div>
-        <div data-reveal style="--reveal-delay:200ms">
-          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">03</p>
-          <h3 class="mt-2 text-2xl">Too Good To Go</h3>
-          <p class="prose-measure mt-3 text-ink-soft">
-            Kein Versprechen, sondern eine Zahl: Über Too Good To Go bekommst du eine Überraschungstüte mit rund
-            {site.tooGoodToGo.bagValue} € Warenwert für {site.tooGoodToGo.bagPrice} € — Ware, die sonst am Ende
-            des Tages übrig geblieben wäre.
           </p>
         </div>
       </div>
