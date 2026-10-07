@@ -1,0 +1,81 @@
+---
+/**
+ * Alternative 1 „Hell & aufgeräumt": Mehlstaub-Grund (bg-bg-alt) statt dunkel, Terrazzo-Band
+ * oben, vier Spalten: Logo + Spruch + Instagram, Öffnungszeiten kompakt, Kontakt mit Route,
+ * Links. Unten die Rechtszeile mit © und „Nach oben".
+ */
+import Logo from '../../../components/shared/Logo.astro';
+import site from '../../../data/site.json';
+import { telHref, routeHref } from '../../../lib/format';
+import type { Schedule } from '../../../lib/opening-hours';
+import { btnSecondary, linkUl } from '../../../variants/a-krume/lib/ui';
+import { NAV_FOOTER, NAV_LEGAL, INSTAGRAM_URL } from '../header/parts/nav';
+import { compactHours } from './parts/hours';
+import Seite from './parts/Seite.astro';
+
+const hours = compactHours(site.openingHours as unknown as Schedule);
+const phoneHref = telHref(site.phone);
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+const head = 'font-mono text-xs uppercase tracking-widest text-ink-soft';
+---
+
+<Seite />
+
+<footer class="bg-bg-alt text-ink">
+  <span class="tz-band" aria-hidden="true"></span>
+  <div class="mx-auto grid max-w-[1440px] gap-10 px-4 py-14 md:grid-cols-12 md:gap-8 md:px-8 md:py-20">
+    <div class="md:col-span-4">
+      <Logo variant="lockup" tone="dark" width={160} loading="lazy" />
+      <p class="mt-5 font-display text-2xl">{site.claim}</p>
+      <p class="mt-2 max-w-[32ch] text-ink-soft">{site.subline}</p>
+      <a href={INSTAGRAM_URL(site.instagram)} target="_blank" rel="noopener" class:list={[linkUl, 'mt-5']}>
+        @{site.instagram} auf Instagram
+        <svg class="arrow-icon size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+      </a>
+    </div>
+
+    <div class="md:col-span-3">
+      <p class={head}>Öffnungszeiten</p>
+      <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 font-mono text-lg">
+        {hours.map((h) => (
+          <>
+            <dt class="text-ink-soft">{h.days}</dt>
+            <dd class:list={['tabular', h.closed && 'text-closed']}>{h.hours}</dd>
+          </>
+        ))}
+      </dl>
+      <p class="mt-4 max-w-[28ch] text-sm text-ink-soft">Frühstück bis {site.breakfastUntil.replace(':00', '')} Uhr, Kuchen und Brot solange der Vorrat reicht.</p>
+    </div>
+
+    <div class="md:col-span-3">
+      <p class={head}>Kontakt</p>
+      <address class="mt-4 not-italic">
+        <p class="text-lg">{site.name}</p>
+        <p class="text-ink-soft">{site.address.street}<br />{site.address.zip} {site.address.city}</p>
+        <a href={phoneHref} class:list={[linkUl, 'mt-3 text-lg']}>{site.phoneDisplay}</a>
+      </address>
+      <a href={route} target="_blank" rel="noopener" class:list={[btnSecondary, 'mt-5 px-5 py-2.5']}>Route planen</a>
+    </div>
+
+    <nav aria-label="Footer-Navigation" class="md:col-span-2">
+      <p class={head}>Mehr</p>
+      <ul class="mt-4 flex flex-col gap-2">
+        {NAV_FOOTER.map((item) => (
+          <li><a href={item.path} class:list={[linkUl, 'min-h-9']}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="border-t border-ink/10">
+    <div class="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-5 font-mono text-xs uppercase tracking-widest text-ink-soft md:px-8">
+      <p>© {new Date().getFullYear()} {site.name} · {site.address.city}</p>
+      <ul class="flex flex-wrap items-center gap-5">
+        {NAV_LEGAL.map((item) => (
+          <li><a href={item.path} class="inline-flex min-h-8 items-center transition-colors duration-[var(--dur-fast)] hover:text-ink">{item.label}</a></li>
+        ))}
+        <li><a href="#top" class="inline-flex min-h-8 items-center gap-1 transition-colors duration-[var(--dur-fast)] hover:text-ink">Nach oben ↑</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

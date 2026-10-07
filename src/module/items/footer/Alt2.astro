@@ -1,0 +1,86 @@
+---
+/**
+ * Alternative 2 „Großer Spruch": dunkler Grund, der Claim riesig in Fraunces als Schlusspunkt;
+ * darunter drei Infoblöcke (Zeiten kompakt, Adresse + Route, Telefon + Instagram) in Mono,
+ * die Links in einer Zeile mit Punkt-Trennern, unten Rechtszeile mit kleinem Logo.
+ */
+import Logo from '../../../components/shared/Logo.astro';
+import site from '../../../data/site.json';
+import { telHref, routeHref } from '../../../lib/format';
+import type { Schedule } from '../../../lib/opening-hours';
+import { NAV_FOOTER, NAV_LEGAL, INSTAGRAM_URL } from '../header/parts/nav';
+import { compactHours } from './parts/hours';
+import Seite from './parts/Seite.astro';
+
+const hours = compactHours(site.openingHours as unknown as Schedule);
+const phoneHref = telHref(site.phone);
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+const head = 'font-mono text-xs uppercase tracking-widest text-bg/60';
+const link = 'link-ul link-ul--light inline-flex min-h-11 items-center gap-2 font-mono';
+---
+
+<Seite />
+
+<footer class="bg-ink text-bg">
+  <div class="mx-auto max-w-[1440px] px-4 pb-10 pt-14 md:px-8 md:pb-14 md:pt-20">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-bg/60">Sauer &amp; Saftig · Ostseebad Rerik</p>
+    <p class="mt-4 font-display text-[clamp(3rem,11vw,9rem)] leading-[0.95] tracking-[-0.03em]">{site.claim}</p>
+
+    <div class="mt-12 grid gap-10 border-t border-bg/15 pt-10 md:grid-cols-3 md:gap-8">
+      <div>
+        <p class={head}>Öffnungszeiten</p>
+        <ul class="mt-4 flex flex-col gap-1 font-mono text-xl">
+          {hours.map((h) => (
+            <li class="flex items-baseline gap-3">
+              <span class="w-16 shrink-0 text-bg/60">{h.days}</span>
+              <span class:list={['tabular', h.closed ? 'text-bg/50 line-through decoration-bg/40' : '']}>{h.hours}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p class={head}>Adresse</p>
+        <address class="mt-4 font-mono text-xl not-italic leading-snug">
+          {site.address.street}<br />
+          {site.address.zip} {site.address.city}
+        </address>
+        <a href={route} target="_blank" rel="noopener" class:list={[link, 'mt-3 text-sm']}>
+          Route planen
+          <svg class="arrow-icon size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+        </a>
+      </div>
+      <div>
+        <p class={head}>Sprich mit uns</p>
+        <a href={phoneHref} class:list={[link, 'mt-4 text-xl']}>{site.phoneDisplay}</a>
+        <br />
+        <a href={INSTAGRAM_URL(site.instagram)} target="_blank" rel="noopener" class:list={[link, 'text-xl']}>
+          @{site.instagram}
+          <svg class="arrow-icon size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+        </a>
+      </div>
+    </div>
+
+    <nav aria-label="Footer-Navigation" class="mt-12 border-t border-bg/15 pt-6">
+      <ul class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-sm uppercase tracking-widest">
+        {NAV_FOOTER.map((item, i) => (
+          <li class="flex items-center gap-2">
+            {i > 0 && <span class="text-bg/30" aria-hidden="true">·</span>}
+            <a href={item.path} class="inline-flex min-h-11 items-center text-bg/90 transition-colors duration-[var(--dur-fast)] hover:text-accent">{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="border-t border-bg/15">
+    <div class="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-4 py-5 md:px-8">
+      <Logo variant="wordmark" tone="light" width={110} loading="lazy" />
+      <ul class="flex flex-wrap items-center gap-5 font-mono text-xs uppercase tracking-widest text-bg/60">
+        <li>© {new Date().getFullYear()} {site.name}</li>
+        {NAV_LEGAL.map((item) => (
+          <li><a href={item.path} class="inline-flex min-h-8 items-center transition-colors duration-[var(--dur-fast)] hover:text-bg">{item.label}</a></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</footer>

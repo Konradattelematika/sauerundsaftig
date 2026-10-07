@@ -1,0 +1,95 @@
+---
+/**
+ * Alternative 3 „Karte auf der Theke": die ganze Fußzeile ist Thekenoberfläche (tz-surface),
+ * darauf liegt eine Papierkarte wie eine Visitenkarte: Logo, Adresse, Telefon, Instagram, Route
+ * und die Öffnungszeiten als kleine Tabelle. Darunter ein dunkler Streifen mit Links + Rechtszeile.
+ */
+import Logo from '../../../components/shared/Logo.astro';
+import site from '../../../data/site.json';
+import { telHref, routeHref } from '../../../lib/format';
+import { weekOverview, type Schedule } from '../../../lib/opening-hours';
+import { btnPrimary, linkUl } from '../../../variants/a-krume/lib/ui';
+import { NAV_FOOTER, NAV_LEGAL, INSTAGRAM_URL } from '../header/parts/nav';
+import Seite from './parts/Seite.astro';
+
+const week = weekOverview(site.openingHours as unknown as Schedule);
+const phoneHref = telHref(site.phone);
+const route = routeHref(site.address.street, site.address.zip, site.address.city);
+---
+
+<Seite />
+
+<footer class="tz-surface" style="--tz-pos: 50% 50%">
+  <div class="mx-auto max-w-[1440px] px-4 py-12 md:px-8 md:py-20">
+    <div class="karte mx-auto max-w-[880px] bg-paper p-6 text-ink md:p-10">
+      <div class="flex flex-wrap items-start justify-between gap-6 border-b border-dashed border-ink/25 pb-6">
+        <Logo variant="lockup" tone="dark" width={170} loading="lazy" />
+        <p class="max-w-[26ch] font-display text-xl leading-snug md:text-right">{site.claim}<br /><span class="text-ink-soft">{site.type}, {site.address.city}.</span></p>
+      </div>
+
+      <div class="mt-6 grid gap-8 md:grid-cols-2 md:gap-10">
+        <div>
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Hier findest du uns</p>
+          <address class="mt-3 text-lg not-italic leading-snug">
+            {site.address.street}<br />
+            {site.address.zip} {site.address.city}
+          </address>
+          <a href={phoneHref} class:list={[linkUl, 'mt-4 text-xl']}>{site.phoneDisplay}</a>
+          <br />
+          <a href={INSTAGRAM_URL(site.instagram)} target="_blank" rel="noopener" class:list={[linkUl, 'text-base']}>
+            @{site.instagram}
+            <svg class="arrow-icon size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+          </a>
+          <div class="mt-5"><a href={route} target="_blank" rel="noopener" class:list={[btnPrimary, 'px-5 py-2.5']}>Route planen</a></div>
+        </div>
+        <div>
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">Öffnungszeiten</p>
+          <table class="mt-3 w-full border-collapse font-mono text-base">
+            <caption class="sr-only">Wochenübersicht Öffnungszeiten</caption>
+            <tbody>
+              {week.map((d) => (
+                <tr class="border-b border-ink/10 last:border-0">
+                  <th scope="row" class="py-1.5 pr-4 text-left font-normal text-ink-soft">{d.day}</th>
+                  <td class:list={['py-1.5 text-right tabular', d.hours === 'Ruhetag' && 'text-closed']}>{d.hours.replace(/0(\d):00/g, '$1')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="mt-6 border-t border-dashed border-ink/25 pt-4 text-center font-display text-lg italic text-ink-soft">Wir freuen uns auf dich.</p>
+    </div>
+  </div>
+
+  <div class="bg-ink text-bg">
+    <div class="mx-auto max-w-[1440px] px-4 py-6 md:px-8">
+      <nav aria-label="Footer-Navigation">
+        <ul class="flex flex-wrap items-center gap-x-6 gap-y-1 font-mono text-sm">
+          {NAV_FOOTER.map((item) => (
+            <li><a href={item.path} class="link-ul link-ul--light inline-flex min-h-11 items-center text-bg/90 hover:text-bg">{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-bg/15 pt-4 font-mono text-xs uppercase tracking-widest text-bg/60">
+        <p>© {new Date().getFullYear()} {site.name} · {site.address.street}, {site.address.city}</p>
+        <ul class="flex flex-wrap items-center gap-5">
+          {NAV_LEGAL.map((item) => (
+            <li><a href={item.path} class="inline-flex min-h-8 items-center transition-colors duration-[var(--dur-fast)] hover:text-bg">{item.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .karte {
+    border-radius: 4px;
+    box-shadow:
+      0 1px 0 rgb(36 27 20 / 0.12),
+      0 24px 40px -24px rgb(36 27 20 / 0.7),
+      inset 0 0 0 1px rgb(36 27 20 / 0.06);
+    transform: rotate(-0.4deg);
+  }
+</style>

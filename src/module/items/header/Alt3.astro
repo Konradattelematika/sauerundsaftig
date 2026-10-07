@@ -1,0 +1,133 @@
+---
+/**
+ * Alternative 3 „Ladenschild": großes Logo auf Thekenstein (Terrazzo) wie das Schild über der
+ * Tür — scrollt weg; darunter die Menüzeile in Mono-Versalien mit Punkt-Trennern, die kleben
+ * bleibt und dann ein kleines Logo einblendet (kein Sprung: nur die Zeile ist sticky). Mobil:
+ * kompakte Zeile + dunkles Vollbild-Menü mit nummerierten Fraunces-Links, CTA, Status, Telefon.
+ */
+import Logo from '../../../components/shared/Logo.astro';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import site from '../../../data/site.json';
+import { telHref } from '../../../lib/format';
+import { NAV_MAIN, NAV_CTA, INSTAGRAM_URL } from './parts/nav';
+import Seite from './parts/Seite.astro';
+
+const phoneHref = telHref(site.phone);
+---
+
+<header class="hdr3" data-header>
+  <!-- Ladenschild: nur ab lg, scrollt mit der Seite weg -->
+  <div class="hdr3-sign tz-surface hidden lg:block">
+    <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-6 px-8 py-6">
+      <p class="w-64 font-mono text-xs uppercase tracking-[0.2em] text-ink">{site.address.street} · {site.address.city}</p>
+      <a href="/" class="rounded-card bg-paper px-8 py-4 shadow-[0_1px_0_rgb(36_27_20/0.1),0_14px_30px_-18px_rgb(36_27_20/0.6)]" aria-label="Sauer & Saftig — Startseite">
+        <Logo variant="lockup" tone="dark" width={210} loading="eager" />
+      </a>
+      <div class="flex w-64 justify-end rounded-card bg-paper/80 px-3 py-1.5"><OpeningStatus size="sm" /></div>
+    </div>
+  </div>
+
+  <!-- Menüzeile: klebt -->
+  <div class="hdr3-bar sticky top-0 z-50 border-b border-ink/10 bg-paper">
+    <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-2 md:px-8">
+      <a href="/" class="hdr3-mini relative z-50 shrink-0" aria-label="Sauer & Saftig — Startseite">
+        <Logo variant="lockup" tone="dark" width={120} loading="eager" />
+      </a>
+
+      <nav aria-label="Hauptnavigation" class="hidden lg:block">
+        <ul class="hdr3-nav flex items-center font-mono text-sm uppercase tracking-[0.2em]">
+          {NAV_MAIN.map((item) => (
+            <li>
+              <a href={item.path} class="inline-flex min-h-11 items-center px-4 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-primary-deep aria-[current=page]:text-primary-deep">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <a href={NAV_CTA.path} class="hidden min-h-11 items-center justify-center rounded-card bg-ink px-5 py-2.5 font-mono text-sm uppercase tracking-[0.15em] text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent hover:text-ink lg:inline-flex">
+        {NAV_CTA.label}
+      </a>
+
+      <details class="hdr3-mobile lg:hidden">
+        <summary
+          class="relative z-50 inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-card border-2 border-ink px-3 font-mono text-xs uppercase tracking-[0.2em] text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-ink hover:text-bg"
+          aria-label="Menü öffnen"
+        >
+          <span class="label-menu">Menü</span>
+          <span class="label-close">Schließen</span>
+          <svg class="icon-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
+          <svg class="icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </summary>
+        <div class="hdr3-overlay fixed inset-0 z-40 overflow-y-auto bg-ink pb-10 pt-20 text-bg">
+          <nav aria-label="Mobile Navigation" class="mx-auto flex max-w-md flex-col px-6">
+            <ol class="flex flex-col divide-y divide-bg/15 font-display text-4xl">
+              {NAV_MAIN.map((item, i) => (
+                <li class="hdr3-item" style={`--i:${i}`}>
+                  <a href={item.path} class="flex min-h-16 items-baseline gap-4 py-3 text-bg hover:text-accent">
+                    <span class="font-mono text-xs text-bg/60" aria-hidden="true">0{i + 1}</span>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ol>
+            <a href={NAV_CTA.path} class="hdr3-item mt-8 inline-flex min-h-12 items-center justify-center rounded-card bg-accent px-6 py-3 font-mono text-sm uppercase tracking-[0.15em] text-ink hover:bg-accent-ink hover:text-paper" style={`--i:${NAV_MAIN.length}`}>
+              {NAV_CTA.label}
+            </a>
+            <div class="hdr3-item mt-8 flex flex-col gap-2 font-mono text-sm" style={`--i:${NAV_MAIN.length + 1}`}>
+              <OpeningStatus size="sm" />
+              <a href={phoneHref} class="inline-flex min-h-11 items-center text-bg/90">{site.phoneDisplay}</a>
+              <a href={INSTAGRAM_URL(site.instagram)} target="_blank" rel="noopener" class="inline-flex min-h-11 items-center text-bg/90">@{site.instagram}</a>
+              <p class="text-bg/60">{site.address.street}, {site.address.zip} {site.address.city}</p>
+            </div>
+          </nav>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<Seite />
+
+<style>
+  .hdr3-sign { --tz-pos: 50% 35%; border-bottom: 1px solid rgb(36 27 20 / 0.1); }
+  /* Kleines Logo erst, wenn die Menüzeile klebt (ab lg); mobil immer sichtbar */
+  @media (min-width: 1024px) {
+    .hdr3-mini { opacity: 0; transform: translateY(4px); pointer-events: none; transition: opacity var(--dur-fast) var(--ease-brand), transform var(--dur-fast) var(--ease-brand); }
+    .hdr3.is-stuck .hdr3-mini { opacity: 1; transform: none; pointer-events: auto; }
+  }
+  .hdr3-bar { transition: box-shadow var(--dur-fast) var(--ease-brand); }
+  .hdr3.is-stuck .hdr3-bar { box-shadow: 0 8px 24px -16px rgb(36 27 20 / 0.3); }
+  .hdr3-nav li + li::before { content: '·'; color: rgb(36 27 20 / 0.35); }
+
+  details.hdr3-mobile > summary::-webkit-details-marker { display: none; }
+  details.hdr3-mobile[open] > summary { background: var(--color-bg); color: var(--color-ink); border-color: var(--color-bg); }
+  details.hdr3-mobile[open] > summary .icon-menu,
+  details.hdr3-mobile[open] > summary .label-menu { display: none; }
+  details.hdr3-mobile:not([open]) > summary .icon-close,
+  details.hdr3-mobile:not([open]) > summary .label-close { display: none; }
+  details.hdr3-mobile:not([open]) > div { display: none; }
+  details.hdr3-mobile[open] .hdr3-item { animation: hdr3-in var(--dur-base) var(--ease-brand) both; animation-delay: calc(var(--i, 0) * 50ms); }
+  @keyframes hdr3-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+</style>
+
+<script>
+  // „Klebt die Menüzeile?" — sobald ihre Oberkante den Viewport-Rand erreicht (keine Höhenänderung → kein Sprung)
+  let bound = false;
+  function paint() {
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    const bar = header?.querySelector<HTMLElement>('.hdr3-bar');
+    if (!header || !bar) return;
+    header.classList.toggle('is-stuck', bar.getBoundingClientRect().top <= 0 && window.scrollY > 8);
+  }
+  function bind() {
+    paint();
+    if (bound) return;
+    bound = true;
+    window.addEventListener('scroll', paint, { passive: true });
+    window.addEventListener('resize', paint, { passive: true });
+  }
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>
