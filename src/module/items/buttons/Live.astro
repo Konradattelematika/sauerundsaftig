@@ -1,0 +1,20 @@
+---
+/** Live: die echten Button-/Link-Klassen von Variante A (src/variants/a-krume/lib/ui.ts). */
+import Tafel from './parts/Tafel.astro';
+import { btnPrimary, btnAccent, btnSecondary, btnGhost, linkUl, linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
+---
+
+<Tafel
+  eyebrow="Live-Version"
+  title="Ruhig & eckig"
+  lead="Leicht abgerundete Knöpfe in der Schreibmaschinen-Schrift. Fahr mit der Maus drüber: Es wechselt nur die Farbe, der Pfeil wandert drei Pixel nach rechts."
+  classes={{
+    primary: btnPrimary,
+    accent: btnAccent,
+    secondary: btnSecondary,
+    ghost: btnGhost,
+    link: linkUl,
+    linkArrow,
+    arrow: arrowIcon,
+  }}
+/>

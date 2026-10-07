@@ -1,0 +1,119 @@
+---
+/**
+ * Kreidetafel-Schild. `live` + `schedule` → aktualisiert sich im Browser (data-tafel-live);
+ * ohne `live` = statisches Beispiel. Farben nur über A-Tokens (auf dunklem Grund per color-mix
+ * aufgehellt, damit AA sicher ist).
+ */
+import type { StatusView } from './view';
+
+interface Props {
+  size: 'sm' | 'lg';
+  view: StatusView;
+  live?: boolean;
+  schedule?: string;
+  class?: string;
+}
+const { size, view, live = false, schedule, class: cls = '' } = Astro.props;
+---
+
+<span
+  class:list={['tafel', size === 'lg' ? 'tafel--lg' : 'tafel--sm', cls]}
+  data-tone={view.tone}
+  data-tafel-live={live ? '' : undefined}
+  data-schedule={live ? schedule : undefined}
+  role="status"
+  aria-live={live ? 'polite' : undefined}
+>
+  <span class="tafel-mark" aria-hidden="true"></span>
+  <span class="tafel-body">
+    <span class="tafel-word">{view.word}</span>
+    <span class="tafel-detail">{view.detail}</span>
+  </span>
+</span>
+
+<style is:global>
+  .tafel {
+    --chalk: var(--color-bg);
+    --signal: color-mix(in srgb, var(--color-secondary-soft) 85%, white);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--color-ink);
+    color: var(--chalk);
+    border-radius: 3px;
+    /* Kreiderahmen: innen etwas heller, leicht ungleichmäßig */
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--color-bg) 25%, transparent),
+      inset 0 0 0 4px var(--color-ink),
+      inset 0 0 0 5px color-mix(in srgb, var(--color-bg) 12%, transparent);
+    transform: rotate(-0.6deg);
+  }
+  .tafel[data-tone='soon'] { --signal: var(--color-accent); }
+  .tafel[data-tone='closed'] { --signal: color-mix(in srgb, var(--color-closed) 60%, white); --chalk: color-mix(in srgb, var(--color-bg) 70%, transparent); }
+
+  .tafel-mark {
+    flex-shrink: 0;
+    border-radius: 9999px;
+    background: var(--signal);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal) 25%, transparent);
+  }
+  .tafel[data-tone='closed'] .tafel-mark {
+    background: transparent;
+    box-shadow: none;
+    position: relative;
+  }
+  .tafel[data-tone='closed'] .tafel-mark::before,
+  .tafel[data-tone='closed'] .tafel-mark::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 120%;
+    height: 2px;
+    background: var(--signal);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .tafel[data-tone='closed'] .tafel-mark::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+  .tafel-body { display: flex; flex-direction: column; line-height: 1.1; }
+  .tafel-word {
+    font-family: var(--font-display);
+    font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 36;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--signal);
+  }
+  .tafel-detail { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .tafel--lg { padding: 1rem 1.4rem 1.1rem 1.2rem; min-height: 5rem; }
+  .tafel--lg .tafel-mark { width: 1rem; height: 1rem; }
+  .tafel--lg .tafel-word { font-size: 2rem; }
+  .tafel--lg .tafel-detail { font-size: 0.95rem; margin-top: 0.35rem; }
+
+  .tafel--sm { padding: 0.35rem 0.8rem 0.4rem 0.7rem; min-height: 2.75rem; gap: 0.5rem; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-bg) 25%, transparent); }
+  .tafel--sm .tafel-mark { width: 0.6rem; height: 0.6rem; }
+  .tafel--sm .tafel-body { flex-direction: row; align-items: baseline; gap: 0.5rem; }
+  .tafel--sm .tafel-word { font-size: 1.1rem; }
+  .tafel--sm .tafel-detail { font-size: 0.8rem; }
+  .tafel--sm[data-tone='closed'] .tafel-mark::before,
+  .tafel--sm[data-tone='closed'] .tafel-mark::after { height: 1.5px; }
+</style>
+
+<script>
+  import { getOpeningStatus, type Schedule } from '../../../../lib/opening-hours';
+  import { toView } from './view';
+
+  function paint() {
+    document.querySelectorAll<HTMLElement>('[data-tafel-live]').forEach((el) => {
+      const schedule = JSON.parse(el.dataset.schedule ?? '{}') as Schedule;
+      const v = toView(getOpeningStatus(schedule));
+      el.dataset.tone = v.tone;
+      const word = el.querySelector<HTMLElement>('.tafel-word');
+      const detail = el.querySelector<HTMLElement>('.tafel-detail');
+      if (word) word.textContent = v.word;
+      if (detail) detail.textContent = v.detail;
+    });
+  }
+  paint();
+  setInterval(paint, 60_000);
+  document.addEventListener('astro:page-load', paint);
+</script>

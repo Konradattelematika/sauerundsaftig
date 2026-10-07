@@ -1,0 +1,69 @@
+---
+/**
+ * Alternative 3 „Wochenleiste": Mo–So als Tagesfelder mit Zeiten, Ruhetage durchgestrichen,
+ * heute hervorgehoben (Farbe = Status), darunter die Statuszeile. Live-Update im Browser.
+ */
+import Rahmen from './parts/Rahmen.astro';
+import Woche from './parts/Wochenleiste.astro';
+import { exampleViews, viewNow, SCHEDULE, SCHEDULE_JSON, EXAMPLES } from './parts/examples';
+import { FALLBACK } from './parts/view';
+import { berlinParts, type WeekKey } from '../../../lib/opening-hours';
+import { btnPrimary, btnSecondary } from '../../../variants/a-krume/lib/ui';
+import site from '../../../data/site.json';
+import { telHref } from '../../../lib/format';
+
+const ORDER: WeekKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+const SHORT: Record<WeekKey, string> = { mon: 'Mo', tue: 'Di', wed: 'Mi', thu: 'Do', fri: 'Fr', sat: 'Sa', sun: 'So' };
+const days = ORDER.map((key) => {
+  const ranges = SCHEDULE.week[key] ?? [];
+  const hours = ranges.length === 0 ? 'Ruhetag' : ranges.map(([a, b]) => `${Number(a.slice(0, 2))}–${Number(b.slice(0, 2))}`).join(', ');
+  return { key, short: SHORT[key], hours, closed: ranges.length === 0 };
+});
+const examples = exampleViews().map((e, i) => ({ ...e, today: berlinParts(new Date(EXAMPLES[i]!.at)).weekday }));
+const now = viewNow();
+const todayKey = berlinParts(new Date()).weekday;
+---
+
+<Rahmen
+  eyebrow="Alternative 3"
+  title="Wochenleiste"
+  lead="Sieben Tagesfelder auf einen Blick: Ruhetage durchgestrichen, der heutige Tag farbig (grün offen, orange bald zu, rot geschlossen), darunter die Statuszeile. Sagt nicht nur ob, sondern auch wann sonst."
+>
+  <div slot="live" class="flex flex-col gap-6 rounded-card bg-paper p-5 md:flex-row md:items-start md:justify-between md:gap-10 md:p-6">
+    <div class="min-w-0 md:w-[260px]">
+      <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">Klein · Kopfzeile</p>
+      <div class="mt-2"><Woche size="sm" days={days} view={FALLBACK} today={todayKey} live schedule={SCHEDULE_JSON} class="w-full" /></div>
+    </div>
+    <div class="min-w-0 flex-1">
+      <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">Groß · Startseite, Besuch</p>
+      <div class="mt-2"><Woche size="lg" days={days} view={FALLBACK} today={todayKey} live schedule={SCHEDULE_JSON} class="w-full" /></div>
+    </div>
+  </div>
+
+  <ul slot="examples" class="grid gap-4 lg:grid-cols-3">
+    {examples.map((e) => (
+      <li class="rounded-card bg-paper p-4">
+        <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">{e.label}</p>
+        <div class="mt-3"><Woche size="lg" days={days} view={e.view} today={e.today} class="w-full" /></div>
+      </li>
+    ))}
+  </ul>
+
+  <div slot="context" class="rounded-card bg-bg-alt px-5 py-8 md:px-10 md:py-12">
+    <div class="grid gap-8 md:grid-cols-12 md:items-center">
+      <div class="md:col-span-6">
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Besuch</p>
+        <span class="tz-rule mt-3" aria-hidden="true"></span>
+        <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.5rem)]">Wann du uns findest</h2>
+        <p class="prose-measure mt-4 text-lg text-ink-soft">Reserviere deinen Tisch per Telefon.</p>
+        <div class="mt-6 flex flex-wrap gap-4">
+          <a href={telHref(site.phone)} class:list={[btnPrimary, 'px-5 py-2.5 text-xl']}>{site.phoneDisplay}</a>
+          <a href="/besuch" class:list={[btnSecondary, 'px-5 py-2.5']}>Alle Infos zum Besuch</a>
+        </div>
+      </div>
+      <div class="md:col-span-6">
+        <Woche size="lg" days={days} view={now} today={todayKey} live schedule={SCHEDULE_JSON} class="w-full" />
+      </div>
+    </div>
+  </div>
+</Rahmen>

@@ -1,0 +1,143 @@
+---
+/**
+ * Türschild: Papierkarte an einer Kordel (CSS, keine Bilder). Oberkante im Signalton,
+ * Wort groß in Fraunces, Detail in Mono. Offen = Papier mit grüner Kante, zu = dunkle Karte.
+ * `live` + `schedule` → Browser-Update (data-schild-live), sonst statisches Beispiel.
+ */
+import type { StatusView } from './view';
+
+interface Props {
+  size: 'sm' | 'lg';
+  view: StatusView;
+  live?: boolean;
+  schedule?: string;
+  class?: string;
+}
+const { size, view, live = false, schedule, class: cls = '' } = Astro.props;
+// Schild-Wortlaut: „Offen" / „Noch offen" / sonst das Schlagwort (Geschlossen, Ruhetag, Heiligabend …)
+const wordFor = (v: StatusView) => (v.tone === 'closed' ? v.word : v.tone === 'soon' ? 'Noch offen' : 'Offen');
+---
+
+<span
+  class:list={['schild', size === 'lg' ? 'schild--lg' : 'schild--sm', cls]}
+  data-tone={view.tone}
+  data-schild-live={live ? '' : undefined}
+  data-schedule={live ? schedule : undefined}
+  role="status"
+  aria-live={live ? 'polite' : undefined}
+>
+  <span class="schild-cord" aria-hidden="true"></span>
+  <span class="schild-card">
+    <span class="schild-hole" aria-hidden="true"></span>
+    <span class="schild-word">{wordFor(view)}</span>
+    <span class="schild-detail">{view.detail}</span>
+  </span>
+</span>
+
+<style is:global>
+  .schild {
+    --signal: var(--color-open);
+    --card-bg: var(--color-paper);
+    --card-ink: var(--color-ink);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform var(--dur-base) var(--ease-brand);
+  }
+  .schild[data-tone='soon'] { --signal: var(--color-accent); }
+  .schild[data-tone='closed'] { --signal: var(--color-closed); --card-bg: var(--color-ink); --card-ink: var(--color-bg); }
+
+  /* Kordel: zwei schräge Fäden zum Loch */
+  .schild-cord {
+    width: 3.5rem;
+    height: 1.5rem;
+    position: relative;
+  }
+  .schild-cord::before,
+  .schild-cord::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 1.5px;
+    height: 125%;
+    background: color-mix(in srgb, var(--color-ink) 55%, transparent);
+    transform-origin: bottom center;
+    transform: rotate(-50deg);
+  }
+  .schild-cord::after { transform: rotate(50deg); }
+
+  .schild-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--card-bg);
+    color: var(--card-ink);
+    border-top: 6px solid var(--signal);
+    border-radius: 4px;
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 10%, transparent),
+      0 10px 20px -14px color-mix(in srgb, var(--color-ink) 60%, transparent);
+    transform: rotate(-1.5deg);
+    transform-origin: top center;
+    transition: transform var(--dur-base) var(--ease-brand), background-color var(--dur-fast) var(--ease-brand), color var(--dur-fast) var(--ease-brand);
+  }
+  .schild:hover .schild-card { transform: rotate(1deg); }
+  .schild-hole {
+    position: absolute;
+    top: 0.35rem;
+    left: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: var(--color-bg-alt);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-ink) 35%, transparent);
+    transform: translateX(-50%);
+  }
+  .schild-word {
+    font-family: var(--font-display);
+    font-variation-settings: 'SOFT' 60, 'WONK' 1, 'opsz' 48;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    text-align: center;
+  }
+  .schild-detail {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: color-mix(in srgb, var(--card-ink) 80%, transparent);
+  }
+  .schild-detail:empty { display: none; }
+
+  .schild--lg .schild-card { min-width: 13rem; padding: 1.5rem 1.6rem 1.2rem; }
+  .schild--lg .schild-word { font-size: 2.4rem; }
+  .schild--lg .schild-detail { font-size: 0.9rem; margin-top: 0.6rem; }
+
+  .schild--sm .schild-cord { width: 2rem; height: 0.8rem; }
+  .schild--sm .schild-card { padding: 0.75rem 0.9rem 0.45rem; border-top-width: 4px; min-height: 2.75rem; flex-direction: row; align-items: baseline; gap: 0.5rem; transform: rotate(-1deg); }
+  .schild--sm .schild-hole { top: 0.2rem; width: 0.35rem; height: 0.35rem; }
+  .schild--sm .schild-word { font-size: 1.1rem; }
+  .schild--sm .schild-detail { font-size: 0.75rem; }
+</style>
+
+<script>
+  import { getOpeningStatus, type Schedule } from '../../../../lib/opening-hours';
+  import { toView } from './view';
+
+  function paint() {
+    document.querySelectorAll<HTMLElement>('[data-schild-live]').forEach((el) => {
+      const schedule = JSON.parse(el.dataset.schedule ?? '{}') as Schedule;
+      const v = toView(getOpeningStatus(schedule));
+      el.dataset.tone = v.tone;
+      const word = el.querySelector<HTMLElement>('.schild-word');
+      const detail = el.querySelector<HTMLElement>('.schild-detail');
+      if (word) word.textContent = v.tone === 'closed' ? v.word : v.tone === 'soon' ? 'Noch offen' : 'Offen';
+      if (detail) detail.textContent = v.detail;
+    });
+  }
+  paint();
+  setInterval(paint, 60_000);
+  document.addEventListener('astro:page-load', paint);
+</script>

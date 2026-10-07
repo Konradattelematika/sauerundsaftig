@@ -1,0 +1,57 @@
+---
+/**
+ * Live: die echte Komponente src/components/shared/OpeningStatus.astro in beiden Größen
+ * (sm = Kopfzeile, lg = Startseite/Besuch). Die Beispielzustände nutzen dasselbe Markup mit
+ * festen Texten/Farben — die Live-Komponente selbst rechnet nur mit der aktuellen Uhrzeit.
+ */
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import Rahmen from './parts/Rahmen.astro';
+import { exampleViews } from './parts/examples';
+import { btnPrimary, btnSecondary } from '../../../variants/a-krume/lib/ui';
+import site from '../../../data/site.json';
+import { telHref } from '../../../lib/format';
+
+const examples = exampleViews();
+const dotColor = { open: 'var(--color-open)', soon: 'var(--color-accent)', closed: 'var(--color-closed)' };
+---
+
+<Rahmen
+  eyebrow="Live-Version"
+  title="Punkt & Zeile"
+  lead="Ein farbiger Punkt und eine Textzeile. Grün heißt offen, Orange heißt „schließt in weniger als einer Stunde“, Rot heißt zu — mit dem Hinweis, wann es weitergeht."
+>
+  <div slot="live" class="flex flex-col gap-6 rounded-card bg-paper p-5 md:flex-row md:items-center md:justify-between md:p-6">
+    <div>
+      <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">Klein · Kopfzeile</p>
+      <div class="mt-2"><OpeningStatus size="sm" /></div>
+    </div>
+    <div>
+      <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">Groß · Startseite, Besuch</p>
+      <div class="mt-2"><OpeningStatus size="lg" /></div>
+    </div>
+  </div>
+
+  <ul slot="examples" class="grid gap-3 sm:grid-cols-3">
+    {examples.map((e) => (
+      <li class="rounded-card bg-paper p-5">
+        <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft">{e.label}</p>
+        <span class="mt-3 inline-flex items-center gap-2 text-xl">
+          <span class="inline-block size-2.5 rounded-full" style={`background:${dotColor[e.view.tone]}`} aria-hidden="true"></span>
+          <span class="font-mono tabular">{e.view.text}</span>
+        </span>
+      </li>
+    ))}
+  </ul>
+
+  <div slot="context" class="rounded-card bg-bg-alt px-5 py-8 md:px-10 md:py-12">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Besuch</p>
+    <span class="tz-rule mt-3" aria-hidden="true"></span>
+    <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.5rem)]">Wann du uns findest</h2>
+    <div class="mt-5"><OpeningStatus size="lg" /></div>
+    <p class="prose-measure mt-4 text-lg text-ink-soft">Reserviere deinen Tisch per Telefon.</p>
+    <div class="mt-6 flex flex-wrap gap-4">
+      <a href={telHref(site.phone)} class:list={[btnPrimary, 'px-5 py-2.5 text-xl']}>{site.phoneDisplay}</a>
+      <a href="/besuch" class:list={[btnSecondary, 'px-5 py-2.5']}>Alle Infos zum Besuch</a>
+    </div>
+  </div>
+</Rahmen>

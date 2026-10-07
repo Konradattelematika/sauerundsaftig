@@ -1,0 +1,109 @@
+---
+/**
+ * Alternative 2 „Stempel": kantige Knöpfe mit hartem, versetztem Schatten (wie ein Stempelabdruck
+ * oder ein Preisschild aus der Backstube), Space Mono in Großbuchstaben. Hover: Knopf rückt
+ * 2 px in den Schatten, Klick: ganz eingedrückt. Textlinks werden beim Hover wie mit Marker
+ * hinterlegt.
+ */
+import Tafel from './parts/Tafel.astro';
+---
+
+<Tafel
+  eyebrow="Alternative 2"
+  title="Stempel"
+  lead="Kantige Knöpfe mit hartem Schatten, Beschriftung in Großbuchstaben. Beim Darüberfahren rutschen sie in den Schatten, beim Klicken drücken sie sich ganz ein."
+  classes={{
+    primary: 'bs bs-primary',
+    accent: 'bs bs-accent',
+    secondary: 'bs bs-secondary',
+    ghost: 'bs bs-ghost',
+    link: 'bs-link',
+    linkArrow: 'bs-link',
+    arrow: 'bs-arrow',
+  }}
+  hoverClass="is-hover"
+/>
+
+<style is:global>
+  .bs {
+    --bs-shadow: var(--color-ink);
+    display: inline-flex;
+    min-height: 2.9rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border-radius: 2px;
+    padding: 0.7rem 1.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    border: 2px solid var(--color-ink);
+    box-shadow: 4px 4px 0 0 var(--bs-shadow);
+    transform: translate(0, 0);
+    transition:
+      transform var(--dur-fast) var(--ease-brand),
+      box-shadow var(--dur-fast) var(--ease-brand),
+      background-color var(--dur-fast) var(--ease-brand),
+      color var(--dur-fast) var(--ease-brand),
+      border-color var(--dur-fast) var(--ease-brand);
+  }
+  .bs:hover, .bs:focus-visible, .bs.is-hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--bs-shadow);
+  }
+  .bs:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 0 var(--bs-shadow);
+  }
+
+  .bs-primary { --bs-shadow: var(--color-primary); background: var(--color-ink); color: var(--color-bg); }
+  .bs-primary:hover, .bs-primary:focus-visible, .bs-primary.is-hover { background: var(--color-primary-deep); border-color: var(--color-primary-deep); }
+
+  .bs-accent { background: var(--color-accent); color: var(--color-ink); }
+  .bs-accent:hover, .bs-accent:focus-visible, .bs-accent.is-hover { background: var(--color-accent-ink); color: var(--color-paper); }
+
+  .bs-secondary { background: var(--color-paper); color: var(--color-ink); }
+  .bs-secondary:hover, .bs-secondary:focus-visible, .bs-secondary.is-hover { background: var(--color-bg-alt); }
+
+  .bs-ghost {
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    color: var(--color-ink);
+    font-weight: 400;
+    border: 2px dashed color-mix(in srgb, var(--color-ink) 40%, transparent);
+    box-shadow: none;
+  }
+  .bs-ghost:hover, .bs-ghost:focus-visible, .bs-ghost.is-hover {
+    border-style: solid;
+    border-color: var(--color-ink);
+    background: var(--color-paper);
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Textlink: Mono-Versalien, Grundlinie; Hover = Marker-Hinterlegung */
+  .bs-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.15rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--color-ink);
+    box-shadow: inset 0 -2px 0 0 var(--color-ink);
+    transition: box-shadow var(--dur-fast) var(--ease-brand), color var(--dur-fast) var(--ease-brand);
+  }
+  .bs-link:hover, .bs-link:focus-visible, .bs-link.is-hover {
+    color: var(--color-bg);
+    box-shadow: inset 0 -2.75rem 0 0 var(--color-ink);
+  }
+  .bs-arrow { width: 1rem; height: 1rem; flex-shrink: 0; transition: transform var(--dur-fast) var(--ease-brand); }
+  .bs-link:hover .bs-arrow, .bs-link.is-hover .bs-arrow, .bs:hover .bs-arrow, .bs.is-hover .bs-arrow { transform: translateX(3px); }
+</style>

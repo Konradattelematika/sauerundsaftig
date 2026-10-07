@@ -1,0 +1,39 @@
+---
+/**
+ * Ruhiger Vorschau-Rahmen für die Öffnungsstatus-Optionen: Kopfzeile, Block „Jetzt gerade"
+ * (läuft live, aktualisiert sich jede Minute) und Block „Alle Zustände" (feste Beispiele).
+ */
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead: string;
+}
+const { eyebrow, title, lead } = Astro.props;
+---
+
+<main class="mx-auto max-w-[1100px] px-4 py-10 md:px-8 md:py-14">
+  <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Öffnungsstatus · {eyebrow}</p>
+  <h1 class="mt-2 text-[clamp(1.75rem,4vw,2.5rem)]">{title}</h1>
+  <p class="prose-measure mt-3 text-ink-soft">{lead}</p>
+
+  <section class="mt-10">
+    <h2 class="font-mono text-xs uppercase tracking-widest text-ink-soft">Jetzt gerade · läuft live, Berliner Zeit</h2>
+    <div class="mt-4">
+      <slot name="live" />
+    </div>
+  </section>
+
+  <section class="mt-12">
+    <h2 class="font-mono text-xs uppercase tracking-widest text-ink-soft">Alle Zustände · feste Beispiele</h2>
+    <div class="mt-4">
+      <slot name="examples" />
+    </div>
+  </section>
+
+  <section class="mt-12">
+    <h2 class="font-mono text-xs uppercase tracking-widest text-ink-soft">Im Zusammenspiel</h2>
+    <div class="mt-4">
+      <slot name="context" />
+    </div>
+  </section>
+</main>

@@ -1,0 +1,101 @@
+---
+/**
+ * Alternative 2 „Schwebende Leiste": abgerundete Leiste mit Abstand zum Rand, die über der Seite
+ * schwebt (sticky + Schatten) und beim Scrollen schmaler wird. Menüpunkte als Pillen (Hover: Mehl-
+ * staub-Fläche), CTA Sanddorn, Öffnungsstatus ab xl. Mobil: Klappmenü als Karte unter der Leiste.
+ */
+import Logo from '../../../components/shared/Logo.astro';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import site from '../../../data/site.json';
+import { telHref } from '../../../lib/format';
+import { NAV_MAIN, NAV_CTA } from './parts/nav';
+import Seite from './parts/Seite.astro';
+
+const phoneHref = telHref(site.phone);
+const pill =
+  'inline-flex min-h-11 items-center rounded-full px-4 font-body text-[0.95rem] font-medium text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-bg-alt aria-[current=page]:bg-bg-alt';
+const cta =
+  'inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-5 font-mono text-sm text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-accent-ink hover:text-paper';
+---
+
+<header class="hdr2 sticky top-0 z-50 px-3 pt-3 md:px-6 md:pt-4" data-header>
+  <div class="hdr2-bar mx-auto flex max-w-[1200px] items-center justify-between gap-3 rounded-full bg-paper/95 py-2 pl-5 pr-2 ring-1 ring-ink/10 lg:backdrop-blur">
+    <a href="/" class="shrink-0" aria-label="Sauer & Saftig — Startseite">
+      <Logo variant="wordmark" tone="dark" width={120} loading="eager" />
+    </a>
+
+    <nav aria-label="Hauptnavigation" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {NAV_MAIN.map((item) => (
+          <li><a href={item.path} class={pill}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <div class="mr-3 hidden xl:block"><OpeningStatus size="sm" /></div>
+      <a href={NAV_CTA.path} class:list={[cta, 'hidden sm:inline-flex']}>{NAV_CTA.label}</a>
+
+      <details class="hdr2-mobile lg:hidden">
+        <summary
+          class="grid size-11 cursor-pointer list-none place-items-center rounded-full bg-ink text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep"
+          aria-label="Menü öffnen"
+        >
+          <svg class="icon-menu" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
+          <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </summary>
+        <div class="hdr2-panel absolute inset-x-3 top-full mt-2 rounded-[1.25rem] bg-paper p-4 shadow-[0_24px_50px_-24px_rgb(36_27_20/0.55)] ring-1 ring-ink/10 md:inset-x-6">
+          <nav aria-label="Mobile Navigation">
+            <ul class="flex flex-col">
+              {NAV_MAIN.map((item) => (
+                <li><a href={item.path} class="flex min-h-12 items-center rounded-full px-4 font-display text-2xl text-ink hover:bg-bg-alt">{item.label}</a></li>
+              ))}
+            </ul>
+          </nav>
+          <div class="mt-3 flex flex-wrap items-center gap-3 border-t border-ink/10 px-2 pt-4">
+            <a href={NAV_CTA.path} class={cta}>{NAV_CTA.label}</a>
+            <a href={phoneHref} class="inline-flex min-h-11 items-center rounded-full border-2 border-ink/20 px-4 font-mono text-sm text-ink hover:border-ink">{site.phoneDisplay}</a>
+          </div>
+          <div class="px-4 pt-4"><OpeningStatus size="sm" /></div>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<Seite />
+
+<style>
+  .hdr2 { transition: padding var(--dur-fast) var(--ease-brand); }
+  .hdr2-bar {
+    box-shadow: 0 10px 30px -20px rgb(36 27 20 / 0.45);
+    transition: padding var(--dur-fast) var(--ease-brand), box-shadow var(--dur-fast) var(--ease-brand);
+  }
+  .hdr2.is-scrolled { padding-top: 0.5rem; }
+  .hdr2.is-scrolled .hdr2-bar {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    box-shadow: 0 16px 40px -22px rgb(36 27 20 / 0.6);
+  }
+  details.hdr2-mobile > summary::-webkit-details-marker { display: none; }
+  details.hdr2-mobile[open] > summary .icon-menu { display: none; }
+  details.hdr2-mobile:not([open]) > summary .icon-close { display: none; }
+  details.hdr2-mobile:not([open]) > div { display: none; }
+  details.hdr2-mobile[open] .hdr2-panel { animation: hdr2-in var(--dur-base) var(--ease-brand) both; transform-origin: top right; }
+  @keyframes hdr2-in { from { transform: translateY(-8px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+</style>
+
+<script>
+  let bound = false;
+  function paint() {
+    document.querySelector<HTMLElement>('[data-header]')?.classList.toggle('is-scrolled', window.scrollY > 24);
+  }
+  function bind() {
+    paint();
+    if (bound) return;
+    bound = true;
+    window.addEventListener('scroll', paint, { passive: true });
+  }
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>

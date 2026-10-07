@@ -1,0 +1,69 @@
+---
+/**
+ * Alternative 1 „Karten mit Foto": Kacheln im Raster (1/2/3 Spalten). Foto oben, wo es eins
+ * gibt (Figure, echte Fotos), sonst ein Terrazzo-Feld mit Laufnummer. Preis als Plakette auf
+ * dem Bild, Marken als Chips, Allergene klein unten. Hover: Bild zoomt sanft (fig-hover).
+ */
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { formatMenuPrice } from '../../../lib/format';
+import Rahmen from './parts/Rahmen.astro';
+import { previewSections } from './parts/items';
+
+const sections = await previewSections();
+let n = 0;
+---
+
+<Rahmen
+  eyebrow="Alternative 1"
+  title="Karten mit Foto"
+  lead="Jeder Eintrag als Kachel mit Foto, wo es eins gibt — sonst ein Feld in Thekenstein mit Nummer. Der Preis sitzt als Plakette auf dem Bild. Mehr zum Gucken, weniger zum Lesen."
+  surface="bg-alt"
+>
+  <div class="flex flex-col gap-12">
+    {sections.map((s) => (
+      <section>
+        <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-ink/10 pb-4">
+          <h2 class="text-[clamp(1.75rem,4vw,2.5rem)]">{s.title}</h2>
+          <p class="max-w-[48ch] text-sm text-ink-soft">{s.intro}</p>
+        </div>
+        <ul class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {s.items.map((item) => {
+            n += 1;
+            const price = formatMenuPrice(item.price, item.priceIsPlaceholder, item.priceSuffix);
+            return (
+              <li class="group flex flex-col overflow-hidden rounded-card bg-paper shadow-[0_1px_0_rgb(36_27_20/0.06)]">
+                <div class="relative">
+                  {item.motif ? (
+                    <Figure motif={item.motif} aspect="aspect-[4/3]" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" hover imgClass="rounded-none" class="rounded-none" />
+                  ) : (
+                    <div class="tz-surface tz-surface--fine relative aspect-[4/3]" aria-hidden="true">
+                      <span class="absolute inset-0 bg-paper/55"></span>
+                      <span class="absolute left-5 top-4 font-display text-6xl text-ink/80 num-old">{String(n).padStart(2, '0')}</span>
+                    </div>
+                  )}
+                  {price && (
+                    <span class="absolute bottom-3 right-3 rounded-card bg-ink px-2.5 py-1 font-mono text-sm text-bg tabular shadow-[0_6px_16px_-8px_rgb(36_27_20/0.6)]">{price}</span>
+                  )}
+                </div>
+                <div class="flex flex-1 flex-col p-5">
+                  <div class="flex flex-wrap items-center gap-2">
+                    {item.highlight && <span class="rounded-full bg-primary px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-paper">Signature</span>}
+                    {item.veggie && <span class="rounded-full bg-secondary-soft/60 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-ink">Veggie</span>}
+                    {item.vegan && <span class="rounded-full bg-secondary-soft/60 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-ink">Vegan</span>}
+                    {item.seasonal && <span class="rounded-full border border-ink/25 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-ink-soft">{item.seasonal}</span>}
+                  </div>
+                  <h3 class="mt-3 font-display text-2xl leading-tight">{item.name}</h3>
+                  {item.description && <p class="mt-2 text-[0.95rem] text-ink-soft">{item.description}</p>}
+                  {item.allergens.length > 0 && (
+                    <p class="mt-auto pt-4 font-mono text-[12px] text-ink-soft">Allergene: {item.allergens.join(', ')}</p>
+                  )}
+                  {!price && <p class="mt-auto pt-4 font-mono text-[12px] text-ink-soft">Preis nach Anfrage</p>}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))}
+  </div>
+</Rahmen>

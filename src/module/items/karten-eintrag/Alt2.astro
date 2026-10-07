@@ -1,0 +1,71 @@
+---
+/**
+ * Alternative 2 „Gedruckte Karte": zentrierte, klassische Speisekarte auf Papier im Terrazzo-
+ * Passepartout. Name in Fraunces, Preis in Mono darunter, Beschreibung kursiv, Allergene als
+ * Buchstabenkürzel mit Legende, Signature mit ✦, Veggie mit „V". Zweispaltig ab 1024 px.
+ */
+import { formatMenuPrice } from '../../../lib/format';
+import Rahmen from './parts/Rahmen.astro';
+import { previewSections, allergenCode, ALLERGEN_CODES } from './parts/items';
+
+const sections = await previewSections();
+const usedAllergens = Array.from(new Set(sections.flatMap((s) => s.items.flatMap((i) => i.allergens))));
+---
+
+<Rahmen
+  eyebrow="Alternative 2"
+  title="Gedruckte Karte"
+  lead="Wie die Karte auf dem Tisch: mittig gesetzt, Name in der Überschriften-Schrift, Preis darunter, Allergene als Buchstaben mit Legende. Ruhig und klassisch — Signature-Einträge tragen einen kleinen Stern."
+>
+  <div class="tz-mat mx-auto max-w-[900px]">
+    <article class="bg-paper px-6 py-10 md:px-14 md:py-14">
+      <p class="text-center font-mono text-xs uppercase tracking-[0.3em] text-ink-soft">Sauer &amp; Saftig · Rerik</p>
+      <h2 class="mt-2 text-center text-[clamp(2rem,5vw,3rem)]">Die Karte</h2>
+      <span class="tz-rule mx-auto mt-4" aria-hidden="true"></span>
+
+      <div class="mt-10 grid gap-12 lg:grid-cols-2 lg:gap-x-14">
+        {sections.map((s) => (
+          <section>
+            <h3 class="text-center font-mono text-sm uppercase tracking-[0.25em] text-primary-deep">— {s.title} —</h3>
+            <p class="mx-auto mt-2 max-w-[42ch] text-center text-sm italic text-ink-soft">{s.intro}</p>
+            <ul class="mt-8 flex flex-col gap-8">
+              {s.items.map((item) => {
+                const price = formatMenuPrice(item.price, item.priceIsPlaceholder, item.priceSuffix);
+                return (
+                  <li class="text-center">
+                    <p class="font-display text-2xl leading-tight md:text-[1.7rem]">
+                      {item.highlight && <span class="mr-1 text-accent-ink" aria-label="Signature">✦</span>}
+                      {item.name}
+                      {item.allergens.length > 0 && (
+                        <sup class="ml-1 font-mono text-[11px] tracking-wider text-ink-soft" aria-label={`Allergene: ${item.allergens.join(', ')}`}>
+                          {item.allergens.map(allergenCode).join(',')}
+                        </sup>
+                      )}
+                    </p>
+                    {item.description && <p class="mx-auto mt-1.5 max-w-[46ch] text-[0.95rem] italic leading-snug text-ink-soft">{item.description}</p>}
+                    <p class="mt-2 font-mono text-base tabular">
+                      {price || 'auf Anfrage'}
+                      {(item.veggie || item.vegan || item.seasonal) && (
+                        <span class="ml-2 text-[12px] uppercase tracking-wider text-ink-soft">
+                          {item.vegan ? '· vegan' : item.veggie ? '· V' : ''}{item.seasonal ? ` · ${item.seasonal}` : ''}
+                        </span>
+                      )}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))}
+      </div>
+
+      <div class="mt-12 border-t border-dashed border-ink/25 pt-5 text-center font-mono text-[12px] leading-relaxed text-ink-soft">
+        <p>✦ Signature · V = vegetarisch</p>
+        <p class="mt-1">
+          Allergene: {usedAllergens.map((a) => `${allergenCode(a)} ${a}`).join(' · ')}
+          {Object.keys(ALLERGEN_CODES).length > usedAllergens.length && ' · weitere siehe Aushang'}
+        </p>
+      </div>
+    </article>
+  </div>
+</Rahmen>

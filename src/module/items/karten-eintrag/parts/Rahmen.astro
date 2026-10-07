@@ -1,0 +1,23 @@
+---
+/** Ruhiger Vorschau-Rahmen für die Karten-Einträge: Kopfzeile, Inhalt, Preislegende. */
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  /** Hintergrund der Fläche, auf der die Einträge liegen */
+  surface?: 'bg' | 'bg-alt';
+}
+const { eyebrow, title, lead, surface = 'bg' } = Astro.props;
+---
+
+<main class:list={['min-h-screen', surface === 'bg-alt' ? 'bg-bg-alt' : 'bg-bg']}>
+  <div class="mx-auto max-w-[1100px] px-4 py-10 md:px-8 md:py-14">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Karten-Eintrag · {eyebrow}</p>
+    <h1 class="mt-2 text-[clamp(1.75rem,4vw,2.5rem)]">{title}</h1>
+    <p class="prose-measure mt-3 text-ink-soft">{lead}</p>
+    <div class="mt-10">
+      <slot />
+    </div>
+    <p class="mt-10 font-mono text-sm text-ink-soft">° Beispielpreise — die echte Karte kommt mit dem Küchen-Update. * Kennzeichnung siehe Aushang im Café.</p>
+  </div>
+</main>
