@@ -49,6 +49,10 @@ ihrem Präfix (`/module/…`, `/checkliste`), API-Aufrufe mit `/api/…`.
   - **Vor Go-Live:** alles außer `/login`, `/logout`, `/healthz`, `/api/golive`, `/robots.txt` und Asset-Pfaden
     (`/_astro/`, `/brand/`, `/favicon.ico`, `/site.webmanifest`) verlangt eine Session → sonst 302 auf
     `/login?next=<pfad>`. Header `X-Robots-Tag: noindex, nofollow, noarchive`; `robots.txt` = `Disallow: /`.
+  - **Countdown-Bühne (seit 07.10.2026, Wunsch Konrad):** Vor Go-Live zeigt `/` OHNE Session öffentlich die große
+    Countdown-Seite (`src/pages/countdown.astro`, Login nur als kleiner Link unten rechts); mit Session die echte Startseite.
+    `/countdown` zeigt sie für alle (zum Präsentieren auch angemeldet). Bei 0 wartet sie auf `/api/golive` → `live` und lädt
+    `/` neu → Website erscheint. Ab Go-Live: `/countdown` → 302 `/`. Vollbild per Doppelklick/Taste F, Wake Lock.
   - **Ab Go-Live:** keine Session nötig, kein X-Robots-Tag, `robots.txt` = `Allow: /` +
     `Sitemap: https://sauerundsaftig.de/sitemap-index.xml`.
 - **Tool-Hosts** (`checkliste.…` → Präfix `checkliste`, `module.…` → Präfix `module`): immer Session.

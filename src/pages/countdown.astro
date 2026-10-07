@@ -1,0 +1,400 @@
+---
+/**
+ * /countdown — Countdown-Bühne bis zum Go-Live (Präsentation). Der Server liefert sie auf
+ * sauerundsaftig.de vor dem Go-Live öffentlich unter "/" (ohne Session) und immer unter
+ * /countdown aus; ab Go-Live zeigt "/" die echte Startseite. Bei 0 wartet die Seite, bis
+ * /api/golive „live" meldet, und lädt dann die Startseite — „zack, Website da".
+ * Login nur als kleiner, unauffälliger Link. Vollbild per Doppelklick oder Taste F,
+ * Bildschirm bleibt per Wake Lock an. Bewusst neutral: kein Anlass, keine Namen.
+ */
+import '../styles/a.css';
+import Logo from '../components/shared/Logo.astro';
+import site from '../data/site.json';
+import { terrazzoCssUrl } from '../lib/textures';
+
+const tzUrl = await terrazzoCssUrl();
+const goLiveAt = (site as { goLiveAt?: string }).goLiveAt ?? '2026-10-10T16:00:00+02:00';
+const goLiveDate = new Date(goLiveAt);
+const dateLabel = new Intl.DateTimeFormat('de-DE', {
+  timeZone: 'Europe/Berlin',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(goLiveDate);
+const timeLabel = new Intl.DateTimeFormat('de-DE', {
+  timeZone: 'Europe/Berlin',
+  hour: '2-digit',
+  minute: '2-digit',
+}).format(goLiveDate);
+const units = [
+  { key: 'd', label: 'Tage' },
+  { key: 'h', label: 'Stunden' },
+  { key: 'm', label: 'Minuten' },
+  { key: 's', label: 'Sekunden' },
+];
+---
+
+<!doctype html>
+<html lang="de" style={`--tz-url:${tzUrl}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sauer & Saftig — gleich geht's los</title>
+    <meta name="description" content={`Café und Backstube in der ${site.address.street}, ${site.address.city}. Die Website startet am ${dateLabel} um ${timeLabel} Uhr.`} />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#F7F2E8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/brand/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/favicon-180.png" />
+  </head>
+  <body class="cd-body bg-bg font-body text-ink antialiased" data-countdown data-golive-at={goLiveAt}>
+    <span class="tz-band cd-band-top" aria-hidden="true"></span>
+
+    <main class="cd-main">
+      <div class="cd-logo"><Logo variant="lockup" tone="dark" width={280} loading="eager" /></div>
+
+      <p class="cd-eyebrow">Café &amp; Backstube · {site.address.city}</p>
+      <h1 class="cd-title" data-cd-title>Gleich geht's los.</h1>
+
+      <div class="cd-clock" role="timer" aria-labelledby="cd-when" data-cd-clock>
+        {units.map((u) => (
+          <div class="cd-unit" data-cd-unit={u.key}>
+            <span class="cd-num" data-cd-num={u.key}>00</span>
+            <span class="cd-label">{u.label}</span>
+          </div>
+        ))}
+      </div>
+      <p class="cd-live" data-cd-live hidden>Jetzt live.</p>
+
+      <p id="cd-when" class="cd-when">
+        <span class="tz-rule" aria-hidden="true"></span>
+        Am {dateLabel} um {timeLabel} Uhr geht die neue Website online.
+      </p>
+      <p class="sr-only" aria-live="polite" data-cd-sr></p>
+    </main>
+
+    <footer class="cd-foot">
+      <p>{site.address.street} · {site.address.city} · <a href={`tel:${site.phone.replace(/\s+/g, '')}`}>{site.phoneDisplay}</a></p>
+      <a href="/login?next=%2F" class="cd-login">Anmelden</a>
+    </footer>
+    <span class="tz-band" aria-hidden="true"></span>
+
+    <style>
+      .cd-body {
+        display: flex;
+        min-height: 100dvh;
+        flex-direction: column;
+        transition: opacity 600ms var(--ease-brand);
+      }
+      /* Niedrige Bildschirme (Laptop/Beamer bis 800 px Höhe): Zusatzzeile weglassen, damit nichts scrollt */
+      @media (max-height: 800px) and (min-width: 640px) {
+        .cd-eyebrow {
+          display: none;
+        }
+      }
+      .cd-band-top {
+        height: clamp(16px, min(4vw, 5vh), 56px);
+      }
+      .cd-body.is-leaving {
+        opacity: 0;
+      }
+      .cd-main {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(0.5rem, 1.8vh, 1.5rem);
+        padding: clamp(1rem, 4vh, 3.5rem) 1rem;
+        text-align: center;
+      }
+      .cd-logo {
+        /* Breite UND Höhe begrenzen: Beamer/Laptop (16:9) zeigen alles ohne Scrollen */
+        width: clamp(120px, min(22vw, 24vh), 280px);
+      }
+      .cd-logo :global(img) {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .cd-eyebrow {
+        margin-top: clamp(0.25rem, 1.5vh, 1.5rem);
+        font-family: var(--font-mono);
+        font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--color-ink-soft);
+      }
+      .cd-title {
+        font-size: clamp(2rem, min(5.2vw, 7.5vh), 4.5rem);
+        line-height: 1;
+      }
+      .cd-clock {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: clamp(0.75rem, 3.5vw, 3.5rem);
+        margin-top: clamp(0.25rem, 2.5vh, 2rem);
+      }
+      .cd-unit {
+        display: flex;
+        min-width: 1.6ch;
+        flex-direction: column;
+        align-items: center;
+      }
+      .cd-unit[hidden] {
+        display: none;
+      }
+      .cd-num {
+        font-family: var(--font-display);
+        font-size: clamp(3.5rem, min(14vw, 20vh), 13rem);
+        line-height: 0.9;
+        font-variant-numeric: tabular-nums lining-nums;
+        font-feature-settings: 'tnum' 1, 'lnum' 1;
+        font-variation-settings: 'SOFT' 40, 'WONK' 0, 'opsz' 144;
+        letter-spacing: -0.03em;
+      }
+      .cd-label {
+        margin-top: 0.6rem;
+        font-family: var(--font-mono);
+        font-size: clamp(0.65rem, 1vw, 0.85rem);
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--color-ink-soft);
+      }
+      .cd-live {
+        font-family: var(--font-display);
+        font-size: clamp(3.75rem, min(14vw, 22vh), 13rem);
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+        color: var(--color-primary-deep);
+      }
+      .cd-when {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: clamp(0.5rem, 2.5vh, 2rem);
+        max-width: 48ch;
+        text-wrap: balance;
+        font-size: clamp(1rem, 1.5vw, 1.25rem);
+        color: var(--color-ink-soft);
+      }
+      .cd-foot {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem 1.5rem;
+        padding: 0.75rem clamp(1rem, 3vw, 2rem) 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--color-ink-soft);
+      }
+      .cd-foot a[href^='tel:'] {
+        color: inherit;
+        text-decoration: none;
+      }
+      /* Login bewusst leise: klein, blass, erst beim Hover/Fokus deutlich */
+      .cd-login {
+        display: inline-flex;
+        min-height: 2.75rem;
+        align-items: center;
+        padding: 0 0.25rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgb(36 27 20 / 0.32);
+        text-decoration: none;
+        transition: color var(--dur-fast) var(--ease-brand);
+      }
+      .cd-login:hover,
+      .cd-login:focus-visible {
+        color: var(--color-ink);
+      }
+      /* Vollbild/Präsentation: Mauszeiger verschwindet nach kurzer Ruhe */
+      .cd-body.is-idle,
+      .cd-body.is-idle * {
+        cursor: none;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .cd-body.is-final .cd-unit[data-cd-unit='s'] .cd-num {
+          animation: cd-pulse 1s var(--ease-brand) infinite;
+          color: var(--color-primary-deep);
+        }
+        .cd-live:not([hidden]) {
+          animation: cd-in 700ms var(--ease-brand) both;
+        }
+      }
+      @keyframes cd-pulse {
+        0% {
+          transform: scale(1.08);
+        }
+        60%,
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes cd-in {
+        from {
+          opacity: 0;
+          transform: translateY(0.2em) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const body = document.body;
+      const target0 = Date.parse(body.dataset.goliveAt ?? '');
+      let target = target0;
+      let offset = 0; // Serverzeit − Clientzeit
+      let finishing = false;
+      let lastMinute = -1;
+      let timer: number | undefined;
+
+      const nums = new Map<string, HTMLElement>();
+      body.querySelectorAll<HTMLElement>('[data-cd-num]').forEach((el) => nums.set(el.dataset.cdNum!, el));
+      const dayUnit = body.querySelector<HTMLElement>('[data-cd-unit="d"]');
+      const clock = body.querySelector<HTMLElement>('[data-cd-clock]')!;
+      const live = body.querySelector<HTMLElement>('[data-cd-live]')!;
+      const title = body.querySelector<HTMLElement>('[data-cd-title]')!;
+      const sr = body.querySelector<HTMLElement>('[data-cd-sr]')!;
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const now = () => Date.now() + offset;
+
+      async function goLiveState(): Promise<{ live: boolean; goLiveAt: number } | null> {
+        try {
+          const t0 = Date.now();
+          const res = await fetch('/api/golive', { cache: 'no-store', headers: { accept: 'application/json' } });
+          if (!res.ok) return null;
+          const j = await res.json();
+          const t1 = Date.now();
+          const server = Date.parse(j.now);
+          if (Number.isFinite(server)) offset = server - (t0 + t1) / 2;
+          const at = Date.parse(j.goLiveAt);
+          return { live: j.live === true, goLiveAt: Number.isFinite(at) ? at : target };
+        } catch {
+          return null;
+        }
+      }
+
+      function render() {
+        const left = Math.max(0, target - now());
+        const s = Math.ceil(left / 1000);
+        const d = Math.floor(s / 86400);
+        const values: Record<string, number> = { d, h: Math.floor(s / 3600) % 24, m: Math.floor(s / 60) % 60, s: s % 60 };
+        if (dayUnit) dayUnit.hidden = d === 0;
+        for (const [k, el] of nums) {
+          const v = k === 'd' ? String(values[k]) : pad(values[k]);
+          if (el.textContent !== v) el.textContent = v;
+        }
+        body.classList.toggle('is-final', s > 0 && s <= 10);
+        const minute = Math.floor(s / 60);
+        if (minute !== lastMinute) {
+          lastMinute = minute;
+          sr.textContent = s > 0 ? `Noch ${d ? `${d} Tage, ` : ''}${values.h} Stunden und ${values.m} Minuten.` : '';
+        }
+        return left;
+      }
+
+      function tick() {
+        const left = render();
+        if (left <= 0) {
+          finish();
+          return;
+        }
+        // auf die nächste volle Sekunde ausrichten → Ziffern springen exakt
+        timer = window.setTimeout(tick, ((left % 1000) || 1000) + 15);
+      }
+
+      async function finish() {
+        if (finishing) return;
+        finishing = true;
+        window.clearTimeout(timer);
+        const started = Date.now();
+        // Warten, bis der Server die Seite freigegeben hat („Jetzt live." erst dann), dann zur Startseite
+        for (;;) {
+          const state = await goLiveState();
+          if (state?.live || (!state && Date.now() - started > 4000)) {
+            clock.hidden = true;
+            title.hidden = true;
+            live.hidden = false;
+            sr.textContent = 'Jetzt live.';
+            await new Promise((r) => setTimeout(r, 1200));
+            body.classList.add('is-leaving');
+            await new Promise((r) => setTimeout(r, 450));
+            location.replace('/');
+            return;
+          }
+          await new Promise((r) => setTimeout(r, Date.now() - started < 30000 ? 500 : 5000));
+        }
+      }
+
+      async function sync() {
+        const state = await goLiveState();
+        if (state) {
+          target = state.goLiveAt;
+          if (state.live) {
+            finish();
+            return;
+          }
+        }
+        if (!finishing) {
+          window.clearTimeout(timer);
+          tick();
+        }
+      }
+
+      if (Number.isFinite(target0)) {
+        render();
+        tick();
+      }
+      sync();
+      // Nach Standby/Tab-Wechsel neu abgleichen, sonst alle 5 Minuten
+      window.setInterval(sync, 5 * 60 * 1000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          sync();
+          requestWakeLock();
+        }
+      });
+
+      // Präsentation: Bildschirm wach halten
+      let wakeLock: { release(): Promise<void> } | null = null;
+      async function requestWakeLock() {
+        try {
+          const nav = navigator as Navigator & { wakeLock?: { request(type: 'screen'): Promise<{ release(): Promise<void> }> } };
+          if (nav.wakeLock && !wakeLock) {
+            wakeLock = await nav.wakeLock.request('screen');
+            (wakeLock as unknown as EventTarget).addEventListener?.('release', () => (wakeLock = null));
+          }
+        } catch {
+          /* nicht unterstützt oder verweigert */
+        }
+      }
+      requestWakeLock();
+
+      // Vollbild per Doppelklick oder Taste F
+      function toggleFullscreen() {
+        if (document.fullscreenElement) document.exitFullscreen?.();
+        else document.documentElement.requestFullscreen?.().catch(() => {});
+      }
+      document.addEventListener('dblclick', toggleFullscreen);
+      document.addEventListener('keydown', (e) => {
+        if ((e.key === 'f' || e.key === 'F') && !e.metaKey && !e.ctrlKey && !e.altKey) toggleFullscreen();
+      });
+
+      // Mauszeiger nach 2,5 s Ruhe ausblenden
+      let idle: number | undefined;
+      document.addEventListener('mousemove', () => {
+        body.classList.remove('is-idle');
+        window.clearTimeout(idle);
+        idle = window.setTimeout(() => body.classList.add('is-idle'), 2500);
+      });
+    </script>
+  </body>
+</html>

@@ -256,6 +256,10 @@ export function createApp({ config, store, staticFiles, passwords, now = () => n
           return;
         }
         if (decision.authRequired && !user()) {
+          if (decision.anonCandidates) {
+            await serveStaticOr404(req, res, decision, decision.anonCandidates);
+            return;
+          }
           redirect(res, 302, `/login?next=${encodeURIComponent(encodePath(decision.segments) + search)}`, {
             'Cache-Control': 'private, no-store',
           });

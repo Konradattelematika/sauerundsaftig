@@ -92,6 +92,9 @@ export function robotsTxt(allow, host) {
  * @param {object} config  aus loadConfig()
  * @param {Date} now
  */
+/** Countdown-Seite (src/pages/countdown.astro) — Live-Host vor Go-Live */
+export const COUNTDOWN_PAGE = '/countdown/index.html';
+
 export function route(req, config, now) {
   const { method, host, rawPath } = req;
   const search = req.search ?? '';
@@ -129,6 +132,13 @@ export function route(req, config, now) {
     return { ...base, type: 'redirect', status: 301, location: encodePath(segments.slice(1)) + search };
   }
 
+  // Countdown-Bühne für die Präsentation: vor Go-Live öffentlich (auch angemeldet erreichbar),
+  // ab Go-Live → Startseite. Ohne Session zeigt "/" vor Go-Live ebenfalls den Countdown (s. u.).
+  if (hostInfo.kind === 'live' && p === '/countdown') {
+    if (publicLive) return { ...base, type: 'redirect', status: 302, location: '/' };
+    return { ...base, type: 'static', candidates: [COUNTDOWN_PAGE], notFound: ['/404.html'], asset: false, authRequired: false };
+  }
+
   if (segments[0] === 'api') {
     // Live-Host: nur /api/golive (oben). Alles andere existiert dort nicht.
     if (hostInfo.kind === 'live') return { ...base, type: 'api-blocked' };
@@ -159,5 +169,7 @@ export function route(req, config, now) {
     }
   }
 
-  return { ...base, type: 'static', candidates, notFound, asset, authRequired };
+  // Vor Go-Live: Startseite ohne Session = Countdown statt Login-Umleitung (Login bleibt unter /login)
+  const anonCandidates = hostInfo.kind === 'live' && authRequired && p === '/' ? [COUNTDOWN_PAGE] : undefined;
+  return { ...base, type: 'static', candidates, notFound, asset, authRequired, anonCandidates };
 }

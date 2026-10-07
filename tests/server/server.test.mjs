@@ -146,7 +146,11 @@ describe('Live-Host ab Go-Live', () => {
   it('SUS_FORCE_PRIVATE hält die Seite zu', async () => {
     const priv = await startTestServer({ SUS_FORCE_PRIVATE: '1' }, { start: new Date('2027-01-01T00:00:00Z') });
     try {
-      expect((await request(priv.port, { host: LIVE, path: '/' })).status).toBe(302);
+      // Startseite zeigt weiter den Countdown, Unterseiten bleiben hinter dem Login
+      const home = await request(priv.port, { host: LIVE, path: '/' });
+      expect(home.status).toBe(200);
+      expect(home.text).toContain('data-countdown');
+      expect((await request(priv.port, { host: LIVE, path: '/karte' })).status).toBe(302);
       expect((await request(priv.port, { host: LIVE, path: '/api/golive' })).json.live).toBe(false);
       expect((await request(priv.port, { host: LIVE, path: '/robots.txt' })).text).toContain('Disallow: /');
     } finally {
