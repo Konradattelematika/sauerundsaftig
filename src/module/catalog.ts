@@ -3,7 +3,7 @@
  * keine zentrale Liste, neue Elemente brauchen nur ihren Ordner.
  */
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
-import { GROUP_LABELS, type ModuleGroup, type ModuleItem, type OptionId } from './types';
+import { GROUP_LABELS, type BoardItemData, type ModuleGroup, type ModuleItem, type OptionId } from './types';
 
 const metas = import.meta.glob<{ default: ModuleItem }>('./items/*/meta.ts', { eager: true });
 const components = import.meta.glob<{ default: AstroComponentFactory }>('./items/*/*.astro', { eager: true });
@@ -36,4 +36,27 @@ export function getOptionComponent(itemId: string, optionId: OptionId): AstroCom
 /** URL der Einzelvorschau (für iframes und „Vollbild") */
 export function previewHref(itemId: string, optionId: OptionId): string {
   return `/module/vorschau/${itemId}/${optionId}`;
+}
+
+/** URL der Detailseite im Board (immer mit /module-Präfix, s. LIVE-PLAN §2.1) */
+export function itemHref(itemId: string): string {
+  return `/module/${itemId}`;
+}
+
+/** Vorheriges/nächstes Element in Katalogreihenfolge (für die Vor/Zurück-Navigation) */
+export function neighbors(itemId: string): { prev?: ModuleItem; next?: ModuleItem } {
+  const i = ITEMS.findIndex((it) => it.id === itemId);
+  if (i < 0) return {};
+  return { prev: ITEMS[i - 1], next: ITEMS[i + 1] };
+}
+
+/** Kompakte Daten für den Client (JSON im Markup) */
+export function toBoardData(item: ModuleItem): BoardItemData {
+  return {
+    id: item.id,
+    title: item.title,
+    question: item.question,
+    group: item.group,
+    options: item.options.map((o) => ({ id: o.id, title: o.title })),
+  };
 }

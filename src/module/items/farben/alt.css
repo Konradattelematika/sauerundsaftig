@@ -1,0 +1,99 @@
+/*
+ * Farbwelt — drei Alternativen zu „Krume" (Live-Tokens in src/styles/a.css).
+ * Greift nur unter html[data-alt-farben="alt-1|alt-2|alt-3"]; überschreibt alle --color-*-Tokens,
+ * damit jede Tailwind-Utility (bg-bg, text-ink, border-ink/10 …) mitzieht.
+ * Kontraste (WCAG 2, berechnet): ink/ink-soft auf bg, bg-alt, paper jeweils ≥ 6,4:1;
+ * bg auf ink ≥ 15:1; Signalfarben ≥ 4,9:1. Sanddorn-Button (weiß auf accent): 3,6–4,0:1
+ * (Live: 3,0:1) — großer Mono-Text, AA-large.
+ */
+
+/* ---------- Alt 1 · Ostsee-Morgen (kühl, hell, Salzhaff + Dünengras) ---------- */
+html[data-alt-farben='alt-1'] {
+  --color-bg: #f3f4f0;
+  --color-bg-alt: #e3e8e2;
+  --color-ink: #16201f;
+  --color-ink-soft: #45544f;
+  --color-primary: #2f5a5e;
+  --color-primary-deep: #1f4044;
+  --color-secondary: #5f7352;
+  --color-secondary-soft: #cfd6c6;
+  --color-accent: #d9641a;
+  --color-accent-ink: #a3480c;
+  --color-open: #3a6b2c;
+  --color-closed: #a53d2f;
+  --color-paper: #fbfbf8;
+}
+html[data-alt-farben='alt-1'] .tz-text {
+  background-color: #4c6b70;
+  background-image: linear-gradient(rgb(47 90 94 / 0.62), rgb(47 90 94 / 0.62)), var(--tz-url);
+}
+
+/* ---------- Alt 2 · Nachtbackstube (dunkel, warm, Ofenglut) ---------- */
+html[data-alt-farben='alt-2'] {
+  --color-bg: #1b1511;
+  --color-bg-alt: #241c16;
+  --color-ink: #f3e9d9;
+  --color-ink-soft: #cdbca6;
+  --color-primary: #e3a35a;
+  --color-primary-deep: #c98a3f;
+  --color-secondary: #7fa39a;
+  --color-secondary-soft: #3b4d48;
+  --color-accent: #cf5f14;
+  --color-accent-ink: #b35a10;
+  --color-open: #9ccf78;
+  --color-closed: #f08b74;
+  --color-paper: #2b221b;
+  color-scheme: dark;
+}
+/* Linien/Unterstreichungen, die in a.css fest auf Röstkern-RGB stehen, auf Creme umstellen */
+html[data-alt-farben='alt-2'] .link-ul {
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(rgb(243 233 217 / 0.3), rgb(243 233 217 / 0.3));
+}
+html[data-alt-farben='alt-2'] .text-bg .link-ul,
+html[data-alt-farben='alt-2'] .link-ul.link-ul--light {
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(rgb(27 21 17 / 0.35), rgb(27 21 17 / 0.35));
+}
+html[data-alt-farben='alt-2'] .header-a.is-scrolled {
+  box-shadow: 0 1px 0 rgb(243 233 217 / 0.08), 0 8px 24px -16px rgb(0 0 0 / 0.6);
+}
+html[data-alt-farben='alt-2'] .tz-band,
+html[data-alt-farben='alt-2'] .tz-mat,
+html[data-alt-farben='alt-2'] .tz-offset::before,
+html[data-alt-farben='alt-2'] .tz-rule,
+html[data-alt-farben='alt-2'] .tz-tag {
+  border-color: rgb(243 233 217 / 0.14);
+  box-shadow: inset 0 0 0 1px rgb(243 233 217 / 0.12);
+}
+html[data-alt-farben='alt-2'] .tz-tag {
+  /* Plakette: Textur leicht abgedunkelt, Creme-Schrift */
+  background-image: linear-gradient(rgb(27 21 17 / 0.55), rgb(27 21 17 / 0.55)), var(--tz-url);
+}
+html[data-alt-farben='alt-2'] .tz-text {
+  background-color: #8fb0a7;
+  background-image: linear-gradient(rgb(127 163 154 / 0.5), rgb(127 163 154 / 0.5)), var(--tz-url);
+}
+
+/* ---------- Alt 3 · Beere & Salbei (rosiges Papier, Beerenrot, Salbei) ---------- */
+html[data-alt-farben='alt-3'] {
+  --color-bg: #faf4f0;
+  --color-bg-alt: #f1e3dc;
+  --color-ink: #2a1c1e;
+  --color-ink-soft: #5b4649;
+  --color-primary: #8a4454;
+  --color-primary-deep: #5e2a38;
+  --color-secondary: #5c7a6b;
+  --color-secondary-soft: #c5d3c8;
+  --color-accent: #d4661a;
+  --color-accent-ink: #9a4d0b;
+  --color-open: #3f6a28;
+  --color-closed: #a6402f;
+  --color-paper: #fffaf7;
+}
+html[data-alt-farben='alt-3'] .tz-text {
+  background-color: #7f5a63;
+  background-image: linear-gradient(rgb(138 68 84 / 0.58), rgb(138 68 84 / 0.58)), var(--tz-url);
+}

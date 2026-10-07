@@ -1,0 +1,89 @@
+/*
+ * Formen & Ecken — drei Alternativen zu „leicht gerundet" (--radius-card 0.375rem in src/styles/a.css).
+ * Greift nur unter html[data-alt-formen="alt-1|alt-2|alt-3"]. Variante A nutzt überall
+ * `rounded-card` (Buttons, Bilder, Kästen, Menü-Button) und `rounded-full` (Badges, Status-Punkt);
+ * das Material „Theke" bringt eigene Radien mit (tz-tag, tz-rule, tz-blob).
+ */
+
+/* ---------- Alt 1 · Scharfkantig (0 Radius, kräftigere Linien) ---------- */
+html[data-alt-formen='alt-1'] {
+  --radius-card: 0;
+}
+html[data-alt-formen='alt-1'] .rounded-full:not(.status-dot) {
+  border-radius: 0;
+}
+html[data-alt-formen='alt-1'] .tz-tag,
+html[data-alt-formen='alt-1'] .tz-rule,
+html[data-alt-formen='alt-1'] .tz-blob {
+  border-radius: 0;
+}
+html[data-alt-formen='alt-1'] .tz-blob {
+  transform: rotate(6deg);
+}
+/* Trennlinien deutlicher: 10 % → 24 % Röstkern */
+html[data-alt-formen='alt-1'] .border-ink\/10,
+html[data-alt-formen='alt-1'] .divide-ink\/10 > :not(:last-child) {
+  border-color: color-mix(in oklab, var(--color-ink) 24%, transparent);
+}
+html[data-alt-formen='alt-1'] .border-bg\/15 {
+  border-color: color-mix(in oklab, var(--color-bg) 30%, transparent);
+}
+html[data-alt-formen='alt-1'] .tz-band {
+  border-top-color: color-mix(in oklab, var(--color-ink) 24%, transparent);
+  border-bottom-color: color-mix(in oklab, var(--color-ink) 24%, transparent);
+}
+
+/* ---------- Alt 2 · Weich gerundet (große Radien, Pillen-Buttons) ---------- */
+html[data-alt-formen='alt-2'] {
+  --radius-card: 1.25rem;
+}
+html[data-alt-formen='alt-2'] :is(a, button, summary).rounded-card {
+  border-radius: 999px;
+}
+html[data-alt-formen='alt-2'] .tz-tag {
+  border-radius: 999px;
+  padding-inline: 0.9rem;
+}
+html[data-alt-formen='alt-2'] .tz-rule {
+  border-radius: 999px;
+}
+html[data-alt-formen='alt-2'] .tz-mat,
+html[data-alt-formen='alt-2'] .tz-offset::before,
+html[data-alt-formen='alt-2'] .tz-frame::after {
+  border-radius: 1.25rem;
+}
+html[data-alt-formen='alt-2'] .tz-mat > *,
+html[data-alt-formen='alt-2'] .tz-offset > * {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+/* ---------- Alt 3 · Handgeformt (asymmetrische Laib-Ecken) ---------- */
+html[data-alt-formen='alt-3'] {
+  --radius-card: 1.5rem 0.25rem 1.5rem 0.25rem;
+}
+html[data-alt-formen='alt-3'] :is(a, button, summary).rounded-card {
+  border-radius: 1.25rem 0.25rem 1.25rem 0.25rem;
+}
+html[data-alt-formen='alt-3'] .rounded-full:not(.status-dot) {
+  border-radius: 0.75rem 0.125rem 0.75rem 0.125rem;
+}
+html[data-alt-formen='alt-3'] .tz-tag {
+  border-radius: 0.9rem 0.125rem 0.9rem 0.125rem;
+}
+html[data-alt-formen='alt-3'] .tz-rule {
+  border-radius: 0.4rem 0 0.4rem 0;
+}
+html[data-alt-formen='alt-3'] .tz-blob {
+  border-radius: 62% 38% 60% 40% / 40% 60% 40% 60%;
+}
+html[data-alt-formen='alt-3'] .tz-mat,
+html[data-alt-formen='alt-3'] .tz-offset::before,
+html[data-alt-formen='alt-3'] .tz-frame::after {
+  border-radius: 1.5rem 0.25rem 1.5rem 0.25rem;
+}
+html[data-alt-formen='alt-3'] .tz-mat > *,
+html[data-alt-formen='alt-3'] .tz-offset > * {
+  border-radius: 1.25rem 0.25rem 1.25rem 0.25rem;
+  overflow: hidden;
+}

@@ -1,0 +1,57 @@
+/*
+ * Schriften — drei Alternativen zu Fraunces / General Sans / Space Mono (Live in src/styles/a.css).
+ * Greift nur unter html[data-alt-schriften="alt-1|alt-2|alt-3"]. Die @font-face-Regeln sind
+ * global, geladen wird eine Schrift aber erst, wenn sie tatsächlich verwendet wird.
+ * Fraunces' Variationsachsen (SOFT/WONK/opsz in a.css) werden je Alternative neutralisiert.
+ */
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource-variable/inter-tight/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+@import '@fontsource/young-serif/400.css';
+@import '@fontsource-variable/figtree/wght.css';
+@import '@fontsource-variable/bricolage-grotesque/standard.css'; /* wght + wdth + opsz */
+@import '../../../styles/fonts-satoshi.css';
+
+/* ---------- Alt 1 · Nordisch klar (Instrument Serif + Inter Tight + JetBrains Mono) ---------- */
+html[data-alt-schriften='alt-1'] {
+  --font-display: 'Instrument Serif', 'Georgia', serif;
+  --font-body: 'Inter Tight Variable', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'Courier New', monospace;
+}
+html[data-alt-schriften='alt-1'] :is(.font-display, h1, h2) {
+  font-variation-settings: normal;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+}
+html[data-alt-schriften='alt-1'] body {
+  letter-spacing: 0.005em;
+}
+
+/* ---------- Alt 2 · Warm & rund (Young Serif + Figtree + Space Mono) ---------- */
+html[data-alt-schriften='alt-2'] {
+  --font-display: 'Young Serif', 'Georgia', serif;
+  --font-body: 'Figtree Variable', 'Segoe UI', sans-serif;
+}
+html[data-alt-schriften='alt-2'] :is(.font-display, h1, h2) {
+  font-variation-settings: normal;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+}
+
+/* ---------- Alt 3 · Plakativ & jung (Bricolage Grotesque + Satoshi + JetBrains Mono) ---------- */
+html[data-alt-schriften='alt-3'] {
+  --font-display: 'Bricolage Grotesque Variable', 'Arial Black', sans-serif;
+  --font-body: 'Satoshi', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'Courier New', monospace;
+}
+html[data-alt-schriften='alt-3'] :is(.font-display, h1, h2) {
+  font-variation-settings: 'opsz' 96, 'wdth' 100;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+html[data-alt-schriften='alt-3'] body {
+  font-weight: 450;
+}

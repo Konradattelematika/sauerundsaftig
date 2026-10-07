@@ -1,0 +1,69 @@
+---
+/**
+ * Hülle der Board-Seiten (Übersicht + Detail) auf module.sauerundsaftig.de.
+ * Krume-Look (Tokens aus a.css), aber zurückhaltend — die Vorschauen stehen im Mittelpunkt.
+ * Kopfzeile: Logo (→ Übersicht), Name des angemeldeten Users (Client füllt ihn aus /api/me), Abmelden.
+ * Die Seite gibt ihre Katalogdaten als JSON mit; die Client-Logik (board-client.ts) liest sie
+ * zusammen mit data-board-page und übernimmt Bewertungen, Kommentare, Entscheidungen, Polling.
+ */
+import '../styles/a.css';
+import './board.css';
+import Logo from '../components/shared/Logo.astro';
+import { terrazzoCssUrl } from '../lib/textures';
+
+interface Props {
+  title: string;
+  page: 'index' | 'item';
+  /** Katalogdaten für den Client (wird als JSON in die Seite geschrieben) */
+  data: unknown;
+}
+const { title, page, data } = Astro.props;
+const tzUrl = await terrazzoCssUrl();
+const json = JSON.stringify(data).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang="de" style={`--tz-url:${tzUrl}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>{title}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+  </head>
+  <body class="board bg-bg text-ink" data-board-page={page}>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+    <header class="board-head">
+      <div class="board-wrap flex items-center justify-between gap-4 py-2.5">
+        <a href="/module" class="inline-flex min-h-11 shrink-0 items-center" aria-label="Modul-Board — zur Übersicht">
+          <Logo variant="lockup" tone="dark" width={112} loading="eager" />
+        </a>
+        <p class="hidden font-mono text-xs uppercase tracking-[0.25em] text-ink-soft sm:block">Modul-Board</p>
+        <div class="flex items-center gap-2 sm:gap-4">
+          <span class="max-w-[9rem] truncate font-mono text-sm text-ink-soft sm:max-w-none" data-board-user></span>
+          <a href="/logout" class="board-btn board-btn--ghost">Abmelden</a>
+        </div>
+      </div>
+      <span class="tz-band" aria-hidden="true"></span>
+    </header>
+
+    <main id="main" class="board-wrap pb-16 pt-6 md:pb-24 md:pt-10">
+      <slot />
+    </main>
+
+    <footer class="border-t border-ink/10">
+      <div class="board-wrap flex flex-wrap items-center justify-between gap-2 py-5 font-mono text-[11px] uppercase tracking-widest text-ink-soft">
+        <p>Sauer &amp; Saftig · Modul-Board</p>
+        <p>Zeiten in Europe/Berlin</p>
+      </div>
+    </footer>
+
+    <div class="board-toast" role="status" aria-live="polite" data-board-toast hidden></div>
+    <script type="application/json" id="sus-board-data" set:html={json} />
+    <script>
+      import { initBoard } from './board-client';
+      initBoard();
+    </script>
+  </body>
+</html>

@@ -2,20 +2,124 @@
 /**
  * Musterseite: kompakte Startseite aus echten Bausteinen von Variante A — Kontext für die
  * Token-Elemente (Farben, Schriften, Formen, Muster). Wird in PreviewShell mit gesetztem
- * data-alt-<id>-Attribut gerendert. (Skelett; M1 darf ausbauen.)
+ * data-alt-<id>-Attribut gerendert.
+ *
+ * Reihenfolge so gewählt, dass alle Gestaltungsgrößen oben sichtbar sind: Header, Bühne mit
+ * H1/Fließtext/allen Button-Stilen und Foto im Terrazzo-Passepartout, Material-Zeile (Plakette,
+ * Regel, Fläche, Textur-Wort), Speisekarten-Ausschnitt mit echten Einträgen, dann die Startseiten-
+ * Module (Heute frisch, Schnecken, Besuch, Stimmen) und der Footer. Bestehende A-Komponenten
+ * werden nur verwendet, nicht verändert.
  */
+import { getEntry } from 'astro:content';
 import Header from '../variants/a-krume/components/Header.astro';
 import Footer from '../variants/a-krume/components/Footer.astro';
+import Figure from '../variants/a-krume/components/Figure.astro';
+import MenuItemsList from '../variants/a-krume/components/MenuItemsList.astro';
 import HeuteFrischBoard from '../variants/a-krume/components/HeuteFrischBoard.astro';
 import SchneckenTeaser from '../variants/a-krume/components/SchneckenTeaser.astro';
 import VisitModule from '../variants/a-krume/components/VisitModule.astro';
 import SocialProof from '../variants/a-krume/components/SocialProof.astro';
+import OpeningStatus from '../components/shared/OpeningStatus.astro';
+import site from '../data/site.json';
+import { btnAccent, btnPrimary, btnSecondary, btnGhost, linkArrow, arrowIcon } from '../variants/a-krume/lib/ui';
 
 const base = '';
+const kuchen = await getEntry('menu', 'kuchen');
+const kartenAuszug = kuchen ? kuchen.data.items.slice(0, 3) : [];
 ---
 
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
 <Header base={base} />
-<main>
+<main id="main">
+  <!-- Bühne: H1, Fließtext, Status, alle Button-Stile, Foto im versetzten Passepartout -->
+  <section class="bg-bg pb-14 pt-8 md:pb-20 md:pt-14">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center md:gap-6">
+        <div class="order-2 md:order-1 md:col-span-6">
+          <p><span class="tz-tag">Café &amp; Backstube · Ostseebad Rerik</span></p>
+          <h1 class="mt-5 text-[clamp(2.5rem,6vw,4.5rem)]">
+            Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen.
+          </h1>
+          <p class="prose-measure mt-5 text-lg text-ink-soft md:text-xl">{site.subline}</p>
+          <p class="prose-measure mt-4 text-ink-soft">
+            Achtzehn Stunden darf der Teig gehen, bevor er in den Ofen kommt. Das schmeckt man — im Brot,
+            in den Schnecken und ja, auch im Käsekuchen.
+          </p>
+          <div class="mt-6"><OpeningStatus size="lg" /></div>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href={`${base}/karte`} class={btnAccent}>
+              Karte ansehen
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+            <a href={`${base}/vorbestellen`} class={btnPrimary}>Vorbestellen</a>
+            <a href={`${base}/besuch`} class={btnSecondary}>Route</a>
+            <a href={`${base}/sauerteig`} class={btnGhost}>Sauerteig</a>
+          </div>
+          <p class="mt-6">
+            <a href={`${base}/ueber-mich`} class={linkArrow}>
+              Wer hier bäckt
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+          </p>
+        </div>
+        <div class="order-1 md:order-2 md:col-span-6 md:pl-6">
+          <Figure
+            motif="hero-krume"
+            aspect="aspect-[4/5] md:aspect-[4/5]"
+            sizes="(min-width: 768px) 48vw, 100vw"
+            loading="eager"
+            fetchpriority="high"
+            mat="offset"
+            class="max-w-[520px] md:ml-auto"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <span class="tz-band" aria-hidden="true"></span>
+
+  <!-- Material-Zeile: Plakette, Regel, Fläche und Textur-Wort nebeneinander -->
+  <section class="bg-bg-alt py-10 md:py-14">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 items-center gap-8 md:grid-cols-12">
+        <div class="md:col-span-5">
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Material</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
+          <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.5rem)]">Die <span class="tz-text">Theke</span> zieht sich durch</h2>
+          <p class="prose-measure mt-4 text-ink-soft">
+            Als Band zwischen den Abschnitten, als Rahmen um Fotos, als Plakette und als Textur in einzelnen
+            Wörtern — immer dasselbe Material, nie aufdringlich.
+          </p>
+        </div>
+        <div class="flex items-center gap-6 md:col-span-7 md:justify-end">
+          <span class="tz-blob w-24 shrink-0 md:w-32" aria-hidden="true"></span>
+          <div class="tz-mat w-full max-w-[280px]">
+            <Figure motif="brot-laib" aspect="aspect-square" sizes="(min-width: 768px) 280px, 60vw" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ausschnitt Speisekarte mit echten Einträgen -->
+  <section class="bg-bg py-14 md:py-20">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div class="md:col-span-4">
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Aus der Karte</p>
+          <span class="tz-rule mt-3" aria-hidden="true"></span>
+          <h2 class="mt-3 text-[clamp(2rem,5vw,3rem)]">{kuchen?.data.title ?? 'Kuchen'}</h2>
+          {kuchen && <p class="prose-measure mt-4 text-lg text-ink-soft">{kuchen.data.intro}</p>}
+          <a href={`${base}/karte`} class:list={[btnGhost, 'mt-6 uppercase tracking-widest']}>Ganze Karte</a>
+        </div>
+        <div class="md:col-span-8">
+          <MenuItemsList items={kartenAuszug} />
+        </div>
+      </div>
+    </div>
+  </section>
+
   <HeuteFrischBoard />
   <SchneckenTeaser base={base} />
   <VisitModule base={base} variant="compact" />
