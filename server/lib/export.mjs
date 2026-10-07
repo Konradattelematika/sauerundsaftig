@@ -129,12 +129,15 @@ export function buildMarkdown({ checklist, module }, { now, goLiveAt, live }) {
   if (!moduleIds.length) L.push('_Noch keine Bewertungen oder Entscheidungen._', '');
   for (const itemId of moduleIds) {
     L.push(`### ${itemId}`, '');
-    const choice = module.choices.find((c) => c.itemId === itemId);
-    L.push(
-      choice
-        ? `- Entscheidung: **${choice.optionId}** (${choice.userName || choice.userId}, ${berlinTime(choice.updatedAt)})`
-        : '- Entscheidung: noch offen',
-    );
+    const choices = module.choices
+      .filter((c) => c.itemId === itemId)
+      .sort((a, b) => String(a.userName || a.userId).localeCompare(String(b.userName || b.userId), 'de'));
+    if (!choices.length) {
+      L.push('- Entscheidungen: noch keine');
+    } else {
+      L.push('- Entscheidungen:');
+      for (const c of choices) L.push(`  - ${c.userName || c.userId}: **${c.optionId}** (${berlinTime(c.updatedAt)})`);
+    }
     const votes = module.votes.filter((v) => v.itemId === itemId);
     const rated = votes.filter((v) => v.rating);
     if (rated.length) {

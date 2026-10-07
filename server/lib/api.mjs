@@ -151,14 +151,17 @@ async function putVote({ req, store, user, now }) {
   });
 }
 
-/** Entscheidung: eine aktive Option je Element (unabhängig vom Benutzer; userId = wer entschieden hat). */
+/**
+ * Entscheidung pro Benutzer: Upsert je (userId, itemId). optionId null entfernt nur die eigene
+ * Entscheidung. GET /api/module/state liefert die Entscheidungen aller Benutzer.
+ */
 async function putChoice({ req, store, user, now }) {
   const body = await readJson(req);
   const itemId = moduleId(body.itemId, 'itemId');
   if (!('optionId' in body)) throw new HttpError(400, 'optionId fehlt (null zum Entfernen)');
   const optionId = body.optionId === null ? null : moduleId(body.optionId, 'optionId');
   return store.update('module', (draft) => {
-    const idx = draft.choices.findIndex((c) => c.itemId === itemId);
+    const idx = draft.choices.findIndex((c) => c.userId === user.id && c.itemId === itemId);
     if (optionId === null) {
       if (idx >= 0) draft.choices.splice(idx, 1);
       return { result: { removed: true }, event: { user: user.id, action: 'module.choice.remove', itemId } };

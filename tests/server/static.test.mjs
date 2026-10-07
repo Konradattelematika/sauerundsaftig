@@ -65,4 +65,17 @@ describe('Export-Markdown', () => {
     expect(md).toContain('_Kein offenes Feedback._');
     expect(md).toContain('_Noch keine Bewertungen oder Entscheidungen._');
   });
+  it('Element nur mit Bewertungen → „Entscheidungen: noch keine"', () => {
+    const md = buildMarkdown(
+      {
+        checklist: { items: [], comments: [] },
+        module: {
+          votes: [{ itemId: 'stimmen', optionId: 'alt-2', userId: 'josie', userName: 'Josie', rating: 'nein', comment: '', updatedAt: '2026-10-08T10:00:00Z' }],
+          choices: [],
+        },
+      },
+      { now: new Date('2026-10-08T10:00:00Z'), goLiveAt: null, live: false },
+    );
+    expect(md).toContain('### stimmen\n\n- Entscheidungen: noch keine\n- Bewertungen:\n  - alt-2: Josie: Nein');
+  });
 });

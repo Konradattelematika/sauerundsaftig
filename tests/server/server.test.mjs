@@ -480,17 +480,30 @@ describe('API', () => {
       expect((await api('PUT', '/api/module/votes', body)).status, JSON.stringify(body).slice(0, 60)).toBe(400);
     }
   });
-  it('PUT /api/module/choices (eine Entscheidung je Element)', async () => {
+  it('PUT /api/module/choices (eine Entscheidung je Benutzer und Element)', async () => {
+    const { cookie: josie } = await login(port, { host: CHECK, user: 'josie', ip: '10.0.0.98' });
+    const asJosie = (method, p, body) => request(port, { method, host: MODULE, path: p, body, headers: jsonHeaders(josie) });
     const c1 = await api('PUT', '/api/module/choices', { itemId: 'farben', optionId: 'alt-2' });
-    expect(c1.json).toMatchObject({ itemId: 'farben', optionId: 'alt-2', userId: 'konrad' });
-    await api('PUT', '/api/module/choices', { itemId: 'farben', optionId: 'alt-1' });
+    expect(c1.json).toMatchObject({ itemId: 'farben', optionId: 'alt-2', userId: 'konrad', userName: 'Konrad' });
+    await api('PUT', '/api/module/choices', { itemId: 'farben', optionId: 'alt-1' }); // Upsert: ersetzt alt-2
     await api('PUT', '/api/module/choices', { itemId: 'hero', optionId: 'live' });
+    const j = await asJosie('PUT', '/api/module/choices', { itemId: 'farben', optionId: 'alt-3' });
+    expect(j.json).toMatchObject({ itemId: 'farben', optionId: 'alt-3', userId: 'josie', userName: 'Josie' });
+    await asJosie('PUT', '/api/module/choices', { itemId: 'hero', optionId: 'alt-1' });
+
+    const key = (c) => `${c.userId}:${c.itemId}:${c.optionId}`;
     let state = await api('GET', '/api/module/state');
-    expect(state.json.choices.map((c) => `${c.itemId}:${c.optionId}`)).toEqual(['farben:alt-1', 'hero:live']);
+    expect(state.json.choices.map(key).sort()).toEqual(['josie:farben:alt-3', 'josie:hero:alt-1', 'konrad:farben:alt-1', 'konrad:hero:live']);
+    // Josie sieht dieselben Entscheidungen aller Benutzer
+    expect((await asJosie('GET', '/api/module/state')).json.choices.map(key).sort()).toEqual(state.json.choices.map(key).sort());
+
+    // null entfernt nur die eigene Entscheidung
     expect((await api('PUT', '/api/module/choices', { itemId: 'hero', optionId: null })).json).toEqual({ removed: true });
     state = await api('GET', '/api/module/state');
-    expect(state.json.choices).toHaveLength(1);
+    expect(state.json.choices.map(key).sort()).toEqual(['josie:farben:alt-3', 'josie:hero:alt-1', 'konrad:farben:alt-1']);
+    expect((await api('PUT', '/api/module/choices', { itemId: 'hero', optionId: null })).json).toEqual({ removed: true });
     expect((await api('PUT', '/api/module/choices', { itemId: 'hero' })).status).toBe(400);
+    expect((await api('PUT', '/api/module/choices', { itemId: 'hero', optionId: 'Alt 1' })).status).toBe(400);
   });
   it('API auch auf dem Vorschau-Host', async () => {
     const res = await request(port, { host: PREVIEW, path: '/api/module/state', headers: { Cookie: cookie } });
@@ -521,7 +534,10 @@ describe('API', () => {
     expect(md.indexOf('### Offenes Feedback')).toBeLessThan(md.indexOf('### Alle Punkte'));
     expect(md).toContain('Konrad · 08.10.2026, 12:00: Noch offen: Fotos fehlen'); // 10:00 UTC = 12:00 Berlin
     expect(md).toContain('[erledigt] Feedback · Konrad · 08.10.2026, 12:00: Bitte auch Allergene!');
-    expect(md).toMatch(/### farben\n\n- Entscheidung: \*\*alt-1\*\* \(Konrad, 08\.10\.2026, 12:00\)/);
+    expect(md).toContain(
+      '### farben\n\n- Entscheidungen:\n  - Josie: **alt-3** (08.10.2026, 12:00)\n  - Konrad: **alt-1** (08.10.2026, 12:00)\n',
+    );
+    expect(md).toContain('### hero\n\n- Entscheidungen:\n  - Josie: **alt-1** (08.10.2026, 12:00)\n');
     expect(md).toContain('alt-1: Konrad: Super gut');
     expect(md).toContain('live · Konrad · 08.10.2026, 12:00: bleibt');
   });
