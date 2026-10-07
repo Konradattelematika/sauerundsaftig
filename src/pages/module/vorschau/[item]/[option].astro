@@ -1,0 +1,29 @@
+---
+/**
+ * Einzelvorschau einer Option: /module/vorschau/<item>/<option>
+ * token → Musterseite mit html[data-alt-<item>=<option>], block → Komponente der Option.
+ */
+import PreviewShell from '../../../../module/PreviewShell.astro';
+import Musterseite from '../../../../module/Musterseite.astro';
+import { ITEMS, getOptionComponent } from '../../../../module/catalog';
+import type { ModuleItem, ModuleOption } from '../../../../module/types';
+
+export function getStaticPaths() {
+  return ITEMS.flatMap((item) =>
+    item.options.map((option) => ({ params: { item: item.id, option: option.id }, props: { item, option } })),
+  );
+}
+
+interface Props {
+  item: ModuleItem;
+  option: ModuleOption;
+}
+const { item, option } = Astro.props;
+const Component = item.kind === 'block' ? getOptionComponent(item.id, option.id) : undefined;
+const htmlAttrs: Record<string, string> =
+  item.kind === 'token' && option.id !== 'live' ? { [`data-alt-${item.id}`]: option.id } : {};
+---
+
+<PreviewShell title={`${item.title} · ${option.title} — Vorschau`} htmlAttrs={htmlAttrs}>
+  {item.kind === 'token' ? <Musterseite /> : Component ? <Component /> : <p class="p-8 font-mono">Vorschau fehlt.</p>}
+</PreviewShell>

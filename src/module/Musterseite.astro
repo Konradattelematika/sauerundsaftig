@@ -1,0 +1,24 @@
+---
+/**
+ * Musterseite: kompakte Startseite aus echten Bausteinen von Variante A — Kontext für die
+ * Token-Elemente (Farben, Schriften, Formen, Muster). Wird in PreviewShell mit gesetztem
+ * data-alt-<id>-Attribut gerendert. (Skelett; M1 darf ausbauen.)
+ */
+import Header from '../variants/a-krume/components/Header.astro';
+import Footer from '../variants/a-krume/components/Footer.astro';
+import HeuteFrischBoard from '../variants/a-krume/components/HeuteFrischBoard.astro';
+import SchneckenTeaser from '../variants/a-krume/components/SchneckenTeaser.astro';
+import VisitModule from '../variants/a-krume/components/VisitModule.astro';
+import SocialProof from '../variants/a-krume/components/SocialProof.astro';
+
+const base = '';
+---
+
+<Header base={base} />
+<main>
+  <HeuteFrischBoard />
+  <SchneckenTeaser base={base} />
+  <VisitModule base={base} variant="compact" />
+  <SocialProof />
+</main>
+<Footer base={base} />

@@ -1,0 +1,38 @@
+---
+/**
+ * Hülle für Einzelvorschauen des Modul-Boards: Styles/Tokens von Variante A, Terrazzo-Textur,
+ * Motion-Bootstrap und ALLE alt.css der Token-Elemente (greifen nur über html[data-alt-<id>]).
+ * Kein Header/Footer — die liefert bei Bedarf die Option selbst bzw. die Musterseite.
+ */
+import '../styles/a.css';
+import Motion from '../components/shared/Motion.astro';
+import { terrazzoCssUrl } from '../lib/textures';
+
+// Alle Token-Overrides als verarbeiteter CSS-Text (Vite löst @import/url() auf) — inline in den <head>
+const altStyles = import.meta.glob<string>('./items/*/alt.css', { eager: true, query: '?inline', import: 'default' });
+const altCss = Object.values(altStyles).join('\n');
+
+interface Props {
+  title: string;
+  /** z. B. { 'data-alt-farben': 'alt-2' } für Token-Vorschauen */
+  htmlAttrs?: Record<string, string>;
+}
+const { title, htmlAttrs = {} } = Astro.props;
+const tzUrl = await terrazzoCssUrl();
+---
+
+<!doctype html>
+<html lang="de" style={`--tz-url:${tzUrl}`} {...htmlAttrs}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>{title}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+    {altCss && <Fragment set:html={`<style>${altCss}</style>`} />}
+  </head>
+  <body class="bg-bg text-ink">
+    <slot />
+    <Motion />
+  </body>
+</html>
