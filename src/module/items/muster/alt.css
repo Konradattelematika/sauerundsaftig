@@ -1,0 +1,106 @@
+/*
+ * Muster & Material — drei Alternativen zum Terrazzo-Foto der Theke (src/styles/a-terrazzo.css).
+ * Greift nur unter html[data-alt-muster="alt-1|alt-2|alt-3"]. Alle .tz-*-Flächen bekommen statt
+ * --tz-url ein CSS-/SVG-Muster (keine externen Bilder). Die Geometrie der Klassen (Band-Höhe,
+ * Passepartout-Versatz, Plakette) bleibt unverändert — nur das Material wechselt.
+ */
+
+/* ---------- Alt 1 · Mehlstaub (feines helles Korn, SVG-Rauschen) ---------- */
+html[data-alt-muster='alt-1'] {
+  --tz-alt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%23e9e1d1'/%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.28'/%3E%3C/svg%3E");
+}
+html[data-alt-muster='alt-1'] .tz-surface,
+html[data-alt-muster='alt-1'] .tz-band,
+html[data-alt-muster='alt-1'] .tz-mat,
+html[data-alt-muster='alt-1'] .tz-rule,
+html[data-alt-muster='alt-1'] .tz-blob,
+html[data-alt-muster='alt-1'] .tz-offset::before,
+html[data-alt-muster='alt-1'] .tz-frame::after {
+  background-color: #e9e1d1;
+  background-image: var(--tz-alt);
+  background-size: 220px 220px;
+  background-position: 0 0;
+  background-repeat: repeat;
+}
+html[data-alt-muster='alt-1'] .tz-tag {
+  background-color: #efe8da;
+  background-image: linear-gradient(rgb(253 249 240 / 0.45), rgb(253 249 240 / 0.45)), var(--tz-alt);
+  background-size: auto, 220px 220px;
+  background-repeat: repeat;
+}
+html[data-alt-muster='alt-1'] .tz-text {
+  background-color: #7a4a26;
+  background-image: linear-gradient(rgb(122 74 38 / 0.78), rgb(122 74 38 / 0.78)), var(--tz-alt);
+  background-size: auto, 220px 220px;
+  filter: none;
+}
+
+/* ---------- Alt 2 · Leinen (feines Gewebe aus Kreuzlinien, reines CSS) ---------- */
+html[data-alt-muster='alt-2'] .tz-surface,
+html[data-alt-muster='alt-2'] .tz-band,
+html[data-alt-muster='alt-2'] .tz-mat,
+html[data-alt-muster='alt-2'] .tz-rule,
+html[data-alt-muster='alt-2'] .tz-blob,
+html[data-alt-muster='alt-2'] .tz-offset::before,
+html[data-alt-muster='alt-2'] .tz-frame::after {
+  background-color: #e8dfcd;
+  background-image:
+    repeating-linear-gradient(0deg, rgb(36 27 20 / 0.075) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgb(36 27 20 / 0.075) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(45deg, rgb(253 249 240 / 0.22) 0 2px, transparent 2px 9px);
+  background-size: auto;
+  background-position: 0 0;
+  background-repeat: repeat;
+}
+html[data-alt-muster='alt-2'] .tz-tag {
+  background-color: #efe7d8;
+  background-image:
+    repeating-linear-gradient(0deg, rgb(36 27 20 / 0.06) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgb(36 27 20 / 0.06) 0 1px, transparent 1px 4px);
+  background-size: auto;
+  background-repeat: repeat;
+}
+html[data-alt-muster='alt-2'] .tz-text {
+  background-color: #6b5a3f;
+  background-image:
+    repeating-linear-gradient(0deg, rgb(107 90 63 / 1) 0 2px, rgb(138 118 86 / 1) 2px 4px),
+    repeating-linear-gradient(90deg, rgb(107 90 63 / 0.6) 0 2px, transparent 2px 4px);
+  background-size: auto;
+  filter: none;
+}
+
+/* ---------- Alt 3 · Ostsee-Welle (Wellenlinien in Salzhaff auf hellem Grund, SVG) ---------- */
+html[data-alt-muster='alt-3'] {
+  --tz-alt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='20' viewBox='0 0 60 20'%3E%3Cpath d='M0 12c7.5-7 22.5-7 30 0s22.5 7 30 0' fill='none' stroke='%233e5c63' stroke-opacity='0.42' stroke-width='1.4'/%3E%3C/svg%3E");
+}
+html[data-alt-muster='alt-3'] .tz-surface,
+html[data-alt-muster='alt-3'] .tz-band,
+html[data-alt-muster='alt-3'] .tz-mat,
+html[data-alt-muster='alt-3'] .tz-rule,
+html[data-alt-muster='alt-3'] .tz-blob,
+html[data-alt-muster='alt-3'] .tz-offset::before,
+html[data-alt-muster='alt-3'] .tz-frame::after {
+  background-color: #eaf0ee;
+  background-image: var(--tz-alt);
+  background-size: 60px 20px;
+  background-position: 0 4px;
+  background-repeat: repeat;
+}
+html[data-alt-muster='alt-3'] .tz-band {
+  background-position: 0 center;
+}
+html[data-alt-muster='alt-3'] .tz-tag {
+  background-color: #eef3f1;
+  background-image: linear-gradient(rgb(253 249 240 / 0.35), rgb(253 249 240 / 0.35)), var(--tz-alt);
+  background-size: auto, 60px 20px;
+  background-repeat: repeat;
+}
+html[data-alt-muster='alt-3'] .tz-rule {
+  background-size: 40px 14px;
+}
+html[data-alt-muster='alt-3'] .tz-text {
+  background-color: #3e5c63;
+  background-image: linear-gradient(rgb(62 92 99 / 0.85), rgb(62 92 99 / 0.85)), var(--tz-alt);
+  background-size: auto, 60px 20px;
+  filter: none;
+}

@@ -19,11 +19,13 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/figtree": "^5.3.0",
     "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/inter-tight": "^5.3.0",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource/instrument-serif": "^5.3.0",
     "@fontsource/space-mono": "^5.3.0",
+    "@fontsource/young-serif": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^5.18.2",
     "lucide-static": "^1.31.0",

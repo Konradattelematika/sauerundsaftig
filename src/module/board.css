@@ -1,0 +1,281 @@
+/*
+ * Modul-Board — Chrome im Krume-Look (Tokens aus a.css), bewusst ruhig gehalten.
+ * Klassen, die der Client (board-client.ts) zur Laufzeit setzt, sind hier als reines CSS
+ * definiert (Tailwind sieht JS-Strings nicht zuverlässig): board-chip, board-vote, is-rejected …
+ */
+
+.board-wrap {
+  margin-inline: auto;
+  max-width: 1280px;
+  padding-inline: 1rem;
+}
+@media (min-width: 768px) {
+  .board-wrap { padding-inline: 2rem; }
+}
+
+/* ---------- Kopfzeile ---------- */
+.board-head {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--color-paper);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-ink) 10%, transparent);
+}
+.board-head .tz-band { height: 6px; border: 0; }
+
+/* ---------- Buttons (Touch-Ziele ≥ 44 px) ---------- */
+.board-btn {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-card);
+  border: 2px solid var(--color-ink);
+  padding: 0.5rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.2;
+  color: var(--color-ink);
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-brand),
+    color var(--dur-fast) var(--ease-brand),
+    border-color var(--dur-fast) var(--ease-brand),
+    transform var(--dur-fast) var(--ease-brand);
+}
+.board-btn:hover { background: var(--color-ink); color: var(--color-bg); }
+.board-btn:active { transform: translateY(1px); }
+.board-btn--ghost { border-color: color-mix(in oklab, var(--color-ink) 22%, transparent); }
+.board-btn--ghost:hover { border-color: var(--color-ink); background: transparent; color: var(--color-ink); }
+.board-btn--primary { background: var(--color-ink); color: var(--color-bg); }
+.board-btn--primary:hover { background: var(--color-primary-deep); }
+.board-btn--sm { min-height: 2.75rem; padding: 0.35rem 0.85rem; font-size: 0.78rem; }
+.board-btn[disabled] { opacity: 0.5; cursor: wait; }
+
+/* Segment-Umschalter (Desktop/Handy) */
+.board-seg {
+  display: inline-flex;
+  border: 1px solid color-mix(in oklab, var(--color-ink) 22%, transparent);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--color-paper);
+}
+.board-seg button {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-brand), color var(--dur-fast) var(--ease-brand);
+}
+.board-seg button + button { border-left: 1px solid color-mix(in oklab, var(--color-ink) 15%, transparent); }
+.board-seg button[aria-pressed='true'] { background: var(--color-ink); color: var(--color-bg); }
+.board-seg button:focus-visible { outline-offset: -3px; }
+
+/* ---------- Vorschau-Fenster: Seite in fester Breite gerendert, per transform skaliert ---------- */
+.pv {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 160px;
+  background: var(--color-bg-alt);
+  border: 1px solid color-mix(in oklab, var(--color-ink) 12%, transparent);
+  border-radius: var(--radius-card);
+  transition: height var(--dur-fast) var(--ease-brand);
+}
+.pv iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  background: #fff;
+  transform-origin: top left;
+  display: block;
+}
+.pv[data-pv-mode='phone'] { background: color-mix(in oklab, var(--color-ink) 6%, var(--color-bg-alt)); }
+.pv--thumb iframe { pointer-events: none; }
+.pv::after {
+  /* feiner Innenrand, damit weiße Vorschauen nicht ins Papier auslaufen */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-ink) 8%, transparent);
+  border-radius: inherit;
+}
+
+/* ---------- Karten der Übersicht ---------- */
+.board-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-paper);
+  border: 1px solid color-mix(in oklab, var(--color-ink) 12%, transparent);
+  border-radius: var(--radius-card);
+  padding: 0.75rem 0.75rem 1rem;
+  transition: border-color var(--dur-fast) var(--ease-brand), transform var(--dur-fast) var(--ease-brand);
+}
+.board-card:hover { border-color: color-mix(in oklab, var(--color-ink) 40%, transparent); transform: translateY(-2px); }
+.board-card:focus-within { border-color: var(--color-ink); }
+.board-card__link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.board-card__link:focus-visible { outline: none; }
+.board-card.is-decided { border-color: color-mix(in oklab, var(--color-primary) 55%, transparent); }
+
+/* Fortschritt */
+.board-progress {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-ink) 10%, transparent);
+  overflow: hidden;
+}
+.board-progress > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--color-primary);
+  transition: width var(--dur-slow) var(--ease-brand);
+}
+
+/* ---------- Optionen der Detailseite ---------- */
+.board-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  background: var(--color-paper);
+  border: 1px solid color-mix(in oklab, var(--color-ink) 12%, transparent);
+  border-radius: var(--radius-card);
+  padding: 1rem;
+  transition: border-color var(--dur-fast) var(--ease-brand), box-shadow var(--dur-fast) var(--ease-brand);
+}
+@media (min-width: 768px) {
+  .board-option { padding: 1.25rem; }
+}
+.board-option.is-chosen {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+.board-option.is-rejected .board-option__body { opacity: 0.45; filter: grayscale(0.7); }
+.board-option__body { transition: opacity var(--dur-fast) var(--ease-brand), filter var(--dur-fast) var(--ease-brand); }
+
+.board-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.7rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--color-ink) 25%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+.board-label--live { border-color: var(--color-open); color: var(--color-open); }
+
+/* Bewertungs-Toggle: Nein · Gut · Super gut */
+.board-rate { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.board-rate button {
+  flex: 1 1 auto;
+  min-height: 2.75rem;
+  min-width: 5.5rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-card);
+  border: 2px solid color-mix(in oklab, var(--color-ink) 22%, transparent);
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-brand), color var(--dur-fast) var(--ease-brand), border-color var(--dur-fast) var(--ease-brand);
+}
+.board-rate button:hover { border-color: var(--color-ink); }
+.board-rate button[aria-pressed='true'] { border-color: var(--color-ink); background: var(--color-ink); color: var(--color-bg); }
+.board-rate button[data-rate='super'][aria-pressed='true'] { border-color: var(--color-accent); background: var(--color-accent); color: #fff; }
+.board-rate button[data-rate='nein'][aria-pressed='true'] { border-color: var(--color-ink-soft); background: var(--color-ink-soft); color: var(--color-bg); }
+
+.board-textarea {
+  width: 100%;
+  min-height: 5.5rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-card);
+  border: 1px solid color-mix(in oklab, var(--color-ink) 25%, transparent);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+.board-textarea:focus-visible { outline-offset: 0; }
+
+.board-choose[aria-pressed='true'] { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.board-choose[aria-pressed='true']:hover { background: var(--color-primary-deep); border-color: var(--color-primary-deep); }
+
+/* Stimmen der anderen */
+.board-votes { display: flex; flex-direction: column; gap: 0.5rem; }
+.board-vote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-card);
+  background: var(--color-bg);
+  font-size: 0.95rem;
+}
+.board-vote q { quotes: '„' '“'; color: var(--color-ink-soft); flex-basis: 100%; }
+.board-vote time { margin-left: auto; font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-ink-soft); }
+
+/* Chips (Initialen, Bewertung) */
+.board-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 1.6rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--color-ink) 25%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-soft);
+  background: var(--color-paper);
+}
+.board-chip--initials { font-weight: 700; color: var(--color-ink); }
+.board-chip--gut { border-color: var(--color-ink); color: var(--color-ink); }
+.board-chip--super { border-color: var(--color-accent-ink); color: var(--color-accent-ink); }
+.board-chip--nein { border-style: dashed; }
+.board-chip--chosen { border-color: var(--color-primary); color: var(--color-primary-deep); background: color-mix(in oklab, var(--color-primary) 10%, var(--color-paper)); }
+
+/* ---------- Toast ---------- */
+.board-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  transform: translateX(-50%);
+  max-width: min(92vw, 36rem);
+  padding: 0.75rem 1.1rem;
+  border-radius: var(--radius-card);
+  background: var(--color-ink);
+  color: var(--color-bg);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  box-shadow: 0 12px 30px -12px rgb(0 0 0 / 0.45);
+}
+.board-toast[hidden] { display: none; }
+.board-toast--error { background: var(--color-closed); color: #fff; }
+
+/* Statuszeile neben „Speichern" */
+.board-status { font-family: var(--font-mono); font-size: 0.78rem; color: var(--color-ink-soft); }
+.board-status--ok { color: var(--color-open); }
