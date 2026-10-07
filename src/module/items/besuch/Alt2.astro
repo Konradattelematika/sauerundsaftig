@@ -1,0 +1,97 @@
+---
+/**
+ * Besuch Alt 2 „Telefon zuerst": dunkler Block (Röstkern), weil Tische nur per Anruf reserviert werden —
+ * die Nummer ist das größte Element. Darunter drei Spalten: Öffnungszeiten (zusammengefasst),
+ * Adresse/Route, Hinweise. Daten: site.json + lib/opening-hours.
+ */
+import site from '../../../data/site.json';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import Icon from './Icon.astro';
+import { groupedWeek, phoneHref, route, RESERVIEREN, HINTS, ICON_PHONE, breakfastUntil, shortHours } from './data';
+
+const groups = groupedWeek();
+const btnLight =
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-card border-2 border-bg px-5 py-2.5 font-mono text-sm text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-bg hover:text-ink';
+---
+
+<section class="relative overflow-hidden bg-ink py-14 text-bg md:py-24" aria-labelledby="bs-alt2-title">
+  <span class="tz-band absolute inset-x-0 top-0 opacity-80" aria-hidden="true"></span>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-bg/75" data-reveal>Besuch · Reservierung</p>
+    <h2 id="bs-alt2-title" class="mt-4 max-w-3xl text-[clamp(1.75rem,3.6vw,2.75rem)] leading-tight" data-reveal style="--reveal-delay:100ms">
+      {RESERVIEREN}
+    </h2>
+
+    <a
+      href={phoneHref}
+      class="nummer group mt-6 inline-flex max-w-full items-center gap-4 rounded-card py-2 md:mt-8 md:gap-6"
+      data-reveal
+      style="--reveal-delay:150ms"
+    >
+      <span class="grid size-14 shrink-0 place-items-center rounded-full bg-accent text-ink transition-transform duration-[var(--dur-base)] ease-[var(--ease-brand)] group-hover:rotate-[-12deg] md:size-20">
+        <Icon svg={ICON_PHONE} class="size-6 md:size-9" />
+      </span>
+      <span class="nummer__text font-display text-[clamp(2.2rem,8.5vw,7rem)] leading-none tabular">
+        <span class="sr-only">Anrufen: </span>{site.phoneDisplay}
+      </span>
+    </a>
+
+    <div class="mt-12 grid grid-cols-1 gap-10 border-t border-bg/20 pt-10 md:mt-16 md:grid-cols-3 md:gap-0 md:divide-x md:divide-bg/20">
+      <div class="md:pr-8" data-reveal>
+        <h3 class="font-mono text-xs uppercase tracking-[0.2em] text-bg/75">Geöffnet</h3>
+        <div class="mt-4 rounded-full bg-paper px-4 py-2 text-ink sm:w-fit"><OpeningStatus /></div>
+        <dl class="mt-5 flex flex-col gap-2 font-mono text-lg md:text-xl">
+          {groups.map((g) => (
+            <div class="flex justify-between gap-4 border-b border-bg/15 pb-2">
+              <dt>
+                <span aria-hidden="true">{g.label}</span>
+                <span class="sr-only">{g.longLabel}</span>
+              </dt>
+              <dd class:list={['tabular', g.closed ? 'text-bg/75' : 'text-bg']}>{shortHours(g.hours)}</dd>
+            </div>
+          ))}
+        </dl>
+        <p class="mt-3 text-bg/80">Frühstück bis {breakfastUntil} Uhr.</p>
+      </div>
+
+      <div class="md:px-8" data-reveal style="--reveal-delay:100ms">
+        <h3 class="font-mono text-xs uppercase tracking-[0.2em] text-bg/75">Hier findest du uns</h3>
+        <address class="mt-4 font-display text-2xl not-italic leading-snug md:text-3xl">
+          {site.name}<br />{site.address.street}<br />{site.address.zip} {site.address.city}
+        </address>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href={route} target="_blank" rel="noopener" class={btnLight}>Route planen</a>
+          <a href="/besuch" class={btnLight}>Alle Infos zum Besuch</a>
+        </div>
+      </div>
+
+      <div class="md:pl-8" data-reveal style="--reveal-delay:200ms">
+        <h3 class="font-mono text-xs uppercase tracking-[0.2em] text-bg/75">Gut zu wissen</h3>
+        <ul class="mt-4 flex flex-col gap-4" role="list">
+          {HINTS.map((h) => (
+            <li class="flex items-start gap-4 text-lg">
+              <span class="grid size-11 shrink-0 place-items-center rounded-full border border-bg/30 text-secondary-soft"><Icon svg={h.icon} /></span>
+              <span class="pt-2">{h.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .nummer__text {
+    background-image: linear-gradient(var(--color-accent), var(--color-accent));
+    background-repeat: no-repeat;
+    background-size: 0% 3px;
+    background-position: 0 100%;
+    padding-bottom: 0.08em;
+    transition: background-size var(--dur-base) var(--ease-brand);
+    overflow-wrap: anywhere;
+  }
+  .nummer:hover .nummer__text,
+  .nummer:focus-visible .nummer__text {
+    background-size: 100% 3px;
+  }
+</style>

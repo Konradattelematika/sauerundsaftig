@@ -1,0 +1,25 @@
+---
+/**
+ * Fünf Sterne, anteilig gefüllt (z. B. 4,6 → 92 %). Rein visuell — die Note steht immer zusätzlich
+ * als Text daneben, deshalb aria-hidden.
+ */
+import { STAR } from './data';
+
+interface Props {
+  fill: number;
+  class?: string;
+}
+const { fill, class: cls = 'h-7' } = Astro.props;
+const stars = [0, 1, 2, 3, 4];
+---
+
+<span class:list={['relative inline-block', cls]} aria-hidden="true">
+  <svg class="h-full w-auto text-ink/20" viewBox="0 0 120 24" fill="currentColor">
+    {stars.map((i) => <path d={STAR} transform={`translate(${i * 24} 0)`} />)}
+  </svg>
+  <span class="absolute inset-y-0 left-0 overflow-hidden" style={`width:${(fill * 100).toFixed(1)}%`}>
+    <svg class="h-full w-auto max-w-none text-accent" viewBox="0 0 120 24" fill="currentColor">
+      {stars.map((i) => <path d={STAR} transform={`translate(${i * 24} 0)`} />)}
+    </svg>
+  </span>
+</span>

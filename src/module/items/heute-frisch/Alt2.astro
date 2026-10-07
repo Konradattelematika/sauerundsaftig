@@ -1,0 +1,99 @@
+---
+/**
+ * Heute frisch Alt 2 „Aufmacher des Tages": Zeitungsseite — Kopfleiste mit Doppellinie und Datum,
+ * der erste Eintrag als Aufmacher mit großem Foto und großer Zeile, die übrigen als Kurzmeldungen
+ * mit kleinen Bildern. Daten: heuteFrisch-Collection.
+ */
+import { getCollection } from 'astro:content';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { formatDate } from '../../../lib/format';
+import { linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+const entries = await getCollection('heuteFrisch');
+const today = entries[0];
+const [lead, ...rest] = today?.data.items ?? [];
+const dateLabel = today ? formatDate(today.data.date, { weekday: 'long' }) : '';
+---
+
+{today && lead && (
+  <section class="bg-paper py-14 md:py-24" aria-labelledby="hf-alt2-title">
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <header class="kopf border-y-[3px] border-double border-ink py-3 md:py-4" data-reveal>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <h2 id="hf-alt2-title" class="text-[clamp(1.9rem,5vw,3.25rem)] leading-none">Heute frisch</h2>
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-ink-soft md:text-sm">{dateLabel}</p>
+        </div>
+      </header>
+      <p class="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-ink-soft" data-reveal>
+        Aus der Backstube · Dünenstraße 1 · {today.data.items.length} Sachen auf der Theke
+      </p>
+
+      <div class="mt-8 grid grid-cols-1 gap-10 md:mt-12 md:grid-cols-12 md:gap-8">
+        <article class="group md:col-span-7 md:border-r md:border-ink/15 md:pr-8" data-reveal>
+          {lead.motif && (
+            <Figure
+              motif={lead.motif}
+              aspect="aspect-[4/3]"
+              sizes="(min-width: 768px) 55vw, 100vw"
+              hover
+              imgClass={lead.soldOut ? 'grayscale' : ''}
+            />
+          )}
+          <p class="mt-5 font-mono text-xs uppercase tracking-[0.2em] text-accent-ink">Aufmacher · 01</p>
+          <h3 class:list={['mt-2 font-display text-[clamp(2.2rem,5vw,4rem)] leading-[1.02]', lead.soldOut && 'line-through decoration-closed']}>
+            {lead.name}
+          </h3>
+          {lead.note && <p class="prose-measure mt-3 text-xl text-ink-soft md:text-2xl">{lead.note}</p>}
+          {lead.soldOut && (
+            <p class="mt-3 inline-block rounded-full border border-closed px-3 py-1 font-mono text-xs uppercase tracking-wide text-closed">Vergriffen</p>
+          )}
+        </article>
+
+        <aside class="md:col-span-5" aria-label="Außerdem heute">
+          <p class="border-b border-ink pb-2 font-mono text-xs uppercase tracking-[0.2em]" data-reveal>Außerdem heute</p>
+          <ol class="flex flex-col" role="list">
+            {rest.map((item, i) => (
+              <li
+                class="group grid grid-cols-[1fr_auto] items-start gap-4 border-b border-ink/15 py-5"
+                data-reveal
+                style={`--reveal-delay:${(i + 1) * 100}ms`}
+              >
+                <div class="min-w-0">
+                  <p class="font-mono text-xs text-ink-soft">0{i + 2}</p>
+                  <h3 class:list={['mt-1 font-display text-2xl leading-tight md:text-[1.75rem]', item.soldOut && 'line-through decoration-closed']}>
+                    {item.name}
+                  </h3>
+                  {item.note && <p class="mt-1 text-ink-soft">{item.note}</p>}
+                  {item.soldOut && (
+                    <p class="mt-2 inline-block rounded-full border border-closed px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-closed">Vergriffen</p>
+                  )}
+                </div>
+                {item.motif && (
+                  <Figure
+                    motif={item.motif}
+                    aspect="aspect-square"
+                    sizes="112px"
+                    hover
+                    class="w-24 md:w-28"
+                    imgClass={item.soldOut ? 'grayscale' : ''}
+                  />
+                )}
+              </li>
+            ))}
+          </ol>
+          <a href="/karte" class:list={[linkArrow, 'mt-4']} data-reveal>
+            Alles auf der Karte
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        </aside>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .kopf h2 {
+    font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 144;
+    letter-spacing: -0.03em;
+  }
+</style>

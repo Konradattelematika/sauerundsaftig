@@ -1,0 +1,23 @@
+---
+/** Bildkapsel in der Hero-Zeile (Alt 3) — rein dekorativ, deshalb alt="" und aria-hidden. */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  img: { src: ImageMetadata; widths: number[] };
+  cls?: string;
+}
+const { img, cls } = Astro.props;
+---
+
+<span class:list={['cap', cls]} aria-hidden="true"
+  ><Picture
+    src={img.src}
+    widths={img.widths}
+    sizes="(min-width: 768px) 260px, 140px"
+    formats={['avif', 'webp']}
+    alt=""
+    loading="eager"
+    class="h-full w-full object-cover"
+  /></span
+>

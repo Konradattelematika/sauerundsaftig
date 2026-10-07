@@ -1,0 +1,110 @@
+---
+/**
+ * Gästestimmen Alt 2 „Gästebuch-Zettel": Zettel mit Terrazzo-Klebestreifen an der Wand, leicht schief,
+ * Schrift kursiv in Fraunces wie von Hand. Der erste Zettel trägt die Google-Note. Hover richtet
+ * einen Zettel gerade. Platzhalter-Zitate bleiben wie in Live sichtbar markiert.
+ */
+import Stars from './Stars.astro';
+import { rating, googleHref, getTestimonials, PLACEHOLDER_LABEL } from './data';
+import { arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+const testimonials = await getTestimonials();
+const TILT = ['-2deg', '1.6deg', '-1deg', '2.2deg'];
+const PAPER = ['bg-paper', 'zettel--kariert', 'bg-paper'];
+---
+
+<section class="wand bg-bg-alt py-14 md:py-24" aria-labelledby="st-alt2-title">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="max-w-2xl" data-reveal>
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Aus dem Gästebuch</p>
+      <h2 id="st-alt2-title" class="mt-3 text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.05]">Was Gäste uns dalassen</h2>
+    </div>
+
+    <ul class="mt-12 grid grid-cols-1 gap-12 sm:grid-cols-2 md:mt-16 lg:grid-cols-3 lg:gap-10" role="list">
+      <li data-reveal>
+        <div class="zettel zettel--note relative bg-paper px-6 pb-7 pt-10 md:px-8" style={`--tilt:${TILT[0]}`}>
+          <span class="klebe tz-surface tz-surface--fine" aria-hidden="true"></span>
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft">{rating.source}-Bewertungen</p>
+          <p class="mt-2 flex items-end gap-3">
+            <span class="hand text-[4.5rem] leading-none">{rating.display}</span>
+            <span class="pb-3 font-mono text-sm text-ink-soft">von 5</span>
+          </p>
+          <Stars fill={rating.fill} class="mt-2 h-7" />
+          <p class="hand mt-4 text-xl">aus {rating.count} Bewertungen</p>
+          <a
+            href={googleHref}
+            target="_blank"
+            rel="noopener"
+            class="link-ul mt-4 inline-flex min-h-11 items-center gap-2 font-mono text-sm text-ink"
+          >
+            Auf {rating.source} lesen
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+          </a>
+        </div>
+      </li>
+      {testimonials.map((t, i) => (
+        <li data-reveal style={`--reveal-delay:${(i + 1) * 100}ms`}>
+          <figure class:list={['zettel relative m-0 px-6 pb-7 pt-10 md:px-8', PAPER[i % PAPER.length]]} style={`--tilt:${TILT[(i + 1) % TILT.length]}`}>
+            <span class="klebe tz-surface tz-surface--fine" aria-hidden="true"></span>
+            {t.isPlaceholder && (
+              <p class="mb-3 inline-block rounded-[2px] bg-bg-alt px-2 py-1 font-mono text-[11px] uppercase tracking-widest text-ink-soft">
+                {PLACEHOLDER_LABEL}
+              </p>
+            )}
+            <blockquote class:list={['hand text-2xl leading-[2.25rem]', PAPER[i % PAPER.length] === 'bg-paper' && 'liniert', t.isPlaceholder && 'text-ink-soft']}>„{t.quote}“</blockquote>
+            <figcaption class="mt-5 text-right font-mono text-sm text-ink-soft">— {t.author}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .zettel {
+    transform: rotate(var(--tilt, 0deg));
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 6%, transparent),
+      0 18px 28px -20px color-mix(in srgb, var(--color-ink) 55%, transparent);
+    transition: transform var(--dur-base) var(--ease-brand), box-shadow var(--dur-base) var(--ease-brand);
+  }
+  .zettel:hover,
+  .zettel:focus-within {
+    transform: rotate(0deg) translateY(-4px);
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--color-ink) 6%, transparent),
+      0 26px 36px -22px color-mix(in srgb, var(--color-ink) 55%, transparent);
+  }
+  /* Papierarten: liniert (Zeilen im Abstand der Zitat-Zeilenhöhe) und kariert */
+  /* Linien direkt unter den Zitatzeilen (Abstand = Zeilenhöhe) */
+  .liniert {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 calc(2.25rem - 1px),
+      color-mix(in srgb, var(--color-secondary) 28%, transparent) calc(2.25rem - 1px) 2.25rem
+    );
+    background-position: 0 -0.2rem;
+  }
+  .zettel--kariert {
+    background-color: var(--color-paper);
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--color-secondary) 14%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-secondary) 14%, transparent) 1px, transparent 1px);
+    background-size: 1rem 1rem;
+  }
+  .klebe {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    width: 7rem;
+    height: 1.5rem;
+    transform: translateX(-50%) rotate(-3deg);
+    opacity: 0.9;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+  .hand {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 36;
+  }
+</style>

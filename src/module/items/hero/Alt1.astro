@@ -4,7 +4,7 @@
  * Verlauf aus Röstkern (Tokens, kein Hex). Öffnungsstatus auf einem Papier-Chip, damit der farbige
  * Punkt auf dem dunklen Grund lesbar bleibt. Sanfter Einzoom einmalig beim Laden (reduced-motion: aus).
  */
-import { Picture } from 'astro:assets';
+import { getImage as optimize } from 'astro:assets';
 import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
 import site from '../../../data/site.json';
 import { routeHref } from '../../../lib/format';
@@ -12,23 +12,39 @@ import { getAlt, getImage, WIDTHS } from '../../../lib/images';
 import { safeWidths } from '../../../variants/a-krume/lib/picture';
 import { arrowIcon } from '../../../variants/a-krume/lib/ui';
 
-const img = getImage('a', 'hero-krume');
+// Art Direction: quer (Desktop) = hero-krume, hoch (Mobil) = schnecke-blech — je ein echtes Foto in passender
+// Ausrichtung, damit das Vollbild auf dem Handy nicht aus einem Querformat hochgezoomt wird.
+const wide = getImage('a', 'hero-krume');
+const tall = getImage('a', 'schnecke-blech');
+const [wideAvif, wideWebp, tallAvif, tallWebp] = await Promise.all([
+  optimize({ src: wide, format: 'avif', widths: safeWidths(wide, [...WIDTHS, wide.width]) }),
+  optimize({ src: wide, format: 'webp', widths: safeWidths(wide, [...WIDTHS, wide.width]) }),
+  optimize({ src: tall, format: 'avif', widths: safeWidths(tall, [400, 800, tall.width]) }),
+  optimize({ src: tall, format: 'webp', widths: safeWidths(tall, [400, 800, tall.width]) }),
+]);
+const fallback = await optimize({ src: wide, format: 'jpg', width: Math.min(1200, wide.width) });
 const route = routeHref(site.address.street, site.address.zip, site.address.city);
 const btn =
   'inline-flex min-h-11 items-center justify-center gap-2 rounded-card px-6 py-3 font-mono text-sm transition-[background-color,color,border-color] duration-[var(--dur-fast)] ease-[var(--ease-brand)] active:translate-y-px';
 ---
 
 <section class="hero-full relative isolate flex min-h-[min(92svh,920px)] items-end overflow-hidden bg-ink text-bg" aria-labelledby="hero-alt1-title">
-  <Picture
-    src={img}
-    formats={['avif', 'webp']}
-    widths={safeWidths(img, [...WIDTHS, img.width])}
-    sizes="100vw"
-    alt={getAlt('hero-krume')}
-    loading="eager"
-    fetchpriority="high"
-    class="hero-full__img absolute inset-0 -z-20 h-full w-full object-cover"
-  />
+  <picture>
+    <source media="(min-width: 768px)" type="image/avif" srcset={wideAvif.srcSet.attribute} sizes="100vw" />
+    <source media="(min-width: 768px)" type="image/webp" srcset={wideWebp.srcSet.attribute} sizes="100vw" />
+    <source type="image/avif" srcset={tallAvif.srcSet.attribute} sizes="100vw" />
+    <source type="image/webp" srcset={tallWebp.srcSet.attribute} sizes="100vw" />
+    <img
+      src={fallback.src}
+      width={wide.width}
+      height={wide.height}
+      alt={getAlt('hero-krume')}
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+      class="hero-full__img absolute inset-0 -z-20 h-full w-full object-cover"
+    />
+  </picture>
   <div class="hero-full__shade absolute inset-0 -z-10" aria-hidden="true"></div>
 
   <div class="mx-auto w-full max-w-[1440px] px-4 pb-8 pt-40 md:px-8 md:pb-12">

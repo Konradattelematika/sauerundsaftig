@@ -4,13 +4,13 @@
  * Fotos als Kapseln mitten in der Zeile (dekorativ, alt=""), „saftig." mit Terrazzo-Textur.
  * Darunter eine Terrazzo-„Theke", auf der eine Papierkarte mit Status, Adresse und Buttons liegt.
  */
-import { Picture } from 'astro:assets';
 import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
 import site from '../../../data/site.json';
 import { routeHref } from '../../../lib/format';
 import { getImage } from '../../../lib/images';
 import { safeWidths } from '../../../variants/a-krume/lib/picture';
 import { btnPrimary, btnSecondary, arrowIcon } from '../../../variants/a-krume/lib/ui';
+import Cap from './HeroCap.astro';
 
 const route = routeHref(site.address.street, site.address.zip, site.address.city);
 const pill = (motif: string) => {
@@ -19,22 +19,17 @@ const pill = (motif: string) => {
 };
 const p1 = pill('schnecke-blech');
 const p2 = pill('brot-laib');
-const p3 = pill('kaesekuchen-lotus');
+const p3 = pill('obsttorte');
 // „Sauer macht saftig." → Wörter einzeln, damit die Bildkapseln dazwischen sitzen
 const [w1, w2, w3] = site.claim.replace(/\.$/, '').split(' ');
 ---
 
-<section class="relative isolate overflow-hidden bg-bg pt-12 md:pt-20" aria-labelledby="hero-alt3-title">
-  <span class="tz-blob tz-blob--hero absolute -right-24 -top-16 -z-10 w-[min(70vw,640px)] opacity-60 md:-right-16" aria-hidden="true"></span>
-
+<section class="relative overflow-hidden bg-bg pt-12 md:pt-20" aria-labelledby="hero-alt3-title">
   <div class="mx-auto max-w-[1440px] px-4 md:px-8">
     <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>Café &amp; Backstube · Ostseebad Rerik</p>
-    <h1 id="hero-alt3-title" class="stage mt-6 text-[clamp(3.4rem,11vw,10rem)] leading-[0.92]" data-reveal style="--reveal-delay:100ms">
-      <span class="whitespace-nowrap">{w1}<span class="cap cap--a" aria-hidden="true"><Picture src={p1.src} widths={p1.widths} sizes="(min-width: 768px) 260px, 140px" formats={['avif', 'webp']} alt="" loading="eager" class="h-full w-full object-cover" /></span></span>
-      {' '}
-      <span class="whitespace-nowrap"><span class="cap cap--b" aria-hidden="true"><Picture src={p2.src} widths={p2.widths} sizes="(min-width: 768px) 260px, 140px" formats={['avif', 'webp']} alt="" loading="eager" class="h-full w-full object-cover" /></span>{w2}</span>
-      {' '}
-      <span class="whitespace-nowrap"><em class="tz-text not-italic">{w3}.</em><span class="cap cap--c" aria-hidden="true"><Picture src={p3.src} widths={p3.widths} sizes="(min-width: 768px) 260px, 140px" formats={['avif', 'webp']} alt="" loading="eager" class="h-full w-full object-cover" /></span></span>
+    <h1 id="hero-alt3-title" class="stage mt-6 text-[clamp(3.4rem,11vw,10rem)] leading-[0.95]" data-reveal style="--reveal-delay:100ms">
+      <span class="block"><span class="whitespace-nowrap">{w1}<Cap img={p1} cls="cap--a" /></span> {w2}</span>
+      <span class="block whitespace-nowrap md:pl-[1.4em]"><Cap img={p2} cls="cap--b" /><em class="tz-text">{w3}.</em><Cap img={p3} cls="cap--c" /></span>
     </h1>
 
     <div class="mt-8 grid grid-cols-1 gap-6 md:mt-12 md:grid-cols-12" data-reveal style="--reveal-delay:200ms">
@@ -78,7 +73,7 @@ const [w1, w2, w3] = site.claim.replace(/\.$/, '').split(' ');
     padding-right: 0.06em; /* Kursiv-Überhang nicht abschneiden (background-clip:text) */
   }
   /* Bildkapseln in der Zeile */
-  .cap {
+  .stage :global(.cap) {
     display: inline-block;
     vertical-align: 0.06em;
     height: 0.72em;
@@ -90,19 +85,15 @@ const [w1, w2, w3] = site.claim.replace(/\.$/, '').split(' ');
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 10%, transparent);
     transition: transform var(--dur-base) var(--ease-brand), width var(--dur-base) var(--ease-brand);
   }
-  .cap--a { transform: rotate(-4deg); }
-  .cap--b { width: 1.05em; transform: rotate(3deg); }
-  .cap--c { width: 0.9em; border-radius: 0.2em 999px 999px 0.2em; transform: rotate(-2deg); }
-  .stage:hover .cap { transform: rotate(0deg); }
-  .stage:hover .cap--a { width: 1.55em; }
+  .stage :global(.cap--a) { transform: rotate(-4deg); }
+  .stage :global(.cap--b) { width: 1.05em; margin-left: 0; transform: rotate(3deg); }
+  .stage :global(.cap--c) { width: 0.9em; transform: rotate(-3deg); }
+  .stage:hover :global(.cap) { transform: rotate(0deg); }
+  .stage:hover :global(.cap--a) { width: 1.6em; }
   @media (max-width: 639px) {
-    .cap { height: 0.66em; width: 1.1em; }
-    .cap--b { width: 0.9em; }
-    .cap--c { width: 0.8em; }
-  }
-  .tz-blob--hero {
-    -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent);
-    mask-image: radial-gradient(closest-side, #000 60%, transparent);
+    .stage :global(.cap) { height: 0.66em; width: 1.1em; }
+    .stage :global(.cap--b) { width: 0.9em; }
+    .stage :global(.cap--c) { width: 0.8em; }
   }
   .theke {
     border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
