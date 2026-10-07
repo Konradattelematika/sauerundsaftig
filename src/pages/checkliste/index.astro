@@ -1,0 +1,241 @@
+---
+/**
+ * Checklisten-App (checkliste.sauerundsaftig.de → „/", Vorschau-Host → /checkliste).
+ * Eigenständige Seite im Design von Variante A „Krume", ohne Website-Navigation. Statisches Gerüst
+ * (Kopfzeile, Übersicht, Filter, Formular „Neuer Punkt"); Punkte, Kommentare und Fortschritt rendert
+ * src/checkliste/app.ts gegen /api/me + /api/checklist (Vertrag: docs/LIVE-PLAN.md §2.5). noindex.
+ */
+import '../../styles/a.css';
+import Logo from '../../components/shared/Logo.astro';
+import site from '../../data/site.json';
+import { terrazzoCssUrl } from '../../lib/textures';
+import { btnPrimary, btnSecondary, eyebrow } from '../../variants/a-krume/lib/ui';
+import { DEFAULT_GO_LIVE, formatGoLive, isValidDate } from '../../checkliste/logic';
+
+const siteGoLive = (site as { goLiveAt?: unknown }).goLiveAt;
+const goLiveAt = isValidDate(siteGoLive) ? siteGoLive : DEFAULT_GO_LIVE;
+const tzUrl = await terrazzoCssUrl();
+
+type Opt = readonly [value: string, label: string];
+const filterGroups: { name: string; legend: string; options: Opt[] }[] = [
+  { name: 'fuer', legend: 'Für wen', options: [['alle', 'Alle'], ['team', 'Team'], ['josie', 'Josie']] },
+  { name: 'phase', legend: 'Phase', options: [['vor', 'Vor Go-Live'], ['nach', 'Nach Go-Live'], ['alle', 'Alle']] },
+  { name: 'status', legend: 'Status', options: [['offen', 'Offen'], ['erledigt', 'Erledigt'], ['alle', 'Alle']] },
+];
+const newGroups: { name: string; legend: string; options: Opt[]; checked: string }[] = [
+  { name: 'phase', legend: 'Phase', options: [['vor', 'Vor Go-Live'], ['nach', 'Nach Go-Live']], checked: 'vor' },
+  { name: 'owner', legend: 'Für wen', options: [['team', 'Team'], ['josie', 'Josie'], ['beide', 'Beide']], checked: 'team' },
+  { name: 'priority', legend: 'Priorität', options: [['normal', 'Normal'], ['wichtig', 'Wichtig'], ['blocker', 'Blocker']], checked: 'normal' },
+];
+const field =
+  'block w-full rounded-card border-2 border-ink/15 bg-paper px-3 py-2.5 text-base text-ink placeholder:text-ink-soft/75 ' +
+  'transition-colors duration-[var(--dur-fast)] hover:border-ink/40 focus:border-ink';
+const label = 'mb-1.5 block font-mono text-xs uppercase tracking-[0.2em] text-ink-soft';
+---
+
+<!doctype html>
+<html lang="de" style={`--tz-url:${tzUrl}`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Checkliste · Sauer & Saftig</title>
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#FDF9F0" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/brand/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/favicon-180.png" />
+  </head>
+  <body class="bg-bg text-ink">
+    <a class="skip-link" href="#cl-list">Zur Liste springen</a>
+
+    <header class="sticky top-0 z-40 bg-paper/95 backdrop-blur-sm">
+      <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-3 px-4 py-2 md:px-8">
+        <a href="/checkliste" class="flex min-h-11 min-w-0 items-center gap-3" aria-label="Checkliste — nach oben">
+          <Logo variant="lockup" tone="dark" width={84} class="h-auto w-[64px] sm:w-[84px]" />
+          <span class="border-l border-ink/20 pl-3 font-mono text-xs uppercase tracking-[0.2em] text-ink">Checkliste</span>
+        </a>
+        <div class="flex min-w-0 items-center gap-1 sm:gap-3">
+          <span id="cl-user" class="min-w-0 max-w-[6.5rem] truncate font-mono text-xs text-ink-soft sm:max-w-[14rem] sm:text-sm"></span>
+          <a
+            href="/logout"
+            class="inline-flex min-h-11 shrink-0 items-center rounded-card px-3 font-mono text-sm text-ink underline decoration-ink/30 underline-offset-4 transition-colors duration-[var(--dur-fast)] hover:bg-bg-alt hover:decoration-ink"
+          >
+            Abmelden
+          </a>
+        </div>
+      </div>
+      <span class="tz-band tz-band--fade" aria-hidden="true"></span>
+    </header>
+
+    <div id="cl-main" data-golive={goLiveAt} class="mx-auto max-w-[1200px] px-4 pb-28 md:px-8 lg:grid lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)] lg:gap-12">
+      <!-- Übersicht + Filter (Desktop: mitlaufende Seitenspalte) -->
+      <aside class="pt-6 md:pt-10 lg:pt-8 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:self-start lg:overflow-y-auto lg:pb-8" aria-label="Übersicht und Filter">
+        <p class={eyebrow}>sauerundsaftig.de</p>
+        <h1 class="mt-2 font-display text-4xl leading-tight md:text-5xl lg:text-[2.6rem]">Checkliste zum Go-Live</h1>
+        <p id="cl-hello" class="mt-3 text-base text-ink-soft">
+          Alles, was vor und nach dem Start der Website zu tun ist. Zu jedem Punkt kannst du Feedback geben oder eine
+          Frage stellen.
+        </p>
+
+        <section class="mt-6 rounded-card border border-ink/10 bg-paper p-4 sm:p-5" aria-labelledby="cl-golive-label">
+          <p id="cl-golive-label" class={eyebrow}>Go-Live</p>
+          <p class="mt-1 font-mono text-sm text-ink" id="cl-golive-date">{formatGoLive(goLiveAt)}</p>
+          <p id="cl-countdown" class="mt-2 font-display text-2xl leading-snug text-primary-deep md:text-3xl lg:text-2xl">&nbsp;</p>
+
+          <dl class="mt-4 space-y-3">
+            {(['vor', 'nach'] as const).map((p) => (
+              <div>
+                <div class="flex items-baseline justify-between gap-3 font-mono text-sm">
+                  <dt>{p === 'vor' ? 'Vor Go-Live' : 'Nach Go-Live'}</dt>
+                  <dd id={`cl-prog-${p}-text`} class="tabular text-ink-soft">–</dd>
+                </div>
+                <div
+                  id={`cl-prog-${p}`}
+                  role="progressbar"
+                  aria-label={p === 'vor' ? 'Fortschritt vor Go-Live' : 'Fortschritt nach Go-Live'}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                  class="mt-1.5 h-2.5 overflow-hidden rounded-full bg-bg-alt"
+                >
+                  <div class="h-full w-0 rounded-full bg-open transition-[width] duration-[var(--dur-base)] ease-[var(--ease-brand)]" data-bar></div>
+                </div>
+              </div>
+            ))}
+          </dl>
+          <p id="cl-blocker" class="mt-4 flex min-h-6 items-center gap-2 font-mono text-sm">&nbsp;</p>
+        </section>
+
+        <form id="cl-filters" class="mt-6 space-y-4" aria-label="Filter">
+          {filterGroups.map((g) => (
+            <fieldset>
+              <legend class={label}>{g.legend}</legend>
+              <div class="flex flex-wrap gap-2">
+                {g.options.map(([value, text]) => (
+                  <label class="cl-chip">
+                    <input type="radio" name={g.name} value={value} />
+                    {text}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ))}
+        </form>
+      </aside>
+
+      <main id="cl-content" class="min-w-0 pt-6 md:pt-10">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p id="cl-count" class="font-mono text-sm text-ink-soft" aria-live="polite"></p>
+          <button type="button" id="cl-new-open" class={btnSecondary} aria-expanded="false" aria-controls="cl-new">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            Neuer Punkt
+          </button>
+        </div>
+
+        <form id="cl-new" class="mt-4 space-y-5 rounded-card border-2 border-ink/15 bg-paper p-4 md:p-6" hidden novalidate>
+          <h2 class="font-display text-2xl">Neuer Punkt</h2>
+          <div>
+            <label for="np-title" class={label}>Titel</label>
+            <input id="np-title" name="title" type="text" required maxlength="200" autocomplete="off" class={field} placeholder="Was ist zu tun?" />
+          </div>
+          <div>
+            <label for="np-description" class={label}>Beschreibung <span class="normal-case tracking-normal">(optional)</span></label>
+            <textarea id="np-description" name="description" rows="3" maxlength="4000" class={field} placeholder="Worum geht es genau? Links werden automatisch klickbar."></textarea>
+          </div>
+          {newGroups.map((g) => (
+            <fieldset>
+              <legend class={label}>{g.legend}</legend>
+              <div class="flex flex-wrap gap-2">
+                {g.options.map(([value, text]) => (
+                  <label class="cl-chip">
+                    <input type="radio" name={g.name} value={value} checked={value === g.checked} />
+                    {text}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ))}
+          <div>
+            <label for="np-category" class={label}>Kategorie</label>
+            <input id="np-category" name="category" type="text" maxlength="60" list="cl-categories" autocomplete="off" class={field} placeholder="z. B. Inhalte" />
+            <datalist id="cl-categories"></datalist>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <button type="submit" class={btnPrimary}>Punkt anlegen</button>
+            <button type="button" id="cl-new-cancel" class="inline-flex min-h-11 items-center rounded-card px-4 font-mono text-sm text-ink-soft underline decoration-ink/30 underline-offset-4 hover:text-ink">Abbrechen</button>
+          </div>
+        </form>
+
+        <div id="cl-list" class="mt-6" tabindex="-1">
+          <p class="rounded-card border border-dashed border-ink/20 p-6 text-center font-mono text-sm text-ink-soft">Lade die Checkliste …</p>
+        </div>
+      </main>
+    </div>
+
+    <div id="cl-toast" class="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="cl-sr" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <script>
+      import '../../checkliste/app';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Filter-/Auswahl-Chips: echte Radio-Buttons, Label als ≥44-px-Tippziel */
+  .cl-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.85rem;
+    border: 2px solid rgb(36 27 20 / 0.16);
+    border-radius: 999px;
+    background: var(--color-paper);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.2;
+    color: var(--color-ink);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--dur-fast) var(--ease-brand),
+      border-color var(--dur-fast) var(--ease-brand),
+      color var(--dur-fast) var(--ease-brand);
+  }
+  @media (min-width: 640px) { .cl-chip { padding: 0 1rem; } }
+  .cl-chip:hover { border-color: var(--color-ink); }
+  .cl-chip input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .cl-chip:has(input:checked) {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-bg);
+  }
+  .cl-chip:has(input:focus-visible) {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+  .cl-chip--sm { padding: 0 0.85rem; font-size: 0.8125rem; }
+
+  .cl-menu > summary::-webkit-details-marker { display: none; }
+  .cl-menu > summary { list-style: none; }
+
+  /* Kurz aufleuchten, wenn ein Punkt angelegt/angesprungen wurde */
+  @keyframes cl-flash {
+    from { box-shadow: 0 0 0 4px rgb(224 122 31 / 0.55); }
+    to { box-shadow: 0 0 0 4px rgb(224 122 31 / 0); }
+  }
+  .cl-flash { animation: cl-flash 1.6s var(--ease-brand) both; }
+
+  .cl-toast-in { animation: cl-toast-in var(--dur-base) var(--ease-brand) both; }
+  @keyframes cl-toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+</style>
