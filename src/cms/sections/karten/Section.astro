@@ -34,7 +34,7 @@ const hasIntro = Boolean(f.eyebrow || f.title || f.intro);
         cms={{ section, eyebrow: 'eyebrow', title: 'title', intro: 'intro' }}
       />
     )}
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2" {...editAttrs(section, 'items', 'text')}>
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:items-start" {...editAttrs(section, 'items', 'text')}>
       {f.items.map((item, i) => {
         const img = media(item.image);
         return (
