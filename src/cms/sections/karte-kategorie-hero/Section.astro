@@ -19,7 +19,8 @@ const category = context!.category;
 
 const HERO_MOTIF_FALLBACK = 'fruehstueck';
 const heroMotif = (category.heroMotif as string | undefined) ?? HERO_MOTIF_FALLBACK;
-const hasPlaceholder = category.items.some((i) => i.priceIsPlaceholder);
+// Seed-JSON hat kein Zod wie src/content.config.ts — gleicher Default dort: priceIsPlaceholder true, wenn fehlend.
+const hasPlaceholder = category.items.some((i) => i.priceIsPlaceholder ?? true);
 ---
 
 <section class="bg-bg py-14 md:py-24" {...editSection(section)}>

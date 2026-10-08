@@ -26,7 +26,7 @@
   {
     "id": "glutenfrei-vegan",
     "question": "Habt ihr glutenfreie oder vegane Optionen?",
-    "answer": "Ehrlich gesagt: Wir sind ein Sauerteig-Café, und Sauerteig heißt bei uns fast überall Gluten — eine durchgehend glutenfreie Karte gibt es aktuell nicht. Vegane Optionen wechseln je nach Tag und Angebot, zum Beispiel bei Kaffee mit Hafermilch oder Filterkaffee. Frag am besten kurz vor Ort oder unter [{{phoneDisplay}}]({{tel}}) nach, was gerade passt.",
+    "answer": "Ehrlich gesagt: Wir sind ein Sauerteig-Café, und Sauerteig heißt bei uns fast überall Gluten — eine durchgehend glutenfreie Karte gibt es aktuell nicht. Vegane Optionen wechseln je nach Tag und Angebot, zum Beispiel bei Kaffee mit Hafermilch oder Filterkaffee. Frag am besten kurz vor Ort oder unter {{phoneDisplay}} nach, was gerade passt.",
     "visible": true,
     "todoKunde": "Glutenfreies und veganes Angebot final abstimmen"
   },

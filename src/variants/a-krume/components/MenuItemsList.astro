@@ -16,7 +16,12 @@ export interface MenuItem {
   veggie?: boolean;
   vegan?: boolean;
   allergens?: string[];
-  seasonal?: string;
+  /**
+   * In den Daten immer ein Label-String (z. B. „neu im Regal", s. src/content.config.ts).
+   * `| boolean` nur, damit `collections.menu`-Items aus src/cms/types.ts (dort `seasonal?: boolean`
+   * — Kern-Datei, nicht editierbar) sich ohne Cast durchreichen lassen.
+   */
+  seasonal?: string | boolean;
   highlight?: boolean;
   [key: string]: unknown;
 }

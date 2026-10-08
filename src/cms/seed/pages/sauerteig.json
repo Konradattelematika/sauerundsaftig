@@ -1,0 +1,60 @@
+{
+  "id": "sauerteig",
+  "order": 20,
+  "slug": "sauerteig",
+  "title": "Sauerteig",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Sauerteig",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "18 Stunden Sauerteig — vom Ansetzen bis zur Theke | Sauer & Saftig",
+    "description": "Kein Schritt lässt sich abkürzen: 18 Stunden von Mehl, Wasser und Zeit bis zum fertigen Sauerteiglaib — Etappe für Etappe."
+  },
+  "sections": [
+    {
+      "id": "hero",
+      "type": "sauerteig-hero",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Handwerk",
+        "title": "18 Stunden, keine Abkürzung",
+        "intro": "Ein Laib Sauerteigbrot hat, bis er im Regal liegt, schon einen ganzen Arbeitstag und eine Nacht hinter sich. Mehl, Wasser, Salz und Zeit — an der letzten Zutat lässt sich kaum rütteln.",
+        "stats": [
+          { "label": "Stunden gesamt", "value": 18 },
+          { "label": "Falt-Runden", "value": 4 },
+          { "label": "Grad im Ofen", "value": 250 }
+        ]
+      }
+    },
+    {
+      "id": "zeitstrahl",
+      "type": "zeitstrahl",
+      "visible": true,
+      "fields": {
+        "stages": [
+          { "time": "14:00", "title": "Ansetzen", "text": "Der Sauerteig kommt aus dem Glas, wird mit Mehl und Wasser aufgefrischt. Parallel ruht das Mehl für den Hauptteig eine Stunde im Wasser — Autolyse." },
+          { "time": "15:30", "title": "Kneten", "text": "Sauerteig und Salz kommen dazu. Kurz kneten, dann Pause — der Teig arbeitet die nächsten Stunden vor allem selbst." },
+          { "time": "17:00–19:00", "title": "Dehnen & Falten", "text": "Vier Runden im Halbstundentakt. Bei rund 24 Grad Raumtemperatur baut der Teig so Spannung auf, ohne zu reißen." },
+          { "time": "21:00", "title": "Formen", "text": "Der Teig wird zum Laib geformt und kopfüber in den bemehlten Gärkorb gelegt — die Naht zeigt nach oben." },
+          { "time": "21:30", "title": "Kalte Gare", "text": "Ab in den Kühlschrank, bei rund 4 Grad. Über Nacht entsteht hier ein guter Teil der Säure, die den Laib später trägt." },
+          { "time": "06:00–06:30", "title": "Ofen & Einschuss", "text": "Der Ofen heizt auf 250 Grad mit Schwaden vor. Ein Schnitt mit der Klinge, dann Dampf für die ersten Minuten." },
+          { "time": "07:15", "title": "Auskühlen", "text": "Die Kruste ist dunkel und knackt beim Abkühlen hörbar — die letzte halbe Stunde gehört dem Brot allein." },
+          { "time": "08:00", "title": "Theke", "text": "18 Stunden nach dem ersten Handgriff steht der Laib bei uns im Regal, bereit für den ersten Schnitt des Tages." }
+        ]
+      }
+    },
+    {
+      "id": "abschluss",
+      "type": "sauerteig-abschluss",
+      "visible": true,
+      "fields": {
+        "media": { "media": "haende-teig" },
+        "eyebrow": "Warum so lange",
+        "title": "Zeit statt Abkürzung",
+        "text": "Kein Schritt lässt sich beschleunigen, ohne dass Krume oder Kruste darunter leiden. Wer weniger Zeit gibt, bekommt weniger Geschmack zurück — deshalb gibt es bei uns keinen Laib, der schneller geht als 18 Stunden.",
+        "link": { "label": "Unsere Brote in der Karte", "href": "/karte/brot", "newTab": false, "visible": true }
+      }
+    }
+  ]
+}

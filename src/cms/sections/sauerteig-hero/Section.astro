@@ -28,7 +28,7 @@ const f = section.fields;
     />
 
     <dl class="mt-10 grid grid-cols-3 gap-4 border-t border-ink/10 pt-8 md:mt-16 md:gap-8" data-reveal style="--reveal-delay:100ms">
-      {f.stats.map((s, i) => (
+      {f.stats.map((s) => (
         <div>
           <dt class="font-mono text-xs uppercase tracking-widest text-ink-soft">{s.label}</dt>
           <dd class="mt-1 font-display text-4xl md:text-5xl">
