@@ -1,0 +1,84 @@
+{
+  "main": [
+    {
+      "id": "karte",
+      "label": "Karte",
+      "href": "page:karte"
+    },
+    {
+      "id": "sauerteig",
+      "label": "Sauerteig",
+      "href": "page:sauerteig"
+    },
+    {
+      "id": "ueber-mich",
+      "label": "Über mich",
+      "href": "page:ueber-mich"
+    },
+    {
+      "id": "besuch",
+      "label": "Besuch",
+      "href": "page:besuch"
+    }
+  ],
+  "cta": {
+    "label": "Vorbestellen",
+    "href": "page:vorbestellen"
+  },
+  "footer": [
+    {
+      "id": "ueber-uns",
+      "label": "Über uns",
+      "href": "page:ueber-uns"
+    },
+    {
+      "id": "ueber-mich",
+      "label": "Über mich",
+      "href": "page:ueber-mich"
+    },
+    {
+      "id": "shop",
+      "label": "Shop & Gutscheine",
+      "href": "page:shop"
+    },
+    {
+      "id": "gastgeber",
+      "label": "Für Gastgeber",
+      "href": "page:gastgeber"
+    },
+    {
+      "id": "faq",
+      "label": "FAQ",
+      "href": "page:faq"
+    },
+    {
+      "id": "kontakt",
+      "label": "Kontakt",
+      "href": "page:kontakt"
+    },
+    {
+      "id": "jobs",
+      "label": "Jobs",
+      "href": "page:jobs"
+    }
+  ],
+  "legal": [
+    {
+      "id": "impressum",
+      "label": "Impressum",
+      "href": "page:impressum"
+    },
+    {
+      "id": "datenschutz",
+      "label": "Datenschutz",
+      "href": "page:datenschutz"
+    }
+  ],
+  "social": [
+    {
+      "id": "instagram",
+      "label": "@sauerundsaftig auf Instagram",
+      "href": "https://www.instagram.com/sauerundsaftig/"
+    }
+  ]
+}

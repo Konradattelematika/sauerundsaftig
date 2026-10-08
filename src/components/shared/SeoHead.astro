@@ -7,9 +7,13 @@ interface Props {
   jsonLd?: object[];
   ogImage?: string;
   noindex?: boolean;
+  /** CMS-SEO (optional; ohne Angabe wie bisher: title/description bzw. automatische Canonical-URL) */
+  ogTitle?: string;
+  ogDescription?: string;
+  canonical?: string;
 }
-const { title, description, jsonLd = [], ogImage, noindex = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const { title, description, jsonLd = [], ogImage, noindex = false, ogTitle, ogDescription, canonical: canonicalOverride } = Astro.props;
+const canonical = canonicalOverride ? new URL(canonicalOverride, Astro.site) : new URL(Astro.url.pathname, Astro.site);
 const ogImg = ogImage ? new URL(ogImage, Astro.site) : new URL('/brand/favicon-512.png', Astro.site);
 ---
 
@@ -27,8 +31,8 @@ const ogImg = ogImage ? new URL(ogImage, Astro.site) : new URL('/brand/favicon-5
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Sauer & Saftig" />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
+<meta property="og:title" content={ogTitle || title} />
+<meta property="og:description" content={ogDescription || description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={ogImg} />
 <meta property="og:locale" content="de_DE" />

@@ -2,3 +2,5 @@ node_modules
 dist*
 .astro
 .claude/
+src/assets/media/*
+!src/assets/media/.gitkeep

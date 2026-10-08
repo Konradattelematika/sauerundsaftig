@@ -1,0 +1,29 @@
+{
+  "date": "2026-08-16",
+  "items": [
+    {
+      "name": "Lotus-Schnecken",
+      "note": "frisch vom Blech, mit Keks obendrauf",
+      "motif": "schnecke-lotus",
+      "soldOut": false
+    },
+    {
+      "name": "Erdbeer-Schnecken",
+      "note": "mit Sahne und Fruchtsoße — solange der Vorrat reicht",
+      "motif": "schnecke-saison",
+      "soldOut": false
+    },
+    {
+      "name": "Erdbeertorte",
+      "note": "stückweise aus der Theke",
+      "motif": "obsttorte",
+      "soldOut": false
+    },
+    {
+      "name": "Bauernbrot & Roggenvollkorn",
+      "note": "auch zum Vorbestellen",
+      "motif": "brotregal",
+      "soldOut": false
+    }
+  ]
+}

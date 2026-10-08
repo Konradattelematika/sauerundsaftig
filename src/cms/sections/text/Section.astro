@@ -1,0 +1,21 @@
+---
+/** Generische Sektion „Text" (s. definition.mjs) — Bausteine und Abstände wie auf den Inhaltsseiten von A. */
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import { editAttrs, editSection, rich } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; title: string; intro?: string; body?: string; background?: 'bg' | 'bg-alt' }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class:list={[f.background === 'bg-alt' ? 'bg-bg-alt' : 'bg-bg', 'py-14 md:py-24']} {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <SectionIntro eyebrow={f.eyebrow || undefined} title={f.title} intro={f.intro || undefined} cms={{ section, eyebrow: 'eyebrow', title: 'title', intro: 'intro' }} />
+    {f.body && (
+      <div class="prose-editorial prose-measure mt-8 text-lg text-ink-soft" data-reveal {...editAttrs(section, 'body', 'rich')} set:html={rich(f.body, { blocks: true, linkClass: 'link-ul text-ink' })} />
+    )}
+  </div>
+</section>

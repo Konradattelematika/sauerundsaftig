@@ -1,0 +1,18 @@
+---
+/**
+ * Rendert die sichtbaren Sektionen einer CMS-Seite in gespeicherter Reihenfolge.
+ * context: optionale Daten für Vorlagen-Seiten (z. B. die Karten-Kategorie bei /karte/<kategorie>).
+ */
+import type { PageDoc } from './types';
+import { visibleSections } from './index';
+import { sectionComponent } from './sections/registry';
+
+interface Props {
+  page: PageDoc;
+  context?: Record<string, unknown>;
+}
+const { page, context } = Astro.props;
+const sections = visibleSections(page).map((section) => ({ section, Component: sectionComponent(section.type) }));
+---
+
+{sections.map(({ section, Component }) => <Component section={section} page={page} context={context} />)}

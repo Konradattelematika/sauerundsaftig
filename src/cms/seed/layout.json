@@ -1,0 +1,11 @@
+{
+  "header": { "logo": null, "showOpeningStatus": true },
+  "footer": {
+    "claim": "",
+    "text": "",
+    "navHeading": "Mehr",
+    "hoursHeading": "Öffnungszeiten",
+    "copyright": "© {jahr} Sauer & Saftig · Dünenstraße 1, {stadt}"
+  },
+  "stickyBar": { "items": [] }
+}

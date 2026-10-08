@@ -1,0 +1,12 @@
+---
+/**
+ * Editor-Brücke (nur im Vorschau-/Editor-Build, eingebunden von Layout A): verbindet die Seite im
+ * iframe mit dem Admin-Seiteneditor (Hervorheben/Anklicken von data-cms-*-Elementen, Live-Updates
+ * per postMessage). Implementierung: src/admin/bridge.ts (Admin-Paket).
+ */
+---
+
+<script>
+  import { initBridge } from '../admin/bridge';
+  initBridge();
+</script>

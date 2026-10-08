@@ -1,0 +1,100 @@
+---
+/**
+ * CMS-Route: liefert jede aktive Seite des Inhaltsstands unter ihrem Slug aus (docs/CMS-PLAN.md §5).
+ * Feste Dateien in src/pages haben Vorrang (Astro-Routing) — so bleiben Login, Countdown, Tools usw. unberührt.
+ */
+import { getImage as astroGetImage } from 'astro:assets';
+import Layout from '../variants/a-krume/Layout.astro';
+import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
+import SectionList from '../cms/SectionList.astro';
+import { activePages, cms, plain, pageUrl, type PageDoc } from '../cms';
+import { getImage } from '../lib/images';
+import { localBusiness, menuSchema, faqPage } from '../lib/schema-org';
+import { renderRich } from '../cms/rich.mjs';
+import type { MenuCategory } from '../cms/types';
+
+export function getStaticPaths() {
+  const doc = cms();
+  const paths: { params: { slug: string | undefined }; props: { pageId: string; category?: MenuCategory } }[] = [];
+  for (const p of activePages()) {
+    if (p.system) continue;
+    if (p.template === 'menu-category') {
+      const parent = p.slug.replace(/\/\*$/, '');
+      for (const category of doc.collections.menu) {
+        const slug = `${parent}/${category.slug}`;
+        if (doc.pages.some((x) => x.slug === slug)) continue; // eigene Seite (z. B. Schnecken)
+        paths.push({ params: { slug }, props: { pageId: p.id, category } });
+      }
+      continue;
+    }
+    paths.push({ params: { slug: p.slug || undefined }, props: { pageId: p.id } });
+  }
+  return paths;
+}
+
+interface Props {
+  pageId: string;
+  category?: MenuCategory;
+}
+const { pageId, category } = Astro.props;
+const doc = cms();
+const page = doc.pages.find((p) => p.id === pageId) as PageDoc;
+const siteUrl = String(Astro.site);
+
+// Vorlagen-Seiten: {kategorie} in SEO-Texten durch den Kategorietitel ersetzen
+const fill = (t: string | undefined) => (t ?? '').replaceAll('{kategorie}', category?.title ?? '');
+const seo = page.seo;
+
+// Brotkrumen: Start → Vorfahren (Slug-Präfix) → diese Seite
+let crumbs: { label: string; href: string }[] = [];
+if (page.showBreadcrumbs) {
+  const home = doc.pages.find((p) => p.slug === '');
+  const currentSlug = category ? `${page.slug.replace(/\/\*$/, '')}/${category.slug}` : page.slug;
+  const parts = currentSlug.split('/');
+  crumbs.push({ label: home?.breadcrumb || 'Start', href: '/' });
+  for (let i = 1; i < parts.length; i++) {
+    const anc = doc.pages.find((p) => p.slug === parts.slice(0, i).join('/') && p.status === 'published');
+    if (anc) crumbs.push({ label: anc.breadcrumb || anc.title, href: pageUrl(anc) });
+  }
+  crumbs.push({ label: category ? category.title : page.breadcrumb || page.title, href: `/${currentSlug}` });
+}
+
+const jsonLd: object[] = [];
+for (const kind of page.structuredData ?? []) {
+  if (kind === 'localBusiness') jsonLd.push(localBusiness(siteUrl));
+  if (kind === 'menu') {
+    const cats = category ? [category] : doc.collections.menu;
+    jsonLd.push(menuSchema(cats.map((c) => ({ title: c.title, items: c.items as never })), siteUrl));
+  }
+  if (kind === 'faq') {
+    jsonLd.push(
+      faqPage(
+        doc.collections.faq
+          .filter((f) => f.visible)
+          .map((f) => ({ question: f.question, answerHtml: renderRich(f.answer, doc, { blocks: true }) })),
+      ),
+    );
+  }
+}
+
+let ogImage: string | undefined;
+const ogRef = seo.ogImage ?? doc.settings.seoDefaults?.ogImage ?? null;
+if (ogRef?.media) {
+  const img = await astroGetImage({ src: getImage('a', ogRef.media), width: 1200, format: 'jpg', quality: 80 });
+  ogImage = img.src;
+}
+---
+
+<Layout
+  title={fill(seo.title)}
+  description={fill(plain(seo.description))}
+  jsonLd={jsonLd}
+  ogImage={ogImage}
+  ogTitle={seo.ogTitle ? fill(seo.ogTitle) : undefined}
+  ogDescription={seo.ogDescription ? fill(seo.ogDescription) : undefined}
+  canonical={seo.canonical || undefined}
+  noindex={seo.noindex}
+>
+  {crumbs.length > 0 && <Breadcrumbs items={crumbs} />}
+  <SectionList page={page} context={category ? { category } : undefined} />
+</Layout>

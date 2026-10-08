@@ -5,6 +5,21 @@
  */
 import type { ImageMetadata } from 'astro';
 import type { VariantKey } from './variants';
+import type { MediaItem } from '../cms/types';
+import { loadSiteDoc } from '../cms/store.mjs';
+
+/**
+ * Hochgeladene bzw. ersetzte Bilder aus der CMS-Medienbibliothek: Der Server kopiert sie vor
+ * jedem Build aus /data/media nach src/assets/media/ (docs/CMS-PLAN.md §6).
+ */
+const uploads = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/media/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+
+function cmsMedia(id: string): MediaItem | undefined {
+  return (loadSiteDoc().media as MediaItem[]).find((m) => m.id === id);
+}
 
 const placeholders = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/placeholders/*/*.jpg',
@@ -46,6 +61,14 @@ export const MOTIF_ALT: Record<string, string> = {
 };
 
 export function getImage(variant: VariantKey, motif: string): ImageMetadata {
+  // CMS: hochgeladenes Medium oder ersetztes Foto/Platzhalter → Datei aus src/assets/media
+  const item = cmsMedia(motif);
+  const uploaded = item?.replacedBy ?? (item?.kind === 'upload' ? item.file : undefined);
+  if (uploaded) {
+    const up = uploads[`../assets/${uploaded}`];
+    if (!up) throw new Error(`CMS-Medium ${motif}: Datei ${uploaded} fehlt in src/assets (Medien-Sync vor dem Build?)`);
+    return up.default;
+  }
   const photo = photos[`../assets/photos/${motif}.jpg`];
   if (photo) return photo.default;
   const ph = placeholders[`../assets/placeholders/${variant}/${motif}.jpg`];
@@ -76,10 +99,15 @@ const PHOTO_ALT: Record<string, string> = {
 };
 
 export function hasPhoto(motif: string): boolean {
+  const item = cmsMedia(motif);
+  if (item?.replacedBy || item?.kind === 'upload') return true;
   return Boolean(photos[`../assets/photos/${motif}.jpg`]);
 }
 
 export function getAlt(motif: string): string {
+  // CMS-Medienbibliothek ist die Quelle (Seed = bisherige Alt-Texte, s. scripts/cms-seed-init.mjs)
+  const item = cmsMedia(motif);
+  if (item?.alt) return item.alt;
   if (hasPhoto(motif) && PHOTO_ALT[motif]) return PHOTO_ALT[motif];
   return MOTIF_ALT[motif] ?? 'Platzhalterbild';
 }

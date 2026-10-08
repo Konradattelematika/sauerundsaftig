@@ -12,6 +12,8 @@ import Motion from '../../components/shared/Motion.astro';
 import Header from './components/Header.astro';
 import Footer from './components/Footer.astro';
 import { terrazzoCssUrl } from '../../lib/textures';
+import EditBridge from '../../cms/EditBridge.astro';
+import { editBuild } from '../../cms';
 
 interface Props {
   title: string;
@@ -19,8 +21,11 @@ interface Props {
   jsonLd?: object[];
   ogImage?: string;
   noindex?: boolean;
+  ogTitle?: string;
+  ogDescription?: string;
+  canonical?: string;
 }
-const { title, description, jsonLd = [], ogImage, noindex = false } = Astro.props;
+const { title, description, jsonLd = [], ogImage, noindex = false, ogTitle, ogDescription, canonical } = Astro.props;
 const base = '';
 // Material Theke: eine optimierte Textur-URL fuer alle .tz-*-Klassen (s. styles/a-terrazzo.css)
 const tzUrl = await terrazzoCssUrl();
@@ -29,7 +34,7 @@ const tzUrl = await terrazzoCssUrl();
 <!doctype html>
 <html lang="de" style={`--tz-url:${tzUrl}`}>
   <head>
-    <SeoHead title={title} description={description} jsonLd={jsonLd} ogImage={ogImage} noindex={noindex} />
+    <SeoHead title={title} description={description} jsonLd={jsonLd} ogImage={ogImage} noindex={noindex} ogTitle={ogTitle} ogDescription={ogDescription} canonical={canonical} />
     <ClientRouter />
   </head>
   <body class="has-sticky-bar">
@@ -41,5 +46,6 @@ const tzUrl = await terrazzoCssUrl();
     <Footer base={base} />
     <StickyBar base={base} />
     <Motion />
+    {editBuild && <EditBridge />}
   </body>
 </html>

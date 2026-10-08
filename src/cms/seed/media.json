@@ -1,0 +1,212 @@
+[
+  {
+    "id": "anstellgut",
+    "kind": "placeholder",
+    "file": "placeholders/a/anstellgut.jpg",
+    "alt": "Anstellgut im Glas mit Blasenstruktur (Platzhalterbild)"
+  },
+  {
+    "id": "brot-anschnitt",
+    "kind": "placeholder",
+    "file": "placeholders/a/brot-anschnitt.jpg",
+    "alt": "Sauerteiglaib im Anschnitt (Platzhalterbild)"
+  },
+  {
+    "id": "brot-laib",
+    "kind": "builtin",
+    "file": "photos/brot-laib.jpg",
+    "alt": "Frisch gebackene Sauerteiglaibe mit eingeschnittenem Ährenmuster und bemehlter Kruste"
+  },
+  {
+    "id": "brotregal",
+    "kind": "builtin",
+    "file": "photos/brotregal.jpg",
+    "alt": "Brotregal mit Sauerteigbroten und Tafel: Dinkelvollkorn mit Saaten, Bauernbrot, Roggenvollkorn"
+  },
+  {
+    "id": "fassade",
+    "kind": "placeholder",
+    "file": "placeholders/a/fassade.jpg",
+    "alt": "Fassade des Cafés in der Dünenstraße 1 (Platzhalterbild)"
+  },
+  {
+    "id": "fruehstueck",
+    "kind": "builtin",
+    "file": "photos/fruehstueck.jpg",
+    "alt": "Große Frühstücksplatte mit Käse, Räucherlachs, Eiern, Obst und Beeren"
+  },
+  {
+    "id": "gaerkorb",
+    "kind": "placeholder",
+    "file": "placeholders/a/gaerkorb.jpg",
+    "alt": "Teigling im bemehlten Gärkorb (Platzhalterbild)"
+  },
+  {
+    "id": "gastraum",
+    "kind": "builtin",
+    "file": "photos/gastraum.jpg",
+    "alt": "Sitzecke im Gastraum: Holzbänke mit Kissen am großen Fenster"
+  },
+  {
+    "id": "gastraum-abend",
+    "kind": "builtin",
+    "file": "photos/gastraum-abend.jpg",
+    "alt": "Gastraum am Abend mit warmem Licht und gedeckten Holztischen"
+  },
+  {
+    "id": "haende-teig",
+    "kind": "placeholder",
+    "file": "placeholders/a/haende-teig.jpg",
+    "alt": "Hände falten Sauerteig (Platzhalterbild)"
+  },
+  {
+    "id": "hero-krume",
+    "kind": "builtin",
+    "file": "photos/hero-krume.jpg",
+    "alt": "Frisch gebackene Sauerteigschnecken dicht an dicht, glänzend vom Ofen"
+  },
+  {
+    "id": "josie-portrait",
+    "kind": "builtin",
+    "file": "photos/josie-portrait.jpg",
+    "alt": "Josie lachend hinter der Theke mit einem Holzbrett voller Gebäck und der Urkunde „Bester Bäcker 2025 – Landkreis Rostock“ aus der Leserumfrage der Ostsee-Zeitung"
+  },
+  {
+    "id": "kaesekuchen",
+    "kind": "builtin",
+    "file": "photos/kaesekuchen.jpg",
+    "alt": "Käsekuchen mit Himbeer- und Maracujaspiegel auf Holzbrettern in der Theke"
+  },
+  {
+    "id": "kaesekuchen-lotus",
+    "kind": "builtin",
+    "file": "photos/kaesekuchen-lotus.jpg",
+    "alt": "Käsekuchen mit Karamellspiegel und Lotus-Keksen"
+  },
+  {
+    "id": "kaffee",
+    "kind": "placeholder",
+    "file": "placeholders/a/kaffee.jpg",
+    "alt": "Kaffeezubereitung an der Maschine (Platzhalterbild)"
+  },
+  {
+    "id": "kueste",
+    "kind": "placeholder",
+    "file": "placeholders/a/kueste.jpg",
+    "alt": "Steilküste am Salzhaff bei Rerik (Platzhalterbild)"
+  },
+  {
+    "id": "obsttorte",
+    "kind": "builtin",
+    "file": "photos/obsttorte.jpg",
+    "alt": "Erdbeertorte, dicht belegt mit frischen Erdbeeren"
+  },
+  {
+    "id": "ofen",
+    "kind": "placeholder",
+    "file": "placeholders/a/ofen.jpg",
+    "alt": "Ofeneinschuss in der Backstube am frühen Morgen (Platzhalterbild)"
+  },
+  {
+    "id": "schnecke-blech",
+    "kind": "builtin",
+    "file": "photos/schnecke-blech.jpg",
+    "alt": "Frisch gebackene Schnecken dicht an dicht auf dem Blech"
+  },
+  {
+    "id": "schnecke-haselnuss",
+    "kind": "placeholder",
+    "file": "placeholders/a/schnecke-haselnuss.jpg",
+    "alt": "Sauerteigschnecke mit Haselnusscreme (Platzhalterbild)"
+  },
+  {
+    "id": "schnecke-lotus",
+    "kind": "builtin",
+    "file": "photos/schnecke-lotus.jpg",
+    "alt": "Lotus-Schnecken mit Karamellcreme und Keks, frisch vom Blech"
+  },
+  {
+    "id": "schnecke-pistazie",
+    "kind": "placeholder",
+    "file": "placeholders/a/schnecke-pistazie.jpg",
+    "alt": "Sauerteigschnecke mit Pistaziencreme (Platzhalterbild)"
+  },
+  {
+    "id": "schnecke-pistazie-hoch",
+    "kind": "placeholder",
+    "file": "placeholders/a/schnecke-pistazie-hoch.jpg",
+    "alt": "Sauerteigschnecke mit Pistaziencreme, Nahaufnahme (Platzhalterbild)"
+  },
+  {
+    "id": "schnecke-querschnitt",
+    "kind": "placeholder",
+    "file": "placeholders/a/schnecke-querschnitt.jpg",
+    "alt": "Sauerteigschnecke im Querschnitt mit sichtbaren Schichten (Platzhalterbild)"
+  },
+  {
+    "id": "schnecke-saison",
+    "kind": "builtin",
+    "file": "photos/schnecke-saison.jpg",
+    "alt": "Saison-Schnecken mit Sahne, frischen Erdbeeren und Fruchtsoße"
+  },
+  {
+    "id": "suppe",
+    "kind": "placeholder",
+    "file": "placeholders/a/suppe.jpg",
+    "alt": "Suppe im Teller mit Brotscheibe (Platzhalterbild)"
+  },
+  {
+    "id": "team-1",
+    "kind": "placeholder",
+    "file": "placeholders/a/team-1.jpg",
+    "alt": "Porträt aus der Backstube (Platzhalterbild)"
+  },
+  {
+    "id": "team-2",
+    "kind": "placeholder",
+    "file": "placeholders/a/team-2.jpg",
+    "alt": "Porträt aus dem Service (Platzhalterbild)"
+  },
+  {
+    "id": "terrasse",
+    "kind": "placeholder",
+    "file": "placeholders/a/terrasse.jpg",
+    "alt": "Eingedeckter Außenbereich (Platzhalterbild)"
+  },
+  {
+    "id": "tgtg",
+    "kind": "placeholder",
+    "file": "placeholders/a/tgtg.jpg",
+    "alt": "Gepackte Too-Good-To-Go-Tüte auf der Theke (Platzhalterbild)"
+  },
+  {
+    "id": "theke",
+    "kind": "builtin",
+    "file": "photos/theke.jpg",
+    "alt": "Theke mit Vitrine, Brotkörben, Brezelständer und Getränketafel"
+  },
+  {
+    "id": "torte-blau",
+    "kind": "builtin",
+    "file": "photos/torte-blau.jpg",
+    "alt": "Auftragstorte mit hellblauer Creme und Streuseln"
+  },
+  {
+    "id": "torte-blumen",
+    "kind": "builtin",
+    "file": "photos/torte-blumen.jpg",
+    "alt": "Auftragstorte mit heller Creme und echten Wiesenblumen"
+  },
+  {
+    "id": "torte-rosa",
+    "kind": "builtin",
+    "file": "photos/torte-rosa.jpg",
+    "alt": "Auftragstorte in Rosa mit gespritzten Bögen und Schleifen"
+  },
+  {
+    "id": "torte-vintage",
+    "kind": "builtin",
+    "file": "photos/torte-vintage.jpg",
+    "alt": "Erdbeer-Mascarpone-Torte im Vintage-Stil mit Buttercreme"
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "zahlungsmittel",
+    "question": "Kann ich mit Karte zahlen oder nur bar?",
+    "answer": "Beides geht: Du kannst bar oder mit Karte bezahlen.",
+    "visible": true
+  },
+  {
+    "id": "reservierung",
+    "question": "Kann ich einen Tisch reservieren?",
+    "answer": "Reservierungen und Anfragen laufen ausschließlich telefonisch — ruf uns unter 038296 769924 an und frag nach einem Tisch für deinen Termin. Gerade an Wochenenden und in der Saison lohnt sich das.",
+    "visible": true
+  },
+  {
+    "id": "fruehstueck-bis-wann",
+    "question": "Bis wann gibt es Frühstück?",
+    "answer": "Frühstück bekommst du bei uns bis 12 Uhr. Danach schwenkt die Karte auf Suppen, Kuchen und die Sauerteigschnecken um.",
+    "visible": true
+  },
+  {
+    "id": "hunde",
+    "question": "Sind Hunde bei euch erlaubt?",
+    "answer": "Ja, Hunde sind an der Leine erlaubt.",
+    "visible": true
+  },
+  {
+    "id": "glutenfrei-vegan",
+    "question": "Habt ihr glutenfreie oder vegane Optionen?",
+    "answer": "Ehrlich gesagt: Wir sind ein Sauerteig-Café, und Sauerteig heißt bei uns fast überall Gluten — eine durchgehend glutenfreie Karte gibt es aktuell nicht. Vegane Optionen wechseln je nach Tag und Angebot, zum Beispiel bei Kaffee mit Hafermilch oder Filterkaffee. Frag am besten kurz vor Ort oder unter 038296 769924 nach, was gerade passt.",
+    "visible": true
+  },
+  {
+    "id": "ruhetage",
+    "question": "Warum habt ihr dienstags und mittwochs zu?",
+    "answer": "Weil ein Café mit eigener Backstube feste Pausen braucht — für Wartung, Bestellungen und die Pflege des Sauerteigs, ohne dass gleichzeitig der Gastraum läuft.",
+    "visible": true
+  },
+  {
+    "id": "torte-bestellen",
+    "question": "Kann ich eine Torte für einen Anlass vorbestellen?",
+    "answer": "Ja, das geht. Plane rund 5 Tage Vorlauf ein, damit wir Zutaten und Backzeit einplanen können. Die Vorbestellseite ist noch eine Demo; bestell deshalb aktuell telefonisch unter 038296 769924.",
+    "visible": true
+  },
+  {
+    "id": "sauerteig-starter",
+    "question": "Kann ich bei euch einen Sauerteig-Starter bekommen?",
+    "answer": "Ein eigenes Glas Anstellgut zum Mitnehmen ist geplant, aktuell aber noch nicht einzeln erhältlich.",
+    "visible": true
+  },
+  {
+    "id": "too-good-to-go",
+    "question": "Seid ihr bei Too Good To Go dabei?",
+    "answer": "Ja. Über die App bekommst du bei uns eine Überraschungstüte mit rund 12 € Warenwert für 4 €. Verfügbarkeit und Abholzeit siehst du direkt in der App.",
+    "visible": false
+  },
+  {
+    "id": "brot-haltbarkeit",
+    "question": "Wie lange hält euer Brot?",
+    "answer": "Unser Sauerteigbrot hält sich 4 bis 5 Tage, ohne trocken oder fade zu werden — die lange Gare sorgt dafür. Am besten bewahrst du es in einem Leinenbeutel oder in Papier bei Zimmertemperatur auf, nicht luftdicht in Plastik. So bleibt die Kruste knusprig und die Krume feucht.",
+    "visible": true
+  }
+]
