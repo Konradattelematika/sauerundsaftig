@@ -1,7 +1,12 @@
 node_modules
 dist
+dist-*
 .astro
 .claude
 .git
+.code-version
 tests
 *.log
+# lokale Uploads/Medien-Sync gehören nicht ins Image (zur Laufzeit aus /data/media)
+src/assets/media/*
+!src/assets/media/.gitkeep
