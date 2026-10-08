@@ -1,12 +1,14 @@
 ---
 /**
  * Footer Variante A: Terrazzo-Band als Übergang (Material „Theke"), dunkler Abschluss
- * (bg-ink), NAV_FOOTER_A (inkl. „Über mich"), NAV_LEGAL, Öffnungszeiten kompakt,
- * Instagram, Claim.
+ * (bg-ink), Footer-Navigation, Rechtliches, Öffnungszeiten kompakt, Social-Links, Claim.
+ * Inhalte aus dem CMS: navigation.footer/legal/social und layout.footer (Claim, Text,
+ * Überschriften, Copyright mit {jahr}/{stadt}/{name}). Öffnungszeiten/Telefon aus den Einstellungen.
  */
 import Logo from '../../../components/shared/Logo.astro';
 import site from '../../../data/site.json';
-import { NAV_FOOTER_A, NAV_LEGAL } from '../../../lib/variants';
+import { cms, linkAttrs, shown, tokens } from '../../../cms';
+import type { LinkValue } from '../../../cms/types';
 import { weekOverview, type Schedule } from '../../../lib/opening-hours';
 import { telHref } from '../../../lib/format';
 
@@ -15,9 +17,23 @@ interface Props {
   base: string;
 }
 const { base } = Astro.props;
+const doc = cms();
 const week = weekOverview(site.openingHours as unknown as Schedule);
 const phoneHref = telHref(site.phone);
-const footerNav = NAV_FOOTER_A;
+const footer = doc.layout?.footer ?? { claim: '', text: '', navHeading: '', hoursHeading: '', copyright: '' };
+const footerNav = doc.navigation.footer.filter(shown);
+const legal = doc.navigation.legal.filter(shown);
+const social = doc.navigation.social.filter(shown);
+const copyright = tokens(footer.copyright)
+  .replaceAll('{jahr}', String(new Date().getFullYear()))
+  .replaceAll('{stadt}', site.address.city)
+  .replaceAll('{name}', site.name);
+
+/** Link-Attribute (href/target/rel); interne Pfade bekommen das Varianten-Präfix */
+function attrs(link: Pick<LinkValue, 'href' | 'newTab'>): Record<string, string> {
+  const a = linkAttrs(link);
+  return base && a.href.startsWith('/') ? { ...a, href: `${base}${a.href}` } : a;
+}
 ---
 
 <footer class="bg-ink text-bg">
@@ -25,25 +41,25 @@ const footerNav = NAV_FOOTER_A;
   <div class="mx-auto grid max-w-[1440px] gap-10 px-4 py-16 md:grid-cols-12 md:gap-8 md:px-8 md:py-24">
     <div class="md:col-span-4">
       <Logo variant="lockup" tone="light" width={170} loading="lazy" />
-      <p class="mt-5 font-display text-2xl">{site.claim}</p>
-      <p class="mt-3 max-w-[32ch] text-bg/70">{site.subline}</p>
-      <a
-        href={`https://www.instagram.com/${site.instagram}/`}
-        target="_blank"
-        rel="noopener"
-        class="link-ul link-ul--light mt-5 inline-flex min-h-11 items-center gap-2 font-mono text-sm"
-      >
-        @{site.instagram} auf Instagram
-        <svg class="arrow-icon size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
-      </a>
+      {footer.claim && <p class="mt-5 font-display text-2xl">{tokens(footer.claim)}</p>}
+      {footer.text && <p class="mt-3 max-w-[32ch] text-bg/70">{tokens(footer.text)}</p>}
+      {social.map((item) => (
+        <a
+          {...attrs(item)}
+          class="link-ul link-ul--light mt-5 inline-flex min-h-11 items-center gap-2 font-mono text-sm"
+        >
+          {tokens(item.label)}
+          <svg class="arrow-icon size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+        </a>
+      ))}
     </div>
 
     <nav aria-label="Footer-Navigation" class="md:col-span-3">
-      <p class="font-mono text-xs uppercase tracking-widest text-bg/60">Mehr</p>
+      {footer.navHeading && <p class="font-mono text-xs uppercase tracking-widest text-bg/60">{footer.navHeading}</p>}
       <ul class="mt-4 flex flex-col gap-3">
         {footerNav.map((item) => (
           <li>
-            <a href={`${base}${item.path}`} class="link-ul link-ul--light inline-flex min-h-8 items-center text-bg/90 hover:text-bg">
+            <a {...attrs(item)} class="link-ul link-ul--light inline-flex min-h-8 items-center text-bg/90 hover:text-bg">
               {item.label}
             </a>
           </li>
@@ -52,7 +68,7 @@ const footerNav = NAV_FOOTER_A;
     </nav>
 
     <div class="md:col-span-5">
-      <p class="font-mono text-xs uppercase tracking-widest text-bg/60">Öffnungszeiten</p>
+      {footer.hoursHeading && <p class="font-mono text-xs uppercase tracking-widest text-bg/60">{footer.hoursHeading}</p>}
       <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 font-mono text-xl text-bg/90">
         {week.map((d) => (
           <>
@@ -69,10 +85,10 @@ const footerNav = NAV_FOOTER_A;
 
   <div class="border-t border-bg/15">
     <div class="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-6 font-mono text-xs uppercase tracking-widest text-bg/60 md:px-8">
-      <p>© {new Date().getFullYear()} {site.name} · Dünenstraße 1, {site.address.city}</p>
+      {copyright && <p>{copyright}</p>}
       <ul class="flex flex-wrap items-center gap-5">
-        {NAV_LEGAL.map((item) => (
-          <li><a href={`${base}${item.path}`} class="inline-flex min-h-8 items-center transition-colors duration-[var(--dur-fast)] hover:text-bg">{item.label}</a></li>
+        {legal.map((item) => (
+          <li><a {...attrs(item)} class="inline-flex min-h-8 items-center transition-colors duration-[var(--dur-fast)] hover:text-bg">{item.label}</a></li>
         ))}
       </ul>
     </div>

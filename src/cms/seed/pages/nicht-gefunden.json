@@ -1,0 +1,30 @@
+{
+  "id": "nicht-gefunden",
+  "order": 99,
+  "slug": "404",
+  "title": "Seite nicht gefunden (404)",
+  "status": "published",
+  "kind": "builtin",
+  "system": true,
+  "seo": {
+    "title": "Seite nicht gefunden — Sauer & Saftig",
+    "description": "Diese Seite gibt es nicht.",
+    "noindex": true
+  },
+  "sections": [
+    {
+      "id": "hinweis",
+      "type": "nicht-gefunden",
+      "visible": true,
+      "fields": {
+        "eyebrow": "404",
+        "title": "Diese Seite ist wie ein Sauerteig ohne Fütterung — nicht mehr da.",
+        "text": "Der Link, dem du gefolgt bist, führt ins Leere. Vielleicht findest du, wonach du suchst, auf der Karte oder auf der Startseite.",
+        "buttons": [
+          { "link": { "label": "Zur Karte", "href": "page:karte", "variant": "accent" }, "icon": "arrow" },
+          { "link": { "label": "Zur Startseite", "href": "page:start", "variant": "secondary" }, "icon": "" }
+        ]
+      }
+    }
+  ]
+}
