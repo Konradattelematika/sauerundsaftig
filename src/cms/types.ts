@@ -79,6 +79,8 @@ export interface PageDoc {
    * (slug endet auf '/*'); Kategorien mit eigener Seite (z. B. karte/schnecken) werden übersprungen.
    */
   template?: 'menu-category';
+  /** structuredData 'menu': nur diese Karten-Kategorie (Slug) statt der ganzen Karte, z. B. 'schnecken' */
+  menuScope?: string;
   /** system = hat eine eigene Route (z. B. 404), wird nicht über die CMS-Route ausgeliefert */
   system?: boolean;
   seo: Seo;
@@ -188,7 +190,8 @@ export interface MenuItem {
   priceSuffix?: string;
   tags?: string[];
   allergens?: string[];
-  seasonal?: boolean;
+  /** Saison-Hinweis als Text (z. B. „nach Jahreszeit") */
+  seasonal?: string;
   motif?: Id;
   [key: string]: unknown;
 }

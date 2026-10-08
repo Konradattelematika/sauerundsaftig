@@ -1,5 +1,6 @@
 /**
  * Kleines, sicheres Text-Markup für CMS-Felder vom Typ `rich` (Build, Admin-Vorschau, Server-Validierung).
+ * Ohne Node-Importe — läuft auch im Admin-Browser.
  * Erlaubt — und sonst nichts (alles andere wird escaped, kein HTML möglich):
  *   Leerzeile        → neuer Absatz (nur renderRich(..., { blocks: true }))
  *   Zeilenumbruch    → <br>
@@ -9,7 +10,7 @@
  *   {{platzhalter}}  → Wert aus den Einstellungen: phoneDisplay, phone, email, name, street, zip, city,
  *                      breakfastUntil, instagram
  */
-import { resolveHref, isExternalHref } from './store.mjs';
+import { resolveHref, isExternalHref } from './links.mjs';
 
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 export const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESC[c]);

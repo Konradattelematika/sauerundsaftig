@@ -6,11 +6,13 @@
   "status": "published",
   "kind": "builtin",
   "showBreadcrumbs": true,
-  "structuredData": ["menu"],
+  "structuredData": [
+    "menu"
+  ],
   "template": "menu-category",
   "seo": {
     "title": "{kategorie} — Karte | Sauer & Saftig",
-    "description": "{kategorie} in der Karte von Sauer & Saftig — aus der eigenen Backstube in Rerik."
+    "description": "{kategorie-intro}"
   },
   "sections": [
     {

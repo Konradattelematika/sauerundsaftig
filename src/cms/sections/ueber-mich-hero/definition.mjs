@@ -20,7 +20,7 @@ export default {
     line2: 'ich bin',
     name: '',
     lead: '',
-    image: '',
+    image: { media: 'josie-portrait' },
     captionLabel: '',
   }),
 };

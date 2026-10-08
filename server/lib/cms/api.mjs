@@ -214,12 +214,17 @@ export function createCmsApi(cms) {
       const item = doc.media.find((m) => m.id === id);
       if (!item) throw new HttpError(404, 'Bild nicht gefunden.');
       const usages = mediaUsages(doc, id, defs);
+      // Grundbestand ist nie löschbar (nur ersetzbar) — Verwendungsnachweis trotzdem mitgeben
+      if (item.kind !== 'upload') {
+        const err = new HttpError(409, 'Bilder aus dem Grundbestand lassen sich nicht löschen, nur ersetzen.');
+        err.body = { usages };
+        throw err;
+      }
       if (usages.length) {
         const err = new HttpError(409, `Das Bild wird noch verwendet (${usages.length}×) — bitte zuerst dort austauschen.`);
         err.body = { usages };
         throw err;
       }
-      if (item.kind !== 'upload') throw new HttpError(409, 'Bilder aus dem Grundbestand lassen sich nicht löschen, nur ersetzen.');
       doc.media = doc.media.filter((m) => m.id !== id);
       return { op: { type: 'media.delete', id }, result: { deleted: id }, event: { action: 'cms.media.delete', id } };
     });

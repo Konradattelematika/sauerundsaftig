@@ -58,5 +58,7 @@ export default defineConfig({
   ],
   vite: {
     plugins: [cmsSiteJson(), tailwindcss()],
+    // Vite-Cache ebenfalls ins beschreibbare Cache-Verzeichnis (Runtime-Builds im Container)
+    ...(process.env.SUS_ASTRO_CACHE_DIR ? { cacheDir: `${process.env.SUS_ASTRO_CACHE_DIR}/vite` } : {}),
   },
 });

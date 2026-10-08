@@ -27,7 +27,9 @@
       "type": "ueber-uns-wechsel",
       "visible": true,
       "fields": {
-        "image": "gastraum",
+        "image": {
+          "media": "gastraum"
+        },
         "label": "Was neu ist",
         "title": "Dieselben Räume, eine andere Backstube",
         "text": "Die Räume kennst du vielleicht noch von früher. Neu dazugekommen ist eine Backstube, in der fast jeden Tag Sauerteig angesetzt wird — und eine Karte, die sich seitdem Schritt für Schritt verändert, statt an einem Tag komplett neu zu sein."
@@ -40,8 +42,12 @@
       "fields": {
         "eyebrow": "Die Menschen dahinter",
         "title": "Wer hier bäckt und serviert",
-        "image1": "team-1",
-        "image2": "team-2",
+        "image1": {
+          "media": "team-1"
+        },
+        "image2": {
+          "media": "team-2"
+        },
         "text": "Hinter der Theke und in der Backstube steht ein kleines Team. Wer das im Einzelnen ist, stellen wir dir hier vor, sobald Fotos und Namen final abgestimmt sind — bis dahin bleiben die Bilder Platzhalter. Wer hier bäckt, steht schon fest: [Moin, ich bin Josie.](page:ueber-mich)"
       }
     },
@@ -50,12 +56,18 @@
       "type": "bild-text",
       "visible": true,
       "fields": {
-        "image": "fassade",
+        "image": {
+          "media": "fassade"
+        },
         "imagePosition": "right",
         "eyebrow": "Der Ort",
         "title": "Dünenstraße 1, Ostseebad Rerik",
         "text": "Rerik liegt zwischen Ostsee und Salzhaff, ruhiger als seine größeren Nachbarorte an der Küste. Für uns war das Grund genug, hier eine Backstube zu betreiben, die nicht nur an Sommertagen trägt.",
-        "link": { "label": "Anfahrt und Öffnungszeiten", "href": "page:besuch", "visible": true },
+        "link": {
+          "label": "Anfahrt und Öffnungszeiten",
+          "href": "page:besuch",
+          "visible": true
+        },
         "background": "bg-alt"
       }
     },
@@ -71,7 +83,11 @@
             "number": "01",
             "title": "Handwerk & Zeit",
             "text": "Sauerteig statt Hefe, überall, wo es geht — 18 Stunden für einen Laib, kein Schritt wird abgekürzt.",
-            "link": { "label": "Der 18-Stunden-Prozess", "href": "page:sauerteig", "visible": true }
+            "link": {
+              "label": "Der 18-Stunden-Prozess",
+              "href": "page:sauerteig",
+              "visible": true
+            }
           },
           {
             "number": "02",

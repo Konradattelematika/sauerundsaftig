@@ -41,8 +41,9 @@ const doc = cms();
 const page = doc.pages.find((p) => p.id === pageId) as PageDoc;
 const siteUrl = String(Astro.site);
 
-// Vorlagen-Seiten: {kategorie} in SEO-Texten durch den Kategorietitel ersetzen
-const fill = (t: string | undefined) => (t ?? '').replaceAll('{kategorie}', category?.title ?? '');
+// Vorlagen-Seiten: {kategorie} / {kategorie-intro} in SEO-Texten durch Titel bzw. Einleitung der Kategorie ersetzen
+const fill = (t: string | undefined) =>
+  (t ?? '').replaceAll('{kategorie-intro}', category?.intro ?? '').replaceAll('{kategorie}', category?.title ?? '');
 const seo = page.seo;
 
 // Brotkrumen: Start → Vorfahren (Slug-Präfix) → diese Seite
@@ -63,7 +64,8 @@ const jsonLd: object[] = [];
 for (const kind of page.structuredData ?? []) {
   if (kind === 'localBusiness') jsonLd.push(localBusiness(siteUrl));
   if (kind === 'menu') {
-    const cats = category ? [category] : doc.collections.menu;
+    const scoped = page.menuScope ? doc.collections.menu.filter((c) => c.slug === page.menuScope) : null;
+    const cats = category ? [category] : scoped ?? doc.collections.menu;
     jsonLd.push(menuSchema(cats.map((c) => ({ title: c.title, items: c.items as never })), siteUrl));
   }
   if (kind === 'faq') {
