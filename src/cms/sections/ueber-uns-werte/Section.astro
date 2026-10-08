@@ -1,0 +1,46 @@
+---
+/** /ueber-uns „Wofür wir stehen" (s. definition.mjs). Markup 1:1 aus ueber-uns.astro. */
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import { arrowIcon, linkArrow } from '../../../variants/a-krume/lib/ui';
+import { editAttrs, editSection, href, isExternal, shown } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Item {
+  number: string;
+  title: string;
+  text: string;
+  link?: LinkValue;
+}
+interface Props {
+  section: Section<{ eyebrow: string; title: string; items: Item[] }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <SectionIntro eyebrow={f.eyebrow} title={f.title} class="mb-10 md:mb-14" cms={{ section, eyebrow: 'eyebrow', title: 'title' }} />
+    <div class="grid grid-cols-1 gap-8 border-t border-ink/10 pt-8 md:grid-cols-2 md:gap-10">
+      {f.items.map((item, i) => (
+        <div data-reveal style={i > 0 ? `--reveal-delay:${i * 100}ms` : undefined}>
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" {...editAttrs(section, `items.${i}.number`)}>{item.number}</p>
+          <h3 class="mt-2 text-2xl" {...editAttrs(section, `items.${i}.title`)}>{item.title}</h3>
+          <p class="prose-measure mt-3 text-ink-soft" {...editAttrs(section, `items.${i}.text`)}>{item.text}</p>
+          {shown(item.link) && (
+            <a
+              href={href(item.link!.href)}
+              target={item.link!.newTab || isExternal(item.link!.href) ? '_blank' : undefined}
+              rel={item.link!.newTab || isExternal(item.link!.href) ? 'noopener' : undefined}
+              class:list={[linkArrow, 'mt-4']}
+              {...editAttrs(section, `items.${i}.link`, 'link')}
+            >
+              {item.link!.label}
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

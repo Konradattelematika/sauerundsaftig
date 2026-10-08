@@ -1,0 +1,21 @@
+---
+/**
+ * /ueber-mich Instagram-Feed (s. definition.mjs). Reiner Wrapper um die geteilte
+ * InstagramFeed-Komponente (Pflege/Daten: lib/instagram.ts, nicht Teil dieses Pakets).
+ * Die Komponente rendert ihre eigene <section>; der Editor-Marker sitzt deshalb auf einem
+ * attributlosen Wrapper-<div> (keine Layoutwirkung, da ohne Klassen/Stile).
+ */
+import InstagramFeed from '../../../variants/a-krume/components/InstagramFeed.astro';
+import { editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ title: string; subline: string }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<div {...editSection(section)}>
+  <InstagramFeed tone="bg-alt" title={f.title} subline={f.subline} />
+</div>

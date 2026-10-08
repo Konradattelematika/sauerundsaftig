@@ -1,0 +1,66 @@
+---
+/**
+ * Generische Sektion „Karten" (s. definition.mjs). Kartenstil 1:1 aus gastgeber
+ * „Das Angebot" (rounded-card border-ink/10 bg-paper p-6, grid sm:grid-cols-2).
+ */
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import { arrowIcon, linkArrow } from '../../../variants/a-krume/lib/ui';
+import { editAttrs, editSection, href, isExternal, media, shown } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Item {
+  title: string;
+  text?: string;
+  image?: string | { media: string; alt?: string };
+  link?: LinkValue;
+}
+interface Props {
+  section: Section<{ eyebrow?: string; title?: string; intro?: string; items: Item[]; background?: 'bg' | 'bg-alt' }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const hasIntro = Boolean(f.eyebrow || f.title || f.intro);
+---
+
+<section class:list={[f.background === 'bg-alt' ? 'bg-bg-alt' : 'bg-bg', 'py-14 md:py-24']} {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    {hasIntro && (
+      <SectionIntro
+        eyebrow={f.eyebrow || undefined}
+        title={f.title || ''}
+        intro={f.intro || undefined}
+        class="mb-10 md:mb-14"
+        cms={{ section, eyebrow: 'eyebrow', title: 'title', intro: 'intro' }}
+      />
+    )}
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2" {...editAttrs(section, 'items', 'text')}>
+      {f.items.map((item, i) => {
+        const img = media(item.image);
+        return (
+          <div class="rounded-card border border-ink/10 bg-paper p-6" data-reveal style={`--reveal-delay:${(i % 2) * 100}ms`}>
+            {img && (
+              <div class="mb-4 overflow-hidden rounded-card">
+                <Figure motif={img.id} alt={img.alt} aspect="aspect-[4/5]" sizes="(min-width: 768px) 32vw, 90vw" />
+              </div>
+            )}
+            <h3 class="text-xl" {...editAttrs(section, `items.${i}.title`)}>{item.title}</h3>
+            {item.text && <p class="prose-measure mt-2 text-ink-soft" {...editAttrs(section, `items.${i}.text`)}>{item.text}</p>}
+            {shown(item.link) && (
+              <a
+                href={href(item.link!.href)}
+                target={item.link!.newTab || isExternal(item.link!.href) ? '_blank' : undefined}
+                rel={item.link!.newTab || isExternal(item.link!.href) ? 'noopener' : undefined}
+                class:list={[linkArrow, 'mt-4']}
+                {...editAttrs(section, `items.${i}.link`, 'link')}
+              >
+                {item.link!.label}
+                <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </a>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,72 @@
+---
+/** /kontakt Hauptsektion (s. definition.mjs). Markup 1:1 aus kontakt.astro. */
+import ClickToLoadMap from '../../../components/shared/ClickToLoadMap.astro';
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import { arrowIcon, linkArrow } from '../../../variants/a-krume/lib/ui';
+import { editAttrs, editSection, href, isExternal, shown, tokens } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Props {
+  section: Section<{
+    eyebrow: string;
+    title: string;
+    addressLine: string;
+    phoneLink?: LinkValue;
+    instagramLink?: LinkValue;
+    formHinweisLabel: string;
+    formHinweisText: string;
+  }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const phoneLink = f.phoneLink;
+const igLink = f.instagramLink;
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+      <div class="md:col-span-6" data-reveal>
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+        <span class="tz-rule mt-3" aria-hidden="true"></span>
+        <h1 class="mt-4 text-[clamp(2.5rem,6vw,4rem)]" {...editAttrs(section, 'title')}>{f.title}</h1>
+        <p class="prose-measure mt-5 text-lg text-ink-soft" {...editAttrs(section, 'addressLine')}>{tokens(f.addressLine)}</p>
+        <div class="mt-4"><OpeningStatus size="lg" /></div>
+        {shown(phoneLink) && (
+          <a
+            href={href(phoneLink!.href)}
+            target={phoneLink!.newTab || isExternal(phoneLink!.href) ? '_blank' : undefined}
+            rel={phoneLink!.newTab || isExternal(phoneLink!.href) ? 'noopener' : undefined}
+            class="mt-8 inline-flex min-h-11 items-center justify-center rounded-card bg-ink px-6 py-3 font-mono text-2xl text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep"
+            {...editAttrs(section, 'phoneLink', 'link')}
+          >
+            {tokens(phoneLink!.label)}
+          </a>
+        )}
+        {shown(igLink) && (
+          <div class="mt-6">
+            <a
+              href={href(igLink!.href)}
+              target={igLink!.newTab || isExternal(igLink!.href) ? '_blank' : undefined}
+              rel={igLink!.newTab || isExternal(igLink!.href) ? 'noopener' : undefined}
+              class={linkArrow}
+              {...editAttrs(section, 'instagramLink', 'link')}
+            >
+              {tokens(igLink!.label)}
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+            </a>
+          </div>
+        )}
+
+        <div class="mt-10 rounded-card border border-ink/15 bg-bg-alt p-5">
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" {...editAttrs(section, 'formHinweisLabel')}>{f.formHinweisLabel}</p>
+          <p class="prose-measure mt-2 text-ink-soft" {...editAttrs(section, 'formHinweisText')}>{f.formHinweisText}</p>
+        </div>
+      </div>
+
+      <div class="md:col-span-6" data-reveal style="--reveal-delay:100ms">
+        <ClickToLoadMap />
+      </div>
+    </div>
+  </div>
+</section>

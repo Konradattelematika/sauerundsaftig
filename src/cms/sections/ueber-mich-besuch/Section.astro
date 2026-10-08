@@ -1,0 +1,18 @@
+---
+/**
+ * /ueber-mich Besuch-Modul (s. definition.mjs). Reiner Wrapper um die geteilte VisitModule-
+ * Komponente (Öffnungszeiten/Telefon/Route aus den Einstellungen, kein eigener Inhalt).
+ */
+import VisitModule from '../../../variants/a-krume/components/VisitModule.astro';
+import { editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<Record<string, never>>;
+}
+const { section } = Astro.props;
+---
+
+<div {...editSection(section)}>
+  <VisitModule base="" variant="compact" />
+</div>

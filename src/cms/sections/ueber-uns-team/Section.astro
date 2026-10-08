@@ -1,0 +1,46 @@
+---
+/** /ueber-uns „Die Menschen dahinter" (s. definition.mjs). Markup 1:1 aus ueber-uns.astro. */
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import { editAttrs, editSection, media, rich } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{
+    eyebrow: string;
+    title: string;
+    image1: string | { media: string; alt?: string };
+    image2: string | { media: string; alt?: string };
+    text: string;
+  }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const img1 = media(f.image1);
+const img2 = media(f.image2);
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <SectionIntro
+      eyebrow={f.eyebrow}
+      title={f.title}
+      class="mb-10 md:mb-14"
+      cms={{ section, eyebrow: 'eyebrow', title: 'title' }}
+    />
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div data-reveal {...editAttrs(section, 'image1', 'media')}>
+        {img1 && <Figure motif={img1.id} alt={img1.alt} aspect="aspect-[4/5]" sizes="(min-width: 768px) 48vw, 90vw" />}
+      </div>
+      <div data-reveal style="--reveal-delay:100ms" {...editAttrs(section, 'image2', 'media')}>
+        {img2 && <Figure motif={img2.id} alt={img2.alt} aspect="aspect-[4/5]" sizes="(min-width: 768px) 48vw, 90vw" />}
+      </div>
+    </div>
+    <p
+      class="prose-measure mt-8 text-lg text-ink-soft"
+      data-reveal
+      {...editAttrs(section, 'text', 'rich')}
+      set:html={rich(f.text, { linkClass: 'link-ul text-ink' })}
+    />
+  </div>
+</section>
