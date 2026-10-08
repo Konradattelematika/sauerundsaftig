@@ -7,6 +7,7 @@ import { openPublishDialog } from '../publish';
 import { badge, btn, card, cardTitle, notice, pageHeader } from '../ui';
 import { formatDateTime, plural, relativeTime } from '../util';
 import { describePath } from '../where';
+import { shortMessage } from '../validate';
 import { seoHints } from './pages';
 
 function buildLine(label: string, b: Build | null): HTMLElement {
@@ -58,8 +59,22 @@ export function renderOverview(root: HTMLElement): () => void {
           { class: 'ad-kvs' },
           h('div', { class: 'ad-kv' }, h('dt', null, 'Zuletzt veröffentlicht'), h('dd', null, pm?.publishedAt ? `${formatDateTime(pm.publishedAt)}${pm.publishedBy ? ` von ${pm.publishedBy}` : ''}` : pm?.updatedAt ? formatDateTime(pm.updatedAt) : '—')),
           h('div', { class: 'ad-kv' }, h('dt', null, 'Entwurf gespeichert'), h('dd', null, store.lastSavedAt ? `${formatDateTime(store.lastSavedAt)}${store.draftMeta.updatedBy ? ` von ${store.draftMeta.updatedBy}` : ''}` : '—')),
-          buildLine('Website (live)', store.live),
-          buildLine('Vorschau', store.preview),
+          h(
+            'div',
+            { class: 'ad-kv' },
+            h('dt', null, 'Online ist'),
+            h(
+              'dd',
+              null,
+              store.online
+                ? store.online.image
+                  ? 'der Grundstand aus dem letzten Deploy (noch nicht über das Dashboard veröffentlicht)'
+                  : `Stand Nr. ${store.online.revision}${store.online.builtAt ? `, gebaut ${formatDateTime(store.online.builtAt)}` : ''}`
+                : '—',
+            ),
+          ),
+          buildLine('Letzter Live-Build', store.live),
+          buildLine('Letzte Vorschau', store.preview),
         ),
       ),
     );
@@ -93,7 +108,7 @@ export function renderOverview(root: HTMLElement): () => void {
               { class: 'ad-issuelist ad-issuelist--error' },
               ...errors.slice(0, 6).map((i) => {
                 const w = describePath(doc, i.path);
-                return h('li', null, h('a', { href: w.route }, w.label), h('span', null, i.message));
+                return h('li', null, h('a', { href: w.route }, w.label), h('span', null, shortMessage(i.message)));
               }),
               errors.length > 6 ? h('li', null, `… und ${errors.length - 6} weitere (Knopf „Prüfhinweise“ oben)`) : null,
             )

@@ -1,7 +1,7 @@
 /** Seitenverwaltung: Liste, neue Seite, duplizieren, aktivieren/deaktivieren, löschen, Seiteneinstellungen (inkl. SEO). */
 import type { NavItem, PageDoc, Section } from '../../cms/types';
 import { previewUrl } from '../api';
-import { allowedOn, sectionDef, SECTION_DEFS } from '../defs';
+import { allowedOn, sectionDef, sectionDefaults, SECTION_DEFS } from '../defs';
 import { h, icon, domId, setChildren, type Child } from '../dom';
 import { renderField, renderFields, refreshErrors } from '../fields';
 import { pagePath } from '../rich';
@@ -90,7 +90,7 @@ function newSection(type: string, page: PageDoc, overrides: Record<string, unkno
     id: uniqueId(type, page.sections.map((s) => s.id)),
     type,
     visible: true,
-    fields: { ...(def?.defaults() ?? {}), ...overrides },
+    fields: { ...(def ? sectionDefaults(def) : {}), ...overrides },
   };
 }
 
@@ -171,7 +171,11 @@ export async function newPageDialog(): Promise<void> {
       kind: 'custom',
       breadcrumb: t,
       showBreadcrumbs: false,
-      seo: { title: `${t} · ${store.doc.settings.name || 'Sauer & Saftig'}`, description: '' },
+      seo: {
+        title: `${t} · ${store.doc.settings.name || 'Sauer & Saftig'}`,
+        // Pflicht beim Veröffentlichen — sinnvoller Vorschlag, unter „Einstellungen & SEO“ anpassbar
+        description: `${t} bei ${store.doc.settings.name || 'Sauer & Saftig'}${store.doc.settings.type ? ` – ${store.doc.settings.type}` : ''}${store.doc.settings.address?.city ? ` in ${store.doc.settings.address.city}` : ''}.`,
+      },
       sections: [],
     };
     for (const type of generic.map((g) => g.type).filter((x) => picks.has(x))) {

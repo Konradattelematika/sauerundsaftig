@@ -14,6 +14,7 @@ import { targetPicker } from './linkfield';
 import { mediaById, mediaVersion, pickMedia, thumb } from './mediafield';
 import { fillTokens, renderRich, resolveHref } from './rich';
 import { store, type ChangeInfo, type LiveMsg } from './state';
+import { shortMessage } from './validate';
 import { btn, confirmDialog, iconBtn, openDialog } from './ui';
 import { clone, formatNumber, isPlainObject, labelOf, moveItem, parseNumber, slugify, truncate, uniqueId, type PathSeg } from './util';
 
@@ -772,6 +773,7 @@ function listField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
 /* ------------------------------------------------------------------ öffentlich ------------------- */
 
 export function renderField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
+  if (def.idOnly) return mediaField(def, obj, ctx);
   switch (def.kind) {
     case 'text':
     case 'textarea':
@@ -812,7 +814,7 @@ export function refreshErrors(root: ParentNode = document): void {
   root.querySelectorAll<HTMLElement>('[data-err-path]').forEach((slot) => {
     const issues = store.issuesAt(slot.dataset.errPath ?? '', slot.dataset.errPrefix === '1');
     slot.replaceChildren(
-      ...issues.map((i) => h('p', { class: `ad-err ad-err--${i.level}` }, icon(i.level === 'error' ? 'alert' : 'help'), i.message)),
+      ...issues.map((i) => h('p', { class: `ad-err ad-err--${i.level}` }, icon(i.level === 'error' ? 'alert' : 'help'), shortMessage(i.message))),
     );
     const field = slot.closest('.ad-field');
     const ctl = field?.querySelector(':scope > input, :scope > textarea, :scope > select, :scope > .ad-rich > textarea');

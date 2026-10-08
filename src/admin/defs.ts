@@ -100,6 +100,37 @@ export function emptyItem(defs: AdminFieldDef[] | undefined): Record<string, unk
   return o;
 }
 
+/**
+ * Bildfelder (kind 'media') speichern laut Datenmodell ein MediaRef-Objekt { media, alt? }. Ältere bzw.
+ * fehlerhafte Inhalte und manche Startwerte enthalten nur die Medien-ID als Text oder '' — die gemeinsame
+ * Prüfung lehnt das ab (422 beim Speichern). Hier werden solche Werte in Objekt bzw. „kein Bild“ umgewandelt.
+ * @returns true, wenn etwas geändert wurde
+ */
+export function normalizeMediaFields(defs: AdminFieldDef[] | undefined, obj: Record<string, unknown> | null | undefined): boolean {
+  if (!obj || typeof obj !== 'object') return false;
+  let changed = false;
+  for (const def of defs ?? []) {
+    const v = obj[def.key];
+    if (def.kind === 'media' && !def.idOnly) {
+      if (typeof v === 'string') {
+        if (v.trim()) obj[def.key] = { media: v.trim() };
+        else delete obj[def.key];
+        changed = true;
+      }
+    } else if (def.kind === 'list' && def.of && Array.isArray(v)) {
+      for (const item of v) if (item && typeof item === 'object' && !Array.isArray(item)) changed = normalizeMediaFields(def.of, item as Record<string, unknown>) || changed;
+    }
+  }
+  return changed;
+}
+
+/** Startwerte einer neuen Sektion (definition.defaults() + Bildwerte vereinheitlicht) */
+export function sectionDefaults(def: SectionDefinition): Record<string, unknown> {
+  const fields = def.defaults();
+  normalizeMediaFields(def.fields as AdminFieldDef[], fields);
+  return fields;
+}
+
 /* ------------------------------------------------------------------ feste Formulare ---------- */
 
 const navItemFields = (withChildren: boolean): AdminFieldDef[] => [

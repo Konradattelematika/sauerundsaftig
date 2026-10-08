@@ -419,6 +419,15 @@
   min-width: 0;
   outline: none;
 }
+.ad-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.25rem;
+  background: #f7e0da;
+  color: #6e2418;
+  font-size: 0.92rem;
+}
 .ad-viewpad {
   width: 100%;
   max-width: 1200px;

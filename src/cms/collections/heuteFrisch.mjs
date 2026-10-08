@@ -17,7 +17,7 @@ export default {
       of: [
         { key: 'name', label: 'Name', kind: 'text', required: true, maxLength: 60 },
         { key: 'note', label: 'Notiz', kind: 'text', maxLength: 100, help: 'z. B. „ofenfrisch ab 9:30“.' },
-        { key: 'motif', label: 'Bild', kind: 'media', idOnly: true },
+        { key: 'motif', label: 'Bild', kind: 'text', idOnly: true, maxLength: 64 },
         { key: 'soldOut', label: 'Ausverkauft', kind: 'boolean' },
       ],
     },

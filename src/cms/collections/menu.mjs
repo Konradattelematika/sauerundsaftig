@@ -7,7 +7,8 @@
  *   shape: 'object' → Der Sammlungswert ist ein Objekt; `fields` beschreibt dieses Objekt.
  * Zusätzliche Feld-Eigenschaften (über FieldDef hinaus, vom Admin ausgewertet):
  *   input: 'date' | 'time' | 'url' | 'email' | 'tel' | 'color'  (Eingabeart für text-Felder)
- *   idOnly: true   (media: Wert ist nur die Medien-ID statt MediaRef — wie MenuItem.motif)
+ *   idOnly: true   (Wert ist nur eine Medien-ID statt MediaRef — wie MenuItem.motif; Feldart bleibt `text`,
+ *                   damit die gemeinsame Prüfung einen String erwartet; der Admin zeigt die Bildauswahl)
  *   list ohne `of` = Liste von Texten; mit `options` = Mehrfachauswahl aus diesen Werten.
  */
 export const ALLERGENS = [
@@ -44,7 +45,7 @@ const itemFields = [
     options: ALLERGENS.map((a) => ({ value: a, label: a })),
     help: 'Alles ankreuzen, was enthalten ist.',
   },
-  { key: 'motif', label: 'Bild', kind: 'media', idOnly: true, help: 'Optional — erscheint bei Empfehlungen und in Teasern.' },
+  { key: 'motif', label: 'Bild', kind: 'text', idOnly: true, maxLength: 64, help: 'Optional — erscheint bei Empfehlungen und in Teasern.' },
 ];
 
 export default {

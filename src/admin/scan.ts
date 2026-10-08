@@ -14,6 +14,7 @@ import {
   type AdminFieldDef,
 } from './defs';
 import { pagePath, richLinks } from './rich';
+import { checkHref as sharedCheckHref } from '../cms/validate.mjs';
 import { isPlainObject, labelOf, type PathSeg } from './util';
 
 export interface Loc {
@@ -206,7 +207,7 @@ export function mediaIdOf(value: unknown): string | null {
 export function mediaUsageMap(doc: SiteDoc): Map<string, Loc[]> {
   const map = new Map<string, Loc[]>();
   walkDoc(doc, ({ def, value, loc }) => {
-    if (def.kind !== 'media') return;
+    if (def.kind !== 'media' && !def.idOnly) return;
     const id = mediaIdOf(value);
     if (!id) return;
     if (!map.has(id)) map.set(id, []);
@@ -240,15 +241,12 @@ export function knownPaths(doc: SiteDoc): Set<string> {
 export function checkHref(href: string, doc: SiteDoc, paths?: Set<string>): HrefCheck | null {
   const h = (href ?? '').trim();
   if (!h) return { level: 'error', message: 'Kein Ziel angegeben' };
+  // Regeln der gemeinsamen Prüfung (src/cms/validate.mjs) — gleiche Einstufung wie beim Veröffentlichen
+  const shared = sharedCheckHref(h, doc) as { error?: string; warning?: string };
+  if (shared.error) return { level: 'error', message: shared.error.replace(/\.$/, '') };
+  if (shared.warning) return { level: 'warning', message: shared.warning.replace(/\.$/, '') };
   if (h === '{{tel}}') return doc.settings?.phone ? null : { level: 'error', message: 'Keine Telefonnummer in den Einstellungen' };
-  if (h === '{{route}}') return null;
-  if (h.startsWith('page:')) {
-    const [id] = h.slice(5).split('#');
-    const page = doc.pages.find((p) => p.id === id);
-    if (!page) return { level: 'error', message: 'Die Zielseite gibt es nicht (mehr)' };
-    if (page.status !== 'published') return { level: 'warning', message: 'Die Zielseite ist deaktiviert' };
-    return null;
-  }
+  if (h === '{{route}}' || h.startsWith('page:')) return null;
   if (/^https?:\/\//i.test(h)) {
     try {
       const u = new URL(h);

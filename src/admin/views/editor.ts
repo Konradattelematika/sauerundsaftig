@@ -7,8 +7,8 @@
  * Vorschau-Build aus, danach lädt das iframe neu (Scrollposition bleibt).
  */
 import type { PageDoc, Section } from '../../cms/types';
-import { previewUrl } from '../api';
-import { allowedSectionTypes, sectionDef } from '../defs';
+import { editorUrl, ensurePreviewCookie } from '../api';
+import { allowedSectionTypes, sectionDef, sectionDefaults } from '../defs';
 import { add, h, icon, domId } from '../dom';
 import { focusFieldPath, refreshErrors, renderFields } from '../fields';
 import { store, type LiveMsg } from '../state';
@@ -30,6 +30,8 @@ const LAZY_PREVIEW_MS = 15_000;
  * nächsten Vorschau-Build — vorher käme nur die 404-Seite.
  */
 const builtSlugs = new Map<string, string>();
+/** Vorschau-Cookie in dieser Sitzung schon gesetzt? (gilt 12 h) */
+let previewCookieSet = false;
 const rememberBuilt = () => {
   builtSlugs.clear();
   for (const p of store.doc.pages) if (p.status === 'published') builtSlugs.set(p.id, p.slug);
@@ -285,7 +287,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
               type: 'button',
               class: 'ad-typecard',
               onclick: () => {
-                const s: Section = { id: uniqueId(def.type, page.sections.map((x) => x.id)), type: def.type, visible: true, fields: def.defaults() };
+                const s: Section = { id: uniqueId(def.type, page.sections.map((x) => x.id)), type: def.type, visible: true, fields: sectionDefaults(def) };
                 const at = after.checked && idx >= 0 ? idx + 1 : page.sections.length;
                 page.sections.splice(at, 0, s);
                 selectedId = s.id;
@@ -356,7 +358,12 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
   const previewPane = h('section', { class: 'ad-editor__preview ad-pane', 'aria-label': 'Live-Vorschau' }, wrap);
   let ready = false;
   let pendingScroll: number | null = null;
-  const liveSince = new Map<string, LiveMsg>();
+  /** Live-Änderungen seit dem letzten Vorschau-Build (nach dem Neuladen erneut anwenden) */
+  const liveSince = new Map<string, { msg: LiveMsg; at: number }>();
+  /** Einträge entfernen, die der fertige Vorschau-Build schon enthält */
+  const pruneLive = () => {
+    for (const [k, v] of liveSince) if (v.at <= store.previewRequestedAt) liveSince.delete(k);
+  };
 
   const layoutFrame = () => {
     const d = DEVICES.find((x) => x.id === device) ?? DEVICES[2];
@@ -386,10 +393,15 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     if (!page.system && page.template !== 'menu-category' && builtSlugs.get(page.id) !== page.slug && !store.previewCurrent) return 'pending';
     return 'ok';
   };
-  const loadFrame = () => {
+  const loadFrame = async () => {
     ready = false;
     frameLoaded = true;
-    iframe.src = previewUrl(pagePreviewPath(page), true);
+    // erst Vorschau-Modus einschalten (Cookie), dann die Seite im Editor-Modus laden (ohne Vorschau-Leiste)
+    if (!previewCookieSet) {
+      await ensurePreviewCookie();
+      previewCookieSet = true;
+    }
+    iframe.src = editorUrl(pagePreviewPath(page));
   };
   /** iframe laden — oder erklären, warum es (noch) nichts zu sehen gibt */
   const syncFrame = () => {
@@ -404,7 +416,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
       );
     else if (st === 'pending')
       blocker.replaceChildren(h('span', { class: 'ad-spinner', 'aria-hidden': 'true' }), h('p', null, 'Die Vorschau dieser Seite wird gerade erstellt — das dauert meist 10 bis 60 Sekunden.'));
-    else if (!frameLoaded) loadFrame();
+    else if (!frameLoaded) void loadFrame();
   };
   const reloadFrame = (manual = false) => {
     try {
@@ -413,11 +425,11 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
       pendingScroll = null;
     }
     ready = false;
-    if (manual) liveSince.clear();
+    if (manual) pruneLive();
     try {
       iframe.contentWindow?.location.reload();
     } catch {
-      loadFrame();
+      void loadFrame();
     }
   };
   iframe.addEventListener('load', () => {
@@ -438,7 +450,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     if (!data || typeof data.type !== 'string') return;
     if (data.type === 'sus-cms:ready') {
       ready = true;
-      for (const m of liveSince.values()) post({ type: 'sus-cms:set', ...m });
+      for (const { msg } of liveSince.values()) post({ type: 'sus-cms:set', ...msg });
       if (selectedId) post({ type: 'sus-cms:focus', section: selectedId, scroll: false });
     } else if (data.type === 'sus-cms:select') {
       const sid = data.section ?? (data.field ? data.field.split(':')[0] : '');
@@ -456,7 +468,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     const m = (e as CustomEvent<LiveMsg>).detail;
     const sid = m.field.slice(0, m.field.indexOf(':'));
     if (!page.sections.some((x) => x.id === sid)) return;
-    liveSince.set(m.field, m);
+    liveSince.set(m.field, { msg: m, at: Date.now() });
     post({ type: 'sus-cms:set', ...m });
   });
 
@@ -506,7 +518,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
         syncFrame();
       } else if (store.previewReloadWanted) {
         store.previewReloadWanted = false;
-        liveSince.clear();
+        pruneLive();
         reloadFrame();
       }
     } else if (wasBusy && p?.state === 'failed') {
@@ -516,7 +528,9 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     renderPreviewState();
   });
   on('issues', () => updateSectionErrors());
-  on('change', () => {
+  on('change', (e) => {
+    // Strukturänderung (z. B. Listeneintrag verschoben): Pfade alter Live-Änderungen stimmen nicht mehr
+    if ((e as CustomEvent<{ structural?: boolean }>).detail?.structural) liveSince.clear();
     // Beschriftungen in der Sektionsliste nachziehen (z. B. Überschrift geändert)
     const s = page.sections.find((x) => x.id === selectedId);
     const el = s ? secList.querySelector<HTMLElement>(`.ad-sec[data-id="${CSS.escape(s.id)}"] .ad-sec__sum`) : null;

@@ -1,10 +1,12 @@
 /**
- * Prüfhinweise: eigene, schnelle Prüfungen im Browser (Pflichtfelder, Längen, Linkziele, Adressen,
- * Bilder) + — falls vorhanden — die gemeinsame Validierung src/cms/validate.mjs (`validateSiteDoc`,
- * Paket S). Alle Meldungen tragen einen Pfad im SiteDoc ('pages.3.sections.1.fields.title').
+ * Prüfhinweise: die gemeinsame Prüfung src/cms/validate.mjs (`validateSiteDoc`, Paket S — dieselbe wie
+ * beim Speichern/Veröffentlichen auf dem Server) plus einige schnelle eigene Prüfungen, die dort fehlen
+ * (Zahlenbereiche, Adress-Kollisionen beim Anlegen, Öffnungszeiten-Reihenfolge). Alle Meldungen tragen
+ * einen Pfad im SiteDoc ('pages.3.sections.1.fields.title'); bei gleichem Pfad gilt die gemeinsame Meldung.
  */
 import type { SiteDoc } from '../cms/types';
-import { COLLECTION_DEFS, RESERVED_SLUGS, SETTINGS_GROUPS } from './defs';
+import { validateSiteDoc } from '../cms/validate.mjs';
+import { COLLECTION_DEFS, RESERVED_SLUGS, SECTION_DEFS, SETTINGS_GROUPS } from './defs';
 import { checkHref, knownPaths, mediaIdOf, walkDoc } from './scan';
 import { canonicalPath, getAt, isPlainObject } from './util';
 
@@ -15,23 +17,13 @@ export interface Issue {
   source?: 'client' | 'shared' | 'server';
 }
 
-type SharedValidator = (doc: SiteDoc) => unknown;
-let shared: SharedValidator | null | undefined;
-const sharedLoaders = import.meta.glob('../cms/validate.mjs');
-
-/** src/cms/validate.mjs laden, falls vorhanden und im Browser lauffähig (sonst nur eigene Prüfungen) */
-async function loadShared(): Promise<SharedValidator | null> {
-  if (shared !== undefined) return shared;
-  shared = null;
-  const loader = Object.values(sharedLoaders)[0];
-  if (!loader) return null;
-  try {
-    const mod = (await loader()) as { validateSiteDoc?: SharedValidator; default?: SharedValidator };
-    shared = mod.validateSiteDoc ?? (typeof mod.default === 'function' ? mod.default : null);
-  } catch (e) {
-    console.warn('[admin] src/cms/validate.mjs nicht im Browser nutzbar — nur eigene Prüfungen', e);
-  }
-  return shared;
+/**
+ * Meldungen der gemeinsamen Prüfung beginnen mit dem Ort („Seite „Start“ › Abschnitt „Text“ › Überschrift: …“).
+ * Am Feld selbst genügt der Teil nach dem Ort.
+ */
+export function shortMessage(message: string): string {
+  const i = message.indexOf(': ');
+  return i > 0 && message.slice(0, i).includes('›') ? message.slice(i + 2) : message;
 }
 
 /** Ergebnis-Formen tolerieren: Issue[] · { errors, warnings } · { ok, errors } */
@@ -115,7 +107,7 @@ export function clientIssues(doc: SiteDoc): Issue[] {
       const c = checkHref(String(value), doc, paths);
       if (c) add(p, c.message, c.level);
     }
-    if (def.kind === 'media') {
+    if (def.kind === 'media' || def.idOnly) {
       const id = mediaIdOf(value);
       if (id && !mediaIds.has(id)) add(p, 'Dieses Bild fehlt in der Medienbibliothek.');
     }
@@ -184,16 +176,15 @@ export function clientIssues(doc: SiteDoc): Issue[] {
   return out;
 }
 
-/** Alle Prüfhinweise (eigene + gemeinsame Validierung), ohne doppelte Meldungen am selben Feld */
+/** Alle Prüfhinweise (gemeinsame Prüfung im Modus „Veröffentlichen“ + eigene), ohne doppelte Meldungen am selben Feld */
 export async function validateDoc(doc: SiteDoc): Promise<Issue[]> {
   const own = clientIssues(doc);
-  const fn = await loadShared();
-  if (!fn) return own;
   let sharedIssues: Issue[] = [];
   try {
-    sharedIssues = normalizeIssues(await fn(doc), doc, 'shared');
+    const defs = { sections: SECTION_DEFS, collections: COLLECTION_DEFS } as unknown as Parameters<typeof validateSiteDoc>[1];
+    sharedIssues = normalizeIssues(validateSiteDoc(doc, defs, { mode: 'publish' }), doc, 'shared');
   } catch (e) {
-    console.warn('[admin] validateSiteDoc fehlgeschlagen', e);
+    console.warn('[admin] validateSiteDoc fehlgeschlagen — nur eigene Prüfungen', e);
     return own;
   }
   const covered = new Set(sharedIssues.map((i) => i.path));

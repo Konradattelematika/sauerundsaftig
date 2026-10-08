@@ -155,7 +155,7 @@ export function renderMedia(root: HTMLElement, route: Route): () => void {
               await store.flush();
               try {
                 await api.deleteMedia(m.id);
-                await store.syncMediaFromServer(m.id);
+                store.mediaChanged(m.id);
                 d.close();
                 toast('Bild gelöscht.', 'ok');
                 render();

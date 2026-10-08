@@ -6,10 +6,23 @@ export interface Build {
   kind: 'live' | 'preview';
   state: 'queued' | 'running' | 'ok' | 'failed';
   revision: number;
+  queuedAt?: string;
   startedAt?: string;
   finishedAt?: string;
   error?: string;
   logTail?: string;
+  requestedBy?: string;
+  reason?: string;
+}
+
+/** Gerade ausgelieferter Build (live) bzw. aktueller Vorschau-Build */
+export interface OnlineBuild {
+  id: string;
+  revision: number;
+  builtAt?: string;
+  codeVersion?: string;
+  /** true = noch das dist/ aus dem Deploy (das CMS hat noch nicht selbst gebaut) */
+  image?: boolean;
 }
 
 export interface Me {
@@ -35,8 +48,23 @@ export interface CmsState {
   dirty: boolean;
   live: Build | null;
   preview: Build | null;
+  online?: OnlineBuild | null;
+  previewOnline?: OnlineBuild | null;
+  /** strenge Prüfung des gespeicherten Entwurfs */
+  issues?: { errors?: { path: string; message: string }[]; warnings?: { path: string; message: string }[] };
   me: Me;
   codeVersion?: string;
+  /** Inhalte schreibgeschützt (z. B. nach einem Code-Rollback) — Grund als Text */
+  readOnly?: string | false | null;
+}
+
+export interface PublishResult {
+  build: Build;
+  revision?: number;
+  draftRevision?: number;
+  changed?: boolean;
+  redirects?: { from: string; to: string }[];
+  version?: VersionInfo | null;
 }
 
 export interface ValidationIssue {
@@ -56,11 +84,12 @@ export interface CmsUser {
   id: string;
   name: string;
   role: string;
-  disabled?: boolean;
-  active?: boolean;
+  /** env = Server-Konfiguration (SUS_USERS: nur Passwort änderbar), dashboard = hier angelegt */
+  source?: 'env' | 'dashboard' | string;
+  editable?: boolean;
   createdAt?: string;
-  lastLoginAt?: string;
-  source?: string;
+  createdBy?: string;
+  updatedAt?: string;
 }
 
 export class ApiError extends Error {
@@ -125,8 +154,8 @@ export const api = {
     request<{ revision: number; updatedAt?: string }>('PUT', '/api/cms/draft', { doc, baseRevision }),
   discard: () => request<{ revision?: number }>('POST', '/api/cms/draft/discard', {}),
   preview: () => request<{ build: Build }>('POST', '/api/cms/preview', {}),
-  publish: (revision: number) => request<{ build: Build }>('POST', '/api/cms/publish', { revision }),
-  build: () => request<{ live: Build | null; preview: Build | null }>('GET', '/api/cms/build'),
+  publish: (revision: number) => request<PublishResult>('POST', '/api/cms/publish', { revision }),
+  build: () => request<{ live: Build | null; preview: Build | null; online?: OnlineBuild | null; previewOnline?: OnlineBuild | null }>('GET', '/api/cms/build'),
   versions: async () => unwrap<VersionInfo[]>(await request('GET', '/api/cms/versions'), 'versions') ?? [],
   restore: (id: string) => request<{ revision: number }>('POST', `/api/cms/versions/${encodeURIComponent(id)}/restore`, {}),
   /** veröffentlichter Inhaltsstand (für die Änderungsübersicht; s. Bitte an den Orchestrator) */
@@ -165,6 +194,21 @@ export function mediaUrl(id: string, w = 320, v?: string | number): string {
 
 /** Vorschau-Modus setzen und eine Seite öffnen (Server: /admin/vorschau) */
 export function previewUrl(path: string, editor = false): string {
-  const next = editor ? `${path}${path.includes('?') ? '&' : '?'}__cms=editor` : path;
+  const next = editor ? editorUrl(path) : path;
   return `/admin/vorschau?an=1&next=${encodeURIComponent(next)}`;
+}
+
+/** Seite im Editor-Modus (ohne Vorschau-Leiste, mit Editor-Brücke) */
+export function editorUrl(path: string): string {
+  return `${path}${path.includes('?') ? '&' : '?'}__cms=editor`;
+}
+
+/** Vorschau-Cookie setzen (Server: /admin/vorschau?an=1 → Weiterleitung auf eine winzige Datei) */
+export async function ensurePreviewCookie(): Promise<void> {
+  try {
+    const res = await fetch(`/admin/vorschau?an=1&next=${encodeURIComponent('/brand/favicon-16.png')}`, { credentials: 'same-origin', cache: 'no-store' });
+    await res.arrayBuffer(); // Antwort abholen, sonst bleibt die Verbindung offen
+  } catch {
+    /* ohne Cookie zeigt das iframe den Live-Stand */
+  }
 }

@@ -5,6 +5,7 @@ import { h, icon } from './dom';
 import { store } from './state';
 import { btn, confirmDialog, loading, notice, openDialog, toast } from './ui';
 import { describePath } from './where';
+import { shortMessage } from './validate';
 import { formatDateTime } from './util';
 
 const busy = (b: Build | null | undefined) => Boolean(b && (b.state === 'queued' || b.state === 'running'));
@@ -99,7 +100,7 @@ export async function openPublishDialog(): Promise<void> {
         h('p', null, h('strong', null, `${errors.length} Fehler`), ' verhindern das Veröffentlichen:'),
         h('ul', { class: 'ad-issuelist' }, ...errors.slice(0, 8).map((i) => {
           const w = describePath(store.doc, i.path);
-          return h('li', null, h('a', { href: w.route, onclick: () => d.close() }, w.label), ': ', i.message);
+          return h('li', null, h('a', { href: w.route, onclick: () => d.close() }, w.label), ': ', shortMessage(i.message));
         })),
       ),
     );
@@ -170,8 +171,8 @@ export async function refreshMeta(): Promise<void> {
     const st = await api.state();
     store.publishedMeta = st.publishedMeta ?? store.publishedMeta;
     store.dirty = Boolean(st.dirty) || store.hasUnsaved;
-    if (!store.hasUnsaved) store.revision = Number(st.draftMeta?.revision ?? store.revision);
     store.live = st.live ?? store.live;
+    store.online = st.online ?? store.online;
     store.dispatchEvent(new CustomEvent('status'));
     store.dispatchEvent(new CustomEvent('build'));
   } catch {

@@ -11,6 +11,7 @@ import { alertDialog, btn, iconBtn, openDialog, toast } from './ui';
 import { formatDateTime, relativeTime } from './util';
 import { parseHash, type Route, type View } from './view';
 import { describePath } from './where';
+import { shortMessage } from './validate';
 import { renderOverview } from './views/overview';
 import { renderPages, renderPageSettings } from './views/pages';
 import { renderEditor, editorPreviewPath } from './views/editor';
@@ -165,9 +166,12 @@ function buildShell(): void {
   top.children[1].classList.add('ad-top__rail');
 
   viewRoot = h('main', { id: 'ad-view', class: 'ad-view', tabindex: '-1' });
+  const readOnlyBanner = store.readOnly
+    ? h('div', { class: 'ad-banner', role: 'status' }, icon('alert'), h('span', null, h('strong', null, 'Nur lesen: '), `Die Inhalte sind gerade schreibgeschützt (${store.readOnly}). Bitte Konrad Bescheid geben.`))
+    : null;
   const scrim = h('div', { class: 'ad-scrim', 'aria-hidden': 'true' });
   scrim.addEventListener('click', () => app.classList.remove('is-menu-open'));
-  setChildren(app, side, h('div', { class: 'ad-main' }, top, viewRoot), scrim);
+  setChildren(app, side, h('div', { class: 'ad-main' }, top, readOnlyBanner, viewRoot), scrim);
   if (localStorage.getItem('sus-admin-rail') === '1') app.classList.add('is-rail');
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && app.classList.contains('is-menu-open')) app.classList.remove('is-menu-open');
@@ -258,7 +262,7 @@ function openIssues(): void {
             { class: `ad-issuelist ad-issuelist--${tone}` },
             ...items.map((i) => {
               const w = describePath(store.doc, i.path);
-              return h('li', null, h('a', { href: w.route, onclick: () => d.close() }, w.label), h('span', null, i.message));
+              return h('li', null, h('a', { href: w.route, onclick: () => d.close() }, w.label), h('span', null, shortMessage(i.message)));
             }),
           ),
         )

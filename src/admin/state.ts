@@ -8,9 +8,10 @@
  *   'conflict' 409 beim Speichern            'change' lokale Änderung
  */
 import type { MediaItem, SiteDoc } from '../cms/types';
-import { api, ApiError, type Build, type CmsState, type DocMeta, type Me } from './api';
+import { api, ApiError, type Build, type CmsState, type DocMeta, type Me, type OnlineBuild } from './api';
 import { validateDoc, normalizeIssues, type Issue } from './validate';
 import { clone, debounce } from './util';
+import { COLLECTION_DEFS, HEADER_DEFS, normalizeMediaFields, sectionDef } from './defs';
 
 export type SaveStatus = 'saved' | 'pending' | 'saving' | 'error' | 'invalid' | 'conflict';
 
@@ -44,8 +45,13 @@ class Store extends EventTarget {
   dirty = false;
   live: Build | null = null;
   preview: Build | null = null;
+  /** gerade ausgelieferter Live- bzw. Vorschau-Build */
+  online: OnlineBuild | null = null;
+  previewOnline: OnlineBuild | null = null;
   me!: Me;
   codeVersion = '';
+  /** Server meldet „schreibgeschützt“ (Grund) */
+  readOnly: string | null = null;
 
   status: SaveStatus = 'saved';
   statusMessage = '';
@@ -55,12 +61,15 @@ class Store extends EventTarget {
 
   private changeSeq = 0;
   private savedSeq = 0;
+  /** Beim Laden wurden Bildwerte vereinheitlicht — mit dem nächsten Speichern mitschicken */
+  private needsNormalizeSave = false;
   private saving: Promise<boolean> | null = null;
   private retryTimer: ReturnType<typeof setTimeout> | undefined;
   /** Strukturänderung seit der letzten Vorschau-Anforderung */
   structuralPending = false;
-  /** Revision, für die zuletzt ein Vorschau-Build angefordert wurde */
+  /** Revision und Zeitpunkt, für die zuletzt ein Vorschau-Build angefordert wurde */
   previewRequestedRev = 0;
+  previewRequestedAt = 0;
   /** Wird der laufende Vorschau-Build die Vorschau sichtbar ändern (→ iframe neu laden)? */
   previewReloadWanted = false;
   private polling = false;
@@ -73,11 +82,16 @@ class Store extends EventTarget {
   }
 
   get canEdit(): boolean {
-    return this.can('cms.edit');
+    return this.can('cms.edit') && !this.readOnly;
   }
 
   get hasUnsaved(): boolean {
     return this.changeSeq !== this.savedSeq;
+  }
+
+  /** Muss vor dem Veröffentlichen noch gespeichert werden? */
+  private get saveNeeded(): boolean {
+    return this.hasUnsaved || (this.needsNormalizeSave && this.canEdit);
   }
 
   private emit(type: string, detail?: unknown): void {
@@ -102,15 +116,20 @@ class Store extends EventTarget {
   }
 
   private applyState(st: CmsState): void {
-    this.doc = normalizeDoc(st.draft);
+    this.doc = st.draft ?? ({} as SiteDoc);
+    // Bildwerte im alten Format → beim nächsten Speichern (spätestens vor dem Veröffentlichen) korrigiert
+    this.needsNormalizeSave = normalizeDoc(this.doc);
     this.draftMeta = st.draftMeta ?? {};
     this.revision = Number(st.draftMeta?.revision ?? st.draft?.meta?.revision ?? 0);
     this.publishedMeta = st.publishedMeta ?? null;
     this.dirty = Boolean(st.dirty);
     this.live = st.live ?? null;
     this.preview = st.preview ?? null;
+    this.online = st.online ?? null;
+    this.previewOnline = st.previewOnline ?? null;
     this.me = st.me ?? { id: '', name: '', role: '', permissions: [] };
     this.codeVersion = st.codeVersion ?? '';
+    this.readOnly = typeof st.readOnly === 'string' && st.readOnly ? st.readOnly : null;
     this.changeSeq = this.savedSeq = 0;
     this.serverIssues = [];
     this.lastSavedAt = st.draftMeta?.updatedAt ?? null;
@@ -145,7 +164,7 @@ class Store extends EventTarget {
   async flush(): Promise<boolean> {
     this.scheduleSave.cancel();
     if (this.saving) await this.saving;
-    if (this.hasUnsaved) return this.save();
+    if (this.saveNeeded) return this.save();
     return this.status !== 'invalid' && this.status !== 'conflict' && this.status !== 'error';
   }
 
@@ -156,7 +175,7 @@ class Store extends EventTarget {
       if (this.hasUnsaved) this.scheduleSave();
       return !this.hasUnsaved;
     }
-    if (!this.hasUnsaved) return true;
+    if (!this.saveNeeded) return true;
     if (this.status === 'conflict') return false;
     clearTimeout(this.retryTimer);
     const seq = this.changeSeq;
@@ -167,6 +186,7 @@ class Store extends EventTarget {
         this.revision = Number(res.revision ?? this.revision + 1);
         this.lastSavedAt = res.updatedAt ?? new Date().toISOString();
         this.savedSeq = seq;
+        this.needsNormalizeSave = false;
         this.dirty = true;
         this.serverIssues = [];
         if (this.hasUnsaved) {
@@ -186,6 +206,12 @@ class Store extends EventTarget {
           void this.validate();
         } else if (e instanceof ApiError && e.status === 401) {
           this.setStatus('error', 'Abgemeldet — bitte neu anmelden.');
+        } else if (e instanceof ApiError && e.status === 429) {
+          this.setStatus('pending', 'Sehr viele Änderungen in kurzer Zeit — wird gleich gespeichert.');
+          this.retryTimer = setTimeout(() => void this.save(), 20_000);
+        } else if (e instanceof ApiError && e.status === 503) {
+          this.setStatus('error', `${e.message} Neuer Versuch in 30 Sekunden.`);
+          this.retryTimer = setTimeout(() => void this.save(), 30_000);
         } else {
           const msg = e instanceof ApiError ? e.message : 'Speichern fehlgeschlagen.';
           this.setStatus('error', `${msg} Neuer Versuch in 10 Sekunden.`);
@@ -203,6 +229,10 @@ class Store extends EventTarget {
   /** Bei einem Konflikt: eigene Fassung auf den neuesten Stand setzen und trotzdem speichern */
   async overwriteAfterConflict(): Promise<boolean> {
     const st = await api.state();
+    // Bilder und Weiterleitungen, die inzwischen auf dem Server dazukamen, nicht verlieren
+    for (const m of st.draft?.media ?? []) if (!this.doc.media.some((x) => x.id === m.id)) this.doc.media.push(m);
+    const own = this.doc.redirects ?? [];
+    this.doc.redirects = [...(st.draft?.redirects ?? []), ...own.filter((r) => !(st.draft?.redirects ?? []).some((x) => x.from === r.from))];
     this.revision = Number(st.draftMeta?.revision ?? this.revision);
     this.setStatus('pending');
     this.changeSeq += 1;
@@ -242,6 +272,8 @@ class Store extends EventTarget {
         const prevLive = this.live;
         this.live = r.live ?? this.live;
         this.preview = r.preview ?? null;
+        if (r.online !== undefined) this.online = r.online;
+        if (r.previewOnline !== undefined) this.previewOnline = r.previewOnline;
         this.emit('build', { prevPreview, prevLive });
       } catch {
         /* nächster Versuch */
@@ -271,6 +303,7 @@ class Store extends EventTarget {
       const r = await api.preview();
       this.preview = r.build ?? this.preview;
       this.previewRequestedRev = this.revision;
+      this.previewRequestedAt = Date.now();
       this.previewReloadWanted = this.previewReloadWanted || this.structuralPending;
       this.structuralPending = false;
       this.emit('build');
@@ -282,15 +315,18 @@ class Store extends EventTarget {
     }
   }
 
+  /** Zeigt die Vorschau den gespeicherten Entwurf? */
   get previewCurrent(): boolean {
-    return Boolean(this.preview && this.preview.state === 'ok' && this.preview.revision >= this.revision && !this.hasUnsaved);
+    if (this.hasUnsaved) return false;
+    if (this.previewOnline) return this.previewOnline.revision >= this.revision;
+    return Boolean(this.preview && this.preview.state === 'ok' && this.preview.revision >= this.revision);
   }
 
   /** Veröffentlichen: speichern → POST publish → Fortschritt über 'build' */
   async publish(): Promise<Build> {
     const ok = await this.flush();
     if (!ok) throw new ApiError(0, this.statusMessage || 'Der Entwurf konnte nicht gespeichert werden.');
-    let r: { build: Build };
+    let r: Awaited<ReturnType<typeof api.publish>>;
     try {
       r = await api.publish(this.revision);
     } catch (e) {
@@ -303,6 +339,16 @@ class Store extends EventTarget {
     this.live = r.build;
     this.emit('build');
     this.watchBuilds();
+    if (r.redirects?.length) {
+      // Der Server hat Weiterleitungen in den Entwurf geschrieben (Adressänderungen) — lokal übernehmen,
+      // damit das nächste Speichern sie nicht entfernt. Die Basis-Revision bleibt: der Server spielt nach.
+      try {
+        const st = await api.state();
+        this.doc.redirects = st.draft?.redirects ?? this.doc.redirects;
+      } catch {
+        /* nächstes Speichern spielt sie serverseitig nach */
+      }
+    }
     return r.build;
   }
 
@@ -313,25 +359,16 @@ class Store extends EventTarget {
   }
 
   /**
-   * Nach Medien-Upload/-Ersetzen/-Löschen hat der Server den Entwurf selbst geändert: neue/geänderte
-   * Medien übernehmen, Revision angleichen — lokale, noch nicht gespeicherte Änderungen bleiben erhalten.
+   * Nach Medien-Upload/-Ersetzen/-Löschen: Der Server hat den Entwurf selbst geändert und spielt diese
+   * Änderung beim nächsten Speichern auf unseren Stand nach — die Basis-Revision bleibt deshalb gleich.
+   * Lokal wird nur das Ergebnis übernommen (neues/geändertes Bild bzw. Löschung).
    */
-  async syncMediaFromServer(removedId?: string): Promise<void> {
-    const st = await api.state();
-    const serverMedia = st.draft?.media ?? [];
-    const local = this.doc.media;
-    for (const m of serverMedia) {
-      const i = local.findIndex((x) => x.id === m.id);
-      if (i < 0) local.push(m);
-      else local[i] = { ...m, alt: this.hasUnsaved ? local[i].alt : m.alt };
-    }
-    if (removedId) {
-      const i = local.findIndex((x) => x.id === removedId);
-      if (i >= 0 && !serverMedia.some((m) => m.id === removedId)) local.splice(i, 1);
-    }
-    this.revision = Number(st.draftMeta?.revision ?? this.revision);
-    this.dirty = Boolean(st.dirty) || this.dirty;
+  mediaChanged(removedId?: string): void {
+    if (removedId) this.doc.media = this.doc.media.filter((m) => m.id !== removedId);
+    this.dirty = true;
     this.emit('media');
+    this.emit('status');
+    void this.validate();
   }
 
   addMediaLocal(item: MediaItem): void {
@@ -346,8 +383,12 @@ class Store extends EventTarget {
 }
 
 /** Fehlende Teilbereiche ergänzen, damit Formulare nie auf undefined stoßen */
-export function normalizeDoc(doc: SiteDoc): SiteDoc {
-  const d = doc ?? ({} as SiteDoc);
+/**
+ * Fehlende Teilbereiche ergänzen (Formulare stoßen nie auf undefined) und Bildwerte vereinheitlichen.
+ * @returns true, wenn Inhalte geändert wurden, die gespeichert werden sollten (Bildwerte)
+ */
+export function normalizeDoc(doc: SiteDoc): boolean {
+  const d = doc;
   d.pages ??= [];
   d.media ??= [];
   d.redirects ??= [];
@@ -372,11 +413,26 @@ export function normalizeDoc(doc: SiteDoc): SiteDoc {
   d.settings.seoDefaults ??= { ogImage: null, themeColor: '#F7F2E8' };
   d.settings.openingHours ??= { week: { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] }, exceptions: [] };
   d.settings.openingHours.exceptions ??= [];
+  let changed = false;
+  const mediaRef = (holder: Record<string, unknown> | null | undefined, key: string) =>
+    (changed = normalizeMediaFields([{ key, label: key, kind: 'media' }], holder) || changed);
   for (const p of d.pages) {
     p.sections ??= [];
     p.seo ??= { title: '', description: '' };
+    mediaRef(p.seo as unknown as Record<string, unknown>, 'ogImage');
+    for (const s of p.sections) {
+      const def = sectionDef(s.type);
+      if (def && s.fields && typeof s.fields === 'object') changed = normalizeMediaFields(def.fields, s.fields as Record<string, unknown>) || changed;
+    }
   }
-  return d;
+  changed = normalizeMediaFields(HEADER_DEFS, d.layout.header as unknown as Record<string, unknown>) || changed;
+  mediaRef(d.settings.seoDefaults as unknown as Record<string, unknown>, 'ogImage');
+  for (const [name, def] of Object.entries(COLLECTION_DEFS)) {
+    const value = d.collections[name];
+    if (def.shape === 'list' && Array.isArray(value)) for (const item of value) changed = normalizeMediaFields(def.fields, item as Record<string, unknown>) || changed;
+    else if (def.shape === 'object' && value && typeof value === 'object') changed = normalizeMediaFields(def.fields, value as Record<string, unknown>) || changed;
+  }
+  return changed;
 }
 
 export const store = new Store();

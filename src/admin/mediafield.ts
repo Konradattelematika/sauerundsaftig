@@ -56,13 +56,7 @@ export async function uploadFiles(files: File[], opts: { replace?: string; onPro
       toast(e instanceof ApiError ? `Hochladen fehlgeschlagen: ${e.message}` : 'Hochladen fehlgeschlagen.', 'error', 8000);
     }
   }
-  if (done.length) {
-    try {
-      await store.syncMediaFromServer();
-    } catch {
-      /* Abgleich beim nächsten Laden */
-    }
-  }
+  if (done.length) store.mediaChanged();
   opts.onProgress?.('');
   return done;
 }
