@@ -151,6 +151,7 @@ describe('Weiterleitungen', () => {
     const { doc, revision } = await getDraft(srv.port, cookie);
     doc.pages.find((p) => p.slug === 'aktion').slug = 'angebote/herbst';
     const put = await cmsApi(srv.port, cookie, 'PUT', '/draft', { doc, baseRevision: revision });
+    expect(put.status).toBe(200);
     const pub = await cmsApi(srv.port, cookie, 'POST', '/publish', { revision: put.json.revision });
     expect(pub.status).toBe(202);
     expect(pub.json.redirects).toEqual([{ from: '/aktion', to: '/angebote/herbst', status: 301 }]);
@@ -175,7 +176,7 @@ describe('Weiterleitungen', () => {
 
     // Zurückbenennen: neue Weiterleitung, die alte (jetzt Schleife) verschwindet
     const back = await editDraft(srv.port, cookie, (d) => {
-      d.pages[0].slug = 'aktion';
+      d.pages.find((p) => p.slug === 'angebote/herbst').slug = 'aktion';
     });
     const pub2 = await cmsApi(srv.port, cookie, 'POST', '/publish', { revision: back.json.revision });
     expect(pub2.status).toBe(202);

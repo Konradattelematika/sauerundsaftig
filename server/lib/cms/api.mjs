@@ -213,9 +213,13 @@ export function createCmsApi(cms) {
     const { result } = await store.updateDraft(user, (doc) => {
       const item = doc.media.find((m) => m.id === id);
       if (!item) throw new HttpError(404, 'Bild nicht gefunden.');
-      // Grundbestand zuerst: nie löschbar, unabhängig von der Verwendung
-      if (item.kind !== 'upload') throw new HttpError(409, 'Bilder aus dem Grundbestand lassen sich nicht löschen, nur ersetzen.');
       const usages = mediaUsages(doc, id, defs);
+      // Grundbestand ist nie löschbar (nur ersetzbar) — Verwendungsnachweis trotzdem mitgeben
+      if (item.kind !== 'upload') {
+        const err = new HttpError(409, 'Bilder aus dem Grundbestand lassen sich nicht löschen, nur ersetzen.');
+        err.body = { usages };
+        throw err;
+      }
       if (usages.length) {
         const err = new HttpError(409, `Das Bild wird noch verwendet (${usages.length}×) — bitte zuerst dort austauschen.`);
         err.body = { usages };
