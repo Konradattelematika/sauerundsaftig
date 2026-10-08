@@ -1,0 +1,39 @@
+---
+/** Sektion „nicht-gefunden" (s. definition.mjs) — Markup 1:1 aus der bisherigen 404-Seite. */
+import Button from '../cover/Button.astro';
+import { editAttrs, editSection, rich, shown } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Fields {
+  eyebrow?: string;
+  title: string;
+  text?: string;
+  buttons?: { link: LinkValue; icon?: '' | 'arrow' | 'external' }[];
+}
+interface Props {
+  section: Section<Fields>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const buttons = (f.buttons ?? []).map((b, i) => ({ ...b, i })).filter((b) => shown(b.link));
+---
+
+<section class="bg-bg py-20 md:py-32" {...editSection(section)}>
+  <div class="mx-auto flex max-w-3xl flex-col items-center px-4 text-center md:px-8">
+    {f.eyebrow && <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>}
+    <span class="tz-rule mx-auto mt-3" aria-hidden="true"></span>
+    <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)]" data-reveal style="--reveal-delay:100ms" {...editAttrs(section, 'title')}>
+      {f.title}
+    </h1>
+    {f.text && (
+      <p class="prose-measure mt-5 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms" {...editAttrs(section, 'text', 'rich')} set:html={rich(f.text, { linkClass: 'link-ul text-ink' })} />
+    )}
+    {buttons.length > 0 && (
+      <div class="mt-8 flex flex-wrap justify-center gap-4" data-reveal style="--reveal-delay:200ms">
+        {buttons.map((b) => (
+          <Button link={b.link} icon={b.icon} attrs={editAttrs(section, `buttons.${b.i}.link`, 'link')} />
+        ))}
+      </div>
+    )}
+  </div>
+</section>

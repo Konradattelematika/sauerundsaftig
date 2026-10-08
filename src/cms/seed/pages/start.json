@@ -1,0 +1,133 @@
+{
+  "id": "start",
+  "order": 0,
+  "slug": "",
+  "title": "Startseite",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Start",
+  "showBreadcrumbs": false,
+  "structuredData": ["localBusiness"],
+  "seo": {
+    "title": "Sauer & Saftig — Café und Backstube in Ostseebad Rerik",
+    "description": "Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen. Café und Backstube in der Dünenstraße 1, Ostseebad Rerik."
+  },
+  "sections": [
+    {
+      "id": "titel",
+      "type": "cover",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Café & Backstube · Ostseebad Rerik",
+        "title": "Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen.",
+        "subline": "Café und Backstube in der Dünenstraße 1, Ostseebad Rerik.",
+        "showOpeningStatus": true,
+        "buttons": [
+          { "link": { "label": "Karte ansehen", "href": "page:karte", "variant": "accent" }, "icon": "arrow" },
+          { "link": { "label": "Route", "href": "{{route}}", "variant": "secondary" }, "icon": "" }
+        ],
+        "image": { "media": "theke" },
+        "caption": "",
+        "captionAside": "Dünenstraße 1",
+        "band": true
+      }
+    },
+    {
+      "id": "heute-frisch",
+      "type": "heute-frisch",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Aus der Backstube",
+        "title": "Eine Auswahl aus unserem Ofen",
+        "dateLine": "Stand {datum}",
+        "soldOutLabel": "Vergriffen",
+        "background": "bg-alt"
+      }
+    },
+    {
+      "id": "signature",
+      "type": "schnecken",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Die Signature",
+        "title": "",
+        "intro": "",
+        "category": "schnecken",
+        "link": { "label": "Zur Signature-Seite", "href": "page:karte-schnecken" },
+        "image": { "media": "schnecke-pistazie-hoch" },
+        "image2": { "media": "schnecke-blech" },
+        "background": "bg"
+      }
+    },
+    {
+      "id": "josie",
+      "type": "vorstellung",
+      "visible": true,
+      "fields": {
+        "image": { "media": "josie-portrait" },
+        "placeholderNote": "Platzhalter — das Porträt folgt",
+        "eyebrow": "Wer hier bäckt",
+        "title": "Moin, ich bin Josie.",
+        "text": "Ich habe in Rerik ein Café übernommen, das viele schon lange kannten — und eine Backstube hineingestellt, in der fast alles mit Sauerteig beginnt. Warum, wie und was die Urkunde damit zu tun hat, steht auf meiner Seite.",
+        "link": { "label": "Mehr über mich und das Café", "href": "page:ueber-mich" },
+        "background": "bg-alt"
+      }
+    },
+    {
+      "id": "instagram",
+      "type": "instagram",
+      "visible": true,
+      "fields": {
+        "tag": "Instagram · {handle}",
+        "title": "Frisch aus der Backstube",
+        "subline": "Noch mehr Krümel gibt’s auf Instagram.",
+        "followLabel": "{handle} auf Instagram folgen",
+        "swipeHint": "Wischen für mehr",
+        "importNote": "Auswahl · Stand {datum}",
+        "limit": 10,
+        "background": "bg"
+      }
+    },
+    {
+      "id": "besuch",
+      "type": "besuch",
+      "visible": true,
+      "fields": {
+        "variant": "compact",
+        "eyebrow": "Besuch",
+        "title": "Wann du uns findest",
+        "showOpeningStatus": true,
+        "text": "Reserviere deinen Tisch per Telefon.",
+        "phone": { "label": "{{phoneDisplay}}", "href": "{{tel}}" },
+        "info": { "label": "Alle Infos zum Besuch", "href": "page:besuch" },
+        "route": { "label": "Route", "href": "{{route}}" },
+        "background": "bg-alt"
+      }
+    },
+    {
+      "id": "stimmen",
+      "type": "stimmen",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Was Gäste sagen",
+        "countLabel": "{anzahl} Google-Bewertungen",
+        "background": "bg"
+      }
+    },
+    {
+      "id": "brotbrief",
+      "type": "newsletter",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Der Brotbrief",
+        "title": "Einmal im Monat Post aus der Backstube",
+        "intro": "Einmal im Monat: ein Rezept, ein Termin, ein Küstenbild. Als Dankeschön gibt’s den Sauerteig-Spickzettel als PDF, sobald er fertig ist.",
+        "emailLabel": "E-Mail*",
+        "consent": "Ich bin einverstanden, dass ihr mir monatlich den Brotbrief schickt. Abmelden geht jederzeit. Mehr dazu in der [Datenschutzerklärung](page:datenschutz).",
+        "submitLabel": "Brotbrief abonnieren (Demo)",
+        "successText": "Fast geschafft — Demo: Der Versand ist noch nicht angeschlossen.",
+        "background": "bg-alt"
+      }
+    }
+  ]
+}

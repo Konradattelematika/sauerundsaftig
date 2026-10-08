@@ -1,0 +1,23 @@
+---
+/** Sektion „stimmen" (s. definition.mjs) — reicht die Felder an SocialProof durch. */
+import SocialProof from '../../../variants/a-krume/components/SocialProof.astro';
+import { editAttrs, editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; countLabel?: string; background?: 'bg' | 'bg-alt' }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<SocialProof
+  eyebrow={f.eyebrow ?? ''}
+  countLabel={f.countLabel ?? ''}
+  tone={f.background === 'bg-alt' ? 'bg-alt' : 'bg'}
+  edit={{
+    root: editSection(section),
+    eyebrow: editAttrs(section, 'eyebrow'),
+    countLabel: editAttrs(section, 'countLabel'),
+  }}
+/>

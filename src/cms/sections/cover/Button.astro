@@ -1,0 +1,39 @@
+---
+/**
+ * Button/Textlink aus einem CMS-LinkValue im Stil von Variante A (lib/ui.ts). Genutzt von den
+ * Sektionen cover, nicht-gefunden und vorstellung. variant: Prop > link.variant > fallback.
+ * icon: 'arrow' = Pfeil nach rechts (intern), 'external' = Pfeil schräg (extern), '' = keins.
+ */
+import { linkAttrs, tokens } from '../../index';
+import type { ButtonVariant, LinkValue } from '../../types';
+import { btnAccent, btnGhost, btnPrimary, btnSecondary, linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
+
+interface Props {
+  link: LinkValue;
+  variant?: ButtonVariant;
+  fallback?: ButtonVariant;
+  icon?: '' | 'arrow' | 'external';
+  class?: string;
+  /** Editor-Marker (editAttrs) */
+  attrs?: Record<string, string>;
+}
+const { link, variant, fallback = 'secondary', icon = '', class: cls, attrs = {} } = Astro.props;
+const VARIANTS: Record<ButtonVariant, string> = {
+  primary: btnPrimary,
+  accent: btnAccent,
+  secondary: btnSecondary,
+  ghost: btnGhost,
+  link: linkArrow,
+};
+const v = variant ?? link.variant ?? fallback;
+---
+
+<a {...linkAttrs(link)} class:list={[VARIANTS[v] ?? VARIANTS[fallback], cls]} {...attrs}>
+  {tokens(link.label)}
+  {icon === 'arrow' && (
+    <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+  )}
+  {icon === 'external' && (
+    <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+  )}
+</a>

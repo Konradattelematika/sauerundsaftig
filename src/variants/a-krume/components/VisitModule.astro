@@ -2,6 +2,8 @@
 /**
  * Besuch-Modul: kompakt (Startseite) oder voll (/besuch). Öffnungszeiten-Tabelle
  * und Telefon immer ≥20px (§6-Prüfliste, Persona 62+).
+ * Texte/Links als Props (Standard = bisherige Texte): CMS-Sektion „besuch", Über-mich-Seite, Modul-Board.
+ * Link-Props: fehlend = Standard, null = ausgeblendet.
  */
 import site from '../../../data/site.json';
 import { weekOverview, type Schedule } from '../../../lib/opening-hours';
@@ -9,54 +11,91 @@ import { telHref, routeHref } from '../../../lib/format';
 import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
 import { btnPrimary, btnSecondary } from '../lib/ui';
 
+type LinkProp = { label: string; attrs: Record<string, string> } | null;
+
 interface Props {
   base: string;
   variant?: 'compact' | 'full';
+  eyebrow?: string;
+  title?: string;
+  text?: string;
+  showOpeningStatus?: boolean;
+  /** Telefon-Button */
+  phone?: LinkProp;
+  /** „Alle Infos zum Besuch" (nur kompakt) */
+  info?: LinkProp;
+  route?: LinkProp;
+  tone?: 'bg' | 'bg-alt';
+  /** CMS-Editor-Marker je Element (root, eyebrow, title, text, phone, info, route) — nur im Editor-Build befüllt */
+  edit?: Record<string, Record<string, string>>;
 }
-const { base, variant = 'compact' } = Astro.props;
+const {
+  base,
+  variant = 'compact',
+  eyebrow = 'Besuch',
+  title = 'Wann du uns findest',
+  text = 'Reserviere deinen Tisch per Telefon.',
+  showOpeningStatus = true,
+  tone = 'bg-alt',
+  edit = {},
+} = Astro.props;
 const full = variant === 'full';
 const week = weekOverview(site.openingHours as unknown as Schedule);
-const phoneHref = telHref(site.phone);
-const route = routeHref(site.address.street, site.address.zip, site.address.city);
+const pick = (value: LinkProp | undefined, fallback: LinkProp): LinkProp => (value === undefined ? fallback : value);
+const phone = pick(Astro.props.phone, { label: site.phoneDisplay, attrs: { href: telHref(site.phone) } });
+const info = pick(Astro.props.info, { label: 'Alle Infos zum Besuch', attrs: { href: `${base}/besuch` } });
+const route = pick(Astro.props.route, {
+  label: 'Route',
+  attrs: { href: routeHref(site.address.street, site.address.zip, site.address.city), target: '_blank', rel: 'noopener' },
+});
 ---
 
-<section class:list={['bg-bg-alt', full ? 'py-14 md:py-24' : 'py-14 md:py-20']}>
+<section class:list={[tone === 'bg' ? 'bg-bg' : 'bg-bg-alt', full ? 'py-14 md:py-24' : 'py-14 md:py-20']} {...edit.root}>
   <div class="mx-auto max-w-[1440px] px-4 md:px-8">
     <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
       <div class="md:col-span-5" data-reveal>
-        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Besuch</p>
+        {eyebrow && <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" {...edit.eyebrow}>{eyebrow}</p>}
         <span class="tz-rule mt-3" aria-hidden="true"></span>
-        <h2 class:list={['mt-3', full ? 'text-[clamp(2rem,5vw,3.5rem)]' : 'text-[clamp(1.75rem,4vw,2.5rem)]']}>
-          Wann du uns findest
+        <h2 class:list={['mt-3', full ? 'text-[clamp(2rem,5vw,3.5rem)]' : 'text-[clamp(1.75rem,4vw,2.5rem)]']} {...edit.title}>
+          {title}
         </h2>
-        <div class="mt-5"><OpeningStatus size="lg" /></div>
-        <p class="prose-measure mt-4 text-lg text-ink-soft">
-          Reserviere deinen Tisch per Telefon.
-        </p>
-        <div class="mt-6 flex flex-wrap gap-4">
-          <a
-            href={phoneHref}
-            class:list={[btnPrimary, 'px-5 py-2.5 text-xl md:text-2xl']}
-          >
-            {site.phoneDisplay}
-          </a>
-          {!full && (
-            <a
-              href={`${base}/besuch`}
-              class:list={[btnSecondary, 'px-5 py-2.5']}
-            >
-              Alle Infos zum Besuch
-            </a>
-          )}
-          <a
-            href={route}
-            target="_blank"
-            rel="noopener"
-            class:list={[btnSecondary, 'px-5 py-2.5']}
-          >
-            Route
-          </a>
-        </div>
+        {showOpeningStatus && <div class="mt-5"><OpeningStatus size="lg" /></div>}
+        {text && (
+          <p class="prose-measure mt-4 text-lg text-ink-soft" {...edit.text}>
+            {text}
+          </p>
+        )}
+        {(phone || (!full && info) || route) && (
+          <div class="mt-6 flex flex-wrap gap-4">
+            {phone && (
+              <a
+                {...phone.attrs}
+                class:list={[btnPrimary, 'px-5 py-2.5 text-xl md:text-2xl']}
+                {...edit.phone}
+              >
+                {phone.label}
+              </a>
+            )}
+            {!full && info && (
+              <a
+                {...info.attrs}
+                class:list={[btnSecondary, 'px-5 py-2.5']}
+                {...edit.info}
+              >
+                {info.label}
+              </a>
+            )}
+            {route && (
+              <a
+                {...route.attrs}
+                class:list={[btnSecondary, 'px-5 py-2.5']}
+                {...edit.route}
+              >
+                {route.label}
+              </a>
+            )}
+          </div>
+        )}
       </div>
       <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
         <table class="w-full border-collapse font-mono text-xl md:text-2xl">
