@@ -1,0 +1,55 @@
+---
+/** /ueber-mich „Woran ich mich halte" (s. definition.mjs). Markup 1:1 aus ueber-mich.astro. */
+import { arrowIcon, linkArrow } from '../../../variants/a-krume/lib/ui';
+import { editAttrs, editSection, href, isExternal } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Principle {
+  n: string;
+  text: string;
+}
+interface Props {
+  section: Section<{ eyebrow: string; title: string; principles: Principle[]; links?: LinkValue[] }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const links = (f.links ?? []).filter((l) => l.label && l.href);
+---
+
+<section class="bg-bg-alt py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="max-w-3xl" data-reveal>
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+      <span class="tz-rule mt-3" aria-hidden="true"></span>
+      <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)]" {...editAttrs(section, 'title')}>{f.title}</h2>
+    </div>
+    <ol class="mt-10 border-t border-ink/10 md:mt-14" role="list">
+      {f.principles.map((p, i) => (
+        <li
+          class="grid grid-cols-[3rem_1fr] items-baseline gap-4 border-b border-ink/10 py-7 md:grid-cols-12 md:gap-8 md:py-10"
+          data-reveal
+          style={`--reveal-delay:${(i % 3) * 100}ms`}
+        >
+          <span class="font-mono text-sm text-ink-soft md:col-span-1" {...editAttrs(section, `principles.${i}.n`)}>{p.n}</span>
+          <p class="font-display text-[clamp(1.5rem,3.2vw,2.5rem)] leading-tight md:col-span-10" {...editAttrs(section, `principles.${i}.text`)}>{p.text}</p>
+        </li>
+      ))}
+    </ol>
+    {links.length > 0 && (
+      <div class="mt-10 flex flex-wrap gap-4" data-reveal>
+        {links.map((l, i) => (
+          <a
+            href={href(l.href)}
+            target={l.newTab || isExternal(l.href) ? '_blank' : undefined}
+            rel={l.newTab || isExternal(l.href) ? 'noopener' : undefined}
+            class={linkArrow}
+            {...editAttrs(section, `links.${i}.label`, 'link')}
+          >
+            {l.label}
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

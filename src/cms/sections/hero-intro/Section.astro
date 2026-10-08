@@ -1,0 +1,26 @@
+---
+/** Hero-Einleitung (s. definition.mjs). Markup 1:1 aus ueber-uns.astro / gastgeber.astro Hero. */
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import { editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow: string; title: string; intro: string }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <SectionIntro
+      as="h1"
+      size="lg"
+      eyebrow={f.eyebrow}
+      title={f.title}
+      intro={f.intro}
+      rule
+      cms={{ section, eyebrow: 'eyebrow', title: 'title', intro: 'intro' }}
+    />
+  </div>
+</section>

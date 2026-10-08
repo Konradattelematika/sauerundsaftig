@@ -1,0 +1,43 @@
+---
+/** /jobs „Wir wachsen mit der Saison" (s. definition.mjs). Markup 1:1 aus jobs.astro. */
+import { editAttrs, editSection, href, isExternal, shown, tokens } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow: string; title: string; intro: string; note?: string; phoneLink?: LinkValue }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const phoneLink = f.phoneLink;
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-3xl px-4 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+    <span class="tz-rule mt-3" aria-hidden="true"></span>
+    <h1 class="mt-4 text-[clamp(2.25rem,6vw,3.75rem)]" data-reveal style="--reveal-delay:100ms" {...editAttrs(section, 'title')}>
+      {f.title}
+    </h1>
+    <p class="prose-measure mt-5 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms" {...editAttrs(section, 'intro')}>
+      {f.intro}
+    </p>
+    {f.note && (
+      <p class="prose-measure mt-4 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms" {...editAttrs(section, 'note')}>
+        {f.note}
+      </p>
+    )}
+    {shown(phoneLink) && (
+      <a
+        href={href(phoneLink!.href)}
+        target={phoneLink!.newTab || isExternal(phoneLink!.href) ? '_blank' : undefined}
+        rel={phoneLink!.newTab || isExternal(phoneLink!.href) ? 'noopener' : undefined}
+        class="mt-8 inline-flex min-h-11 items-center justify-center rounded-card bg-ink px-6 py-3 font-mono text-xl text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep"
+        data-reveal
+        style="--reveal-delay:300ms"
+        {...editAttrs(section, 'phoneLink', 'link')}
+      >
+        {tokens(phoneLink!.label)}
+      </a>
+    )}
+  </div>
+</section>

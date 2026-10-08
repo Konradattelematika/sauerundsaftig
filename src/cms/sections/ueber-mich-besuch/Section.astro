@@ -1,0 +1,18 @@
+---
+/**
+ * /ueber-mich Besuch-Modul (s. definition.mjs). Reiner Wrapper um die geteilte VisitModule-
+ * Komponente (Öffnungszeiten/Telefon/Route aus den Einstellungen, kein eigener Inhalt).
+ * VisitModule nimmt seit P1 einen `edit`-Prop entgegen und setzt den Marker selbst auf
+ * ihre Wurzel — kein eigener Wrapper nötig.
+ */
+import VisitModule from '../../../variants/a-krume/components/VisitModule.astro';
+import { editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<Record<string, never>>;
+}
+const { section } = Astro.props;
+---
+
+<VisitModule base="" variant="compact" edit={{ root: editSection(section) }} />

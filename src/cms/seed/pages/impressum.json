@@ -1,0 +1,58 @@
+{
+  "id": "impressum",
+  "order": 100,
+  "slug": "impressum",
+  "title": "Impressum",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Impressum",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "Impressum — Sauer & Saftig",
+    "description": "Impressum von Sauer & Saftig.",
+    "noindex": true
+  },
+  "sections": [
+    {
+      "id": "rechtstext",
+      "type": "rechtstext",
+      "visible": true,
+      "fields": {
+        "title": "Impressum",
+        "sections": [
+          {
+            "heading": "Angaben gemäß § 5 DDG",
+            "paragraphs": [
+              { "text": "Sauer & Saftig — Café und Backstube" },
+              { "text": "Inhaberin: Josephine Almstädt" },
+              { "text": "Mittelallee 3, 18230 Rerik" },
+              { "text": "Café: Dünenstraße 1, 18230 Ostseebad Rerik" }
+            ]
+          },
+          {
+            "heading": "Kontakt",
+            "paragraphs": [{ "text": "Telefon: 038296 769924" }]
+          },
+          {
+            "heading": "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV",
+            "paragraphs": [{ "text": "Josephine Almstädt, Mittelallee 3, 18230 Rerik" }]
+          },
+          {
+            "heading": "Verbraucherstreitbeilegung",
+            "paragraphs": [
+              { "text": "Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen." }
+            ]
+          },
+          {
+            "heading": "Haftung für Inhalte und Links",
+            "paragraphs": [
+              {
+                "text": "Die Inhalte dieser Website erstellen wir mit Sorgfalt. Für Inhalte externer Websites, auf die wir verlinken (z. B. Instagram), sind ausschließlich deren Betreiber verantwortlich. Werden uns Rechtsverletzungen bekannt, entfernen wir die betreffenden Inhalte oder Links umgehend."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
