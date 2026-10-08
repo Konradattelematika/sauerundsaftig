@@ -139,14 +139,25 @@ export function route(req, config, now) {
     return { ...base, type: 'static', candidates: [COUNTDOWN_PAGE], notFound: ['/404.html'], asset: false, authRequired: false };
   }
 
+  // CMS-API: auf allen Hosts (auch Live), immer mit Session (prüft server/lib/cms/api.mjs)
+  if (segments[0] === 'api' && segments[1] === 'cms') {
+    return { ...base, type: 'cms-api', apiSegments: segments.slice(2), noindex: true, privateCache: true };
+  }
+
   if (segments[0] === 'api') {
-    // Live-Host: nur /api/golive (oben). Alles andere existiert dort nicht.
+    // Live-Host: nur /api/golive und /api/cms/* (oben). Alles andere existiert dort nicht.
     if (hostInfo.kind === 'live') return { ...base, type: 'api-blocked' };
     return { ...base, type: 'api', apiSegments: segments.slice(1), privateCache: true };
   }
 
   if (norm.needsCanonical && (method === 'GET' || method === 'HEAD')) {
     return { ...base, type: 'redirect', status: 301, location: encodePath(segments) + search };
+  }
+
+  // CMS-Dashboard und Vorschau-Schalter: auf allen Hosts, immer mit Session (app.mjs)
+  if (segments[0] === 'admin') {
+    const type = segments.length === 2 && segments[1] === 'vorschau' ? 'cms-preview-toggle' : 'admin';
+    return { ...base, type, noindex: true, privateCache: true };
   }
 
   const asset = isAssetPath(p);

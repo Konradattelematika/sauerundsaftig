@@ -21,7 +21,8 @@ export const DEFAULT_TOOL_HOSTS = {
 // Ein Domain-Cookie würde bei einem Besuch dort unnötig an dessen Server gesendet.
 export const DEFAULT_COOKIE_DOMAIN = null;
 export const SESSION_MAX_AGE_S = 30 * 24 * 60 * 60;
-export const ROLES = ['team', 'inhaberin'];
+/** Rollen in SUS_USERS: admin/redaktion (CMS); Altrollen team/inhaberin gelten als admin */
+export const ROLES = ['team', 'inhaberin', 'admin', 'redaktion'];
 
 const HOST_RE = /^[a-z0-9.-]+$/;
 const USER_ID_RE = /^[a-z0-9_-]{1,32}$/;
@@ -159,6 +160,9 @@ export function loadConfig(env = process.env, opts = {}) {
 
   const users = parseUsers(usersConfigValue(env, warnings), warnings);
 
+  const buildTimeoutMin = Number.parseFloat(env.SUS_BUILD_TIMEOUT_MIN ?? '');
+  const buildTimeoutMs = Number.isFinite(buildTimeoutMin) && buildTimeoutMin > 0 ? Math.round(buildTimeoutMin * 60_000) : 10 * 60_000;
+
   const cookieDomainRaw = env.SUS_COOKIE_DOMAIN?.trim().toLowerCase().replace(/^\./, '');
   const cookieDomain = cookieDomainRaw === undefined ? DEFAULT_COOKIE_DOMAIN : cookieDomainRaw || null;
 
@@ -168,6 +172,12 @@ export function loadConfig(env = process.env, opts = {}) {
     distDir: path.resolve(appRoot, env.SUS_DIST_DIR?.trim() || 'dist'),
     dataDir: path.resolve(appRoot, env.SUS_DATA_DIR?.trim() || '/data'),
     seedFile: path.resolve(appRoot, env.SUS_SEED_FILE?.trim() || 'server/seed/checklist.json'),
+    // CMS (docs/CMS-PLAN.md §7): App-Verzeichnis für Builds zur Laufzeit, Code-Version, Build-Grenzen
+    appDir: path.resolve(appRoot, env.SUS_APP_DIR?.trim() || '.'),
+    cmsSeedDir: env.SUS_CMS_SEED_DIR?.trim() ? path.resolve(appRoot, env.SUS_CMS_SEED_DIR.trim()) : null,
+    codeVersion: env.SUS_CODE_VERSION?.trim() || null,
+    buildTimeoutMs,
+    buildOnStart: env.SUS_BUILD_ON_START?.trim() !== '0',
     liveHosts: parseHostList(env.SUS_LIVE_HOSTS, DEFAULT_LIVE_HOSTS, warnings, 'SUS_LIVE_HOSTS'),
     wwwHosts: parseHostList(env.SUS_WWW_HOSTS, DEFAULT_WWW_HOSTS, warnings, 'SUS_WWW_HOSTS'),
     toolHosts: parseToolHosts(env.SUS_TOOL_HOSTS, warnings),
