@@ -16,7 +16,9 @@
       "id": "hero",
       "type": "karte-schnecken-hero",
       "visible": true,
-      "fields": { "eyebrow": "Die Signature" }
+      "fields": {
+        "eyebrow": "Die Signature"
+      }
     },
     {
       "id": "sorten",
@@ -25,21 +27,27 @@
       "fields": {
         "items": [
           {
-            "media": { "media": "schnecke-pistazie-hoch" },
+            "media": {
+              "media": "schnecke-pistazie-hoch"
+            },
             "name": "Pistazie",
             "description": "Pistaziencreme, satt eingerollt, mit gehackten Kernen bestreut.",
             "price": 4.5,
             "priceIsPlaceholder": true
           },
           {
-            "media": { "media": "schnecke-lotus" },
+            "media": {
+              "media": "schnecke-lotus"
+            },
             "name": "Lotus",
             "description": "Karamellisierte Lotuscreme, die beim ersten Biss noch warm zieht.",
             "price": 4.3,
             "priceIsPlaceholder": true
           },
           {
-            "media": { "media": "schnecke-haselnuss" },
+            "media": {
+              "media": "schnecke-haselnuss"
+            },
             "name": "Haselnuss",
             "description": "Geröstete Haselnusscreme, dicht gerollt, außen leicht knusprig.",
             "price": 4.3,
@@ -54,20 +62,33 @@
       "id": "hinweis",
       "type": "karte-schnecken-hinweis",
       "visible": true,
-      "fields": { "note": "Ofenfrisch am Vormittag — solange der Vorrat reicht." }
+      "fields": {
+        "note": "Ofenfrisch am Vormittag — solange der Vorrat reicht."
+      }
     },
     {
       "id": "querschnitt",
       "type": "karte-schnecken-querschnitt",
       "visible": true,
       "fields": {
-        "media": { "media": "schnecke-querschnitt" },
+        "media": {
+          "media": "schnecke-querschnitt"
+        },
         "eyebrow": "Im Querschnitt",
         "title": "Schicht für Schicht sichtbar",
         "text": "Eng gerollt, damit die Creme in jeder Windung sitzt — sichtbar wird das erst beim Anschnitt.",
-        "link": { "label": "Vorbestellen", "href": "page:vorbestellen", "newTab": false, "visible": true },
+        "link": {
+          "label": "Vorbestellen",
+          "href": "page:vorbestellen",
+          "newTab": false,
+          "visible": true
+        },
         "note": "° Beispielpreise — finale Preise folgen."
       }
     }
-  ]
+  ],
+  "structuredData": [
+    "menu"
+  ],
+  "menuScope": "schnecken"
 }
