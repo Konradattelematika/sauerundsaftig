@@ -1,0 +1,46 @@
+---
+/** Sektion „schnecken" (s. definition.mjs) — reicht die Felder an SchneckenTeaser durch. */
+import SchneckenTeaser from '../../../variants/a-krume/components/SchneckenTeaser.astro';
+import { editAttrs, editSection, linkAttrs, media, shown, tokens } from '../../index';
+import type { LinkValue, MediaRef, Section } from '../../types';
+
+interface Fields {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  category: string;
+  link?: LinkValue;
+  image?: MediaRef | null;
+  image2?: MediaRef | null;
+  background?: 'bg' | 'bg-alt';
+}
+interface Props {
+  section: Section<Fields>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const img = (ref: MediaRef | null | undefined) => {
+  const m = media(ref);
+  return m ? { motif: m.id, alt: m.alt } : null;
+};
+---
+
+<SchneckenTeaser
+  base=""
+  category={f.category || 'schnecken'}
+  eyebrow={f.eyebrow ?? ''}
+  title={f.title}
+  intro={f.intro}
+  link={f.link && shown(f.link) ? { label: tokens(f.link.label), attrs: linkAttrs(f.link) } : null}
+  images={[img(f.image), img(f.image2)]}
+  tone={f.background === 'bg-alt' ? 'bg-alt' : 'bg'}
+  edit={{
+    root: editSection(section),
+    eyebrow: editAttrs(section, 'eyebrow'),
+    title: editAttrs(section, 'title'),
+    intro: editAttrs(section, 'intro'),
+    link: editAttrs(section, 'link', 'link'),
+    image: editAttrs(section, 'image', 'media'),
+    image2: editAttrs(section, 'image2', 'media'),
+  }}
+/>

@@ -1,35 +1,34 @@
 ---
 /**
- * /404 — Variante A: editorial gesetzte 404 mit Sauerteig-Bild, Links zu
- * Karte und Startseite. Baut nach dist/404.html — der Server liefert sie für unbekannte Pfade (Status 404).
+ * /404 — Variante A. Baut nach dist/404.html — der Server liefert sie für unbekannte Pfade (Status 404).
+ * Inhalt aus der CMS-Systemseite `nicht-gefunden` (system: true → nicht über die CMS-Route ausgeliefert):
+ * SEO aus page.seo, Sektionen über SectionList (Typ „nicht-gefunden": Text + Links zu Karte und Startseite).
  */
+import { getImage as astroGetImage } from 'astro:assets';
 import Layout from '../variants/a-krume/Layout.astro';
-import { btnAccent, btnSecondary, arrowIcon } from '../variants/a-krume/lib/ui';
+import SectionList from '../cms/SectionList.astro';
+import { cms, page as cmsPage, plain } from '../cms';
+import { getImage } from '../lib/images';
 
-const base = '';
+const page = cmsPage('nicht-gefunden');
+const seo = page.seo;
+
+let ogImage: string | undefined;
+const ogRef = seo.ogImage ?? cms().settings.seoDefaults?.ogImage ?? null;
+if (ogRef?.media) {
+  const img = await astroGetImage({ src: getImage('a', ogRef.media), width: 1200, format: 'jpg', quality: 80 });
+  ogImage = img.src;
+}
 ---
 
-<Layout title="Seite nicht gefunden — Sauer & Saftig" description="Diese Seite gibt es nicht." noindex>
-  <section class="bg-bg py-20 md:py-32">
-    <div class="mx-auto flex max-w-3xl flex-col items-center px-4 text-center md:px-8">
-      <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal>404</p>
-      <span class="tz-rule mx-auto mt-3" aria-hidden="true"></span>
-      <h1 class="mt-4 text-[clamp(2.25rem,6vw,4rem)]" data-reveal style="--reveal-delay:100ms">
-        Diese Seite ist wie ein Sauerteig ohne Fütterung — nicht mehr da.
-      </h1>
-      <p class="prose-measure mt-5 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms">
-        Der Link, dem du gefolgt bist, führt ins Leere. Vielleicht findest du, wonach du suchst, auf der Karte
-        oder auf der Startseite.
-      </p>
-      <div class="mt-8 flex flex-wrap justify-center gap-4" data-reveal style="--reveal-delay:200ms">
-        <a href={`${base}/karte`} class={btnAccent}>
-          Zur Karte
-          <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-        </a>
-        <a href={base || '/'} class={btnSecondary}>
-          Zur Startseite
-        </a>
-      </div>
-    </div>
-  </section>
+<Layout
+  title={seo.title}
+  description={plain(seo.description)}
+  ogImage={ogImage}
+  ogTitle={seo.ogTitle || undefined}
+  ogDescription={seo.ogDescription || undefined}
+  canonical={seo.canonical || undefined}
+  noindex
+>
+  <SectionList page={page} />
 </Layout>

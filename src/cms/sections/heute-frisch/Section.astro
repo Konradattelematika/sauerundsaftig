@@ -1,0 +1,27 @@
+---
+/** Sektion „heute-frisch" (s. definition.mjs) — reicht die Felder an HeuteFrischBoard durch. */
+import HeuteFrischBoard from '../../../variants/a-krume/components/HeuteFrischBoard.astro';
+import { editAttrs, editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; title: string; dateLine?: string; soldOutLabel?: string; background?: 'bg' | 'bg-alt' }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<HeuteFrischBoard
+  eyebrow={f.eyebrow ?? ''}
+  title={f.title}
+  dateLine={f.dateLine ?? ''}
+  soldOutLabel={f.soldOutLabel || 'Vergriffen'}
+  tone={f.background === 'bg' ? 'bg' : 'bg-alt'}
+  edit={{
+    root: editSection(section),
+    eyebrow: editAttrs(section, 'eyebrow'),
+    title: editAttrs(section, 'title'),
+    dateLine: editAttrs(section, 'dateLine'),
+    soldOutLabel: editAttrs(section, 'soldOutLabel'),
+  }}
+/>

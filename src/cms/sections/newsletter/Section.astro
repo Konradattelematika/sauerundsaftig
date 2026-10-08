@@ -1,0 +1,52 @@
+---
+/** Sektion „newsletter" (s. definition.mjs) — Markup 1:1 aus dem Brotbrief-Block der bisherigen Startseite. */
+import NewsletterForm from '../../../components/shared/NewsletterForm.astro';
+import { editAttrs, editSection, rich } from '../../index';
+import type { Section } from '../../types';
+
+interface Fields {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  emailLabel?: string;
+  consent?: string;
+  submitLabel?: string;
+  successText?: string;
+  background?: 'bg' | 'bg-alt';
+}
+interface Props {
+  section: Section<Fields>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const ea = (key: string, kind: 'text' | 'rich' = 'text') => editAttrs(section, key, kind);
+---
+
+<section class:list={[f.background === 'bg' ? 'bg-bg' : 'bg-bg-alt', 'py-14 md:py-24']} {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+      <div class="md:col-span-5" data-reveal>
+        {f.eyebrow && <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" {...ea('eyebrow')}>{f.eyebrow}</p>}
+        <span class="tz-rule mt-3" aria-hidden="true"></span>
+        <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.5rem)]" {...ea('title')}>{f.title}</h2>
+      </div>
+      <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms">
+        <NewsletterForm
+          base=""
+          intro={f.intro ?? ''}
+          emailLabel={f.emailLabel || 'E-Mail*'}
+          consentHtml={f.consent ? rich(f.consent, { linkClass: 'underline' }) : undefined}
+          submitLabel={f.submitLabel || 'Brotbrief abonnieren (Demo)'}
+          successText={f.successText ?? ''}
+          edit={{
+            intro: ea('intro'),
+            emailLabel: ea('emailLabel'),
+            consent: ea('consent', 'rich'),
+            submitLabel: ea('submitLabel'),
+            successText: ea('successText'),
+          }}
+        />
+      </div>
+    </div>
+  </div>
+</section>

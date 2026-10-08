@@ -1,0 +1,46 @@
+---
+/** Sektion „besuch" (s. definition.mjs) — reicht die Felder an VisitModule durch. */
+import VisitModule from '../../../variants/a-krume/components/VisitModule.astro';
+import { editAttrs, editSection, linkAttrs, shown, tokens } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Fields {
+  variant?: 'compact' | 'full';
+  eyebrow?: string;
+  title: string;
+  showOpeningStatus?: boolean;
+  text?: string;
+  phone?: LinkValue;
+  info?: LinkValue;
+  route?: LinkValue;
+  background?: 'bg' | 'bg-alt';
+}
+interface Props {
+  section: Section<Fields>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const link = (l: LinkValue | undefined) => (l && shown(l) ? { label: tokens(l.label), attrs: linkAttrs(l) } : null);
+---
+
+<VisitModule
+  base=""
+  variant={f.variant === 'full' ? 'full' : 'compact'}
+  eyebrow={f.eyebrow ?? ''}
+  title={f.title}
+  text={tokens(f.text)}
+  showOpeningStatus={f.showOpeningStatus !== false}
+  phone={link(f.phone)}
+  info={link(f.info)}
+  route={link(f.route)}
+  tone={f.background === 'bg' ? 'bg' : 'bg-alt'}
+  edit={{
+    root: editSection(section),
+    eyebrow: editAttrs(section, 'eyebrow'),
+    title: editAttrs(section, 'title'),
+    text: editAttrs(section, 'text'),
+    phone: editAttrs(section, 'phone', 'link'),
+    info: editAttrs(section, 'info', 'link'),
+    route: editAttrs(section, 'route', 'link'),
+  }}
+/>

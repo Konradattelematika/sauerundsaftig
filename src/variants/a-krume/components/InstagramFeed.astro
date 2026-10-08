@@ -6,6 +6,8 @@
  * Cursor-Label auf Desktop, Caption/Datum als Hover-Overlay (Touch: statisch unter dem Bild).
  * Daten: lib/instagram.ts (lokaler Fallback, Live-Anbindung dort dokumentiert).
  * prefers-reduced-motion: keine Skalierung, kein Cursor-Label, kein sanftes Scrollen.
+ * Texte als Props (Standard = bisherige Texte; {handle} = @Profilname, {datum} = Importdatum):
+ * CMS-Sektion „instagram", Über-mich-Seite und Modul-Board nutzen dieselbe Komponente.
  */
 import { Picture } from 'astro:assets';
 import { getInstagramPosts, INSTAGRAM_PROFILE, INSTAGRAM_IS_LIVE } from '../../../lib/instagram';
@@ -19,12 +21,26 @@ interface Props {
   limit?: number;
   /** Hintergrund passend zur Sektionsfolge */
   tone?: 'bg' | 'bg-alt';
+  /** Plakette über der Überschrift */
+  tag?: string;
+  followLabel?: string;
+  /** Hinweis unter dem Feed (nur mobil) */
+  swipeHint?: string;
+  /** Stand-Hinweis, solange der Feed nicht live angebunden ist */
+  importNote?: string;
+  /** CMS-Editor-Marker je Element (root, tag, title, subline, followLabel, swipeHint, importNote) — nur im Editor-Build befüllt */
+  edit?: Record<string, Record<string, string>>;
 }
 const {
   title = 'Frisch aus der Backstube',
   subline = 'Noch mehr Krümel gibt’s auf Instagram.',
   limit = 10,
   tone = 'bg',
+  tag = 'Instagram · {handle}',
+  followLabel = '{handle} auf Instagram folgen',
+  swipeHint = 'Wischen für mehr',
+  importNote = 'Auswahl · Stand {datum}',
+  edit = {},
 } = Astro.props;
 
 const posts = await getInstagramPosts(limit);
@@ -37,15 +53,17 @@ const SIZES: Record<string, string> = {
   sm: '(min-width: 1440px) 230px, (min-width: 768px) 17vw, 42vw',
 };
 const handle = `@${INSTAGRAM_PROFILE.username}`;
+const fill = (t: string) =>
+  t.replaceAll('{handle}', handle).replaceAll('{datum}', formatDate(INSTAGRAM_PROFILE.fetchedAt, { month: 'short' }));
 ---
 
-<section class:list={['ig relative overflow-x-clip py-14 md:py-24', tone === 'bg' ? 'bg-bg' : 'bg-bg-alt']} aria-labelledby="ig-title">
+<section class:list={['ig relative overflow-x-clip py-14 md:py-24', tone === 'bg' ? 'bg-bg' : 'bg-bg-alt']} aria-labelledby="ig-title" {...edit.root}>
   <div class="mx-auto max-w-[1440px] px-4 md:px-8">
     <div class="flex flex-wrap items-end justify-between gap-6">
       <div class="max-w-2xl" data-reveal>
-        <p><span class="tz-tag">Instagram · {handle}</span></p>
-        <h2 id="ig-title" class="mt-4 text-[clamp(2rem,5vw,3.5rem)]">{title}</h2>
-        <p class="prose-measure mt-3 text-lg text-ink-soft md:text-xl">{subline}</p>
+        {tag && <p><span class="tz-tag" {...edit.tag}>{fill(tag)}</span></p>}
+        <h2 id="ig-title" class="mt-4 text-[clamp(2rem,5vw,3.5rem)]" {...edit.title}>{title}</h2>
+        {subline && <p class="prose-measure mt-3 text-lg text-ink-soft md:text-xl" {...edit.subline}>{subline}</p>}
       </div>
       <div class="hidden items-center gap-2 md:flex" data-reveal style="--reveal-delay:100ms">
         <button
@@ -130,14 +148,14 @@ const handle = `@${INSTAGRAM_PROFILE.username}`;
   <div class="mx-auto mt-6 max-w-[1440px] px-4 md:mt-8 md:px-8">
     <div class="ig-progress" aria-hidden="true"><span data-ig-progress></span></div>
     <div class="mt-5 flex flex-wrap items-center justify-between gap-4">
-      <a href={INSTAGRAM_PROFILE.url} target="_blank" rel="noopener" class={linkArrow}>
-        {handle} auf Instagram folgen
+      <a href={INSTAGRAM_PROFILE.url} target="_blank" rel="noopener" class={linkArrow} {...edit.followLabel}>
+        {fill(followLabel)}
         <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
       </a>
-      <p class="font-mono text-[12px] uppercase tracking-widest text-ink-soft md:hidden">Wischen für mehr</p>
-      {!INSTAGRAM_IS_LIVE && (
-        <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft/80" title="Stand des Imports; Live-Feed folgt mit API-Zugang">
-          Auswahl · Stand {formatDate(INSTAGRAM_PROFILE.fetchedAt, { month: 'short' })}
+      {swipeHint && <p class="font-mono text-[12px] uppercase tracking-widest text-ink-soft md:hidden" {...edit.swipeHint}>{swipeHint}</p>}
+      {!INSTAGRAM_IS_LIVE && importNote && (
+        <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft/80" title="Stand des Imports; Live-Feed folgt mit API-Zugang" {...edit.importNote}>
+          {fill(importNote)}
         </p>
       )}
     </div>
