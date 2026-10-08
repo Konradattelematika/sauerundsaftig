@@ -235,3 +235,30 @@ export class StaticFiles {
     });
   }
 }
+
+/**
+ * Umschaltbare Auslieferung (CMS-Builds): hält die aktuelle StaticFiles-Instanz. set() tauscht sie atomar
+ * aus — die neue Instanz startet mit leerem Kompressions-Cache, laufende Antworten der alten laufen zu Ende.
+ */
+export class StaticSwitch {
+  /** @param {StaticFiles|null} [inner] */
+  constructor(inner = null) {
+    this.inner = inner;
+  }
+
+  set(inner) {
+    this.inner = inner;
+  }
+
+  get distDir() {
+    return this.inner?.distDir ?? null;
+  }
+
+  async find(candidates) {
+    return this.inner ? this.inner.find(candidates) : null;
+  }
+
+  serve(req, res, file, opts) {
+    return this.inner.serve(req, res, file, opts);
+  }
+}

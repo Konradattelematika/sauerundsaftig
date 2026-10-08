@@ -1,0 +1,33 @@
+---
+/** Sektion „Besuch-Öffnungszeiten" (s. definition.mjs) — Markup 1:1 aus src/pages/besuch.astro. */
+import { weekOverview, type Schedule } from '../../../lib/opening-hours';
+import { cms, editAttrs, editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; note?: string }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const week = weekOverview(cms().settings.openingHours as unknown as Schedule);
+---
+
+<section class="bg-bg-alt py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" data-reveal {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+    <table class="mt-6 w-full max-w-3xl border-collapse font-mono text-2xl md:text-3xl" data-reveal style="--reveal-delay:100ms">
+      <caption class="sr-only">Wochenübersicht Öffnungszeiten</caption>
+      <tbody>
+        {week.map((d) => (
+          <tr class="border-b border-ink/10">
+            <th scope="row" class="py-4 pr-4 text-left font-normal text-ink-soft">{d.day}</th>
+            <td class:list={['py-4 text-right tabular', d.hours === 'Ruhetag' && 'text-closed']}>{d.hours}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p class="prose-measure mt-6 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms" {...editAttrs(section, 'note')}>
+      {f.note}
+    </p>
+  </div>
+</section>

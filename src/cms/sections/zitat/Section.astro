@@ -1,0 +1,32 @@
+---
+/**
+ * Generische Sektion „Zitat" (s. definition.mjs). Baustoffe: tz-rule, font-display-Zitatgröße
+ * (SocialProof-Gästezitate), Mono-Quelle in Versalien.
+ */
+import { editAttrs, editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ quote: string; source?: string; background?: 'bg' | 'bg-alt' }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class:list={[f.background === 'bg-alt' ? 'bg-bg-alt' : 'bg-bg', 'py-14 md:py-24']} {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <figure class="mx-auto max-w-3xl text-center" data-reveal>
+      <span class="tz-rule mx-auto" aria-hidden="true"></span>
+      <blockquote class="mt-6">
+        <p class="font-display text-[clamp(1.75rem,4vw,2.75rem)] leading-snug text-ink" {...editAttrs(section, 'quote')}>
+          „{f.quote}“
+        </p>
+      </blockquote>
+      {f.source && (
+        <figcaption class="mt-5 font-mono text-sm uppercase tracking-widest text-ink-soft" {...editAttrs(section, 'source')}>
+          {f.source}
+        </figcaption>
+      )}
+    </figure>
+  </div>
+</section>

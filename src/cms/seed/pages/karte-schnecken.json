@@ -1,0 +1,73 @@
+{
+  "id": "karte-schnecken",
+  "order": 12,
+  "slug": "karte/schnecken",
+  "title": "Karte: Schnecken (Signature)",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Schnecken",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "Sauerteigschnecken — die Signature von Sauer & Saftig",
+    "description": "Sauerteig statt Hefeteig, 18 Stunden Reifezeit, dreimal gefüllt: Pistazie, Lotus, Haselnuss. Ofenfrisch am Vormittag, solange der Vorrat reicht."
+  },
+  "sections": [
+    {
+      "id": "hero",
+      "type": "karte-schnecken-hero",
+      "visible": true,
+      "fields": { "eyebrow": "Die Signature" }
+    },
+    {
+      "id": "sorten",
+      "type": "karte-schnecken-sorten",
+      "visible": true,
+      "fields": {
+        "items": [
+          {
+            "media": { "media": "schnecke-pistazie-hoch" },
+            "name": "Pistazie",
+            "description": "Pistaziencreme, satt eingerollt, mit gehackten Kernen bestreut.",
+            "price": 4.5,
+            "priceIsPlaceholder": true
+          },
+          {
+            "media": { "media": "schnecke-lotus" },
+            "name": "Lotus",
+            "description": "Karamellisierte Lotuscreme, die beim ersten Biss noch warm zieht.",
+            "price": 4.3,
+            "priceIsPlaceholder": true
+          },
+          {
+            "media": { "media": "schnecke-haselnuss" },
+            "name": "Haselnuss",
+            "description": "Geröstete Haselnusscreme, dicht gerollt, außen leicht knusprig.",
+            "price": 4.3,
+            "priceIsPlaceholder": true
+          }
+        ],
+        "textAfterFirst": "Sauerteig statt Hefe: Der Grundteig reift rund 18 Stunden, bevor er ausgerollt, gefüllt und aufgerollt wird. Was er dadurch verliert, ist Eile — was er gewinnt, ist Struktur und Säure, die die süße Füllung ausbalanciert.",
+        "textAfterSecond": "Jeden Morgen von Hand gedreht: Creme verteilen, aufrollen, schneiden — dann geht das Blech in den Ofen, bis die Ränder karamellisieren."
+      }
+    },
+    {
+      "id": "hinweis",
+      "type": "karte-schnecken-hinweis",
+      "visible": true,
+      "fields": { "note": "Ofenfrisch am Vormittag — solange der Vorrat reicht." }
+    },
+    {
+      "id": "querschnitt",
+      "type": "karte-schnecken-querschnitt",
+      "visible": true,
+      "fields": {
+        "media": { "media": "schnecke-querschnitt" },
+        "eyebrow": "Im Querschnitt",
+        "title": "Schicht für Schicht sichtbar",
+        "text": "Eng gerollt, damit die Creme in jeder Windung sitzt — sichtbar wird das erst beim Anschnitt.",
+        "link": { "label": "Vorbestellen", "href": "page:vorbestellen", "newTab": false, "visible": true },
+        "note": "° Beispielpreise — finale Preise folgen."
+      }
+    }
+  ]
+}

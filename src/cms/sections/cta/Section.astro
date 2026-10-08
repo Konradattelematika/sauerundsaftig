@@ -1,0 +1,58 @@
+---
+/**
+ * Generische Sektion „Handlungsaufruf" (s. definition.mjs). Markup 1:1 aus gastgeber
+ * „Ruf uns an, wir sprechen alles Weitere direkt durch" (bg-accent, weißer Text).
+ * Bei genau einem Button bleibt die ursprüngliche Einzel-Button-Auszeichnung erhalten
+ * (kein zusätzlicher Wrapper), bei zwei Buttons kommt eine schmale Button-Reihe dazu.
+ */
+import { editAttrs, editSection, href, isExternal, shown, tokens } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; title: string; text?: string; buttons?: LinkValue[] }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const buttons = (f.buttons ?? []).filter(shown);
+
+const primaryBtn =
+  'inline-flex min-h-11 items-center justify-center rounded-card bg-white px-6 py-3 font-mono text-xl text-accent-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-bg';
+const secondaryBtn =
+  'inline-flex min-h-11 items-center justify-center rounded-card border-2 border-white px-6 py-3 font-mono text-xl text-white transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-white hover:text-accent-ink';
+
+const attrsFor = (link: LinkValue) => ({
+  href: href(link.href),
+  target: link.newTab || isExternal(link.href) ? '_blank' : undefined,
+  rel: link.newTab || isExternal(link.href) ? 'noopener' : undefined,
+});
+---
+
+<section class="bg-accent py-14 text-white md:py-20" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 text-center md:px-8">
+    {f.eyebrow && (
+      <p class="font-mono text-xs uppercase tracking-[0.25em]" data-reveal {...editAttrs(section, 'eyebrow')}>{tokens(f.eyebrow)}</p>
+    )}
+    <h2 class="mt-3 text-[clamp(1.75rem,4vw,2.75rem)]" data-reveal style="--reveal-delay:100ms" {...editAttrs(section, 'title')}>
+      {f.title}
+    </h2>
+    {f.text && (
+      <p class="prose-measure mx-auto mt-3 text-white/90" data-reveal style="--reveal-delay:100ms" {...editAttrs(section, 'text')}>
+        {tokens(f.text)}
+      </p>
+    )}
+    {buttons.length === 1 && (
+      <a {...attrsFor(buttons[0])} class={`mt-8 ${primaryBtn}`} data-reveal style="--reveal-delay:200ms" {...editAttrs(section, 'buttons.0.label', 'link')}>
+        {tokens(buttons[0].label)}
+      </a>
+    )}
+    {buttons.length > 1 && (
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4" data-reveal style="--reveal-delay:200ms">
+        {buttons.map((b, i) => (
+          <a {...attrsFor(b)} class={i === 0 ? primaryBtn : secondaryBtn} {...editAttrs(section, `buttons.${i}.label`, 'link')}>
+            {tokens(b.label)}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

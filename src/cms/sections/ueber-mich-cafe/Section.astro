@@ -1,0 +1,66 @@
+---
+/** /ueber-mich „Die Theke ist das Erste, was du siehst" (s. definition.mjs). Markup 1:1 aus ueber-mich.astro. */
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { TERRAZZO_IS_PLACEHOLDER } from '../../../lib/textures';
+import { arrowIcon, btnSecondary } from '../../../variants/a-krume/lib/ui';
+import { editAttrs, editSection, href, isExternal, media, shown } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Props {
+  section: Section<{
+    image: string | { media: string; alt?: string };
+    label: string;
+    title: string;
+    text1: string;
+    text2?: string;
+    link?: LinkValue;
+    bigWord: string;
+    terrazzoCaption: string;
+  }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const img = media(f.image);
+const link = f.link;
+---
+
+<section class="bg-bg pt-14 md:pt-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
+      <div class="md:col-span-6" {...editAttrs(section, 'image', 'media')}>
+        {img && <Figure motif={img.id} alt={img.alt} aspect="aspect-[4/5] md:aspect-[3/4]" sizes="(min-width: 768px) 50vw, 100vw" mat="flat" reveal revealKind="image" hover />}
+      </div>
+      <div class="md:col-span-5 md:col-start-8" data-reveal style="--reveal-delay:100ms">
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" {...editAttrs(section, 'label')}>{f.label}</p>
+        <span class="tz-rule mt-3" aria-hidden="true"></span>
+        <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)]" {...editAttrs(section, 'title')}>{f.title}</h2>
+        <p class="prose-measure mt-5 text-lg text-ink-soft" {...editAttrs(section, 'text1')}>{f.text1}</p>
+        {f.text2 && <p class="prose-measure mt-4 text-lg text-ink-soft" {...editAttrs(section, 'text2')}>{f.text2}</p>}
+        {shown(link) && (
+          <a
+            href={href(link!.href)}
+            target={link!.newTab || isExternal(link!.href) ? '_blank' : undefined}
+            rel={link!.newTab || isExternal(link!.href) ? 'noopener' : undefined}
+            class:list={[btnSecondary, 'mt-8']}
+            {...editAttrs(section, 'link', 'link')}
+          >
+            {link!.label}
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <!-- Übergang: großes Wort in Terrazzo-Textur, dann die Fläche selbst -->
+  <div class="mx-auto mt-12 max-w-[1440px] px-4 md:mt-20 md:px-8" data-reveal>
+    <p class="tz-text font-display text-[clamp(4.5rem,18vw,17rem)] leading-[0.85] tracking-[-0.03em]" aria-hidden="true" {...editAttrs(section, 'bigWord')}>{f.bigWord}</p>
+  </div>
+  <div class="tz-surface relative mt-[-0.2em] border-t border-ink/10">
+    <div class="mx-auto flex min-h-[clamp(120px,18vw,240px)] max-w-[1440px] items-end px-4 pb-4 md:px-8 md:pb-6">
+      <p class="rounded-card bg-paper/85 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-ink-soft backdrop-blur-[2px]" {...editAttrs(section, 'terrazzoCaption')}>
+        {f.terrazzoCaption}{TERRAZZO_IS_PLACEHOLDER && ' · Platzhalter-Textur, echtes Foto folgt'}
+      </p>
+    </div>
+  </div>
+</section>

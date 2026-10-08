@@ -1,0 +1,28 @@
+{
+  "id": "jobs",
+  "order": 90,
+  "slug": "jobs",
+  "title": "Jobs",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Jobs",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "Jobs — Sauer & Saftig",
+    "description": "Wir wachsen mit der Saison — melde dich, wenn du in Backstube oder Service anpacken kannst."
+  },
+  "sections": [
+    {
+      "id": "aufruf",
+      "type": "jobs-aufruf",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Jobs",
+        "title": "Wir wachsen mit der Saison",
+        "intro": "Aktuell haben wir keine konkrete Stelle ausgeschrieben — trotzdem freuen wir uns über Initiativbewerbungen. Melde dich, wenn du in der Backstube oder im Service anpacken kannst, egal ob für eine Saison oder länger.",
+        "note": "Am einfachsten geht das telefonisch — dann können wir gleich klären, ob und wann etwas zusammenpasst.",
+        "phoneLink": { "label": "{{phoneDisplay}}", "href": "{{tel}}", "visible": true }
+      }
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "id": "ueber-mich",
+  "order": 41,
+  "slug": "ueber-mich",
+  "title": "Über mich",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Über mich",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "Über mich — Josie | Sauer & Saftig",
+    "description": "Moin, ich bin Josie. Ich backe in Ostseebad Rerik fast alles mit Sauerteig — und führe das Café dazu. Über die Backstube, die Theke und eine Urkunde."
+  },
+  "sections": [
+    {
+      "id": "hero",
+      "type": "ueber-mich-hero",
+      "visible": true,
+      "fields": {
+        "tag": "Café & Backstube · Ostseebad Rerik",
+        "line1": "Moin,",
+        "line2": "ich bin",
+        "name": "Josie.",
+        "lead": "Ich backe. Fast alles hier beginnt mit Sauerteig — auch der Käsekuchen. Und weil eine Backstube allein noch kein Ort ist, gibt es das Café dazu: Frühstück, Kuchen, Suppe und Kaffee, Donnerstag bis Montag in der Dünenstraße 1.",
+        "image": "josie-portrait",
+        "captionLabel": "Josie · Sauer & Saftig, Dünenstraße 1"
+      }
+    },
+    {
+      "id": "story",
+      "type": "ueber-mich-story",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Wie das hier angefangen hat",
+        "title": "Ein Café, das viele schon kannten. Und eine Backstube, die neu ist.",
+        "lead": "Ich habe in Rerik ein Café übernommen, das viele hier schon lange kannten und mochten. Manches habe ich bewusst verändert — allen voran den Sauerteig, der seitdem fast überall drinsteckt. Anderes braucht noch Zeit.",
+        "body": "Auf Instagram nenne ich das: die Reise zum Sauerteig-Café. Die Räume kennst du vielleicht noch von früher. Neu dazugekommen ist eine Backstube, in der fast jeden Tag Sauerteig angesetzt wird — und eine Karte, die sich Schritt für Schritt verändert, statt an einem Tag komplett neu zu sein.\n\nWas dabei herauskommt: Brot, das 18 Stunden braucht. Schnecken aus demselben Teig. Käsekuchen mit Sauerteig. Und Torten, die auf Bestellung entstehen — jede anders.",
+        "placeholderLabel": "Redaktioneller Platzhalter — Josie ergänzt",
+        "offeneFragen": [
+          { "frage": "Woher kommst du, und wie bist du zum Backen gekommen?" },
+          { "frage": "Seit wann führst du Sauer & Saftig — und was war der Anlass, das Café zu übernehmen?" },
+          { "frage": "Wer gehört zum Team in Backstube und Service?" }
+        ]
+      }
+    },
+    {
+      "id": "urkunde",
+      "type": "ueber-mich-urkunde",
+      "visible": true,
+      "fields": {
+        "year": "2025",
+        "title": "Und dann war da plötzlich diese Urkunde.",
+        "text": "„Bester Bäcker 2025 – Landkreis Rostock“ steht darauf, gewählt in der Leserumfrage der Ostsee-Zeitung. Auf dem Foto oben halte ich sie in der Hand — in der anderen ein Brett mit Gebäck, weil das an dem Tag eben auch fertig werden musste. Geändert hat sich durch die Urkunde nichts am Rezept: Der Teig braucht weiterhin seine 18 Stunden, und Dienstag und Mittwoch bleibt der Ofen aus.",
+        "cardLabel": "Urkunde",
+        "cardTitleLine1": "Bester Bäcker",
+        "cardTitleLine2": "2025",
+        "cardRegion": "Landkreis Rostock",
+        "cardSource": "Leserumfrage · Ostsee-Zeitung"
+      }
+    },
+    {
+      "id": "philosophie",
+      "type": "ueber-mich-philosophie",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Woran ich mich halte",
+        "title": "Vier Sätze, die hier gelten",
+        "principles": [
+          { "n": "01", "text": "Sauerteig statt Hefe — überall, wo es geht. Auch im Käsekuchen." },
+          { "n": "02", "text": "18 Stunden für einen Laib. Kein Schritt wird abgekürzt." },
+          { "n": "03", "text": "Dienstag und Mittwoch bleibt der Ofen aus. Zwei Ruhetage, jede Woche." },
+          { "n": "04", "text": "Torten gibt es auf Bestellung. Jede anders, keine aus dem Katalog." }
+        ],
+        "links": [
+          { "label": "Der 18-Stunden-Prozess", "href": "page:sauerteig", "visible": true },
+          { "label": "Die Karte", "href": "page:karte", "visible": true }
+        ]
+      }
+    },
+    {
+      "id": "cafe",
+      "type": "ueber-mich-cafe",
+      "visible": true,
+      "fields": {
+        "image": "theke",
+        "label": "Das Café",
+        "title": "Die Theke ist das Erste, was du siehst.",
+        "text1": "Vitrine, Brotkörbe, die Tafel mit den Getränken — und obendrauf die helle Steinplatte mit den Einsprengseln. Genau dieses Muster begegnet dir auf dieser Website immer wieder: als schmales Band zwischen den Abschnitten, als Rahmen um Fotos, hinter der Überschrift.",
+        "text2": "Es ist kein Website-Ornament. Es ist unsere Theke.",
+        "link": { "label": "Anfahrt und Öffnungszeiten", "href": "page:besuch", "visible": true },
+        "bigWord": "Theke",
+        "terrazzoCaption": "Oberfläche der Theke, Dünenstraße 1"
+      }
+    },
+    {
+      "id": "instagram",
+      "type": "ueber-mich-instagram",
+      "visible": true,
+      "fields": {
+        "title": "Frisch aus der Backstube",
+        "subline": "Noch mehr Krümel gibt’s auf Instagram."
+      }
+    },
+    {
+      "id": "besuch",
+      "type": "ueber-mich-besuch",
+      "visible": true,
+      "fields": {}
+    }
+  ]
+}

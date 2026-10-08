@@ -1,0 +1,20 @@
+---
+/** Sektion „Shop-Gutschein" (s. definition.mjs) — Markup 1:1 aus src/pages/shop.astro. */
+import VoucherConfigurator from '../../../components/shared/VoucherConfigurator.astro';
+import { editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ amounts: { value: number }[]; workshops?: boolean }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-bg pb-14 md:pb-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="mx-auto max-w-2xl" data-reveal>
+      <VoucherConfigurator base="" workshops={f.workshops ?? false} amounts={f.amounts.map((a) => a.value)} />
+    </div>
+  </div>
+</section>

@@ -2,6 +2,7 @@
  * Request-Handler: verbindet Host-Policy, Login/Session, Static und API.
  * createApp() ist ohne Netzwerk testbar; startServer() startet einen echten HTTP-Server.
  */
+import { readFile } from 'node:fs/promises';
 import http from 'node:http';
 import { handleApi } from './api.mjs';
 import {
@@ -16,11 +17,13 @@ import {
   sessionCookie,
   verifyPassword,
 } from './auth.mjs';
-import { encodePath, isGoLive, normalizeHost, route } from './host-policy.mjs';
+import { encodePath, fileCandidates, isGoLive, normalizeHost, route } from './host-policy.mjs';
 import { HttpError, applyBaseHeaders, isSameOrigin, mediaType, readBody, redirect, sendJson, sendText } from './http.mjs';
 import { PasswordOverrides } from './passwords.mjs';
-import { StaticFiles } from './static.mjs';
 import { Store } from './store.mjs';
+import { createCms } from './cms/index.mjs';
+import { bannerHtml, injectBanner, previewCookie, previewRequested } from './cms/preview.mjs';
+import { can } from './cms/users.mjs';
 
 const LOGIN_BODY_LIMIT = 8 * 1024;
 const PASSWORD_MIN_LENGTH = 10;
@@ -34,6 +37,12 @@ const FALLBACK_LOGIN = `<!doctype html><html lang="de"><head><meta charset="utf-
 <input type="hidden" name="next" id="next"><button>Anmelden</button></form>
 <script>var n=new URLSearchParams(location.search).get('next');if(n)document.getElementById('next').value=n;</script>
 </body></html>`;
+
+/** Kleine HTML-Seite für 403 im Dashboard-Bereich */
+const FORBIDDEN_HTML = `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Kein Zugriff</title></head>
+<body style="font-family:system-ui,sans-serif;max-width:28rem;margin:4rem auto;padding:0 1rem;line-height:1.5">
+<h1>Kein Zugriff</h1><p>Dein Benutzerkonto hat keine Berechtigung für das Dashboard. Bitte wende dich an eine Person mit Admin-Rechten.</p>
+<p><a href="/">Zur Website</a> · <a href="/logout">Abmelden</a></p></body></html>`;
 
 function cacheControlFor(rel, decision) {
   if (rel.startsWith('/_astro/')) return 'public, max-age=31536000, immutable';
@@ -70,25 +79,140 @@ async function readPasswordForm(req) {
 }
 
 /**
- * @param {{ config: object, store: Store, staticFiles: StaticFiles, passwords?: PasswordOverrides, now?: () => Date, log?: Console }} deps
+ * @param {{ config: object, store: Store, staticFiles: { find: Function, serve: Function }, passwords?: { set(id: string, hash: string): Promise<void> },
+ *           cms?: object, now?: () => Date, log?: Console }} deps
+ *   staticFiles: StaticFiles bzw. StaticSwitch (das CMS schaltet nach jedem Build um) · cms: aus createCms()
  */
-export function createApp({ config, store, staticFiles, passwords, now = () => new Date(), log = console }) {
+export function createApp({ config, store, staticFiles, passwords, cms = null, now = () => new Date(), log = console }) {
   const nowMs = () => now().getTime();
   const loginLimiter = new RateLimiter(config.loginRateLimit, nowMs);
   const writeLimiter = new RateLimiter(config.writeRateLimit, nowMs);
 
-  async function serveStaticOr404(req, res, decision, candidates) {
+  /** CMS-Weiterleitung für Pfade ohne Datei (aus dem aktuellen Live-Build) → true, wenn umgeleitet */
+  function tryRedirect(req, res, decision, search) {
+    const r = (req.method === 'GET' || req.method === 'HEAD') && cms ? cms.redirectFor(decision.path) : null;
+    if (!r) return false;
+    // Query der Anfrage mitnehmen (vor einem #anker), außer das Ziel hat eine eigene oder ist extern
+    const hashAt = r.to.indexOf('#');
+    let target = r.to;
+    if (search && !r.to.includes('?') && !/^https?:/i.test(r.to)) {
+      target = hashAt >= 0 ? r.to.slice(0, hashAt) + search + r.to.slice(hashAt) : r.to + search;
+    }
+    const cache = r.status === 301 && !decision.privateCache ? 'public, max-age=3600' : 'private, no-store';
+    redirect(res, r.status, target, { 'Cache-Control': cache });
+    return true;
+  }
+
+  async function serveStaticOr404(req, res, decision, candidates, search = '') {
     const file = candidates.length ? await staticFiles.find(candidates) : null;
     if (file) {
       await staticFiles.serve(req, res, file, { cacheControl: cacheControlFor(file.rel, decision) });
       return;
     }
+    if (tryRedirect(req, res, decision, search)) return;
     const nf = await staticFiles.find(decision.notFound ?? ['/404.html']);
     if (nf) {
       await staticFiles.serve(req, res, nf, { status: 404, cacheControl: decision.privateCache ? 'private, no-store' : 'no-cache' });
       return;
     }
     sendText(res, 404, 'Nicht gefunden');
+  }
+
+  /**
+   * Vorschau-Modus: HTML/Assets aus dem Vorschau-Build (Fallback: Live-Build), HTML mit Vorschau-Leiste
+   * (außer ?__cms=editor). Antworten sind privat und werden nicht zwischengespeichert (Assets: Hash im Namen).
+   */
+  async function servePreview(req, res, decision, search) {
+    const sources = cms.previewFiles.inner ? [cms.previewFiles, staticFiles] : [staticFiles];
+    const findIn = async (candidates) => {
+      for (const src of sources) {
+        const f = candidates.length ? await src.find(candidates) : null;
+        if (f) return { file: f, files: src };
+      }
+      return null;
+    };
+    let hit = await findIn(decision.candidates);
+    let status = 200;
+    if (!hit) {
+      if (tryRedirect(req, res, decision, search)) return;
+      hit = await findIn(decision.notFound ?? ['/404.html']);
+      if (!hit) {
+        sendText(res, 404, 'Nicht gefunden');
+        return;
+      }
+      status = 404;
+    }
+    const { file, files } = hit;
+    if (!file.rel.endsWith('.html') || new URLSearchParams(search).get('__cms') === 'editor') {
+      const cacheControl = file.rel.startsWith('/_astro/') ? 'private, max-age=31536000, immutable' : 'private, no-store';
+      await files.serve(req, res, file, { status, cacheControl });
+      return;
+    }
+    const html = await readFile(file.abs, 'utf8');
+    const previewState = cms.builds.status().preview?.state;
+    const banner = bannerHtml({
+      path: decision.path,
+      search,
+      previewBuild: cms.builds.previewOnline(),
+      draftRevision: cms.store.draftMeta().revision,
+      building: previewState === 'queued' || previewState === 'running',
+    });
+    const body = Buffer.from(injectBanner(html, banner), 'utf8');
+    res.writeHead(status, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Content-Length': body.length,
+      'Cache-Control': 'private, no-store',
+      'X-Robots-Tag': 'noindex, nofollow, noarchive',
+    });
+    res.end(req.method === 'HEAD' ? undefined : body);
+  }
+
+  function sendForbiddenPage(req, res) {
+    res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'private, no-store' });
+    res.end(req.method === 'HEAD' ? undefined : FORBIDDEN_HTML);
+  }
+
+  /** /admin[/…] → dist/admin/index.html (Session + cms.view) */
+  async function handleAdmin(req, res, decision, search, user) {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      sendText(res, 405, 'Methode nicht erlaubt', { Allow: 'GET, HEAD' });
+      return;
+    }
+    if (!user) {
+      redirect(res, 302, `/login?next=${encodeURIComponent(encodePath(decision.segments) + search)}`, { 'Cache-Control': 'private, no-store' });
+      return;
+    }
+    if (!can(user, 'cms.view')) {
+      sendForbiddenPage(req, res);
+      return;
+    }
+    const candidates = decision.path === '/admin' ? ['/admin/index.html'] : [...fileCandidates(decision.path), '/admin/index.html'];
+    const file = await staticFiles.find(candidates);
+    if (!file) {
+      sendText(res, 503, 'Die Admin-Oberfläche ist in diesem Build nicht enthalten.');
+      return;
+    }
+    await staticFiles.serve(req, res, file, { cacheControl: file.rel.endsWith('.html') ? 'private, no-store' : 'private, no-cache' });
+  }
+
+  /** /admin/vorschau?an=1 bzw. ?aus=1, &next=/pfad → Vorschau-Cookie setzen/löschen und weiter */
+  function handlePreviewToggle(req, res, host, search, user) {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      sendText(res, 405, 'Methode nicht erlaubt', { Allow: 'GET, HEAD' });
+      return;
+    }
+    if (!user) {
+      redirect(res, 302, `/login?next=${encodeURIComponent(`/admin/vorschau${search}`)}`, { 'Cache-Control': 'private, no-store' });
+      return;
+    }
+    if (!can(user, 'cms.view')) {
+      sendForbiddenPage(req, res);
+      return;
+    }
+    const params = new URLSearchParams(search);
+    const on = !params.has('aus');
+    const next = safeNext(params.get('next') ?? (on ? '/' : '/admin'));
+    redirect(res, 302, next, { 'Set-Cookie': previewCookie(host, on), 'Cache-Control': 'private, no-store' });
   }
 
   async function handleLogin(req, res, decision, host, search, user) {
@@ -250,6 +374,19 @@ export function createApp({ config, store, staticFiles, passwords, now = () => n
       case 'api':
         await handleApi({ req, res, apiSegments: decision.apiSegments, user: user(), store, config, now, writeLimiter });
         return;
+      case 'cms-api':
+        if (!cms) {
+          sendJson(res, 503, { error: 'CMS nicht verfügbar' });
+          return;
+        }
+        await cms.handleApi({ req, res, segments: decision.apiSegments, user: user(), host, search, writeLimiter });
+        return;
+      case 'admin':
+        await handleAdmin(req, res, decision, search, user());
+        return;
+      case 'cms-preview-toggle':
+        handlePreviewToggle(req, res, host, search, user());
+        return;
       case 'static':
         if (!isRead) {
           sendText(res, 405, 'Methode nicht erlaubt', { Allow: 'GET, HEAD' });
@@ -257,7 +394,7 @@ export function createApp({ config, store, staticFiles, passwords, now = () => n
         }
         if (decision.authRequired && !user()) {
           if (decision.anonCandidates) {
-            await serveStaticOr404(req, res, decision, decision.anonCandidates);
+            await serveStaticOr404(req, res, decision, decision.anonCandidates, search);
             return;
           }
           redirect(res, 302, `/login?next=${encodeURIComponent(encodePath(decision.segments) + search)}`, {
@@ -265,7 +402,11 @@ export function createApp({ config, store, staticFiles, passwords, now = () => n
           });
           return;
         }
-        await serveStaticOr404(req, res, decision, decision.candidates);
+        if (cms && previewRequested(req.headers.cookie) && can(user(), 'cms.view')) {
+          await servePreview(req, res, decision, search);
+          return;
+        }
+        await serveStaticOr404(req, res, decision, decision.candidates, search);
         return;
       default:
         sendText(res, 500, 'Interner Fehler');
@@ -299,11 +440,14 @@ export function createApp({ config, store, staticFiles, passwords, now = () => n
  * Store + Static initialisieren und HTTP-Server starten.
  * @returns {Promise<{ server: http.Server, store: Store, url: string, close: () => Promise<void> }>}
  */
-export async function startServer(config, { now = () => new Date(), log = console, port = config.port, host = config.listenHost } = {}) {
+export async function startServer(config, { now = () => new Date(), log = console, port = config.port, host = config.listenHost, builder, cmsOptions = {} } = {}) {
   const store = await new Store({ dataDir: config.dataDir, seedFile: config.seedFile, now, log }).init();
-  const staticFiles = await new StaticFiles(config.distDir, { log }).init();
-  const passwords = await new PasswordOverrides({ dataDir: config.dataDir, users: config.users, now, log }).init();
-  const handler = createApp({ config, store, staticFiles, passwords, now, log });
+  // Env-Benutzer (Bootstrap): PasswordOverrides setzt deren wirksamen Hash; das CMS spiegelt danach
+  // Env- und Dashboard-Benutzer in config.users (Login und Session-Prüfung arbeiten darauf).
+  const envUsers = [...config.users];
+  const passwords = await new PasswordOverrides({ dataDir: config.dataDir, users: envUsers, now, log }).init();
+  const cms = await createCms({ config, envUsers, passwords, now, log, builder, ...cmsOptions });
+  const handler = createApp({ config, store, staticFiles: cms.liveFiles, passwords: cms.users, cms, now, log });
   const server = http.createServer(handler);
   server.keepAliveTimeout = 65_000;
   server.headersTimeout = 66_000;
@@ -324,9 +468,10 @@ export async function startServer(config, { now = () => new Date(), log = consol
         server.close(() => resolve());
         server.closeIdleConnections?.();
       });
+      await cms.close();
       await store.drain();
     })();
     return closing;
   };
-  return { server, store, url, port: addr.port, close };
+  return { server, store, cms, url, port: addr.port, close };
 }

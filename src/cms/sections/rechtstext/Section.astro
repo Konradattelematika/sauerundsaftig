@@ -1,0 +1,49 @@
+---
+/**
+ * Generische Sektion „Rechtstext" (s. definition.mjs). Markup 1:1 aus impressum.astro /
+ * datenschutz.astro (vormals lib/legal.ts): Absätze, die mit "TODO(kunde)" beginnen oder es
+ * enthalten, bekommen eine kleine „folgt"-Marke statt normalem Fließtext.
+ */
+import { editAttrs, editSection, rich } from '../../index';
+import type { Section } from '../../types';
+
+interface Paragraph {
+  text: string;
+}
+interface LegalSection {
+  heading: string;
+  paragraphs: Paragraph[];
+}
+interface Props {
+  section: Section<{ title: string; sections: LegalSection[] }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-3xl px-4 md:px-8">
+    <h1 class="text-[clamp(2rem,5vw,3rem)]" {...editAttrs(section, 'title')}>{f.title}</h1>
+    <div class="mt-10 flex flex-col gap-10">
+      {f.sections.map((sec, si) => (
+        <div>
+          <h2 class="text-2xl" {...editAttrs(section, `sections.${si}.heading`)}>{sec.heading}</h2>
+          <div class="prose-measure mt-3 flex flex-col gap-2 text-ink-soft">
+            {sec.paragraphs.map((p, pi) =>
+              (p.text ?? '').includes('TODO(kunde)') ? (
+                <p class="flex flex-wrap items-baseline gap-2" {...editAttrs(section, `sections.${si}.paragraphs.${pi}.text`, 'rich')}>
+                  <span class="shrink-0 rounded-full border border-accent-ink/40 px-2 py-0.5 font-mono text-[11px] uppercase tracking-wide text-accent-ink">
+                    folgt
+                  </span>
+                  <span set:html={rich(p.text, { linkClass: 'link-ul text-ink' })} />
+                </p>
+              ) : (
+                <p {...editAttrs(section, `sections.${si}.paragraphs.${pi}.text`, 'rich')} set:html={rich(p.text, { linkClass: 'link-ul text-ink' })} />
+              ),
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

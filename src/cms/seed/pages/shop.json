@@ -1,0 +1,60 @@
+{
+  "id": "shop",
+  "order": 50,
+  "slug": "shop",
+  "title": "Shop & Gutscheine",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Shop & Gutscheine",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "Shop & Gutscheine — Sauer & Saftig",
+    "description": "Gutscheine für Café und Backstube — mit frei wählbarem Betrag. Anstellgut-Glas und Merch sind in Planung."
+  },
+  "sections": [
+    {
+      "id": "intro",
+      "type": "seiten-intro",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Shop",
+        "title": "Gutscheine für Café und Backstube",
+        "intro": "Den Betrag wählst du frei — als Gastgeschenk oder für dich selbst. Die Zahlung ist noch eine Demo, echtes Bezahlen folgt mit dem Shop-Update.",
+        "background": "bg"
+      }
+    },
+    {
+      "id": "gutschein",
+      "type": "shop-gutschein",
+      "visible": true,
+      "fields": {
+        "amounts": [{ "value": 20 }, { "value": 35 }, { "value": 50 }],
+        "workshops": false
+      }
+    },
+    {
+      "id": "in-planung",
+      "type": "shop-in-planung",
+      "visible": true,
+      "fields": {
+        "eyebrow": "In Planung",
+        "title": "Noch nicht käuflich, aber angedacht",
+        "badgeLabel": "Bald",
+        "items": [
+          {
+            "title": "Anstellgut im Glas",
+            "text": "Ein eigenes Glas Anstellgut zum Mitnehmen ist geplant, aktuell aber noch nicht einzeln erhältlich."
+          },
+          {
+            "title": "Sauerteig-Spickzettel zum Mitnehmen",
+            "text": "Eine gedruckte Kurzanleitung fürs eigene Anstellgut für die Theke ist in Planung. Eine digitale Version als PDF ist ebenfalls geplant."
+          },
+          {
+            "title": "Merch",
+            "text": "Ein kleines Sortiment — Tasse, Beutel, vielleicht ein Schneidebrett — ist angedacht, aber noch nicht spruchreif."
+          }
+        ]
+      }
+    }
+  ]
+}

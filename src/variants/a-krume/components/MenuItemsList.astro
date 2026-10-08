@@ -2,29 +2,45 @@
 /**
  * Zweispaltige Karten-Liste: Name+Beschreibung links, Preis rechts in Space Mono
  * mit Punktlinie dazwischen. Preis-Platzhalter über formatMenuPrice (°).
+ * Items kommen roh aus der CMS-Sammlung `collections.menu` (kein Zod, s. src/content.config.ts) —
+ * fehlende Flags bekommen hier dieselben Defaults wie dort (priceIsPlaceholder: true, sonst false/[]).
  */
 import { formatMenuPrice } from '../../../lib/format';
 
-interface MenuItem {
+export interface MenuItem {
   name: string;
   description?: string;
   price?: number;
-  priceIsPlaceholder: boolean;
+  priceIsPlaceholder?: boolean;
   priceSuffix?: string;
-  veggie: boolean;
-  vegan: boolean;
-  allergens: string[];
-  seasonal?: string;
-  highlight: boolean;
+  veggie?: boolean;
+  vegan?: boolean;
+  allergens?: string[];
+  /**
+   * In den Daten immer ein Label-String (z. B. „neu im Regal", s. src/content.config.ts).
+   * `| boolean` nur, damit `collections.menu`-Items aus src/cms/types.ts (dort `seasonal?: boolean`
+   * — Kern-Datei, nicht editierbar) sich ohne Cast durchreichen lassen.
+   */
+  seasonal?: string | boolean;
+  highlight?: boolean;
+  [key: string]: unknown;
 }
 interface Props {
   items: MenuItem[];
 }
 const { items } = Astro.props;
+const norm = (item: MenuItem) => ({
+  ...item,
+  priceIsPlaceholder: item.priceIsPlaceholder ?? true,
+  veggie: item.veggie ?? false,
+  vegan: item.vegan ?? false,
+  allergens: item.allergens ?? [],
+  highlight: item.highlight ?? false,
+});
 ---
 
 <ul class="flex flex-col">
-  {items.map((item, i) => (
+  {items.map(norm).map((item, i) => (
     <li class:list={['border-b border-ink/10 py-5', i === 0 && 'pt-0']} data-reveal style={`--reveal-delay:${(i % 3) * 100}ms`}>
       <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <p class="flex flex-wrap items-center gap-2 text-lg md:text-xl">

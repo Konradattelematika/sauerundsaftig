@@ -11,13 +11,7 @@
 import site from '../../data/site.json';
 import { formatMenuPrice } from '../../lib/format';
 
-interface Props {
-  /** Varianten-Basispfad, z. B. "/b" (Live-Site A: "") — für den Rücksprung nach Erfolg. */
-  base: string;
-}
-const { base } = Astro.props;
-
-interface Product {
+export interface Product {
   id: string;
   name: string;
   price: number;
@@ -27,7 +21,8 @@ interface Product {
   placeholder?: boolean;
 }
 
-const PRODUCTS: Product[] = [
+/** Heutiger Stand (Default, falls die CMS-Sektion keine eigene Liste mitgibt) */
+const DEFAULT_PRODUCTS: Product[] = [
   { id: 'bauernbrot', name: 'Bauernbrot', price: 7.0, leadDays: 0 },
   { id: 'roggenvollkorn', name: 'Roggenvollkorn', price: 7.0, leadDays: 0 },
   { id: 'dinkelvollkorn-saaten', name: 'Dinkelvollkorn mit Saaten', price: 6.5, leadDays: 0, note: 'neu' },
@@ -37,6 +32,28 @@ const PRODUCTS: Product[] = [
   { id: 'kaesekuchen', name: 'Käsekuchen ganz', price: 24.0, leadDays: 5, note: 'Vorlauf 5 Tage', placeholder: true },
   { id: 'obsttorte', name: 'Obsttorte ganz', price: 26.0, leadDays: 5, note: 'Vorlauf 5 Tage', placeholder: true },
 ];
+const DEFAULT_NOTE = '° Beispielpreis — finale Preise folgen. Brotpreise sind aktuell.';
+const DEFAULT_SUCCESS_TITLE = 'Danke! Das war eine Demo-Vorbestellung.';
+const DEFAULT_SUCCESS_TEXT_BEFORE = 'Die Bestellung wurde nicht übertragen und ist nicht vorgemerkt. Ruf uns an:';
+
+interface Props {
+  /** Varianten-Basispfad, z. B. "/b" (Live-Site A: "") — für den Rücksprung nach Erfolg. */
+  base: string;
+  /** Vorbestellbare Produkte (CMS-Feldliste der Sektion; Default = heutiger Stand) */
+  products?: Product[];
+  /** Fußnotentext unter der Produktliste (Default = heutiger Stand) */
+  note?: string;
+  successTitle?: string;
+  /** Text vor dem Telefonlink im Erfolgshinweis (Default = heutiger Stand) */
+  successTextBefore?: string;
+}
+const {
+  base,
+  products: PRODUCTS = DEFAULT_PRODUCTS,
+  note = DEFAULT_NOTE,
+  successTitle = DEFAULT_SUCCESS_TITLE,
+  successTextBefore = DEFAULT_SUCCESS_TEXT_BEFORE,
+} = Astro.props;
 
 const WINDOWS = [
   { value: '08-10', label: '8–10 Uhr' },
@@ -116,7 +133,7 @@ const btnSecondary =
             ))}
           </ul>
         </fieldset>
-        <p class="mt-3 text-sm text-ink-soft">° Beispielpreis — finale Preise folgen. Brotpreise sind aktuell.</p>
+        <p class="mt-3 text-sm text-ink-soft">{note}</p>
         <div class="mt-6 flex flex-wrap items-center justify-end gap-3">
           <p class="mr-auto text-sm text-ink-soft" data-hint-step1>Wähle mindestens ein Produkt, um weiterzugehen.</p>
           <button type="button" class={btnPrimary} data-action="next" data-target-step="2" disabled>Weiter</button>
@@ -209,9 +226,9 @@ const btnSecondary =
     </div>
 
     <div class="success-panel" data-success hidden tabindex="-1" aria-live="polite">
-      <p class="text-xl">Danke! Das war eine Demo-Vorbestellung.</p>
+      <p class="text-xl">{successTitle}</p>
       <p class="mt-2 text-base">
-        Die Bestellung wurde nicht übertragen und ist nicht vorgemerkt. Ruf uns an: <a class="underline" href={`tel:${site.phone.replace(/[^+\d]/g, '')}`}>{site.phoneDisplay}</a>
+        {successTextBefore} <a class="underline" href={`tel:${site.phone.replace(/[^+\d]/g, '')}`}>{site.phoneDisplay}</a>
       </p>
       <a href={base || '/'} class="mt-4 inline-block font-mono text-sm text-ink-soft underline">Zurück zur Startseite</a>
     </div>

@@ -17,7 +17,9 @@
     "placeholders": "node scripts/generate-placeholders.mjs",
     "start": "node server/index.mjs",
     "hash-password": "node server/hash-password.mjs",
-    "test:server": "vitest run tests/server --exclude '.claude/worktrees/**'"
+    "test:server": "vitest run tests/server --exclude '.claude/worktrees/**'",
+    "test:cms": "vitest run tests/server/cms --exclude '.claude/worktrees/**'",
+    "code-version": "node server/code-version.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

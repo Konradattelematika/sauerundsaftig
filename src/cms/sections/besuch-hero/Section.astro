@@ -1,0 +1,39 @@
+---
+/** Sektion „Besuch-Hero" (s. definition.mjs) — Markup 1:1 aus src/pages/besuch.astro. */
+import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
+import { editAttrs, editSection, linkAttrs, shown, tokens } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; title: string; intro?: string; phoneLink: LinkValue }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+    <span class="tz-rule mt-3" aria-hidden="true"></span>
+    <h1 class="mt-4 text-[clamp(2.5rem,6vw,4.5rem)]" data-reveal style="--reveal-delay:100ms" {...editAttrs(section, 'title')}>
+      {f.title}
+    </h1>
+    <div class="mt-6" data-reveal style="--reveal-delay:200ms">
+      <OpeningStatus size="lg" />
+    </div>
+    <p class="prose-measure mt-4 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms" {...editAttrs(section, 'intro')}>
+      {f.intro}
+    </p>
+    {shown(f.phoneLink) && (
+      <a
+        {...linkAttrs(f.phoneLink)}
+        class="mt-8 inline-flex min-h-11 items-center justify-center rounded-card bg-ink px-6 py-4 font-mono text-3xl text-bg transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-primary-deep md:text-4xl"
+        data-reveal
+        style="--reveal-delay:300ms"
+        {...editAttrs(section, 'phoneLink', 'link')}
+      >
+        {tokens(f.phoneLink.label)}
+      </a>
+    )}
+  </div>
+</section>

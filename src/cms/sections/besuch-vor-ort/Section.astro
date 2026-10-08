@@ -1,0 +1,49 @@
+---
+/**
+ * Sektion „Besuch-Vor-Ort" (s. definition.mjs) — Markup 1:1 aus src/pages/besuch.astro.
+ * Feste Rasterstruktur (3 + 2, letzter Block zweispaltig); nur Text kommt aus den Feldern.
+ */
+import { editAttrs, editSection, rich } from '../../index';
+import type { Section } from '../../types';
+
+interface Item {
+  heading: string;
+  text?: string;
+}
+interface Props {
+  section: Section<{ eyebrow?: string; items: Item[] }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const [parken, barrierefreiheit, hunde, reservierung, zahlungsmittel] = f.items;
+---
+
+<section class="bg-bg-alt py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" data-reveal {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+    <div class="mt-8 grid grid-cols-1 gap-10 md:grid-cols-3">
+      <div data-reveal>
+        <h2 class="text-xl" {...editAttrs(section, 'items.0.heading')}>{parken.heading}</h2>
+        <p class="prose-measure mt-2 text-ink-soft" {...editAttrs(section, 'items.0.text', 'rich')} set:html={rich(parken.text, { linkClass: 'link-ul text-ink' })} />
+      </div>
+      <div data-reveal style="--reveal-delay:100ms">
+        <h2 class="text-xl" {...editAttrs(section, 'items.1.heading')}>{barrierefreiheit.heading}</h2>
+        <p class="prose-measure mt-2 text-ink-soft" {...editAttrs(section, 'items.1.text', 'rich')} set:html={rich(barrierefreiheit.text, { linkClass: 'link-ul text-ink' })} />
+      </div>
+      <div data-reveal style="--reveal-delay:200ms">
+        <h2 class="text-xl" {...editAttrs(section, 'items.2.heading')}>{hunde.heading}</h2>
+        <p class="prose-measure mt-2 text-ink-soft" {...editAttrs(section, 'items.2.text', 'rich')} set:html={rich(hunde.text, { linkClass: 'link-ul text-ink' })} />
+      </div>
+    </div>
+    <div class="mt-10 grid grid-cols-1 gap-10 border-t border-ink/10 pt-8 md:grid-cols-3">
+      <div data-reveal>
+        <h2 class="text-xl" {...editAttrs(section, 'items.3.heading')}>{reservierung.heading}</h2>
+        <p class="prose-measure mt-2 text-ink-soft" {...editAttrs(section, 'items.3.text', 'rich')} set:html={rich(reservierung.text, { linkClass: 'link-ul text-ink' })} />
+      </div>
+      <div class="md:col-span-2" data-reveal style="--reveal-delay:100ms">
+        <h2 class="text-xl" {...editAttrs(section, 'items.4.heading')}>{zahlungsmittel.heading}</h2>
+        <p class="prose-measure mt-2 text-ink-soft" {...editAttrs(section, 'items.4.text', 'rich')} set:html={rich(zahlungsmittel.text, { linkClass: 'link-ul text-ink' })} />
+      </div>
+    </div>
+  </div>
+</section>

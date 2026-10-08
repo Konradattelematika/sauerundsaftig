@@ -1,0 +1,63 @@
+{
+  "id": "gastgeber",
+  "order": 60,
+  "slug": "gastgeber",
+  "title": "Für Gastgeber",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Für Gastgeber",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "Für Gastgeber — Sauer & Saftig",
+    "description": "Willkommensbrot, Frühstückskörbe, Gutscheine und ein kostenloser Kartenständer für Ferienwohnungs-Vermieter in Rerik."
+  },
+  "sections": [
+    {
+      "id": "hero",
+      "type": "hero-intro",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Für Gastgeber",
+        "title": "Ein gutes Frühstück ist Teil der Anreise",
+        "intro": "Rerik zählt rund 3.300 Gästebetten in Ferienwohnungen und -häusern. Für Vermieterinnen und Vermieter bieten wir vier Wege, deinen Gästen den ersten Morgen leichter zu machen — ohne dass du selbst backen musst."
+      }
+    },
+    {
+      "id": "angebot",
+      "type": "gastgeber-angebot",
+      "visible": true,
+      "fields": {
+        "label": "Das Angebot",
+        "items": [
+          { "title": "Willkommensbrot-Paket", "text": "Ein Laib Sauerteigbrot für deine Gäste am Anreisetag, fertig verpackt zur Abholung." },
+          { "title": "Frühstückskorb zur Anreise", "text": "Brot, Aufstriche und eine Schnecke — ein kleiner Korb, der den ersten Urlaubsmorgen einfacher macht." },
+          { "title": "Gutscheine als Gastgeschenk", "text": "Frei wählbarer Betrag, den deine Gäste bei uns einlösen — ohne dass du selbst Ware vorhalten musst." },
+          { "title": "Kartenständer mit QR-Code", "text": "Ein kostenloser Ständer für deine Rezeption. Der QR-Code führt direkt zu unserer Karte und zur Vorbestellung." }
+        ],
+        "note": "Preise gibt es auf Anfrage — Mengen, Rhythmus und Zustellung stimmen wir individuell mit dir ab. Rechnung ist möglich.",
+        "image": "brot-laib"
+      }
+    },
+    {
+      "id": "warum",
+      "type": "gastgeber-warum",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Warum das hilft",
+        "title": "Warum das deine Bewertungen verbessert",
+        "text": "Ein frisches Brot am Anreisetag oder ein kleiner Frühstückskorb ist oft das Erste, was Gäste von deiner Unterkunft mitbekommen — und häufig das Erste, was sie später in einer Bewertung erwähnen. Ein gutes Detail am Anfang des Aufenthalts bleibt hängen, ohne dass du selbst in der Küche stehst."
+      }
+    },
+    {
+      "id": "kontakt-cta",
+      "type": "cta",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Anfrage",
+        "title": "Ruf uns an, wir sprechen alles Weitere direkt durch",
+        "text": "Ein Anfrageformular ist hier noch nicht angeschlossen — am schnellsten geht es telefonisch.",
+        "buttons": [{ "label": "{{phoneDisplay}}", "href": "{{tel}}", "visible": true }]
+      }
+    }
+  ]
+}

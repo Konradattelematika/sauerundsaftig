@@ -1,0 +1,71 @@
+---
+/**
+ * Generische Sektion „Bild & Text" (s. definition.mjs). Markup/Maße 1:1 aus ueber-uns
+ * „Rerik-Bezug" (Bild rechts): Text 5/12, Lücke, Bild 6/12 (bzw. gespiegelt bei links).
+ */
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { arrowIcon, btnPrimary, btnSecondary, linkArrow } from '../../../variants/a-krume/lib/ui';
+import { editAttrs, editSection, href, isExternal, media, rich, shown } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Props {
+  section: Section<{
+    image: string | { media: string; alt?: string };
+    imagePosition?: 'left' | 'right';
+    eyebrow?: string;
+    title: string;
+    text?: string;
+    link?: LinkValue;
+    background?: 'bg' | 'bg-alt';
+  }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const img = media(f.image);
+const left = f.imagePosition === 'left';
+const link = f.link;
+const linkVariantClass = link?.variant === 'primary' ? btnPrimary : link?.variant === 'secondary' ? btnSecondary : linkArrow;
+const isArrowLink = !link?.variant || link.variant === 'link';
+---
+
+<section class:list={[f.background === 'bg-alt' ? 'bg-bg-alt' : 'bg-bg', 'py-14 md:py-24']} {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
+      {left && (
+        <div class="md:col-span-6" data-reveal {...editAttrs(section, 'image', 'media')}>
+          {img && <Figure motif={img.id} alt={img.alt} aspect="aspect-[16/9]" sizes="(min-width: 768px) 45vw, 100vw" />}
+        </div>
+      )}
+      <div class:list={[left ? 'md:col-span-5 md:col-start-8' : 'md:col-span-5']} data-reveal>
+        {f.eyebrow && (
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+        )}
+        <h2 class:list={[f.eyebrow ? 'mt-3' : '', 'text-[clamp(2rem,4vw,2.75rem)]']} {...editAttrs(section, 'title')}>{f.title}</h2>
+        {f.text && (
+          <div
+            class="prose-measure mt-4 text-lg text-ink-soft"
+            {...editAttrs(section, 'text', 'rich')}
+            set:html={rich(f.text, { linkClass: 'link-ul text-ink' })}
+          />
+        )}
+        {shown(link) && (
+          isArrowLink ? (
+            <a href={href(link!.href)} target={link!.newTab || isExternal(link!.href) ? '_blank' : undefined} rel={link!.newTab || isExternal(link!.href) ? 'noopener' : undefined} class:list={[linkArrow, 'mt-6']} {...editAttrs(section, 'link', 'link')}>
+              {link!.label}
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+          ) : (
+            <a href={href(link!.href)} target={link!.newTab || isExternal(link!.href) ? '_blank' : undefined} rel={link!.newTab || isExternal(link!.href) ? 'noopener' : undefined} class:list={[linkVariantClass, 'mt-6']} {...editAttrs(section, 'link', 'link')}>
+              {link!.label}
+            </a>
+          )
+        )}
+      </div>
+      {!left && (
+        <div class="md:col-span-6 md:col-start-7" data-reveal style="--reveal-delay:100ms" {...editAttrs(section, 'image', 'media')}>
+          {img && <Figure motif={img.id} alt={img.alt} aspect="aspect-[16/9]" sizes="(min-width: 768px) 45vw, 100vw" />}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

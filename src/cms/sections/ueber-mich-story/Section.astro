@@ -1,0 +1,49 @@
+---
+/** /ueber-mich „Wie das hier angefangen hat" (s. definition.mjs). Markup 1:1 aus ueber-mich.astro. */
+import { editAttrs, editSection, rich } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{
+    eyebrow: string;
+    title: string;
+    lead: string;
+    body?: string;
+    placeholderLabel: string;
+    offeneFragen: { frage: string }[];
+  }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-bg-alt py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+      <div class="md:col-span-4" data-reveal>
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+        <span class="tz-rule mt-3" aria-hidden="true"></span>
+        <h2 class="mt-4 text-[clamp(2rem,4.5vw,3.25rem)]" {...editAttrs(section, 'title')}>{f.title}</h2>
+      </div>
+      <div class="prose-editorial md:col-span-7 md:col-start-6" data-reveal style="--reveal-delay:100ms">
+        <p class="lead text-ink" {...editAttrs(section, 'lead', 'rich')} set:html={rich(f.lead, { linkClass: 'link-ul text-ink' })} />
+        {f.body && (
+          <Fragment set:html={rich(f.body, { blocks: true, linkClass: 'link-ul text-ink', pClass: 'prose-measure text-lg text-ink-soft' })} />
+        )}
+
+        <!-- Redaktionelle Lücken — sichtbar, nicht erfunden -->
+        <div class="mt-10 rounded-card border border-dashed border-ink/30 bg-bg p-6 md:p-8">
+          <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft" {...editAttrs(section, 'placeholderLabel')}>{f.placeholderLabel}</p>
+          <ul class="mt-4 flex flex-col gap-3 text-ink-soft">
+            {f.offeneFragen.map((q, i) => (
+              <li class="flex gap-3">
+                <span class="mt-2 size-1.5 shrink-0 rounded-full bg-ink/40" aria-hidden="true"></span>
+                <span {...editAttrs(section, `offeneFragen.${i}.frage`)}>{q.frage}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

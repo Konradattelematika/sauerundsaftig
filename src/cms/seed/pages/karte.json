@@ -1,0 +1,27 @@
+{
+  "id": "karte",
+  "order": 10,
+  "slug": "karte",
+  "title": "Karte",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Karte",
+  "showBreadcrumbs": true,
+  "structuredData": ["menu"],
+  "seo": {
+    "title": "Karte — Frühstück, Kuchen, Brot, Schnecken, Kaffee | Sauer & Saftig",
+    "description": "Die ganze Karte von Sauer & Saftig: Frühstück, Kuchen, Brot, Sauerteigschnecken und Kaffee — alles aus der eigenen Backstube."
+  },
+  "sections": [
+    {
+      "id": "karte-sektionen",
+      "type": "karte-sektionen",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Die Karte",
+        "title": "Unsere Karte",
+        "note": "° Beispielpreise — finale Preise folgen."
+      }
+    }
+  ]
+}

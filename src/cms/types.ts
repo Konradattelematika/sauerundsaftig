@@ -118,7 +118,7 @@ export interface LayoutDoc {
     text: string;
     navHeading: string;
     hoursHeading: string;
-    /** {jahr} wird ersetzt */
+    /** Platzhalter: {jahr}, {stadt}, {name} */
     copyright: string;
   };
   /** Mobile Leiste unten: genau die Einträge in dieser Reihenfolge */

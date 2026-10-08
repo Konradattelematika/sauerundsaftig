@@ -1,0 +1,35 @@
+---
+/** Sektion „Sauerteig-Abschluss" (s. definition.mjs) — Markup 1:1 aus src/pages/sauerteig/index.astro. */
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
+import { editAttrs, editSection, linkAttrs, media, shown } from '../../index';
+import type { LinkValue, MediaRef, Section } from '../../types';
+
+interface Props {
+  section: Section<{ media: MediaRef; eyebrow?: string; title: string; text?: string; link: LinkValue }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const img = media(f.media)!;
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
+      <div class="md:col-span-6" data-reveal {...editAttrs(section, 'media', 'media')}>
+        <Figure motif={img.id} alt={img.alt} aspect="aspect-[4/5]" sizes="(min-width: 768px) 45vw, 100vw" mat="flat" hover />
+      </div>
+      <div class="md:col-span-5 md:col-start-8" data-reveal style="--reveal-delay:100ms">
+        <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+        <h2 class="mt-3 text-[clamp(2rem,4vw,2.75rem)]" {...editAttrs(section, 'title')}>{f.title}</h2>
+        <p class="prose-measure mt-4 text-lg text-ink-soft" {...editAttrs(section, 'text')}>{f.text}</p>
+        {shown(f.link) && (
+          <a {...linkAttrs(f.link)} class:list={[linkArrow, 'mt-6']} {...editAttrs(section, 'link', 'link')}>
+            {f.link.label}
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

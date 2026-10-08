@@ -1,0 +1,31 @@
+{
+  "id": "kontakt",
+  "order": 80,
+  "slug": "kontakt",
+  "title": "Kontakt",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Kontakt",
+  "showBreadcrumbs": true,
+  "structuredData": ["localBusiness"],
+  "seo": {
+    "title": "Kontakt — Sauer & Saftig",
+    "description": "Adresse, Telefon und Instagram von Sauer & Saftig, Dünenstraße 1, Ostseebad Rerik."
+  },
+  "sections": [
+    {
+      "id": "haupt",
+      "type": "kontakt-haupt",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Kontakt",
+        "title": "Sprich uns an",
+        "addressLine": "{{street}}, {{zip}} {{city}}",
+        "phoneLink": { "label": "{{phoneDisplay}}", "href": "{{tel}}", "visible": true },
+        "instagramLink": { "label": "@{{instagram}} auf Instagram", "href": "https://www.instagram.com/sauerundsaftig/", "newTab": true, "visible": true },
+        "formHinweisLabel": "Formular",
+        "formHinweisText": "Ein Kontaktformular ist hier noch nicht angeschlossen. Am schnellsten erreichst du uns telefonisch oder über Instagram — beides oben verlinkt."
+      }
+    }
+  ]
+}

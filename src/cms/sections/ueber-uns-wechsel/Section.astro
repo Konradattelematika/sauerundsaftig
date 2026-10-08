@@ -1,0 +1,30 @@
+---
+/** /ueber-uns „Übernahme" (s. definition.mjs). Markup 1:1 aus ueber-uns.astro. */
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { editAttrs, editSection, media } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ image: string | { media: string; alt?: string }; label: string; title: string; text: string }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const img = media(f.image);
+---
+
+<section class="bg-bg-alt py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center">
+      <div class="md:col-span-7" data-reveal {...editAttrs(section, 'image', 'media')}>
+        {img && <Figure motif={img.id} alt={img.alt} aspect="aspect-[4/5]" sizes="(min-width: 768px) 55vw, 100vw" mat="offset" hover />}
+      </div>
+      <div class="relative z-10 md:col-span-4 md:col-start-8 md:-ml-16 md:mt-16" data-reveal style="--reveal-delay:100ms">
+        <div class="rounded-card bg-paper p-6 md:p-8 md:shadow-[0_1px_0_0_rgba(36,27,20,0.08)]">
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" {...editAttrs(section, 'label')}>{f.label}</p>
+          <h2 class="mt-2 text-3xl" {...editAttrs(section, 'title')}>{f.title}</h2>
+          <p class="prose-measure mt-3 text-ink-soft" {...editAttrs(section, 'text')}>{f.text}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

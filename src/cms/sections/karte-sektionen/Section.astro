@@ -1,0 +1,80 @@
+---
+/**
+ * Generische Sektion „Karte-Sektionen" (s. definition.mjs) — Markup 1:1 aus /karte/index.astro
+ * übernommen. Kategorien kommen aus collections.menu (Feld „order"); der Schnecken-Eintrag bekommt
+ * weiter die besondere 3er-Bildergalerie statt der normalen Preisliste.
+ */
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import MenuItemsList from '../../../variants/a-krume/components/MenuItemsList.astro';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { btnGhost, linkArrow, arrowIcon } from '../../../variants/a-krume/lib/ui';
+import { cms, editAttrs, editSection } from '../../index';
+import type { MenuCategory, Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; title: string; note?: string }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const categories = [...cms().collections.menu].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) as MenuCategory[];
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <SectionIntro
+      as="h1"
+      size="lg"
+      eyebrow={f.eyebrow || undefined}
+      title={f.title}
+      rule
+      cms={{ section, eyebrow: 'eyebrow', title: 'title' }}
+    />
+    <nav aria-label="Sektionen der Karte" class="mt-8 flex flex-wrap gap-3" data-reveal style="--reveal-delay:100ms">
+      {categories.map((c) => (
+        <a href={`#${c.slug}`} class:list={[btnGhost, 'uppercase tracking-widest']}>
+          {c.title}
+        </a>
+      ))}
+    </nav>
+  </div>
+</section>
+
+<span class="tz-band" aria-hidden="true"></span>
+
+{categories.map((category, i) => (
+  <section id={category.slug} class:list={['scroll-mt-24 py-14 md:py-24', i % 2 === 1 ? 'bg-bg-alt' : 'bg-bg']}>
+    <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+      <div class="grid grid-cols-1 gap-10 md:grid-cols-12">
+        <div class="md:col-span-4">
+          <SectionIntro eyebrow={`0${i + 1} · Sektion`} title={category.title} intro={category.intro} />
+          {category.note && <p class="prose-measure mt-4 font-mono text-sm text-ink-soft">{category.note}</p>}
+          <a href={`/karte/${category.slug}`} class:list={[linkArrow, 'mt-6']}>
+            {category.slug === 'schnecken' ? 'Zur Signature-Seite' : `${category.title} als eigene Seite`}
+            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+        </div>
+        <div class="md:col-span-8">
+          {category.slug === 'schnecken' ? (
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {category.items.map((item, idx) => (
+                <div data-reveal style={`--reveal-delay:${(idx % 3) * 100}ms`}>
+                  {item.motif && <Figure motif={item.motif as string} aspect="aspect-square" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 30vw, 92vw" />}
+                  <p class="mt-3 text-lg">{item.name}</p>
+                  {item.description && <p class="mt-1 text-sm text-ink-soft">{item.description}</p>}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <MenuItemsList items={category.items} />
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+))}
+
+<section class="bg-bg py-10">
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    {f.note && <p class="font-mono text-sm text-ink-soft" {...editAttrs(section, 'note')}>{f.note}</p>}
+  </div>
+</section>
