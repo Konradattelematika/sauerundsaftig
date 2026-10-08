@@ -8,7 +8,7 @@
   {
     "id": "reservierung",
     "question": "Kann ich einen Tisch reservieren?",
-    "answer": "Reservierungen und Anfragen laufen ausschließlich telefonisch — ruf uns unter 038296 769924 an und frag nach einem Tisch für deinen Termin. Gerade an Wochenenden und in der Saison lohnt sich das.",
+    "answer": "Reservierungen und Anfragen laufen ausschließlich telefonisch — ruf uns unter {{phoneDisplay}} an und frag nach einem Tisch für deinen Termin. Gerade an Wochenenden und in der Saison lohnt sich das.",
     "visible": true
   },
   {
@@ -26,8 +26,9 @@
   {
     "id": "glutenfrei-vegan",
     "question": "Habt ihr glutenfreie oder vegane Optionen?",
-    "answer": "Ehrlich gesagt: Wir sind ein Sauerteig-Café, und Sauerteig heißt bei uns fast überall Gluten — eine durchgehend glutenfreie Karte gibt es aktuell nicht. Vegane Optionen wechseln je nach Tag und Angebot, zum Beispiel bei Kaffee mit Hafermilch oder Filterkaffee. Frag am besten kurz vor Ort oder unter 038296 769924 nach, was gerade passt.",
-    "visible": true
+    "answer": "Ehrlich gesagt: Wir sind ein Sauerteig-Café, und Sauerteig heißt bei uns fast überall Gluten — eine durchgehend glutenfreie Karte gibt es aktuell nicht. Vegane Optionen wechseln je nach Tag und Angebot, zum Beispiel bei Kaffee mit Hafermilch oder Filterkaffee. Frag am besten kurz vor Ort oder unter [{{phoneDisplay}}]({{tel}}) nach, was gerade passt.",
+    "visible": true,
+    "todoKunde": "Glutenfreies und veganes Angebot final abstimmen"
   },
   {
     "id": "ruhetage",
@@ -38,7 +39,7 @@
   {
     "id": "torte-bestellen",
     "question": "Kann ich eine Torte für einen Anlass vorbestellen?",
-    "answer": "Ja, das geht. Plane rund 5 Tage Vorlauf ein, damit wir Zutaten und Backzeit einplanen können. Die Vorbestellseite ist noch eine Demo; bestell deshalb aktuell telefonisch unter 038296 769924.",
+    "answer": "Ja, das geht. Plane rund 5 Tage Vorlauf ein, damit wir Zutaten und Backzeit einplanen können. Die Vorbestellseite ist noch eine Demo; bestell deshalb aktuell telefonisch unter {{phoneDisplay}}.",
     "visible": true
   },
   {

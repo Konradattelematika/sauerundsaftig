@@ -1,0 +1,42 @@
+---
+/**
+ * Sektion „Karte-Schnecken-Hero" (s. definition.mjs) — Markup 1:1 aus src/pages/karte/schnecken.astro.
+ *
+ * Bekannte Abweichung (Bitte an Orchestrator): Das Menu-JSON-LD für diese Seite darf nur die
+ * Kategorie „Schnecken" enthalten (wie bisher), aber src/pages/[...slug].astro (Kern) berechnet für
+ * Seiten ohne `template: 'menu-category'` immer `cats = category ? [category] : doc.collections.menu`
+ * — ohne Template gäbe es hier also fälschlich ALLE Kategorien. Deshalb bleibt
+ * `seed/pages/karte-schnecken.json` ohne `structuredData:['menu']`, und das Menu-Schema wird hier
+ * direkt mit der richtigen Kategorie gebaut. Dadurch landet das Script hinter dem BreadcrumbList-
+ * Script der Seite (Breadcrumbs rendert vor den Sektionen) statt wie bisher davor — Inhalt ist
+ * korrekt, Reihenfolge weicht ab. Saubere Lösung: ein optionales PageDoc-Feld (z. B.
+ * `menuScope?: string` = Kategorie-Slug), das der Kern bei Seiten ohne Template zusätzlich zu
+ * `category` berücksichtigt.
+ */
+import { cms, editAttrs, editSection } from '../../index';
+import { menuSchema } from '../../../lib/schema-org';
+import type { MenuCategory, Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const schnecken = cms().collections.menu.find((c) => c.slug === 'schnecken') as MenuCategory;
+const jsonLd = menuSchema([{ title: schnecken.title, items: schnecken.items as never }], String(Astro.site));
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" data-reveal {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+    <span class="tz-rule mt-3" aria-hidden="true"></span>
+    <h1 class="mt-4 max-w-4xl text-[clamp(2.75rem,7vw,5.5rem)]" data-reveal style="--reveal-delay:100ms">
+      {schnecken.title}
+    </h1>
+    <p class="prose-measure mt-6 text-xl text-ink-soft md:text-2xl" data-reveal style="--reveal-delay:200ms">
+      {schnecken.intro}
+    </p>
+  </div>
+</section>

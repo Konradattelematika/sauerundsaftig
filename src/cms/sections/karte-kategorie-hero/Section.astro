@@ -1,0 +1,52 @@
+---
+/**
+ * Sektion „Karte-Kategorie-Hero" (s. definition.mjs) — Markup 1:1 aus src/pages/karte/[slug].astro.
+ * `context.category` liefert [...slug].astro je generierter Route (eine MenuCategory aus collections.menu).
+ */
+import SectionIntro from '../../../variants/a-krume/components/SectionIntro.astro';
+import MenuItemsList from '../../../variants/a-krume/components/MenuItemsList.astro';
+import Figure from '../../../variants/a-krume/components/Figure.astro';
+import { editAttrs, editSection } from '../../index';
+import type { MenuCategory, Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; footnote?: string }>;
+  context?: { category: MenuCategory };
+}
+const { section, context } = Astro.props;
+const f = section.fields;
+const category = context!.category;
+
+const HERO_MOTIF_FALLBACK = 'fruehstueck';
+const heroMotif = (category.heroMotif as string | undefined) ?? HERO_MOTIF_FALLBACK;
+const hasPlaceholder = category.items.some((i) => i.priceIsPlaceholder);
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
+      <div class="md:col-span-5">
+        <SectionIntro
+          as="h1"
+          size="lg"
+          eyebrow={f.eyebrow || undefined}
+          title={category.title}
+          intro={category.intro}
+          rule
+          cms={{ section, eyebrow: 'eyebrow' }}
+        />
+        {category.note && <p class="prose-measure mt-4 font-mono text-sm text-ink-soft">{category.note}</p>}
+      </div>
+      <div class="md:col-span-6 md:col-start-8" data-reveal style="--reveal-delay:100ms">
+        <Figure motif={heroMotif} aspect="aspect-[16/9]" sizes="(min-width: 768px) 45vw, 100vw" loading="eager" mat="flat" hover />
+      </div>
+    </div>
+
+    <div class="mt-12 max-w-3xl md:mt-20">
+      <MenuItemsList items={category.items} />
+      {hasPlaceholder && f.footnote && (
+        <p class="mt-6 font-mono text-sm text-ink-soft" {...editAttrs(section, 'footnote')}>{f.footnote}</p>
+      )}
+    </div>
+  </div>
+</section>
