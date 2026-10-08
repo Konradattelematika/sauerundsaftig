@@ -1,0 +1,43 @@
+---
+/** Sektion „instagram" (s. definition.mjs) — reicht die Felder an InstagramFeed durch. */
+import InstagramFeed from '../../../variants/a-krume/components/InstagramFeed.astro';
+import { editAttrs, editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Fields {
+  tag?: string;
+  title: string;
+  subline?: string;
+  followLabel: string;
+  swipeHint?: string;
+  importNote?: string;
+  limit?: number;
+  background?: 'bg' | 'bg-alt';
+}
+interface Props {
+  section: Section<Fields>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+const ea = (key: string) => editAttrs(section, key);
+---
+
+<InstagramFeed
+  tag={f.tag ?? ''}
+  title={f.title}
+  subline={f.subline ?? ''}
+  followLabel={f.followLabel || '{handle} auf Instagram folgen'}
+  swipeHint={f.swipeHint ?? ''}
+  importNote={f.importNote ?? ''}
+  limit={f.limit || 10}
+  tone={f.background === 'bg-alt' ? 'bg-alt' : 'bg'}
+  edit={{
+    root: editSection(section),
+    tag: ea('tag'),
+    title: ea('title'),
+    subline: ea('subline'),
+    followLabel: ea('followLabel'),
+    swipeHint: ea('swipeHint'),
+    importNote: ea('importNote'),
+  }}
+/>

@@ -1,51 +1,95 @@
 ---
-/** Signature-Block „Schnecke" für die Startseite — 3 Sorten, Link zur Signature-Seite. */
-import { getEntry } from 'astro:content';
+/**
+ * Signature-Block „Schnecke" — Sorten einer Karten-Kategorie (CMS-Sammlung „Karte"), Link zur
+ * Signature-Seite, zwei Bilder. Texte/Bilder/Link als Props (Standard = bisherige Startseite):
+ * CMS-Sektion „schnecken" und Modul-Board nutzen dieselbe Komponente.
+ */
+import { cms } from '../../../cms';
 import Figure from './Figure.astro';
 import { btnSecondary, arrowIcon } from '../lib/ui';
 
 interface Props {
   base: string;
+  /** Slug der Karten-Kategorie */
+  category?: string;
+  eyebrow?: string;
+  /** leer/fehlend = Titel der Kategorie */
+  title?: string;
+  /** leer/fehlend = Einleitung der Kategorie */
+  intro?: string;
+  /** null = kein Link */
+  link?: { label: string; attrs: Record<string, string> } | null;
+  /** [großes Bild, versetztes Bild] */
+  images?: ({ motif: string; alt?: string } | null)[];
+  tone?: 'bg' | 'bg-alt';
+  /** CMS-Editor-Marker je Element (root, eyebrow, title, intro, link, image, image2) — nur im Editor-Build befüllt */
+  edit?: Record<string, Record<string, string>>;
 }
-const { base } = Astro.props;
-const schnecken = await getEntry('menu', 'schnecken');
+const {
+  base,
+  category = 'schnecken',
+  eyebrow = 'Die Signature',
+  title,
+  intro,
+  link,
+  images = [{ motif: 'schnecke-pistazie-hoch' }, { motif: 'schnecke-blech' }],
+  tone = 'bg',
+  edit = {},
+} = Astro.props;
+const schnecken = cms().collections.menu.find((c) => c.slug === category);
+const cta = link === undefined ? { label: 'Zur Signature-Seite', attrs: { href: `${base}/karte/schnecken` } } : link;
+const [img1, img2] = images;
+const sizes = '(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 92vw';
+// Editor-Build: Bild 1 bekommt eine Hülle für den Bild-Marker (Figure nimmt keine Fremdattribute an)
+const wrapImage1 = Object.keys(edit.image ?? {}).length > 0;
 ---
 
 {schnecken && (
-  <section class="bg-bg py-14 md:py-24">
+  <section class:list={[tone === 'bg-alt' ? 'bg-bg-alt' : 'bg-bg', 'py-14 md:py-24']} {...edit.root}>
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
       <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-center">
         <div class="md:col-span-5 md:order-2" data-reveal>
-          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Die Signature</p>
+          {eyebrow && <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft" {...edit.eyebrow}>{eyebrow}</p>}
           <span class="tz-rule mt-3" aria-hidden="true"></span>
-          <h2 class="mt-3 text-[clamp(2rem,5vw,3.5rem)]">{schnecken.data.title}</h2>
-          <p class="prose-measure mt-4 text-lg text-ink-soft">{schnecken.data.intro}</p>
+          <h2 class="mt-3 text-[clamp(2rem,5vw,3.5rem)]" {...edit.title}>{title || schnecken.title}</h2>
+          {(intro || schnecken.intro) && <p class="prose-measure mt-4 text-lg text-ink-soft" {...edit.intro}>{intro || schnecken.intro}</p>}
           <ol class="mt-6 flex flex-col divide-y divide-ink/10 border-y border-ink/10 font-mono text-sm uppercase tracking-widest text-ink-soft">
-            {schnecken.data.items.map((it, i) => (
+            {schnecken.items.map((it, i) => (
               <li class="flex items-center gap-4 py-3">
                 <span class="text-ink/50">0{i + 1}</span>
                 <span class="text-ink">{it.name}</span>
               </li>
             ))}
           </ol>
-          <a href={`${base}/karte/schnecken`} class:list={[btnSecondary, 'mt-8 px-5 py-2.5']}>
-            Zur Signature-Seite
-            <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-          </a>
+          {cta && (
+            <a {...cta.attrs} class:list={[btnSecondary, 'mt-8 px-5 py-2.5']} {...edit.link}>
+              {cta.label}
+              <svg class={arrowIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+          )}
         </div>
         <div class="grid grid-cols-2 gap-4 md:col-span-7 md:order-1 md:gap-6">
-          <Figure
-            motif="schnecke-pistazie-hoch"
-            aspect="aspect-[4/5]"
-            sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 92vw"
-            class="col-span-2 sm:col-span-1"
-            reveal
-            revealKind="image"
-            hover
-          />
-          <div class="hidden sm:block sm:pt-12" data-parallax="0.05">
-            <Figure motif="schnecke-blech" aspect="aspect-[4/5]" sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 92vw" reveal revealKind="image" revealDelay={100} hover />
-          </div>
+          {img1 && (wrapImage1 ? (
+            <div class="col-span-2 sm:col-span-1" {...edit.image}>
+              <Figure motif={img1.motif} alt={img1.alt} aspect="aspect-[4/5]" sizes={sizes} reveal revealKind="image" hover />
+            </div>
+          ) : (
+            <Figure
+              motif={img1.motif}
+              alt={img1.alt}
+              aspect="aspect-[4/5]"
+              sizes={sizes}
+              class="col-span-2 sm:col-span-1"
+              reveal
+              revealKind="image"
+              hover
+            />
+          ))}
+          {img2 && (
+            <div class="hidden sm:block sm:pt-12" data-parallax="0.05" {...edit.image2}>
+              <Figure motif={img2.motif} alt={img2.alt} aspect="aspect-[4/5]" sizes={sizes} reveal revealKind="image" revealDelay={100} hover />
+            </div>
+          )}
         </div>
       </div>
     </div>

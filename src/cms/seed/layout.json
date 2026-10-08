@@ -1,11 +1,18 @@
 {
   "header": { "logo": null, "showOpeningStatus": true },
   "footer": {
-    "claim": "",
-    "text": "",
+    "claim": "Sauer macht saftig.",
+    "text": "Café und Backstube in der Dünenstraße 1, Ostseebad Rerik.",
     "navHeading": "Mehr",
     "hoursHeading": "Öffnungszeiten",
     "copyright": "© {jahr} Sauer & Saftig · Dünenstraße 1, {stadt}"
   },
-  "stickyBar": { "items": [] }
+  "stickyBar": {
+    "items": [
+      { "id": "karte", "label": "Karte", "href": "page:karte", "icon": "menu" },
+      { "id": "anrufen", "label": "Anrufen", "href": "{{tel}}", "icon": "phone" },
+      { "id": "route", "label": "Route", "href": "{{route}}", "icon": "route" },
+      { "id": "vorbestellen", "label": "Vorbestellen", "href": "page:vorbestellen", "icon": "bag", "variant": "accent" }
+    ]
+  }
 }

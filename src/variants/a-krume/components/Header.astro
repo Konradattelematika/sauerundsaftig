@@ -4,11 +4,16 @@
  * OpeningStatus (sm) und CTA. Nav-Unterstreichung zieht beim Hover auf, Schatten
  * erst nach dem Scrollen (Klasse is-scrolled). Mobil: <details>-Drawer (CSS-first),
  * Links gestaffelt eingeblendet, Terrazzo-Band als Material-Zitat.
+ * Inhalte aus dem CMS: navigation.main (Einträge mit `children` = Dropdown: Desktop Hover/Fokus-Menü,
+ * mobil eingerückte Unterpunkte), navigation.cta, layout.header (Logo, Öffnungsstatus).
  */
+import { Image } from 'astro:assets';
 import Logo from '../../../components/shared/Logo.astro';
 import OpeningStatus from '../../../components/shared/OpeningStatus.astro';
-import { NAV_MAIN_A, NAV_CTA } from '../../../lib/variants';
-import { btnPrimary } from '../lib/ui';
+import { cms, linkAttrs, media, shown, tokens } from '../../../cms';
+import type { LinkValue, NavItem } from '../../../cms/types';
+import { getImage } from '../../../lib/images';
+import { btnAccent, btnGhost, btnPrimary, btnSecondary } from '../lib/ui';
 
 interface Props {
   /** Pfad-Präfix der Links; Live-Site im Wurzelpfad = '' */
@@ -16,40 +21,87 @@ interface Props {
 }
 const { base } = Astro.props;
 const path = Astro.url.pathname;
+const doc = cms();
+const header = doc.layout?.header ?? { logo: null, showOpeningStatus: true };
+const logo = header.logo ? media(header.logo) : null;
 
-function isActive(itemPath: string): boolean {
-  const full = `${base}${itemPath}`;
-  return path === full || path.startsWith(`${full}/`);
+/** Link-Attribute (href/target/rel); interne Pfade bekommen das Varianten-Präfix */
+function attrs(link: Pick<LinkValue, 'href' | 'newTab'>): Record<string, string> {
+  const a = linkAttrs(link);
+  return base && a.href.startsWith('/') ? { ...a, href: `${base}${a.href}` } : a;
 }
+
+function isActive(item: NavItem): boolean {
+  const full = attrs(item).href;
+  if (full.startsWith('/') && (path === full || path.startsWith(`${full}/`))) return true;
+  return (item.children ?? []).some((c) => shown(c) && isActive(c));
+}
+
+const main = doc.navigation.main.filter(shown).map((item) => ({ item, kids: (item.children ?? []).filter(shown) }));
+const cta = shown(doc.navigation.cta) ? doc.navigation.cta : null;
+const CTA_CLASS: Record<string, string> = { primary: btnPrimary, accent: btnAccent, secondary: btnSecondary, ghost: btnGhost };
+const ctaClass = CTA_CLASS[cta?.variant ?? 'primary'] ?? btnPrimary;
 ---
 
 <header class="header-a sticky top-0 z-50 border-b border-ink/10 bg-paper lg:bg-paper/95 lg:backdrop-blur" data-header>
   <div class="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-3 md:px-8">
-    <a href={base || '/'} class="relative z-50 shrink-0" aria-label="Sauer & Saftig — Startseite">
-      <Logo variant="lockup" tone="dark" width={140} loading="eager" />
+    <a href={base || '/'} class="relative z-50 shrink-0" aria-label={`${doc.settings.name} — Startseite`}>
+      {logo ? (
+        <Image src={getImage('a', logo.id)} alt={logo.alt} width={140} densities={[1, 2]} loading="eager" class="h-auto max-h-[101px] w-[140px] object-contain object-left" />
+      ) : (
+        <Logo variant="lockup" tone="dark" width={140} loading="eager" />
+      )}
     </a>
 
     <nav aria-label="Hauptnavigation" class="nav-a hidden lg:block">
       <ul class="flex items-center gap-7 font-mono text-sm uppercase tracking-widest">
-        {NAV_MAIN_A.map((item) => (
-          <li>
-            <a
-              href={`${base}${item.path}`}
-              aria-current={isActive(item.path) ? 'page' : undefined}
-              class="inline-flex min-h-11 items-center py-1 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-primary-deep aria-[current=page]:text-primary-deep"
-            >
-              {item.label}
-            </a>
-          </li>
+        {main.map(({ item, kids }) => (
+          kids.length === 0 ? (
+            <li>
+              <a
+                {...attrs(item)}
+                aria-current={isActive(item) ? 'page' : undefined}
+                class="inline-flex min-h-11 items-center py-1 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-primary-deep aria-[current=page]:text-primary-deep"
+              >
+                {item.label}
+              </a>
+            </li>
+          ) : (
+            <li class="nav-dd relative">
+              <a
+                {...attrs(item)}
+                aria-current={isActive(item) ? 'page' : undefined}
+                class="inline-flex min-h-11 items-center gap-1.5 py-1 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-primary-deep aria-[current=page]:text-primary-deep"
+              >
+                {item.label}
+                <svg class="nav-dd-chevron size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </a>
+              <ul class="nav-dd-menu absolute left-0 top-full z-50 flex min-w-[15rem] flex-col rounded-card border border-ink/10 bg-paper p-2 shadow-[0_12px_32px_-16px_rgb(36_27_20/0.35)]">
+                {kids.map((kid) => (
+                  <li>
+                    <a
+                      {...attrs(kid)}
+                      aria-current={isActive(kid) ? 'page' : undefined}
+                      class="flex min-h-11 items-center rounded-card px-3 py-2 text-ink transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:bg-bg-alt hover:text-primary-deep aria-[current=page]:bg-bg-alt aria-[current=page]:text-primary-deep"
+                    >
+                      {kid.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          )
         ))}
       </ul>
     </nav>
 
     <div class="hidden items-center gap-6 lg:flex">
-      <OpeningStatus size="sm" class="max-xl:hidden" />
-      <a href={`${base}${NAV_CTA.path}`} class:list={[btnPrimary, 'px-5 py-2.5']}>
-        {NAV_CTA.label}
-      </a>
+      {header.showOpeningStatus && <OpeningStatus size="sm" class="max-xl:hidden" />}
+      {cta && (
+        <a {...attrs(cta)} class:list={[ctaClass, 'px-5 py-2.5']}>
+          {tokens(cta.label)}
+        </a>
+      )}
     </div>
 
     <details class="mobile-nav lg:hidden">
@@ -68,29 +120,48 @@ function isActive(itemPath: string): boolean {
         <span class="tz-band" aria-hidden="true"></span>
         <nav aria-label="Mobile Navigation" class="mx-auto flex max-w-md flex-col gap-1 px-6 pt-4">
           <ul class="flex flex-col divide-y divide-ink/10 font-display text-3xl">
-            {NAV_MAIN_A.map((item, i) => (
+            {main.map(({ item, kids }, i) => (
               <li class="drawer-item" style={`--i:${i}`}>
                 <a
-                  href={`${base}${item.path}`}
-                  aria-current={isActive(item.path) ? 'page' : undefined}
+                  {...attrs(item)}
+                  aria-current={isActive(item) ? 'page' : undefined}
                   class="flex min-h-14 items-center justify-between py-3 text-ink aria-[current=page]:text-primary-deep"
                 >
                   {item.label}
-                  <span class="font-mono text-xs text-ink-soft" aria-hidden="true">0{i + 1}</span>
+                  <span class="font-mono text-xs text-ink-soft" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 </a>
+                {kids.length > 0 && (
+                  <ul class="-mt-1 flex flex-col pb-3 pl-5 font-mono text-sm uppercase tracking-widest">
+                    {kids.map((kid) => (
+                      <li>
+                        <a
+                          {...attrs(kid)}
+                          aria-current={isActive(kid) ? 'page' : undefined}
+                          class="flex min-h-11 items-center text-ink-soft transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] hover:text-ink aria-[current=page]:text-primary-deep"
+                        >
+                          {kid.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
-          <a
-            href={`${base}${NAV_CTA.path}`}
-            class:list={[btnPrimary, 'drawer-item mt-6 min-h-12']}
-            style={`--i:${NAV_MAIN_A.length}`}
-          >
-            {NAV_CTA.label}
-          </a>
-          <div class="drawer-item mt-6" style={`--i:${NAV_MAIN_A.length + 1}`}>
-            <OpeningStatus size="sm" />
-          </div>
+          {cta && (
+            <a
+              {...attrs(cta)}
+              class:list={[ctaClass, 'drawer-item mt-6 min-h-12']}
+              style={`--i:${main.length}`}
+            >
+              {tokens(cta.label)}
+            </a>
+          )}
+          {header.showOpeningStatus && (
+            <div class="drawer-item mt-6" style={`--i:${main.length + (cta ? 1 : 0)}`}>
+              <OpeningStatus size="sm" />
+            </div>
+          )}
         </nav>
       </div>
     </details>
@@ -110,6 +181,40 @@ function isActive(itemPath: string): boolean {
   /* Geschlossenes Panel wirklich aus dem Layout nehmen (Chrome hält es sonst mit content-visibility im Fluss → Overflow) */
   details.mobile-nav:not([open]) > div {
     display: none;
+  }
+  /* Dropdown der Hauptnavigation (nur Einträge mit Unterpunkten): Hover oder Tastaturfokus öffnet */
+  .nav-dd-menu {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity var(--dur-fast) var(--ease-brand),
+      transform var(--dur-fast) var(--ease-brand),
+      visibility 0s linear var(--dur-fast);
+  }
+  .nav-dd:hover > .nav-dd-menu,
+  .nav-dd:focus-within > .nav-dd-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+  /* Unterpunkte: Fläche statt der Unterstreichung der Hauptpunkte (.nav-a a::after in a.css) */
+  .nav-dd-menu a::after {
+    display: none;
+  }
+  .nav-dd-chevron {
+    transition: transform var(--dur-fast) var(--ease-brand);
+  }
+  .nav-dd:hover .nav-dd-chevron,
+  .nav-dd:focus-within .nav-dd-chevron {
+    transform: rotate(180deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-dd-menu,
+    .nav-dd-chevron {
+      transition: none;
+    }
   }
 </style>
 
