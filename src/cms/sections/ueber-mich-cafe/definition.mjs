@@ -19,7 +19,7 @@ export default {
     { key: 'terrazzoCaption', label: 'Bildunterschrift Materialfläche', kind: 'text', required: true, maxLength: 80 },
   ],
   defaults: () => ({
-    image: '',
+    image: { media: 'theke' },
     label: 'Das Café',
     title: 'Neue Überschrift',
     text1: '',

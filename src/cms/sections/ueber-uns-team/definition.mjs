@@ -19,5 +19,5 @@ export default {
       help: '[Linktext](page:seite) für Links, **fett**, *kursiv*',
     },
   ],
-  defaults: () => ({ eyebrow: '', title: 'Neue Überschrift', image1: '', image2: '', text: '' }),
+  defaults: () => ({ eyebrow: '', title: 'Neue Überschrift', image1: { media: 'team-1' }, image2: { media: 'team-2' }, text: '' }),
 };

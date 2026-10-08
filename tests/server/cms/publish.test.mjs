@@ -149,7 +149,7 @@ describe('Weiterleitungen', () => {
     expect((await request(srv.port, { path: '/aktion', headers: { Cookie: cookie } })).text).toContain('Aktion Überschrift');
 
     const { doc, revision } = await getDraft(srv.port, cookie);
-    doc.pages[0].slug = 'angebote/herbst';
+    doc.pages.find((p) => p.slug === 'aktion').slug = 'angebote/herbst';
     const put = await cmsApi(srv.port, cookie, 'PUT', '/draft', { doc, baseRevision: revision });
     const pub = await cmsApi(srv.port, cookie, 'POST', '/publish', { revision: put.json.revision });
     expect(pub.status).toBe(202);

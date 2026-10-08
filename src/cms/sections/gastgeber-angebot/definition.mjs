@@ -22,5 +22,5 @@ export default {
     { key: 'note', label: 'Preishinweis', kind: 'textarea', required: true, maxLength: 300 },
     { key: 'image', label: 'Bild', kind: 'media', required: true },
   ],
-  defaults: () => ({ label: 'Das Angebot', items: [{ title: 'Neues Angebot', text: '' }], note: '', image: '' }),
+  defaults: () => ({ label: 'Das Angebot', items: [{ title: 'Neues Angebot', text: '' }], note: '', image: { media: 'brot-laib' } }),
 };

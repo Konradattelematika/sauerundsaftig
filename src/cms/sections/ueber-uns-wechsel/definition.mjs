@@ -11,5 +11,5 @@ export default {
     { key: 'title', label: 'Kartentitel', kind: 'text', required: true, maxLength: 160 },
     { key: 'text', label: 'Text', kind: 'textarea', required: true, maxLength: 600 },
   ],
-  defaults: () => ({ image: '', label: 'Was neu ist', title: 'Neue Überschrift', text: '' }),
+  defaults: () => ({ image: { media: 'gastraum' }, label: 'Was neu ist', title: 'Neue Überschrift', text: '' }),
 };

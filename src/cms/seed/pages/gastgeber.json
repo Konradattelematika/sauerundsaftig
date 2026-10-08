@@ -29,13 +29,27 @@
       "fields": {
         "label": "Das Angebot",
         "items": [
-          { "title": "Willkommensbrot-Paket", "text": "Ein Laib Sauerteigbrot für deine Gäste am Anreisetag, fertig verpackt zur Abholung." },
-          { "title": "Frühstückskorb zur Anreise", "text": "Brot, Aufstriche und eine Schnecke — ein kleiner Korb, der den ersten Urlaubsmorgen einfacher macht." },
-          { "title": "Gutscheine als Gastgeschenk", "text": "Frei wählbarer Betrag, den deine Gäste bei uns einlösen — ohne dass du selbst Ware vorhalten musst." },
-          { "title": "Kartenständer mit QR-Code", "text": "Ein kostenloser Ständer für deine Rezeption. Der QR-Code führt direkt zu unserer Karte und zur Vorbestellung." }
+          {
+            "title": "Willkommensbrot-Paket",
+            "text": "Ein Laib Sauerteigbrot für deine Gäste am Anreisetag, fertig verpackt zur Abholung."
+          },
+          {
+            "title": "Frühstückskorb zur Anreise",
+            "text": "Brot, Aufstriche und eine Schnecke — ein kleiner Korb, der den ersten Urlaubsmorgen einfacher macht."
+          },
+          {
+            "title": "Gutscheine als Gastgeschenk",
+            "text": "Frei wählbarer Betrag, den deine Gäste bei uns einlösen — ohne dass du selbst Ware vorhalten musst."
+          },
+          {
+            "title": "Kartenständer mit QR-Code",
+            "text": "Ein kostenloser Ständer für deine Rezeption. Der QR-Code führt direkt zu unserer Karte und zur Vorbestellung."
+          }
         ],
         "note": "Preise gibt es auf Anfrage — Mengen, Rhythmus und Zustellung stimmen wir individuell mit dir ab. Rechnung ist möglich.",
-        "image": "brot-laib"
+        "image": {
+          "media": "brot-laib"
+        }
       }
     },
     {
@@ -56,7 +70,13 @@
         "eyebrow": "Anfrage",
         "title": "Ruf uns an, wir sprechen alles Weitere direkt durch",
         "text": "Ein Anfrageformular ist hier noch nicht angeschlossen — am schnellsten geht es telefonisch.",
-        "buttons": [{ "label": "{{phoneDisplay}}", "href": "{{tel}}", "visible": true }]
+        "buttons": [
+          {
+            "label": "{{phoneDisplay}}",
+            "href": "{{tel}}",
+            "visible": true
+          }
+        ]
       }
     }
   ]

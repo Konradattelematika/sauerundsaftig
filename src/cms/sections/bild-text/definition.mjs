@@ -34,7 +34,7 @@ export default {
     },
   ],
   defaults: () => ({
-    image: '',
+    image: { media: 'fassade' },
     imagePosition: 'right',
     eyebrow: '',
     title: 'Neue Überschrift',

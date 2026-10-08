@@ -67,25 +67,29 @@ describe('PUT /api/cms/draft', () => {
   });
 
   it('Fehler → 422 mit Pfad und verständlicher Meldung, nichts gespeichert', async () => {
+    let idx = -1; // Index der neuen Seite (der Seed bringt bereits Seiten mit)
     const res = await editDraft(srv.port, cookie, (d) => {
+      idx = d.pages.length;
       d.pages.push({ ...textPage('neu', 'admin'), sections: [{ id: 'x', type: 'gibtsnicht', visible: true, fields: {} }] });
     });
     expect(res.status).toBe(422);
     const paths = res.json.errors.map((e) => e.path);
-    expect(paths).toContain('pages.0.slug');
-    expect(paths).toContain('pages.0.sections.0.type');
-    expect(res.json.errors.find((e) => e.path === 'pages.0.slug').message).toMatch(/reserviert/);
+    expect(paths).toContain(`pages.${idx}.slug`);
+    expect(paths).toContain(`pages.${idx}.sections.0.type`);
+    expect(res.json.errors.find((e) => e.path === `pages.${idx}.slug`).message).toMatch(/reserviert/);
     expect((await api('GET', '/state')).json.draftMeta.revision).toBe(1);
   });
 
   it('Entwurf darf unvollständig sein (Warnung), Veröffentlichen nicht (422)', async () => {
+    let idx = -1;
     const res = await editDraft(srv.port, cookie, (d) => {
       const p = textPage('neu', 'neu');
       p.sections[0].fields.title = '';
+      idx = d.pages.length;
       d.pages.push(p);
     });
     expect(res.status).toBe(200);
-    expect(res.json.warnings.some((w) => w.path === 'pages.0.sections.0.fields.title' && /Pflichtfeld/.test(w.message))).toBe(true);
+    expect(res.json.warnings.some((w) => w.path === `pages.${idx}.sections.0.fields.title` && /Pflichtfeld/.test(w.message))).toBe(true);
     const pub = await api('POST', '/publish', { revision: res.json.revision });
     expect(pub.status).toBe(422);
     expect(pub.json.errors[0].message).toMatch(/Seite „Testseite“ › Abschnitt „Text“ › Überschrift: Pflichtfeld ist leer/);
