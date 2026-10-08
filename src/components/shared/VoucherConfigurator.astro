@@ -32,11 +32,11 @@ const btnPrimary =
     <fieldset>
       <legend class="font-mono text-sm uppercase tracking-widest text-ink-soft">Art des Gutscheins</legend>
       <div class="mt-3 grid grid-cols-2 gap-3">
-        <label class="voucher-type-tile relative flex min-h-[44px] cursor-pointer items-center justify-center rounded-card border-2 border-ink/20 px-4 py-3 font-mono text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg">
+        <label class="voucher-type-tile relative flex min-h-[44px] cursor-pointer items-center justify-center rounded-card border-2 border-ink/20 px-4 py-3 font-mono text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink">
           <input type="radio" name="voucher-type" value="amount" class="sr-only" checked />
           <span>Betrag</span>
         </label>
-        <label class="voucher-type-tile relative flex min-h-[44px] cursor-pointer items-center justify-center rounded-card border-2 border-ink/20 px-4 py-3 font-mono text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg">
+        <label class="voucher-type-tile relative flex min-h-[44px] cursor-pointer items-center justify-center rounded-card border-2 border-ink/20 px-4 py-3 font-mono text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink">
           <input type="radio" name="voucher-type" value="workshop" class="sr-only" />
           <span>Workshop</span>
         </label>
@@ -49,7 +49,7 @@ const btnPrimary =
         <legend class="font-mono text-sm uppercase tracking-widest text-ink-soft">Betrag wählen</legend>
         <div class="mt-3 grid grid-cols-3 gap-3">
           {AMOUNT_TILES.map((amount) => (
-            <label class="amount-tile relative flex min-h-[44px] cursor-pointer items-center justify-center rounded-card border-2 border-ink/20 px-3 py-3 font-mono text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg">
+            <label class="amount-tile relative flex min-h-[44px] cursor-pointer items-center justify-center rounded-card border-2 border-ink/20 px-3 py-3 font-mono text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink">
               <input type="radio" name="voucher-amount" value={amount} class="sr-only" data-amount-radio />
               <span>{formatPrice(amount)}</span>
             </label>
@@ -80,7 +80,7 @@ const btnPrimary =
         <legend class="font-mono text-sm uppercase tracking-widest text-ink-soft">Workshop wählen</legend>
         <div class="mt-3 flex flex-col gap-3">
           {WORKSHOPS.map((w) => (
-            <label class="workshop-tile relative flex min-h-[44px] cursor-pointer items-center justify-between gap-3 rounded-card border-2 border-ink/20 px-4 py-3 transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg">
+            <label class="workshop-tile relative flex min-h-[44px] cursor-pointer items-center justify-between gap-3 rounded-card border-2 border-ink/20 px-4 py-3 transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink">
               <input type="radio" name="voucher-workshop" value={w.id} class="sr-only" />
               <span data-workshop-title>{w.title}</span>
               <span class="font-mono text-sm" data-workshop-price={w.price}>{formatMenuPrice(w.price, true)}</span>

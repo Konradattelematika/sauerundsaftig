@@ -28,7 +28,7 @@ export default {
       id: 'alt-2',
       title: 'Großer Spruch',
       summary:
-        '„Sauer macht saftig." riesig in der Überschriften-Schrift auf dunklem Grund, darunter Zeiten, Adresse und Telefon in einer Reihe, die Links in einer Zeile. Ein echter Schlusspunkt.',
+        '„Sauer macht saftig.“ riesig in der Überschriften-Schrift auf dunklem Grund, darunter Zeiten, Adresse und Telefon in einer Reihe, die Links in einer Zeile. Ein echter Schlusspunkt.',
     },
     {
       id: 'alt-3',

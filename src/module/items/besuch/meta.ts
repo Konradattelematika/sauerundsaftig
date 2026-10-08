@@ -34,7 +34,7 @@ export default {
       id: 'alt-3',
       title: 'Postkarte aus Rerik',
       summary:
-        'Alles Wichtige steht wie auf der Rückseite einer Postkarte: Adresse auf Linien, Briefmarke mit Theken-Foto, Öffnungszeiten als Nachricht und ein P.S. mit den Hinweisen.',
+        'Alles Wichtige steht wie auf der Rückseite einer Postkarte: Adresse auf Linien, Briefmarke mit Theken-Foto, Öffnungszeiten als Nachricht, im P.S. die Reservierung per Telefon und im P.P.S. die Hinweise.',
     },
   ],
 } satisfies ModuleItem;

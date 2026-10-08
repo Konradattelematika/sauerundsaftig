@@ -63,7 +63,9 @@ const jsonLd = [menuSchema([{ title: section.data.title, items: section.data.ite
 
       <div class="mt-12 max-w-3xl md:mt-20">
         <MenuItemsList items={section.data.items} />
-        <p class="mt-6 font-mono text-sm text-ink-soft">° Beispielpreise — die echte Karte kommt mit dem Küchen-Update.</p>
+        {section.data.items.some((i) => i.priceIsPlaceholder) && (
+          <p class="mt-6 font-mono text-sm text-ink-soft">° Beispielpreise — finale Preise folgen.</p>
+        )}
       </div>
     </div>
   </section>

@@ -26,7 +26,7 @@ export function localBusiness(siteUrl: string) {
     url: siteUrl,
     telephone: site.phone,
     priceRange: site.priceRange,
-    paymentAccepted: 'Cash, Credit Card',
+    paymentAccepted: 'Bargeld, Karte',
     servesCuisine: 'Café, Backwaren, Frühstück',
     address: {
       '@type': 'PostalAddress',
@@ -38,11 +38,8 @@ export function localBusiness(siteUrl: string) {
     },
     geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
     openingHoursSpecification: spec,
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: site.rating.value,
-      reviewCount: site.rating.count,
-    },
+    // Kein aggregateRating: Google wertet selbst eingebundene (Google-)Bewertungen im eigenen
+    // LocalBusiness-Markup als „self-serving reviews" — nicht zulässig für Rich Results.
     sameAs: [`https://www.instagram.com/${site.instagram}/`],
   };
 }

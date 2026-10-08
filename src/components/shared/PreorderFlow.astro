@@ -31,9 +31,9 @@ const PRODUCTS: Product[] = [
   { id: 'bauernbrot', name: 'Bauernbrot', price: 7.0, leadDays: 0 },
   { id: 'roggenvollkorn', name: 'Roggenvollkorn', price: 7.0, leadDays: 0 },
   { id: 'dinkelvollkorn-saaten', name: 'Dinkelvollkorn mit Saaten', price: 6.5, leadDays: 0, note: 'neu' },
-  { id: 'schnecke-pistazie', name: 'Sauerteigschnecke Pistazie', price: 4.2, leadDays: 0, placeholder: true },
-  { id: 'schnecke-lotus', name: 'Sauerteigschnecke Lotus', price: 4.2, leadDays: 0, placeholder: true },
-  { id: 'schnecke-haselnuss', name: 'Sauerteigschnecke Haselnuss', price: 4.2, leadDays: 0, placeholder: true },
+  { id: 'schnecke-pistazie', name: 'Sauerteigschnecke Pistazie', price: 4.5, leadDays: 0, placeholder: true },
+  { id: 'schnecke-lotus', name: 'Sauerteigschnecke Lotus', price: 4.3, leadDays: 0, placeholder: true },
+  { id: 'schnecke-haselnuss', name: 'Sauerteigschnecke Haselnuss', price: 4.3, leadDays: 0, placeholder: true },
   { id: 'kaesekuchen', name: 'Käsekuchen ganz', price: 24.0, leadDays: 5, note: 'Vorlauf 5 Tage', placeholder: true },
   { id: 'obsttorte', name: 'Obsttorte ganz', price: 26.0, leadDays: 5, note: 'Vorlauf 5 Tage', placeholder: true },
 ];
@@ -59,6 +59,7 @@ const btnSecondary =
   class="preorder-flow rounded-card border border-ink/10 bg-paper p-5 md:p-7"
   data-preorder-flow
   data-schedule={scheduleJson}
+  style="scroll-margin-top: 6rem"
 >
   <p class="sr-only" role="status" aria-live="polite" data-step-announcer></p>
 
@@ -144,7 +145,7 @@ const btnSecondary =
           <legend class="font-mono text-sm uppercase tracking-widest text-ink-soft">In welchem Zeitfenster?</legend>
           <div class="mt-4 grid grid-cols-2 gap-3">
             {WINDOWS.map((w) => (
-              <label class="window-tile relative flex min-h-[44px] cursor-pointer items-center justify-center rounded-card border-2 border-ink/20 px-4 py-3 font-mono text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg">
+              <label class="window-tile relative flex min-h-[44px] cursor-pointer items-center justify-center rounded-card border-2 border-ink/20 px-4 py-3 font-mono text-sm transition-colors duration-[var(--dur-fast)] ease-[var(--ease-brand)] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-bg has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink">
                 <input type="radio" name="pickup-window" value={w.value} class="sr-only" />
                 <span data-window-label>{w.label}</span>
               </label>
@@ -208,9 +209,9 @@ const btnSecondary =
     </div>
 
     <div class="success-panel" data-success hidden tabindex="-1" aria-live="polite">
-      <p class="text-xl">Danke, deine Vorbestellung ist vorgemerkt.</p>
+      <p class="text-xl">Danke! Das war eine Demo-Vorbestellung.</p>
       <p class="mt-2 text-base">
-        Demo — die Bestellung wurde nicht übertragen. Ruf uns an: <a class="underline" href={`tel:${site.phone.replace(/[^+\d]/g, '')}`}>{site.phoneDisplay}</a>
+        Die Bestellung wurde nicht übertragen und ist nicht vorgemerkt. Ruf uns an: <a class="underline" href={`tel:${site.phone.replace(/[^+\d]/g, '')}`}>{site.phoneDisplay}</a>
       </p>
       <a href={base || '/'} class="mt-4 inline-block font-mono text-sm text-ink-soft underline">Zurück zur Startseite</a>
     </div>
@@ -366,6 +367,15 @@ const btnSecondary =
       announcer.textContent = `Schritt ${n} von 4: ${label}`;
       if (n === 2) renderDayGrid();
       if (n === 4) renderSummary();
+      // Neuer Schritt beginnt oben: hinscrollen (unter dem Sticky-Header) und Fokus auf die Schritt-Überschrift,
+      // sonst bleibt man auf dem Handy unten bei Newsletter/Footer stehen
+      const heading = root!.querySelector<HTMLElement>(`[data-step="${n}"] h3`);
+      if (heading) {
+        heading.tabIndex = -1;
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        root!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        heading.focus({ preventScroll: true });
+      }
     }
 
     function renderSummary() {

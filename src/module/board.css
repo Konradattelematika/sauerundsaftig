@@ -128,6 +128,8 @@
 .board-card:focus-within { border-color: var(--color-ink); }
 .board-card__link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
 .board-card__link:focus-visible { outline: none; }
+/* Fokus der (unsichtbar flächigen) Karten-Verlinkung deutlich an der ganzen Karte zeigen */
+.board-card:has(.board-card__link:focus-visible) { outline: 2px solid var(--color-ink); outline-offset: 3px; }
 .board-card.is-decided { border-color: color-mix(in oklab, var(--color-primary) 55%, transparent); }
 
 /* Fortschritt */

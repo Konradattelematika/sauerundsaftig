@@ -8,7 +8,6 @@ import Breadcrumbs from '../../variants/a-krume/components/Breadcrumbs.astro';
 import SectionIntro from '../../variants/a-krume/components/SectionIntro.astro';
 import Timeline from '../../variants/a-krume/components/Timeline.astro';
 import Figure from '../../variants/a-krume/components/Figure.astro';
-import { breadcrumbs } from '../../lib/schema-org';
 import { linkArrow, arrowIcon } from '../../variants/a-krume/lib/ui';
 
 const base = '';
@@ -24,18 +23,11 @@ const stages = [
   { time: '08:00', title: 'Theke', text: '18 Stunden nach dem ersten Handgriff steht der Laib bei uns im Regal, bereit für den ersten Schnitt des Tages.' },
 ];
 
-const jsonLd = [
-  breadcrumbs([
-    { name: 'Start', url: new URL(base || '/', Astro.site).toString() },
-    { name: 'Sauerteig', url: new URL(`${base}/sauerteig`, Astro.site).toString() },
-  ]),
-];
 ---
 
 <Layout
   title="18 Stunden Sauerteig — vom Ansetzen bis zur Theke | Sauer & Saftig"
   description="Kein Schritt lässt sich abkürzen: 18 Stunden von Mehl, Wasser und Zeit bis zum fertigen Sauerteiglaib — Etappe für Etappe."
-  jsonLd={jsonLd}
 >
   <Breadcrumbs items={[{ label: 'Start', href: base || '/' }, { label: 'Sauerteig', href: `${base}/sauerteig` }]} />
 

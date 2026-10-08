@@ -3,8 +3,8 @@
   "items": [
     {
       "id": "impressum-datenschutz-pflichtangaben",
-      "title": "Impressum & Datenschutz: Pflichtangaben ergänzen",
-      "description": "Im Impressum fehlen noch: vollständiger Name bzw. Firmierung der Betreiberin (mit Rechtsform), E-Mail-Adresse, ggf. Umsatzsteuer-ID und die inhaltlich verantwortliche Person. In der Datenschutzerklärung fehlt dieselbe Angabe als „verantwortliche Stelle“.\nOhne diese Angaben darf die Seite nicht öffentlich gehen.\nDatenschutz: https://sauerundsaftig.de/datenschutz",
+      "title": "Impressum & Datenschutz: E-Mail-Adresse ergänzen",
+      "description": "Name, Anschrift, Telefon und die inhaltlich verantwortliche Person sind eingetragen. Vor dem öffentlichen Start fehlt noch eine E-Mail-Adresse im Impressum und bei der verantwortlichen Stelle in der Datenschutzerklärung. Falls eine Umsatzsteuer-ID besteht, muss sie ebenfalls ins Impressum.\nDatenschutz: https://sauerundsaftig.de/datenschutz",
       "phase": "vor",
       "owner": "team",
       "assignee": "Konrad",
@@ -71,7 +71,7 @@
     {
       "id": "go-live-probelauf",
       "title": "Probelauf für den Go-Live",
-      "description": "Vorab testen, dass sich sauerundsaftig.de am 10.10. um 16:00 Uhr von selbst öffnet: ohne Login erreichbar und für Suchmaschinen freigegeben. Checkliste, Modul-Seite und die alte Vorschau bleiben weiter hinter dem Login.",
+      "description": "Vorab testen, dass sich sauerundsaftig.de am 10.10. um 16:00 Uhr von selbst öffnet: Der Countdown wechselt auf die Website, die dann ohne Login erreichbar und für Suchmaschinen freigegeben ist. Checkliste, Modul-Seite und die alte Vorschau bleiben weiter hinter dem Login.",
       "phase": "vor",
       "owner": "team",
       "assignee": "Konrad",
@@ -82,7 +82,7 @@
     {
       "id": "zugaenge-anlegen",
       "title": "Zugänge für alle anlegen",
-      "description": "Logins für Konrad, Lukas, Nicole und Josie einrichten und einmal ausprobieren. Ein Login gilt für die Checkliste und die Modul-Seite.",
+      "description": "Logins für Konrad, Lukas, Nicole und Josie einrichten und einmal ausprobieren. Dieselben Zugangsdaten gelten für die Checkliste, die Modul-Seite und bis zum Go-Live auch für sauerundsaftig.de; wegen der getrennten Subdomains ist die Anmeldung auf jeder Seite einmal nötig.\nSein Passwort kann danach jeder selbst ändern: oben rechts auf „Passwort“ tippen (oder /passwort aufrufen).",
       "phase": "vor",
       "owner": "team",
       "assignee": "Konrad",
@@ -104,7 +104,7 @@
     {
       "id": "live-variante-krume",
       "title": "Design „Krume“ auf sauerundsaftig.de",
-      "description": "sauerundsaftig.de zeigt jetzt das Design „Krume“. Bis zum Go-Live ist die Seite nur mit Login erreichbar, auf der Startseite läuft ein Countdown bis zum Start.",
+      "description": "sauerundsaftig.de zeigt jetzt das Design „Krume“. Bis zum Go-Live sieht man dort ohne Login nur eine große Countdown-Seite (unten rechts ein kleiner Link zur Anmeldung), mit Login die ganze Website.",
       "phase": "vor",
       "owner": "team",
       "status": "erledigt",
@@ -137,10 +137,10 @@
     {
       "id": "kartenkoordinaten",
       "title": "Genaue Position auf der Karte",
-      "description": "Der Kartenpunkt sitzt noch ungefähr in der Ortsmitte von Rerik. Exakte Koordinaten der Dünenstraße 1 eintragen, damit „Route in Maps starten“ direkt vor die Tür führt.",
+      "description": "Der Punkt auf der Anfahrtskarte der Besuchsseite sitzt jetzt direkt auf dem Café (Koordinaten aus dem OpenStreetMap-Eintrag „Café sauer & saftig“, Dünenstraße 1). Bitte einmal kurz ansehen, ob er stimmt. Der Knopf „Route in Maps starten“ nutzt ohnehin die Adresse.",
       "phase": "vor",
       "owner": "team",
-      "status": "offen",
+      "status": "erledigt",
       "priority": "normal",
       "category": "Besuch & Öffnungszeiten",
       "link": "https://sauerundsaftig.de/besuch"
@@ -320,7 +320,7 @@
     {
       "id": "design-alternativen-bewerten",
       "title": "Design-Alternativen anschauen und bewerten",
-      "description": "Auf der Modul-Seite siehst du für Farben, Schriften und einzelne Bereiche der Website jeweils die aktuelle Version und drei Alternativen. Bewerte mit „Nein“, „Gut“ oder „Super gut“ und schreib dazu, was dir gefällt – deine Favoriten bauen wir ein.",
+      "description": "Auf der Modul-Seite siehst du für Farben, Schriften und einzelne Bereiche der Website jeweils die aktuelle Version und drei Alternativen. Bewerte mit „Nein“, „Gut“ oder „Super gut“, schreib dazu, was dir gefällt, und tipp bei deinem Favoriten auf „Das nehme ich“ – den bauen wir ein.",
       "phase": "nach",
       "owner": "josie",
       "status": "offen",

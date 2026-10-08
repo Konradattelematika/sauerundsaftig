@@ -13,7 +13,7 @@ export default {
       id: 'live',
       title: 'Magazin-Cover',
       summary:
-        'So ist es jetzt: links dein Satz zum Sauerteig mit Öffnungszeit und Buttons, rechts ein hohes Schneckenfoto im versetzten Terrazzo-Rahmen.',
+        'So ist es jetzt: links dein Satz zum Sauerteig mit Öffnungszeit und Buttons, rechts ein hohes Foto deiner Theke im versetzten Terrazzo-Rahmen.',
     },
     {
       id: 'alt-1',
@@ -31,7 +31,7 @@ export default {
       id: 'alt-3',
       title: 'Große Schrift, kleine Bilder',
       summary:
-        'Dein Spruch „Sauer macht saftig." steht riesig da, kleine Fotos sitzen mitten in der Zeile. Darunter eine Terrazzo-Theke mit Öffnungszeit und Buttons.',
+        'Dein Spruch „Sauer macht saftig.“ steht riesig da, kleine Fotos sitzen mitten in der Zeile. Darunter eine Terrazzo-Theke mit Öffnungszeit und Buttons.',
     },
   ],
 } satisfies ModuleItem;

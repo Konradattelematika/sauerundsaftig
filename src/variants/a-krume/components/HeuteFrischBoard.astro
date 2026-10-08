@@ -17,10 +17,10 @@ const today = entries[0];
     <div class="mx-auto max-w-[1440px] px-4 md:px-8">
       <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 border-b border-ink/10 pb-6" data-reveal>
         <div>
-          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Heute frisch</p>
-          <h2 class="mt-3 text-[clamp(2rem,5vw,3.25rem)]">Was heute aus dem Ofen kommt</h2>
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ink-soft">Aus der Backstube</p>
+          <h2 class="mt-3 text-[clamp(2rem,5vw,3.25rem)]">Eine Auswahl aus unserem Ofen</h2>
         </div>
-        <p class="font-mono text-sm uppercase tracking-widest text-ink-soft">{formatDate(today.data.date)}</p>
+        <p class="font-mono text-sm uppercase tracking-widest text-ink-soft">Stand {formatDate(today.data.date)}</p>
       </div>
       <ol class="mt-8 grid grid-cols-2 items-end gap-x-4 gap-y-8 md:mt-12 md:gap-x-6 lg:grid-cols-4" role="list">
         {today.data.items.map((item, i) => (

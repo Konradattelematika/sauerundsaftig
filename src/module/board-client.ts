@@ -38,7 +38,10 @@ function $$<T extends Element>(sel: string, root: ParentNode = document): T[] {
   return Array.from(root.querySelectorAll<T>(sel));
 }
 
+let redirecting = false;
+
 function redirectToLogin(): void {
+  redirecting = true;
   location.href = '/login?next=' + encodeURIComponent(location.pathname + location.search);
 }
 
@@ -479,7 +482,10 @@ export async function initBoard(): Promise<void> {
     const res = await api<{ user: BoardUser }>('/api/me');
     me = res.user;
   } catch {
-    return; // 401 → Redirect läuft bereits; andere Fehler: Board bleibt lesbar, aber ohne Stimmen
+    // 401 → Redirect läuft bereits; andere Fehler: Board bleibt lesbar, aber ohne Stimmen —
+    // dann sichtbar sagen, warum Bewerten gerade nicht geht (sonst passiert beim Tippen einfach nichts).
+    if (!redirecting) toast('Keine Verbindung zum Server — Bewerten geht gerade nicht. Bitte lade die Seite neu.', 'error');
+    return;
   }
   const userEl = $<HTMLElement>('[data-board-user]');
   if (userEl) userEl.textContent = me.name;

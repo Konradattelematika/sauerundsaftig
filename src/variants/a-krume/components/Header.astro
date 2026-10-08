@@ -126,6 +126,23 @@ function isActive(itemPath: string): boolean {
     if (bound) return;
     bound = true;
     window.addEventListener('scroll', paintHeaderShadow, { passive: true });
+    // Mobil-Menü: Escape schließt, Beschriftung folgt dem Zustand ('toggle' blubbert nicht → Capture)
+    document.addEventListener(
+      'toggle',
+      (e) => {
+        const nav = e.target;
+        if (!(nav instanceof HTMLDetailsElement) || !nav.classList.contains('mobile-nav')) return;
+        nav.querySelector('summary')?.setAttribute('aria-label', nav.open ? 'Menü schließen' : 'Menü öffnen');
+      },
+      true,
+    );
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const nav = document.querySelector<HTMLDetailsElement>('details.mobile-nav[open]');
+      if (!nav) return;
+      nav.open = false;
+      nav.querySelector('summary')?.focus();
+    });
   }
   bindHeaderShadow();
   document.addEventListener('astro:page-load', bindHeaderShadow);

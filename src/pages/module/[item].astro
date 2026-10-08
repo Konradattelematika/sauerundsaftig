@@ -24,6 +24,9 @@ const data = {
   next: next ? { id: next.id, title: next.title } : undefined,
 };
 const position = ITEMS.findIndex((i) => i.id === item.id) + 1;
+// „Zu sehen auf"-Links immer auf die Live-Site: relativ würden "/" und "/besuch" auf
+// module.sauerundsaftig.de die Board-Seiten selbst öffnen (Tool-Host löst erst /module/<pfad> auf).
+const liveHref = (path: string) => new URL(path, Astro.site ?? 'https://sauerundsaftig.de').href;
 ---
 
 <BoardShell title={`${item.title} — Modul-Board`} page="item" data={data}>
@@ -48,7 +51,7 @@ const position = ITEMS.findIndex((i) => i.id === item.id) + 1;
             Zu sehen auf:
             {item.usedOn.map((u, i) => (
               <>
-                <a href={u.path} class="link-ul text-ink" target="_blank" rel="noopener">{u.label}</a>{i < item.usedOn!.length - 1 ? ', ' : ''}
+                <a href={liveHref(u.path)} class="link-ul text-ink" target="_blank" rel="noopener">{u.label}</a>{i < item.usedOn!.length - 1 ? ', ' : ''}
               </>
             ))}
           </span>

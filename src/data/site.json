@@ -12,9 +12,9 @@
     "country": "DE"
   },
   "geo": {
-    "lat": 54.1101,
-    "lng": 11.6043,
-    "todoKunde": "Koordinaten approximiert (Ortsmitte Rerik) — vor Launch exakt setzen"
+    "lat": 54.10613,
+    "lng": 11.61521,
+    "quelle": "OpenStreetMap-Knoten 2094203087 „Café sauer & saftig“ (Telefon stimmt überein), Abruf 08.10.2026"
   },
   "phone": "+49 38296 769924",
   "phoneDisplay": "038296 769924",

@@ -24,13 +24,13 @@ export default {
       id: 'alt-1',
       title: 'Kreidetafel',
       summary:
-        'Ein dunkles Täfelchen wie die Tafel an der Theke: „Geöffnet" groß in Kreide-Schrift, darunter bis wann. Für die Kopfzeile gibt es eine schmale Tafel-Version.',
+        'Ein dunkles Täfelchen wie die Tafel an der Theke: „Geöffnet“ groß in Kreide-Schrift, darunter bis wann. Für die Kopfzeile gibt es eine schmale Tafel-Version.',
     },
     {
       id: 'alt-2',
       title: 'Türschild',
       summary:
-        'Das klassische Wendeschild an der Ladentür: „Offen" oder „Geschlossen" an einer Kordel, die Kante im Signal-Ton. Klein als Anhänger für die Kopfzeile.',
+        'Das klassische Wendeschild an der Ladentür: „Offen“ oder „Geschlossen“ an einer Kordel, die Kante im Signal-Ton. Klein als Anhänger für die Kopfzeile.',
     },
     {
       id: 'alt-3',

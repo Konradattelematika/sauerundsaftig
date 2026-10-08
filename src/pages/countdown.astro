@@ -39,7 +39,7 @@ const units = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Sauer & Saftig — gleich geht's los</title>
+    <title>Sauer & Saftig — gleich geht’s los</title>
     <meta name="description" content={`Café und Backstube in der ${site.address.street}, ${site.address.city}. Die Website startet am ${dateLabel} um ${timeLabel} Uhr.`} />
     <meta name="robots" content="noindex,nofollow,noarchive" />
     <meta name="theme-color" content="#F7F2E8" />
@@ -54,7 +54,7 @@ const units = [
       <div class="cd-logo"><Logo variant="lockup" tone="dark" width={280} loading="eager" /></div>
 
       <p class="cd-eyebrow">Café &amp; Backstube · {site.address.city}</p>
-      <h1 class="cd-title" data-cd-title>Gleich geht's los.</h1>
+      <h1 class="cd-title" data-cd-title>Gleich geht’s los.</h1>
 
       <div class="cd-clock" role="timer" aria-labelledby="cd-when" data-cd-clock>
         {units.map((u) => (
@@ -68,7 +68,7 @@ const units = [
 
       <p id="cd-when" class="cd-when">
         <span class="tz-rule" aria-hidden="true"></span>
-        Am {dateLabel} um {timeLabel} Uhr geht die neue Website online.
+        <span>Am <span data-cd-date>{dateLabel}</span> um <span data-cd-time>{timeLabel}</span> Uhr geht die neue Website online.</span>
       </p>
       <p class="sr-only" aria-live="polite" data-cd-sr></p>
     </main>
@@ -266,6 +266,16 @@ const units = [
       const pad = (n: number) => String(n).padStart(2, '0');
       const now = () => Date.now() + offset;
 
+      // Termin-Satz an die Server-Zielzeit angleichen (falls SUS_GO_LIVE_AT verschoben wurde)
+      function showWhen(at: number) {
+        const d = new Date(at);
+        const fmt = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', ...o }).format(d);
+        const dateEl = body.querySelector('[data-cd-date]');
+        const timeEl = body.querySelector('[data-cd-time]');
+        if (dateEl) dateEl.textContent = fmt({ day: 'numeric', month: 'long', year: 'numeric' });
+        if (timeEl) timeEl.textContent = fmt({ hour: '2-digit', minute: '2-digit' });
+      }
+
       async function goLiveState(): Promise<{ live: boolean; goLiveAt: number } | null> {
         try {
           const t0 = Date.now();
@@ -276,6 +286,7 @@ const units = [
           const server = Date.parse(j.now);
           if (Number.isFinite(server)) offset = server - (t0 + t1) / 2;
           const at = Date.parse(j.goLiveAt);
+          if (Number.isFinite(at)) showWhen(at);
           return { live: j.live === true, goLiveAt: Number.isFinite(at) ? at : target };
         } catch {
           return null;
@@ -296,7 +307,8 @@ const units = [
         const minute = Math.floor(s / 60);
         if (minute !== lastMinute) {
           lastMinute = minute;
-          sr.textContent = s > 0 ? `Noch ${d ? `${d} Tage, ` : ''}${values.h} Stunden und ${values.m} Minuten.` : '';
+          const unit = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+          sr.textContent = s > 0 ? `Noch ${d ? `${unit(d, 'Tag', 'Tage')}, ` : ''}${unit(values.h, 'Stunde', 'Stunden')} und ${unit(values.m, 'Minute', 'Minuten')}.` : '';
         }
         return left;
       }

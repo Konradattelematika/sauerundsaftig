@@ -205,9 +205,10 @@ const handle = `@${INSTAGRAM_PROFILE.username}`;
   }
   .ig-cap-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .ig-cap-static { display: none; }
+  /* Tastaturfokus zeigt die Bildunterschrift immer (unabhängig vom Zeigegerät) */
+  .ig-tile:focus-visible .ig-cap { opacity: 1; transform: none; }
   @media (hover: hover) and (pointer: fine) {
-    .ig-tile:hover .ig-cap,
-    .ig-tile:focus-visible .ig-cap { opacity: 1; transform: none; }
+    .ig-tile:hover .ig-cap { opacity: 1; transform: none; }
   }
   @media (hover: none), (pointer: coarse) {
     .ig-cap { display: none; }
