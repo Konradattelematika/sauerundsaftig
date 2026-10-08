@@ -27,6 +27,8 @@ interface Props {
   mat?: 'none' | 'flat' | 'offset' | 'offset-left';
   class?: string;
   imgClass?: string;
+  /** Zusätzliche Attribute auf dem Wurzelelement (CMS-Editor-Marker: editAttrs(…, 'media')) */
+  attrs?: Record<string, string>;
 }
 const {
   motif,
@@ -42,6 +44,7 @@ const {
   mat = 'none',
   class: cls = '',
   imgClass = '',
+  attrs = {},
 } = Astro.props;
 const image = getImage('a', motif);
 const widths = safeWidths(image, WIDTHS);
@@ -63,7 +66,7 @@ const matClass = [
 ---
 
 {mat !== 'none' ? (
-  <div class:list={matClass} data-reveal={revealAttr} style={style}>
+  <div class:list={matClass} data-reveal={revealAttr} style={style} {...attrs}>
     <div class:list={frameClass}>
       <Picture
         src={image}
@@ -78,7 +81,7 @@ const matClass = [
     </div>
   </div>
 ) : (
-  <div class:list={frameClass} data-reveal={revealAttr} style={style}>
+  <div class:list={frameClass} data-reveal={revealAttr} style={style} {...attrs}>
     <Picture
       src={image}
       formats={['avif', 'webp']}
