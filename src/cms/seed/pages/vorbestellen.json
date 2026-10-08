@@ -1,0 +1,47 @@
+{
+  "id": "vorbestellen",
+  "order": 51,
+  "slug": "vorbestellen",
+  "title": "Vorbestellen",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Vorbestellen",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "Vorbestellen — Sauer & Saftig",
+    "description": "Brot, Schnecken und Torten vorbestellen, abholen zur Wunschzeit. Bestellschluss 18 Uhr am Vortag, Torten und Obsttorten brauchen 5 Tage Vorlauf."
+  },
+  "sections": [
+    {
+      "id": "intro",
+      "type": "seiten-intro",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Vorbestellen",
+        "title": "Reserviert, statt vergriffen",
+        "intro": "Bestellschluss ist 18 Uhr am Vortag der Abholung. Käsekuchen und Obsttorte brauchen 5 Tage Vorlauf, weil wir Zutaten und Backzeit dafür einplanen.",
+        "background": "bg"
+      }
+    },
+    {
+      "id": "formular",
+      "type": "vorbestellen-formular",
+      "visible": true,
+      "fields": {
+        "products": [
+          { "id": "bauernbrot", "name": "Bauernbrot", "price": 7.0, "leadDays": 0, "note": "", "placeholder": false },
+          { "id": "roggenvollkorn", "name": "Roggenvollkorn", "price": 7.0, "leadDays": 0, "note": "", "placeholder": false },
+          { "id": "dinkelvollkorn-saaten", "name": "Dinkelvollkorn mit Saaten", "price": 6.5, "leadDays": 0, "note": "neu", "placeholder": false },
+          { "id": "schnecke-pistazie", "name": "Sauerteigschnecke Pistazie", "price": 4.5, "leadDays": 0, "note": "", "placeholder": true },
+          { "id": "schnecke-lotus", "name": "Sauerteigschnecke Lotus", "price": 4.3, "leadDays": 0, "note": "", "placeholder": true },
+          { "id": "schnecke-haselnuss", "name": "Sauerteigschnecke Haselnuss", "price": 4.3, "leadDays": 0, "note": "", "placeholder": true },
+          { "id": "kaesekuchen", "name": "Käsekuchen ganz", "price": 24.0, "leadDays": 5, "note": "Vorlauf 5 Tage", "placeholder": true },
+          { "id": "obsttorte", "name": "Obsttorte ganz", "price": 26.0, "leadDays": 5, "note": "Vorlauf 5 Tage", "placeholder": true }
+        ],
+        "note": "° Beispielpreis — finale Preise folgen. Brotpreise sind aktuell.",
+        "successTitle": "Danke! Das war eine Demo-Vorbestellung.",
+        "successTextBefore": "Die Bestellung wurde nicht übertragen und ist nicht vorgemerkt. Ruf uns an:"
+      }
+    }
+  ]
+}

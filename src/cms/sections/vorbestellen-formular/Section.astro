@@ -1,0 +1,20 @@
+---
+/** Sektion „Vorbestellen-Formular" (s. definition.mjs) — Markup 1:1 aus src/pages/vorbestellen.astro. */
+import PreorderFlow, { type Product } from '../../../components/shared/PreorderFlow.astro';
+import { editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ products: Product[]; note?: string; successTitle?: string; successTextBefore?: string }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-bg-alt py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <div class="mx-auto max-w-2xl" data-reveal>
+      <PreorderFlow base="" products={f.products} note={f.note} successTitle={f.successTitle} successTextBefore={f.successTextBefore} />
+    </div>
+  </div>
+</section>

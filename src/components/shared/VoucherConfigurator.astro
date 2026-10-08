@@ -13,10 +13,11 @@ interface Props {
   base: string;
   /** Workshop-Gutscheine anbieten (Default true; Live-Site A: false) */
   workshops?: boolean;
+  /** Betragskacheln (CMS-Feldliste der Sektion; Default = heutiger Stand) */
+  amounts?: number[];
 }
-const { base, workshops: withWorkshops = true } = Astro.props;
+const { base, workshops: withWorkshops = true, amounts: AMOUNT_TILES = [20, 35, 50] } = Astro.props;
 
-const AMOUNT_TILES = [20, 35, 50];
 const WORKSHOPS = [
   { id: 'anfaenger', title: 'Sauerteig für Anfänger', price: 129 },
   { id: 'intensiv', title: 'Brot & Schnecken intensiv', price: 189 },

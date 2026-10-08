@@ -1,0 +1,27 @@
+{
+  "id": "faq",
+  "order": 70,
+  "slug": "faq",
+  "title": "FAQ",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "FAQ",
+  "showBreadcrumbs": true,
+  "structuredData": ["faq"],
+  "seo": {
+    "title": "Häufige Fragen — Sauer & Saftig",
+    "description": "Antworten auf häufige Fragen: Öffnungszeiten, Reservierung, Zahlungsmittel, Hunde, Vorbestellung und mehr."
+  },
+  "sections": [
+    {
+      "id": "faq-liste",
+      "type": "faq-liste",
+      "visible": true,
+      "fields": {
+        "eyebrow": "FAQ",
+        "title": "Häufige Fragen",
+        "intro": "Was uns am Telefon und an der Theke am häufigsten gefragt wird — ehrlich beantwortet, auch wenn wir manches noch nicht sicher sagen können."
+      }
+    }
+  ]
+}

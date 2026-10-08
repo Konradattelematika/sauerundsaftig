@@ -1,0 +1,31 @@
+---
+/** Sektion „Besuch-Anfahrt" (s. definition.mjs) — Markup 1:1 aus src/pages/besuch.astro. */
+import ClickToLoadMap from '../../../components/shared/ClickToLoadMap.astro';
+import { btnSecondary } from '../../../variants/a-krume/lib/ui';
+import { editAttrs, editSection, linkAttrs, shown } from '../../index';
+import type { LinkValue, Section } from '../../types';
+
+interface Props {
+  section: Section<{ eyebrow?: string; text1?: string; text2?: string; link: LinkValue }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-bg py-14 md:py-24" {...editSection(section)}>
+  <div class="mx-auto max-w-[1440px] px-4 md:px-8">
+    <p class="font-mono text-xs uppercase tracking-widest text-ink-soft" data-reveal {...editAttrs(section, 'eyebrow')}>{f.eyebrow}</p>
+    <div class="mt-6" data-reveal style="--reveal-delay:100ms">
+      <ClickToLoadMap />
+    </div>
+    <div class="prose-measure mt-6 text-lg text-ink-soft" data-reveal style="--reveal-delay:200ms">
+      <p {...editAttrs(section, 'text1')}>{f.text1}</p>
+      <p class="mt-3 font-mono text-sm" {...editAttrs(section, 'text2')}>{f.text2}</p>
+    </div>
+    {shown(f.link) && (
+      <a {...linkAttrs(f.link)} class:list={[btnSecondary, 'mt-6']} {...editAttrs(section, 'link', 'link')}>
+        {f.link.label}
+      </a>
+    )}
+  </div>
+</section>

@@ -1,0 +1,69 @@
+{
+  "id": "besuch",
+  "order": 30,
+  "slug": "besuch",
+  "title": "Besuch",
+  "status": "published",
+  "kind": "builtin",
+  "breadcrumb": "Besuch",
+  "showBreadcrumbs": true,
+  "structuredData": ["localBusiness"],
+  "seo": {
+    "title": "Besuch — Öffnungszeiten, Anfahrt, Telefon | Sauer & Saftig",
+    "description": "Öffnungszeiten, Adresse und Anreise nach Rerik, Dünenstraße 1. Reservierung nur telefonisch."
+  },
+  "sections": [
+    {
+      "id": "hero",
+      "type": "besuch-hero",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Besuch",
+        "title": "Dünenstraße 1, Ostseebad Rerik",
+        "intro": "Reserviere deinen Tisch per Telefon.",
+        "phoneLink": { "label": "{{phoneDisplay}}", "href": "{{tel}}", "newTab": false, "visible": true }
+      }
+    },
+    {
+      "id": "oeffnungszeiten",
+      "type": "besuch-oeffnungszeiten",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Öffnungszeiten",
+        "note": "An Heiligabend und am 1. Weihnachtstag haben wir geschlossen. Verlässlich ist immer der Stand hier auf der Website, nicht unbedingt Google oder Instagram."
+      }
+    },
+    {
+      "id": "anfahrt",
+      "type": "besuch-anfahrt",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Anfahrt",
+        "text1": "Rerik liegt an der Ostseeküste zwischen Wismar und Kühlungsborn. Aus Richtung Kühlungsborn kommst du aus östlicher Richtung, aus Richtung Bad Doberan aus südlicher Richtung, aus Richtung Wismar aus westlicher Richtung — die Dünenstraße liegt nah an der Küste.",
+        "text2": "Am sichersten: kurz anrufen, wenn du dir bei der Anfahrt unsicher bist.",
+        "link": { "label": "Route in Maps starten", "href": "{{route}}", "newTab": true, "visible": true }
+      }
+    },
+    {
+      "id": "vor-ort",
+      "type": "besuch-vor-ort",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Vor Ort",
+        "items": [
+          {
+            "heading": "Parken",
+            "text": "Parkmöglichkeiten in der Nähe haben wir noch nicht abschließend bestätigt. Ruf uns kurz an unter [{{phoneDisplay}}]({{tel}}), dann sagen wir dir, wo du am besten stehst."
+          },
+          { "heading": "Barrierefreiheit", "text": "Das Café ist nicht barrierefrei." },
+          { "heading": "Hunde", "text": "Hunde sind an der Leine erlaubt." },
+          {
+            "heading": "Reservierung",
+            "text": "Reservierungen laufen ausschließlich telefonisch — ruf uns unter [{{phoneDisplay}}]({{tel}}) an und frag nach einem Tisch für deinen Termin."
+          },
+          { "heading": "Zahlungsmittel", "text": "Du kannst bar oder mit Karte bezahlen." }
+        ]
+      }
+    }
+  ]
+}

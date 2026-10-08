@@ -1,0 +1,26 @@
+{
+  "id": "karte-kategorie",
+  "order": 11,
+  "slug": "karte/*",
+  "title": "Karte: Kategorie (Vorlage)",
+  "status": "published",
+  "kind": "builtin",
+  "showBreadcrumbs": true,
+  "structuredData": ["menu"],
+  "template": "menu-category",
+  "seo": {
+    "title": "{kategorie} — Karte | Sauer & Saftig",
+    "description": "{kategorie} in der Karte von Sauer & Saftig — aus der eigenen Backstube in Rerik."
+  },
+  "sections": [
+    {
+      "id": "hero",
+      "type": "karte-kategorie-hero",
+      "visible": true,
+      "fields": {
+        "eyebrow": "Karte",
+        "footnote": "° Beispielpreise — finale Preise folgen."
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+---
+/** Sektion „Karte-Schnecken-Hinweis" (s. definition.mjs) — Markup 1:1 aus src/pages/karte/schnecken.astro. */
+import { editAttrs, editSection } from '../../index';
+import type { Section } from '../../types';
+
+interface Props {
+  section: Section<{ note: string }>;
+}
+const { section } = Astro.props;
+const f = section.fields;
+---
+
+<section class="bg-accent py-6 text-white" {...editSection(section)}>
+  <p class="text-center font-mono text-sm uppercase tracking-[0.2em]" data-reveal {...editAttrs(section, 'note')}>
+    {f.note}
+  </p>
+</section>
