@@ -186,3 +186,26 @@ Kern (`src/cms/{types.ts,store.mjs,rich.mjs,index.ts,SectionList.astro,sections/
 ## 11. Go-Live-Sicherheit
 Die Website geht am 10.10.2026 16:00 automatisch öffentlich (Überraschungs-Übergabe). Das CMS wird auf Branch `cms`
 entwickelt und erst nach vollständiger Prüfung und Freigabe durch Konrad auf Produktion gebracht.
+
+## 12. Umsetzungsstand (08.10.2026, Branch `cms`)
+
+- **Seiten:** alle 17 Live-Seiten laufen über `src/pages/[...slug].astro` (Seeds in `src/cms/seed/pages/`); in
+  `src/pages/` bleiben nur Systemseiten (404 liest Seite `nicht-gefunden`, login, passwort, countdown, varianten).
+- **Sektionstypen:** 48 (`src/cms/sections/`). Generisch (`allowedOn: '*'`, für neue Seiten): text, cover, bild-text,
+  karten, cta, zitat, rechtstext, seiten-intro, zeitstrahl, faq-liste, karte-sektionen, heute-frisch, schnecken,
+  vorstellung, instagram, besuch, stimmen, newsletter. Seitenspezifisch: besuch-* (4), karte-*, sauerteig-*, shop-*,
+  vorbestellen-formular, ueber-uns-*, ueber-mich-*, gastgeber-*, kontakt-haupt, jobs-aufruf, nicht-gefunden.
+  Abweichung vom Plan: P1 nannte die Startseiten-Bühne `cover` (Name `hero` blieb frei, wird nicht benötigt);
+  die Besuch-Seite nutzt vier eigene Typen statt eines „voll"-Modus von `besuch`.
+- **Server:** `server/lib/cms/**` (Speicher, Migrationen, Versionen, Rechte, Benutzer, Medien, Build-Pipeline,
+  Vorschau, Weiterleitungen), zusätzlich `POST /api/cms/validate`; `GET /api/cms/state` liefert `issues`, `online`,
+  `previewOnline`. Validator/Definitions-Lader: `src/cms/validate.mjs`, `src/cms/definitions.mjs`. Link-Helfer ohne
+  Node-Importe: `src/cms/links.mjs` (rich.mjs ist browsertauglich). `PageDoc.menuScope` (Menu-JSON-LD je Kategorie),
+  SEO-Platzhalter `{kategorie}` / `{kategorie-intro}` auf Vorlagen-Seiten.
+- **Geprüft:** Pixel-/Textregression aller 20 Live-Seiten in 390/768/1440 px identisch zur Referenz vor dem Umbau;
+  `pnpm typecheck` 0 Fehler; 252 Tests grün (davon 85 CMS-Servertests); `pnpm test:routes` 138 Routen; Seed besteht den
+  Validator (0 Fehler); Smoke-Test mit echtem Astro-Build: Veröffentlichen → Live-Build 9,3 s (warmer Bild-Cache),
+  Vorschau-Build 7,2 s, Text/Seite/ersetztes Bild live, 0 Editor-Marker im Live-HTML.
+- **Betrieb:** Dockerfile-Runtime enthält App + node_modules (Builds zur Laufzeit), `.code-version` aus
+  `server/code-version.mjs`; Schreibpfade `src/assets/media`, `.astro`, `node_modules/.vite`; Caches unter
+  `/data/astro-cache` (Astro + Vite). Docker-Build ist auf dem VPS nicht möglich → erst Staging in Coolify.
