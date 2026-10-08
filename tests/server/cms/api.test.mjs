@@ -6,6 +6,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { cmsApi, editDraft, getDraft, loginAs, startCms, testImage, textPage, upload } from './helpers.mjs';
+import { request } from '../helpers.mjs';
 
 let srv;
 let cookie;
@@ -53,6 +54,16 @@ describe('PUT /api/cms/draft', () => {
     expect(st.publishedMeta.revision).toBe(1);
     const events = (await readFile(path.join(srv.dataDir, 'events.jsonl'), 'utf8')).trim().split('\n').map((l) => JSON.parse(l));
     expect(events.at(-1)).toMatchObject({ user: 'konrad', action: 'cms.draft.save', revision: 2, base: 1 });
+  });
+
+  it('GET /published liefert den veröffentlichten Stand ohne meta (Vergleichsbasis fürs Dashboard)', async () => {
+    const res = await api('GET', '/published');
+    expect(res.status).toBe(200);
+    expect(res.json.meta.revision).toBe(1);
+    expect(res.json.doc.meta).toBeUndefined();
+    expect(Array.isArray(res.json.doc.pages)).toBe(true);
+    expect(res.json.doc.settings.name).toBe('Sauer & Saftig');
+    expect((await request(srv.port, { path: '/api/cms/published', host: 'localhost' })).status).toBe(401);
   });
 
   it('veraltete Basis-Revision → 409 mit aktuellem Stand', async () => {

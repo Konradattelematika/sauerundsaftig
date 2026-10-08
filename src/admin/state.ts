@@ -123,6 +123,20 @@ class Store extends EventTarget {
     this.watchBuilds();
   }
 
+  /** Veröffentlichten Stand als Vergleichsbasis laden — die Änderungsübersicht bleibt so auch nach einem Neuladen exakt */
+  private async loadBaseline(rev: number | null): Promise<void> {
+    try {
+      const { doc } = await api.published();
+      if ((this.publishedMeta?.revision ?? null) !== rev || !doc || !Array.isArray(doc.pages)) return;
+      const base = clone(doc);
+      normalizeDoc(base);
+      this.baseline = base;
+      this.baselineRev = rev;
+    } catch {
+      /* Übersicht fällt auf den Stand beim Öffnen zurück */
+    }
+  }
+
   private applyState(st: CmsState): void {
     this.doc = st.draft ?? ({} as SiteDoc);
     // Bildwerte im alten Format → beim nächsten Speichern (spätestens vor dem Veröffentlichen) korrigiert
@@ -144,6 +158,7 @@ class Store extends EventTarget {
       this.baselineRev = pubRev;
     } else if (this.baselineRev !== pubRev) {
       this.baseline = null;
+      void this.loadBaseline(pubRev);
     }
     this.sessionStart = clone(this.doc);
     this.changeSeq = this.savedSeq = 0;

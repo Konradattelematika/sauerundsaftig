@@ -84,6 +84,12 @@ export function createCmsApi(cms) {
     };
   }
 
+  /** Veröffentlichter Stand (ohne meta) + Meta — Vergleichsbasis für die Änderungsübersicht im Dashboard */
+  async function getPublished() {
+    const { meta, ...doc } = store.published ?? {};
+    return { doc, meta: store.publishedMeta() };
+  }
+
   async function putDraft({ req, user }) {
     const body = await readJson(req, DRAFT_BODY_LIMIT);
     if (!isObj(body.doc)) throw new HttpError(400, 'doc fehlt');
@@ -260,6 +266,7 @@ export function createCmsApi(cms) {
   // [Pfad, Methode, Handler, { perm, write, status, raw }]  ':id' = beliebiges Segment
   const ROUTES = [
     [['state'], 'GET', getState, { perm: 'cms.view' }],
+    [['published'], 'GET', getPublished, { perm: 'cms.view' }],
     [['draft'], 'PUT', putDraft, { perm: 'cms.edit', write: true }],
     [['draft', 'discard'], 'POST', discardDraft, { perm: 'cms.edit', write: true }],
     [['validate'], 'POST', validateDoc, { perm: 'cms.view', write: true }],

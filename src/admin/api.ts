@@ -150,6 +150,7 @@ const unwrap = <T>(res: unknown, key: string): T =>
 
 export const api = {
   state: () => request<CmsState>('GET', '/api/cms/state'),
+  published: () => request<{ doc: SiteDoc; meta: DocMeta | null }>('GET', '/api/cms/published'),
   saveDraft: (doc: SiteDoc, baseRevision: number) =>
     request<{ revision: number; updatedAt?: string }>('PUT', '/api/cms/draft', { doc, baseRevision }),
   discard: () => request<{ revision?: number }>('POST', '/api/cms/draft/discard', {}),

@@ -276,6 +276,18 @@ export interface FieldDef {
   max?: number;
   /** link: welche Varianten die Komponente kann (leer = keine Auswahl) */
   variants?: string[];
+  /* --- Darstellung im Admin-Dashboard (src/admin/defs.ts) --- */
+  /** text: HTML-Eingabetyp */
+  input?: 'date' | 'time' | 'url' | 'email' | 'tel' | 'color';
+  /** media: nur die Medien-ID speichern (String statt MediaRef), z. B. Karten-Einträge (motif) */
+  idOnly?: boolean;
+  placeholder?: string;
+  /** Spaltenbreite im Formular */
+  width?: 'half' | 'third';
+  /** list: Einträge tragen eine eigene `id` (Navigation, Sticky-Leiste) */
+  itemIds?: boolean;
+  /** list: Beschriftung des Hinzufügen-Knopfs */
+  addLabel?: string;
 }
 
 export interface SectionDefinition {
@@ -293,5 +305,9 @@ export interface CollectionDefinition {
   name: string;
   label: string;
   description: string;
+  /** list = Array von Einträgen (fields je Eintrag), object = ein Objekt (fields auf das Objekt) */
+  shape: 'list' | 'object';
+  /** list: welches Feld den Eintrag in der Liste benennt */
+  itemLabel?: string;
   fields: FieldDef[];
 }

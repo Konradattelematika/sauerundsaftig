@@ -7,7 +7,7 @@ import { getImage as astroGetImage } from 'astro:assets';
 import Layout from '../variants/a-krume/Layout.astro';
 import Breadcrumbs from '../variants/a-krume/components/Breadcrumbs.astro';
 import SectionList from '../cms/SectionList.astro';
-import { activePages, cms, plain, pageUrl, type PageDoc } from '../cms';
+import { activePages, cms, editBuild, plain, pageUrl, type PageDoc } from '../cms';
 import { getImage } from '../lib/images';
 import { localBusiness, menuSchema, faqPage } from '../lib/schema-org';
 import { renderRich } from '../cms/rich.mjs';
@@ -16,7 +16,10 @@ import type { MenuCategory } from '../cms/types';
 export function getStaticPaths() {
   const doc = cms();
   const paths: { params: { slug: string | undefined }; props: { pageId: string; category?: MenuCategory } }[] = [];
-  for (const p of activePages()) {
+  // Editor-/Vorschau-Build: auch deaktivierte Seiten mitbauen, damit der Seiteneditor sie zeigen kann
+  // (Live-Build: nur aktive Seiten; deaktivierte Slugs liefern dort 404)
+  const pages = editBuild ? doc.pages.filter((p) => p.status === 'published' || p.status === 'disabled') : activePages();
+  for (const p of pages) {
     if (p.system) continue;
     if (p.template === 'menu-category') {
       const parent = p.slug.replace(/\/\*$/, '');
