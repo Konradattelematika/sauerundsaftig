@@ -1,7 +1,7 @@
 /** Veröffentlichen (Rückfrage mit Änderungsübersicht → Build-Fortschritt), Entwurf verwerfen, Vorschau öffnen. */
 import { api, ApiError, previewUrl, type Build } from './api';
 import { diffDocs } from './diff';
-import { h, icon } from './dom';
+import { add, h, icon } from './dom';
 import { store } from './state';
 import { btn, confirmDialog, loading, notice, openDialog, toast } from './ui';
 import { describePath } from './where';
@@ -55,12 +55,6 @@ export async function openPublishDialog(): Promise<void> {
   const d = openDialog({ title: 'Änderungen veröffentlichen', size: 'lg' });
   d.body.append(loading('Speichere und vergleiche mit der Website …'));
   const saved = await store.flush();
-  let published = null;
-  try {
-    published = await api.published();
-  } catch {
-    published = null;
-  }
   d.body.replaceChildren();
   if (!saved) {
     d.body.append(notice('error', h('p', null, 'Der Entwurf ist noch nicht gespeichert: ', store.statusMessage || 'bitte Prüfhinweise beheben.')));
@@ -75,22 +69,28 @@ export async function openPublishDialog(): Promise<void> {
     d.body.append(notice('info', h('p', null, 'Gerade läuft schon eine Veröffentlichung. Bitte warte, bis sie fertig ist.')));
   }
 
-  if (published) {
-    const groups = diffDocs(published, store.doc);
-    if (!groups.length) d.body.append(notice('ok', h('p', null, 'Der Entwurf entspricht schon dem veröffentlichten Stand — es gibt nichts zu veröffentlichen.')));
-    else
-      d.body.append(
-        h('p', { class: 'ad-lead' }, 'Diese Änderungen gehen online:'),
-        h(
-          'div',
-          { class: 'ad-changes' },
-          ...groups.map((g) =>
-            h('section', { class: 'ad-changes__group' }, h('h3', { class: 'ad-h3' }, g.area), h('ul', null, ...g.items.slice(0, 12).map((i) => h('li', null, i)), g.items.length > 12 ? h('li', null, `… und ${g.items.length - 12} weitere`) : null)),
-          ),
-        ),
-      );
+  // Vergleichsstand: veröffentlichter Stand, wenn bekannt — sonst der Stand beim Öffnen des Dashboards
+  const exact = Boolean(store.baseline);
+  const base = store.baseline ?? store.sessionStart;
+  const groups = base ? diffDocs(base, store.doc) : [];
+  const changeList = h(
+    'div',
+    { class: 'ad-changes' },
+    ...groups.map((g) =>
+      h('section', { class: 'ad-changes__group' }, h('h3', { class: 'ad-h3' }, g.area), h('ul', null, ...g.items.slice(0, 12).map((i) => h('li', null, i)), g.items.length > 12 ? h('li', null, `… und ${g.items.length - 12} weitere`) : null)),
+    ),
+  );
+  if (exact && !groups.length && !store.dirty) {
+    d.body.append(notice('ok', h('p', null, 'Der Entwurf entspricht schon dem veröffentlichten Stand — es gibt nichts zu veröffentlichen.')));
+  } else if (exact) {
+    d.body.append(h('p', { class: 'ad-lead' }, 'Diese Änderungen gehen online:'), groups.length ? changeList : h('p', null, 'Kleine technische Anpassungen (z. B. Bildangaben).'));
   } else {
-    d.body.append(h('p', { class: 'ad-lead' }, 'Alle gespeicherten Änderungen des Entwurfs gehen online.'));
+    add(
+      d.body,
+      h('p', { class: 'ad-lead' }, 'Alle gespeicherten Änderungen des Entwurfs gehen online.'),
+      groups.length ? h('p', { class: 'ad-help' }, 'Seit dem Öffnen des Dashboards geändert (frühere, noch nicht veröffentlichte Änderungen kommen dazu):') : null,
+      groups.length ? changeList : null,
+    );
   }
 
   if (errors.length) {

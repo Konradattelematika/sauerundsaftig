@@ -52,6 +52,14 @@ class Store extends EventTarget {
   codeVersion = '';
   /** Server meldet „schreibgeschützt“ (Grund) */
   readOnly: string | null = null;
+  /**
+   * Veröffentlichter Stand zum Vergleich (Änderungsübersicht vor dem Veröffentlichen): der Entwurf beim
+   * Laden, wenn er laut Server unverändert war, bzw. der zuletzt hier veröffentlichte Stand. null = unbekannt.
+   */
+  baseline: SiteDoc | null = null;
+  private baselineRev: number | null = null;
+  /** Stand beim Öffnen des Dashboards (Ersatz-Vergleich, wenn der veröffentlichte Stand unbekannt ist) */
+  sessionStart: SiteDoc | null = null;
 
   status: SaveStatus = 'saved';
   statusMessage = '';
@@ -130,6 +138,14 @@ class Store extends EventTarget {
     this.me = st.me ?? { id: '', name: '', role: '', permissions: [] };
     this.codeVersion = st.codeVersion ?? '';
     this.readOnly = typeof st.readOnly === 'string' && st.readOnly ? st.readOnly : null;
+    const pubRev = this.publishedMeta?.revision ?? null;
+    if (!this.dirty) {
+      this.baseline = clone(this.doc);
+      this.baselineRev = pubRev;
+    } else if (this.baselineRev !== pubRev) {
+      this.baseline = null;
+    }
+    this.sessionStart = clone(this.doc);
     this.changeSeq = this.savedSeq = 0;
     this.serverIssues = [];
     this.lastSavedAt = st.draftMeta?.updatedAt ?? null;
@@ -327,6 +343,7 @@ class Store extends EventTarget {
     const ok = await this.flush();
     if (!ok) throw new ApiError(0, this.statusMessage || 'Der Entwurf konnte nicht gespeichert werden.');
     let r: Awaited<ReturnType<typeof api.publish>>;
+    const snapshot = clone(this.doc);
     try {
       r = await api.publish(this.revision);
     } catch (e) {
@@ -337,6 +354,10 @@ class Store extends EventTarget {
       throw e;
     }
     this.live = r.build;
+    // Der veröffentlichte Stand ist ab jetzt dieser Entwurf (auch wenn der Live-Build noch läuft/scheitert)
+    this.baseline = snapshot;
+    this.baselineRev = typeof r.revision === 'number' ? r.revision : this.baselineRev;
+    this.sessionStart = clone(snapshot);
     this.emit('build');
     this.watchBuilds();
     if (r.redirects?.length) {

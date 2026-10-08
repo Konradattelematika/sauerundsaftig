@@ -1,7 +1,6 @@
 /** Pfade im SiteDoc → menschenlesbare Fundstelle + Hash-Route (für Prüfhinweise und Änderungslisten). */
 import type { SiteDoc } from '../cms/types';
-import { COLLECTION_DEFS, FOOTER_DEFS, HEADER_DEFS, NAV_DEFS, SETTINGS_GROUPS, STICKY_DEF, sectionDef, type AdminFieldDef } from './defs';
-import { COLLECTION_ROUTES } from './scan';
+import { COLLECTION_DEFS, COLLECTION_ROUTES, FOOTER_DEFS, HEADER_DEFS, NAV_DEFS, SETTINGS_GROUPS, STICKY_DEF, sectionDef, type AdminFieldDef } from './defs';
 import { isPlainObject, labelOf, parsePath, type PathSeg } from './util';
 
 const PAGE_KEYS: Record<string, string> = {

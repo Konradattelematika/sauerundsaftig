@@ -318,6 +318,13 @@ export const SETTINGS_GROUPS: { title: string; intro?: string; path: string[]; f
   },
 ];
 
+export const COLLECTION_ROUTES: Record<string, string> = {
+  menu: '#/karte',
+  faq: '#/faq',
+  testimonials: '#/stimmen',
+  heuteFrisch: '#/backstube',
+};
+
 export const WEEKDAYS: { key: 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun'; label: string }[] = [
   { key: 'mon', label: 'Montag' },
   { key: 'tue', label: 'Dienstag' },

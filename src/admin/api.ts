@@ -158,17 +158,6 @@ export const api = {
   build: () => request<{ live: Build | null; preview: Build | null; online?: OnlineBuild | null; previewOnline?: OnlineBuild | null }>('GET', '/api/cms/build'),
   versions: async () => unwrap<VersionInfo[]>(await request('GET', '/api/cms/versions'), 'versions') ?? [],
   restore: (id: string) => request<{ revision: number }>('POST', `/api/cms/versions/${encodeURIComponent(id)}/restore`, {}),
-  /** veröffentlichter Inhaltsstand (für die Änderungsübersicht; s. Bitte an den Orchestrator) */
-  published: async (): Promise<SiteDoc | null> => {
-    try {
-      const r = await request<unknown>('GET', '/api/cms/published');
-      const doc = unwrap<SiteDoc>(r, 'doc');
-      return doc && typeof doc === 'object' && Array.isArray((doc as SiteDoc).pages) ? doc : null;
-    } catch (e) {
-      if (e instanceof ApiError && (e.status === 404 || e.status === 405)) return null;
-      throw e;
-    }
-  },
   uploadMedia: async (file: File, opts: { alt?: string; replace?: string } = {}) => {
     const q = opts.replace ? `?replace=${encodeURIComponent(opts.replace)}` : '';
     const headers: Record<string, string> = {

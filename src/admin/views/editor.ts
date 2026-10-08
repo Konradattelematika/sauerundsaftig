@@ -6,7 +6,7 @@
  * Text-/Bild-/Link-Änderungen erscheinen sofort; Strukturänderungen lösen nach dem Speichern einen
  * Vorschau-Build aus, danach lädt das iframe neu (Scrollposition bleibt).
  */
-import type { PageDoc, Section } from '../../cms/types';
+import type { Section } from '../../cms/types';
 import { editorUrl, ensurePreviewCookie } from '../api';
 import { allowedSectionTypes, sectionDef, sectionDefaults } from '../defs';
 import { add, h, icon, domId } from '../dom';
@@ -30,8 +30,6 @@ const LAZY_PREVIEW_MS = 15_000;
  * nächsten Vorschau-Build — vorher käme nur die 404-Seite.
  */
 const builtSlugs = new Map<string, string>();
-/** Vorschau-Cookie in dieser Sitzung schon gesetzt? (gilt 12 h) */
-let previewCookieSet = false;
 const rememberBuilt = () => {
   builtSlugs.clear();
   for (const p of store.doc.pages) if (p.status === 'published') builtSlugs.set(p.id, p.slug);
@@ -396,11 +394,9 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
   const loadFrame = async () => {
     ready = false;
     frameLoaded = true;
-    // erst Vorschau-Modus einschalten (Cookie), dann die Seite im Editor-Modus laden (ohne Vorschau-Leiste)
-    if (!previewCookieSet) {
-      await ensurePreviewCookie();
-      previewCookieSet = true;
-    }
+    // erst Vorschau-Modus einschalten (Cookie — könnte in einem anderen Tab beendet worden sein),
+    // dann die Seite im Editor-Modus laden (ohne Vorschau-Leiste)
+    await ensurePreviewCookie();
     iframe.src = editorUrl(pagePreviewPath(page));
   };
   /** iframe laden — oder erklären, warum es (noch) nichts zu sehen gibt */
@@ -426,11 +422,13 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     }
     ready = false;
     if (manual) pruneLive();
-    try {
-      iframe.contentWindow?.location.reload();
-    } catch {
-      void loadFrame();
-    }
+    void ensurePreviewCookie().then(() => {
+      try {
+        iframe.contentWindow?.location.reload();
+      } catch {
+        void loadFrame();
+      }
+    });
   };
   iframe.addEventListener('load', () => {
     if (pendingScroll !== null) {

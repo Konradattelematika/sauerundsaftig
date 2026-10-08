@@ -384,8 +384,7 @@ async function start(): Promise<void> {
   window.addEventListener('beforeunload', (e) => {
     if (store.hasUnsaved || store.status === 'saving') {
       void store.save();
-      e.preventDefault();
-      e.returnValue = '';
+      e.preventDefault(); // Rückfrage „Seite verlassen?“ (moderne Browser)
     }
   });
   document.addEventListener('keydown', (e) => {

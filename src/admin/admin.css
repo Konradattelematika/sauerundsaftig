@@ -11,9 +11,9 @@
   font-size: 16px;
   line-height: 1.5;
 }
-.ad-body h1,
-.ad-body h2,
-.ad-body h3 {
+.ad-body h1:not([class]),
+.ad-body h2:not([class]),
+.ad-body h3:not([class]) {
   margin: 0;
 }
 .ad-body p {
@@ -1424,6 +1424,7 @@ select.ad-input {
 
 /* ------------------------------------------------------------------ Dialoge & Toasts ------ */
 .ad-dialog {
+  margin: auto;
   width: min(100% - 1.5rem, 34rem);
   max-height: min(100dvh - 1.5rem, 54rem);
   padding: 0;
@@ -1904,6 +1905,7 @@ a.ad-row__title:hover {
 }
 .ad-mediadetail__img {
   width: 100%;
+  min-height: 12rem;
   max-height: 60vh;
   object-fit: contain;
   border-radius: var(--radius-card);

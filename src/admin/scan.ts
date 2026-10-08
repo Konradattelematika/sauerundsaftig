@@ -5,6 +5,7 @@
 import type { NavItem, PageDoc, SiteDoc } from '../cms/types';
 import {
   COLLECTION_DEFS,
+  COLLECTION_ROUTES,
   FOOTER_DEFS,
   HEADER_DEFS,
   NAV_CTA_DEF,
@@ -14,8 +15,9 @@ import {
   type AdminFieldDef,
 } from './defs';
 import { pagePath, richLinks } from './rich';
-import { checkHref as sharedCheckHref } from '../cms/validate.mjs';
-import { isPlainObject, labelOf, type PathSeg } from './util';
+import { checkHref as sharedCheckHref, collectMediaRefs } from '../cms/validate.mjs';
+import { describePath } from './where';
+import { isPlainObject, labelOf, parsePath, type PathSeg } from './util';
 
 export interface Loc {
   /** menschenlesbar: „Seite Besuch › Text › Überschrift“ */
@@ -155,12 +157,6 @@ export function walkDoc(doc: SiteDoc, visit: (v: FieldVisit) => void): void {
   }
 }
 
-export const COLLECTION_ROUTES: Record<string, string> = {
-  menu: '#/karte',
-  faq: '#/faq',
-  testimonials: '#/stimmen',
-  heuteFrisch: '#/backstube',
-};
 
 /* ------------------------------------------------------------------ Links ---------------------- */
 
@@ -205,14 +201,13 @@ export function mediaIdOf(value: unknown): string | null {
 
 /** Wo wird ein Bild verwendet? (alle Medien auf einmal: Map id → Fundstellen) */
 export function mediaUsageMap(doc: SiteDoc): Map<string, Loc[]> {
+  // dieselbe Suche wie der Server beim Löschen (alle { media }-Verweise und motif-Felder)
   const map = new Map<string, Loc[]>();
-  walkDoc(doc, ({ def, value, loc }) => {
-    if (def.kind !== 'media' && !def.idOnly) return;
-    const id = mediaIdOf(value);
-    if (!id) return;
-    if (!map.has(id)) map.set(id, []);
-    map.get(id)!.push(loc);
-  });
+  for (const r of collectMediaRefs(doc) as { id: string; path: string }[]) {
+    const w = describePath(doc, r.path);
+    if (!map.has(r.id)) map.set(r.id, []);
+    map.get(r.id)!.push({ label: w.label, route: w.route, path: parsePath(r.path) });
+  }
   return map;
 }
 
