@@ -5,7 +5,8 @@
  * sichtbarer Text je Seite. Vergleich pixelgenau (sharp) und als Textvergleich.
  *
  *   node scripts/visual-regression.mjs capture <dist-dir> <ausgabe-dir> [--port 4460] [--only /pfad,/pfad2]
- *   node scripts/visual-regression.mjs compare <referenz-dir> <neu-dir> [--threshold 0]
+ *   node scripts/visual-regression.mjs compare <referenz-dir> <neu-dir> [--threshold 0] [--partial]
+ *   (--partial: nur die im neuen Verzeichnis aufgenommenen Seiten vergleichen — passend zu capture --only)
  *
  * capture startet den Node-Server (server/index.mjs) auf <dist-dir> mit localhost als Live-Host nach Go-Live.
  * Vorher `source scripts/env.sh` (Chromium-Bibliotheken). compare: Exit 1 bei Abweichungen; Diff-Bilder
@@ -119,6 +120,7 @@ async function compare(refDir, newDir) {
   let failed = 0;
   for (const f of files) {
     const nf = path.join(newDir, f);
+    if (!existsSync(nf) && rest.includes('--partial')) continue;
     if (!existsSync(nf)) {
       console.log(`FEHLT   ${f}`);
       failed++;
@@ -154,7 +156,7 @@ async function compare(refDir, newDir) {
   // Textvergleich
   const rt = JSON.parse(await readFile(path.join(refDir, 'texts.json'), 'utf8'));
   const nt = existsSync(path.join(newDir, 'texts.json')) ? JSON.parse(await readFile(path.join(newDir, 'texts.json'), 'utf8')) : {};
-  for (const p of Object.keys(rt)) {
+  for (const p of Object.keys(rt).filter((x) => !rest.includes('--partial') || x in nt)) {
     for (const key of ['text', 'meta', 'ld', 'links', 'imgs']) {
       const x = JSON.stringify(rt[p]?.[key]);
       const y = JSON.stringify(nt[p]?.[key]);
