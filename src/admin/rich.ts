@@ -108,7 +108,7 @@ export function plainText(text: unknown, doc: DocLike): string {
     .trim();
 }
 
-/** Alle Links [Text](ziel) in einem rich-Text (für „Buttons & Links" und Verweis-Suche) */
+/** Alle Links [Text](ziel) in einem rich-Text (für „Buttons & Links“ und Verweis-Suche) */
 export function richLinks(text: unknown): { label: string; target: string }[] {
   const out: { label: string; target: string }[] = [];
   String(text ?? '').replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, (_m, label: string, target: string) => {

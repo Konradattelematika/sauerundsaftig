@@ -218,14 +218,16 @@ export function initBridge(): void {
 
   window.addEventListener('message', (e: MessageEvent) => {
     if (e.origin !== location.origin || e.source !== window.parent) return;
-    const msg = e.data as { type?: string } & Partial<SetMsg> & { section?: string; scroll?: boolean };
+    const msg = e.data as { type?: string } & Partial<Omit<SetMsg, 'type'>> & { section?: string; scroll?: boolean };
     if (!msg || typeof msg.type !== 'string') return;
     if (msg.type === 'sus-cms:set' && typeof msg.field === 'string') {
       const els = document.querySelectorAll(`[data-cms-field="${cssEscape(msg.field)}"]`);
       els.forEach((el) => {
         const kind = (msg.kind ?? el.getAttribute('data-cms-kind') ?? 'text') as Kind;
         if (kind === 'text') {
-          if (el.getAttribute('data-cms-kind') === 'link') setLabel(el, String(msg.value ?? ''));
+          // Icons (svg) o. Ä. im Element bleiben stehen — nur der Text wird ersetzt
+          const hasElements = [...el.children].some((c) => c.tagName !== 'BR');
+          if (hasElements || el.getAttribute('data-cms-kind') === 'link') setLabel(el, String(msg.value ?? ''));
           else el.textContent = String(msg.value ?? '');
         } else if (kind === 'rich') {
           if (typeof msg.html === 'string') applyRich(el, msg.html);

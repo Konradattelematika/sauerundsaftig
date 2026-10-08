@@ -1,7 +1,7 @@
 /** Bildfeld + Medienwähler (Bibliothek, Suche, Upload per Datei oder Drag & Drop). */
 import type { MediaItem } from '../cms/types';
 import { api, ApiError, mediaUrl } from './api';
-import { h, icon } from './dom';
+import { add, h, icon } from './dom';
 import { store } from './state';
 import { btn, openDialog, toast } from './ui';
 
@@ -30,8 +30,8 @@ export function kindLabel(m: MediaItem): string {
 
 /** Datei prüfen (Typ/Größe) — Rückgabe: Fehlermeldung oder null */
 export function fileProblem(f: File): string | null {
-  if (!ACCEPT.split(',').includes(f.type)) return `„${f.name}" ist kein unterstütztes Bild (JPEG, PNG, WebP oder AVIF).`;
-  if (f.size > MAX_BYTES) return `„${f.name}" ist größer als 15 MB.`;
+  if (!ACCEPT.split(',').includes(f.type)) return `„${f.name}“ ist kein unterstütztes Bild (JPEG, PNG, WebP oder AVIF).`;
+  if (f.size > MAX_BYTES) return `„${f.name}“ ist größer als 15 MB.`;
   return null;
 }
 
@@ -44,7 +44,7 @@ export async function uploadFiles(files: File[], opts: { replace?: string; onPro
       toast(prob, 'error', 8000);
       continue;
     }
-    opts.onProgress?.(`Lade ${files.length > 1 ? `${i + 1} von ${files.length}` : `„${f.name}"`} hoch …`);
+    opts.onProgress?.(`Lade ${files.length > 1 ? `${i + 1} von ${files.length}` : `„${f.name}“`} hoch …`);
     try {
       const alt = f.name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ');
       const item = await api.uploadMedia(f, { replace: opts.replace, alt: opts.replace ? undefined : alt });
@@ -137,7 +137,7 @@ export async function pickMedia(current?: string | null): Promise<string | null>
       )
     : null;
 
-  d.body.append(h('div', { class: 'ad-pick-top' }, search), zone ? h('details', { class: 'ad-pick-upload' }, h('summary', null, 'Neues Bild hochladen'), zone, progress) : null, grid);
+  add(d.body, h('div', { class: 'ad-pick-top' }, search), zone ? h('details', { class: 'ad-pick-upload' }, h('summary', null, 'Neues Bild hochladen'), zone, progress) : null, grid);
   d.footer.append(btn('Abbrechen', { kind: 'quiet', onClick: () => d.close(null) }));
   render();
   search.focus();

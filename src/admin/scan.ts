@@ -1,6 +1,6 @@
 /**
  * Durchläuft einen SiteDoc entlang der Felddefinitionen: alle Links/Linkziele, Bildverwendungen und
- * Verweise auf Seiten — für „Buttons & Links", „Wo verwendet", Löschen-Rückfragen und Prüfhinweise.
+ * Verweise auf Seiten — für „Buttons & Links“, „Wo verwendet“, Löschen-Rückfragen und Prüfhinweise.
  */
 import type { NavItem, PageDoc, SiteDoc } from '../cms/types';
 import {
@@ -14,10 +14,10 @@ import {
   type AdminFieldDef,
 } from './defs';
 import { pagePath, richLinks } from './rich';
-import { isPlainObject, type PathSeg } from './util';
+import { isPlainObject, labelOf, type PathSeg } from './util';
 
 export interface Loc {
-  /** menschenlesbar: „Seite Besuch › Text › Überschrift" */
+  /** menschenlesbar: „Seite Besuch › Text › Überschrift“ */
   label: string;
   /** Hash-Route zum Bearbeiten */
   route: string;
@@ -55,7 +55,8 @@ function visitFields(
     if (def.kind === 'list' && def.of && Array.isArray(value)) {
       value.forEach((item, i) => {
         if (!isPlainObject(item)) return;
-        const name = def.itemLabel && typeof item[def.itemLabel] === 'string' && item[def.itemLabel] ? `„${item[def.itemLabel]}"` : `Nr. ${i + 1}`;
+        const lbl = def.itemLabel ? labelOf(item[def.itemLabel]) : '';
+        const name = lbl ? `„${lbl}“` : `Nr. ${i + 1}`;
         visitFields(
           def.of as AdminFieldDef[],
           item,
@@ -85,7 +86,7 @@ function guessDefs(obj: Record<string, unknown>): AdminFieldDef[] {
 }
 
 export function pageLabel(p: PageDoc): string {
-  return `Seite „${p.title || p.id}"`;
+  return `Seite „${p.title || p.id}“`;
 }
 
 /** Alle Felder des Dokuments (Seiten/SEO, Navigation, Header & Footer, Einstellungen, Sammlungen) */
@@ -143,7 +144,8 @@ export function walkDoc(doc: SiteDoc, visit: (v: FieldVisit) => void): void {
     if (def.shape === 'list' && Array.isArray(value)) {
       value.forEach((item, i) => {
         if (!isPlainObject(item)) return;
-        const nm = def.itemLabel && item[def.itemLabel] ? `„${String(item[def.itemLabel])}"` : `Nr. ${i + 1}`;
+        const lbl = def.itemLabel ? labelOf(item[def.itemLabel]) : '';
+        const nm = lbl ? `„${lbl}“` : `Nr. ${i + 1}`;
         visitFields(def.fields, item, { label: `${def.label} ${nm}`, route, path: ['collections', name, i] }, visit);
       });
     } else if (def.shape === 'object' && isPlainObject(value)) {
@@ -266,7 +268,7 @@ export function checkHref(href: string, doc: SiteDoc, paths?: Set<string>): Href
   return { level: 'error', message: 'Unbekanntes Linkziel' };
 }
 
-/** Linkziel menschenlesbar: „Seite: Besuch (/besuch)" */
+/** Linkziel menschenlesbar: „Seite: Besuch (/besuch)“ */
 export function describeHref(href: string, doc: SiteDoc): string {
   const h = (href ?? '').trim();
   if (!h) return 'kein Ziel';
@@ -275,8 +277,8 @@ export function describeHref(href: string, doc: SiteDoc): string {
   if (h.startsWith('page:')) {
     const [id, anchor] = h.slice(5).split('#');
     const page = doc.pages.find((p) => p.id === id);
-    if (!page) return `Seite „${id}" (fehlt)`;
-    return `Seite „${page.title}" (${pagePath(page)}${anchor ? `#${anchor}` : ''})`;
+    if (!page) return `Seite „${id}“ (fehlt)`;
+    return `Seite „${page.title}“ (${pagePath(page)}${anchor ? `#${anchor}` : ''})`;
   }
   if (h.startsWith('mailto:')) return `E-Mail an ${h.slice(7)}`;
   if (h.startsWith('tel:')) return `Anruf: ${h.slice(4)}`;

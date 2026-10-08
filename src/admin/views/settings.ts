@@ -1,7 +1,7 @@
 /** Einstellungen: Stammdaten (ersetzen src/data/site.json) inkl. Öffnungszeiten-Editor mit Ausnahmen. */
 import type { Settings, WeekKey } from '../../cms/types';
 import { SETTINGS_GROUPS, WEEKDAYS } from '../defs';
-import { h, domId, icon } from '../dom';
+import { h, domId, icon, setChildren } from '../dom';
 import { renderFields, refreshErrors } from '../fields';
 import { store } from '../state';
 import { btn, card, cardTitle, confirmDialog, editable, iconBtn, pageHeader } from '../ui';
@@ -13,7 +13,7 @@ type Span = [string, string];
 function spanEditor(spans: Span[], path: string, onChange: () => void, label: string): HTMLElement {
   const box = h('div', { class: 'ad-spans' });
   const render = () => {
-    box.replaceChildren(
+    setChildren(box, 
       ...spans.map((sp, i) => {
         const fromId = domId();
         const toId = domId();
@@ -99,7 +99,7 @@ function hoursEditor(settings: Settings): HTMLElement {
   const today = new Date().toISOString().slice(0, 10);
   const renderEx = () => {
     const list = oh.exceptions;
-    exBox.replaceChildren(
+    setChildren(exBox, 
       ...list.map((ex, i) => {
         ex.hours ??= [];
         const dateId = domId();
@@ -181,7 +181,6 @@ function hoursEditor(settings: Settings): HTMLElement {
     refreshErrors(exBox);
   };
   renderEx();
-  void renderEx;
   return h(
     'div',
     { class: 'ad-hours' },
@@ -191,7 +190,7 @@ function hoursEditor(settings: Settings): HTMLElement {
     h('h3', { class: 'ad-h3' }, 'Ausnahmen (Feiertage, Urlaub, Sonderöffnungen)'),
     h('p', { class: 'ad-help' }, 'Gilt nur an diesem Datum und hat Vorrang vor der regulären Woche.'),
     exBox,
-    h('p', { class: 'ad-help' }, icon('help'), ' Die Öffnungszeiten erscheinen im Footer, auf der Besuchsseite, im „Jetzt geöffnet"-Hinweis und bei Google.'),
+    h('p', { class: 'ad-help' }, icon('help'), ' Die Öffnungszeiten erscheinen im Footer, auf der Besuchsseite, im „Jetzt geöffnet“-Hinweis und bei Google.'),
   );
 }
 

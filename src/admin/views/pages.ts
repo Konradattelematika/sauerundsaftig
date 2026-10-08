@@ -1,8 +1,8 @@
 /** Seitenverwaltung: Liste, neue Seite, duplizieren, aktivieren/deaktivieren, löschen, Seiteneinstellungen (inkl. SEO). */
-import type { PageDoc, Section } from '../../cms/types';
+import type { NavItem, PageDoc, Section } from '../../cms/types';
 import { previewUrl } from '../api';
-import { allowedOn, allowedSectionTypes, sectionDef, SECTION_DEFS } from '../defs';
-import { h, icon, domId, type Child } from '../dom';
+import { allowedOn, sectionDef, SECTION_DEFS } from '../defs';
+import { h, icon, domId, setChildren, type Child } from '../dom';
 import { renderField, renderFields, refreshErrors } from '../fields';
 import { pagePath } from '../rich';
 import { flatNav, pageReferences } from '../scan';
@@ -75,7 +75,7 @@ export function pagePreviewPath(p: PageDoc): string {
   return pagePath(p);
 }
 
-/** Adresse beim Laden (für den Hinweis „Weiterleitung wird angelegt") */
+/** Adresse beim Laden (für den Hinweis „Weiterleitung wird angelegt“) */
 const initialSlugs = new Map<string, string>();
 store.addEventListener('doc', () => {
   initialSlugs.clear();
@@ -147,7 +147,7 @@ export async function newPageDialog(): Promise<void> {
       slugMsg,
     ),
     generic.length ? startBox : notice('warn', h('p', null, 'Es gibt noch keine Sektionstypen für neue Seiten.')),
-    h('p', { class: 'ad-help' }, 'Die Seite geht erst mit dem nächsten „Veröffentlichen" online. Du kannst sie vorher deaktivieren.'),
+    h('p', { class: 'ad-help' }, 'Die Seite geht erst mit dem nächsten „Veröffentlichen“ online. Du kannst sie vorher deaktivieren.'),
   );
   const create = btn('Seite anlegen', { kind: 'primary', icon: 'plus' });
   d.footer.append(btn('Abbrechen', { kind: 'quiet', onClick: () => d.close() }), create);
@@ -183,7 +183,7 @@ export async function newPageDialog(): Promise<void> {
     store.doc.pages.push(page);
     store.change({ structural: true });
     d.close();
-    toast(`Seite „${t}" angelegt.`, 'ok');
+    toast(`Seite „${t}“ angelegt.`, 'ok');
     go(`#/seiten/${page.id}`);
   });
 }
@@ -191,8 +191,9 @@ export async function newPageDialog(): Promise<void> {
 export function duplicatePage(src: PageDoc): void {
   const copy = clone(src);
   copy.id = uniqueId(`${src.id}-kopie`, store.doc.pages.map((p) => p.id));
-  let s = `${src.slug.replace(/\/\*$/, '') || 'start'}-kopie`;
-  for (let i = 2; store.doc.pages.some((p) => p.slug === s); i++) s = `${src.slug || 'start'}-kopie-${i}`;
+  const base = `${src.slug.replace(/\/\*$/, '') || 'start'}-kopie`;
+  let s = base;
+  for (let i = 2; store.doc.pages.some((p) => p.slug === s); i++) s = `${base}-${i}`;
   copy.slug = s;
   copy.title = `${src.title} (Kopie)`;
   copy.kind = 'custom';
@@ -223,7 +224,7 @@ export function canToggle(p: PageDoc): boolean {
 export function togglePage(p: PageDoc): void {
   p.status = p.status === 'published' ? 'disabled' : 'published';
   store.change({ structural: true });
-  toast(p.status === 'published' ? `„${p.title}" ist wieder aktiv (nach dem Veröffentlichen online).` : `„${p.title}" ist deaktiviert (nach dem Veröffentlichen offline).`, 'info');
+  toast(p.status === 'published' ? `„${p.title}“ ist wieder aktiv (nach dem Veröffentlichen online).` : `„${p.title}“ ist deaktiviert (nach dem Veröffentlichen offline).`, 'info');
 }
 
 export async function deletePage(p: PageDoc): Promise<boolean> {
@@ -233,16 +234,16 @@ export async function deletePage(p: PageDoc): Promise<boolean> {
   const removeNavId = domId();
   const removeNav = h('input', { id: removeNavId, type: 'checkbox', checked: true });
   const ok = await confirmDialog({
-    title: `Seite „${p.title}" löschen?`,
+    title: `Seite „${p.title}“ löschen?`,
     message: h(
       'div',
       null,
-      h('p', null, `Die Seite ${pagePath(p)} und ihr Inhalt werden aus dem Entwurf entfernt. Mit „Entwurf verwerfen" oder unter „Versionen" lässt sich das rückgängig machen.`),
+      h('p', null, `Die Seite ${pagePath(p)} und ihr Inhalt werden aus dem Entwurf entfernt. Mit „Entwurf verwerfen“ oder unter „Versionen“ lässt sich das rückgängig machen.`),
       refs.length
         ? notice(
             'warn',
             h('p', null, `${refs.length} Link${refs.length === 1 ? ' zeigt' : 's zeigen'} auf diese Seite und funktionieren danach nicht mehr:`),
-            h('ul', { class: 'ad-issuelist' }, ...refs.slice(0, 10).map((r) => h('li', null, r.loc.label, r.label ? ` („${truncate(r.label, 40)}")` : ''))),
+            h('ul', { class: 'ad-issuelist' }, ...refs.slice(0, 10).map((r) => h('li', null, r.loc.label, r.label ? ` („${truncate(r.label, 40)}“)` : ''))),
           )
         : h('p', { class: 'ad-help' }, 'Keine anderen Stellen verlinken auf diese Seite.'),
       navRefs.length ? h('label', { class: 'ad-check', for: removeNavId }, removeNav, ` Die ${navRefs.length} Menüpunkt${navRefs.length === 1 ? '' : 'e'} in der Navigation mitlöschen`) : null,
@@ -253,18 +254,18 @@ export async function deletePage(p: PageDoc): Promise<boolean> {
   if (!ok) return false;
   store.doc.pages = store.doc.pages.filter((x) => x.id !== p.id);
   if (navRefs.length && removeNav.checked) {
-    const strip = (items: typeof store.doc.navigation.main) =>
+    const strip = (items: NavItem[]): NavItem[] =>
       items.filter((n) => !navRefs.includes(n)).map((n) => (n.children ? { ...n, children: strip(n.children) } : n));
     for (const k of ['main', 'footer', 'legal', 'social'] as const) store.doc.navigation[k] = strip(store.doc.navigation[k]);
   }
   store.change({ structural: true });
-  toast(`Seite „${p.title}" gelöscht.`, 'ok');
+  toast(`Seite „${p.title}“ gelöscht.`, 'ok');
   return true;
 }
 
 /* ------------------------------------------------------------------ Liste ----------------------- */
 
-export function renderPages(root: HTMLElement): () => void {
+export function renderPages(root: HTMLElement, route?: Route): () => void {
   const canEdit = store.canEdit;
   const list = h('div', { class: 'ad-table ad-table--pages', role: 'table', 'aria-label': 'Seiten' });
   const render = () => {
@@ -274,7 +275,7 @@ export function renderPages(root: HTMLElement): () => void {
       const more = h(
         'details',
         { class: 'ad-more ad-more--row' },
-        h('summary', { class: 'ad-iconbtn', 'aria-label': `Weitere Aktionen für „${p.title}"`, title: 'Weitere Aktionen' }, icon('more')),
+        h('summary', { class: 'ad-iconbtn', 'aria-label': `Weitere Aktionen für „${p.title}“`, title: 'Weitere Aktionen' }, icon('more')),
         h(
           'div',
           { class: 'ad-more__menu', role: 'menu' },
@@ -336,14 +337,27 @@ export function renderPages(root: HTMLElement): () => void {
       { class: 'ad-viewpad' },
       pageHeader(
         'Seiten',
-        'Alle Seiten der Website. „Bearbeiten" öffnet den Seiteneditor mit Live-Vorschau; Adresse, Titel und SEO findest du unter „Einstellungen & SEO".',
+        'Alle Seiten der Website. „Bearbeiten“ öffnet den Seiteneditor mit Live-Vorschau; Adresse, Titel und SEO findest du unter „Einstellungen & SEO“.',
         canEdit ? btn('Neue Seite', { kind: 'primary', icon: 'plus', onClick: () => void newPageDialog() }) : null,
       ),
       list,
     ),
   );
-  const onIssues = () => render();
+  // Nach Prüfungen nur neu aufbauen, wenn sich Fehlerzahlen geändert haben (Fokus bleibt sonst erhalten)
+  const signature = () => store.doc.pages.map((_, i) => store.issues.filter((x) => x.level === 'error' && x.path.startsWith(`pages.${i}.`)).length).join(',');
+  let lastSig = signature();
+  const onIssues = () => {
+    const sig = signature();
+    if (sig !== lastSig) {
+      lastSig = sig;
+      render();
+    }
+  };
   store.addEventListener('issues', onIssues);
+  if (route?.query.get('neu') === '1' && canEdit) {
+    history.replaceState(null, '', '#/seiten');
+    void newPageDialog();
+  }
   return () => store.removeEventListener('issues', onIssues);
 }
 
@@ -370,7 +384,7 @@ export function renderPageSettings(root: HTMLElement, route: Route): void {
   const slugCheck = () => {
     const initial = initialSlugs.get(page.id) ?? page.slug;
     const prob = slugEditable ? slugProblem(slugInput.value, store.doc, page.id) : null;
-    slugMsg.replaceChildren(
+    setChildren(slugMsg, 
       prob ? h('p', { class: 'ad-err ad-err--error' }, icon('alert'), prob) : null,
       !prob && slugEditable && slugInput.value !== initial
         ? notice('info', h('p', null, `Neue Adresse: /${slugInput.value}. Beim Veröffentlichen wird automatisch eine Weiterleitung von /${initial} auf /${slugInput.value} angelegt — alte Links und Google-Einträge funktionieren weiter. Links innerhalb der Website passen sich von selbst an.`))
@@ -398,7 +412,7 @@ export function renderPageSettings(root: HTMLElement, route: Route): void {
         : page.slug === ''
           ? 'Die Startseite liegt immer unter sauerundsaftig.de/.'
           : page.template
-            ? 'Vorlage: für jede Karten-Kategorie entsteht eine eigene Seite. Die Adressen legst du bei der Kategorie fest (Bereich „Karte").'
+            ? 'Vorlage: für jede Karten-Kategorie entsteht eine eigene Seite. Die Adressen legst du bei der Kategorie fest (Bereich „Karte“).'
             : 'Systemseite — Adresse ist fest.',
     ),
     h('div', { class: 'ad-prefixed' }, h('span', { class: 'ad-prefixed__pre', 'aria-hidden': 'true' }, 'sauerundsaftig.de/'), slugInput, page.template ? h('span', { class: 'ad-prefixed__pre' }, '/<kategorie>') : null),
@@ -422,7 +436,7 @@ export function renderPageSettings(root: HTMLElement, route: Route): void {
   // Brotkrumen
   const crumbs = renderFields(
     [
-      { key: 'showBreadcrumbs', label: 'Brotkrumen-Navigation anzeigen („Start › Karte › Kuchen")', kind: 'boolean' },
+      { key: 'showBreadcrumbs', label: 'Brotkrumen-Navigation anzeigen („Start › Karte › Kuchen“)', kind: 'boolean' },
       { key: 'breadcrumb', label: 'Beschriftung in den Brotkrumen', kind: 'text', maxLength: 40, help: 'Leer = Titel der Seite.' },
     ],
     page as unknown as Record<string, unknown>,
@@ -490,7 +504,7 @@ export function renderPageSettings(root: HTMLElement, route: Route): void {
       { key: 'ogTitle', label: 'Titel beim Teilen (WhatsApp, Facebook …)', kind: 'text', maxLength: 90, help: 'Leer = Titel für Suchmaschinen.' },
       { key: 'ogDescription', label: 'Beschreibung beim Teilen', kind: 'textarea', maxLength: 200, help: 'Leer = Beschreibung für Suchmaschinen.' },
       { key: 'ogImage', label: 'Vorschaubild beim Teilen', kind: 'media', help: 'Leer = Standard-Vorschaubild (Bereich SEO). Ideal: Querformat.' },
-      { key: 'canonical', label: 'Kanonische Adresse (nur für Fachleute)', kind: 'text', input: 'url', help: 'Leer lassen = automatisch. Nur ausfüllen, wenn dieselben Inhalte unter einer anderen Adresse die „Hauptversion" sind.' },
+      { key: 'canonical', label: 'Kanonische Adresse (nur für Fachleute)', kind: 'text', input: 'url', help: 'Leer lassen = automatisch. Nur ausfüllen, wenn dieselben Inhalte unter einer anderen Adresse die „Hauptversion“ sind.' },
       { key: 'noindex', label: 'Nicht in Suchmaschinen anzeigen (noindex)', kind: 'boolean', help: 'Die Seite bleibt erreichbar, erscheint aber nicht bei Google und nicht in der Sitemap.' },
     ],
     seo,
@@ -516,12 +530,11 @@ export function renderPageSettings(root: HTMLElement, route: Route): void {
       editable(
         ro,
         card(cardTitle('Allgemein'), h('div', { class: 'ad-fields' }, titleField, slugField, statusField)),
-        card(cardTitle('Brotkrumen', 'Kleine Pfadangabe oben auf der Seite, z. B. „Start › Karte › Kuchen".'), crumbs),
+        card(cardTitle('Brotkrumen', 'Kleine Pfadangabe oben auf der Seite, z. B. „Start › Karte › Kuchen“.'), crumbs),
         card(cardTitle('Suchmaschinen & Teilen (SEO)'), seoTop, seoMore),
         danger.length ? card(cardTitle('Seite duplizieren oder löschen'), h('div', { class: 'ad-btnrow' }, ...danger)) : null,
       ),
     ),
   );
-  void allowedSectionTypes;
   refreshErrors(root);
 }

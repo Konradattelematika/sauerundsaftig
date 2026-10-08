@@ -106,7 +106,7 @@ export async function openPublishDialog(): Promise<void> {
   } else if (warnings.length) {
     d.body.append(notice('warn', h('p', null, `${warnings.length} Hinweis${warnings.length === 1 ? '' : 'e'} (z. B. fehlende SEO-Beschreibungen) — Veröffentlichen ist trotzdem möglich.`)));
   }
-  d.body.append(h('p', { class: 'ad-help' }, 'Vor dem Veröffentlichen wird der bisherige Stand als Version gesichert — du kannst ihn unter „Versionen" jederzeit zurückholen.'));
+  d.body.append(h('p', { class: 'ad-help' }, 'Vor dem Veröffentlichen wird der bisherige Stand als Version gesichert — du kannst ihn unter „Versionen“ jederzeit zurückholen.'));
 
   const go = btn('Jetzt veröffentlichen', { kind: 'accent', icon: 'send', disabled: errors.length > 0 || busy(store.live) });
   d.footer.append(btn('Abbrechen', { kind: 'quiet', onClick: () => d.close() }), go);
@@ -201,7 +201,7 @@ export async function discardDraft(): Promise<void> {
   }
 }
 
-/** „Vorschau ansehen": speichern, Vorschau-Build sicherstellen, Seite im Vorschau-Modus in neuem Tab öffnen */
+/** „Vorschau ansehen“: speichern, Vorschau-Build sicherstellen, Seite im Vorschau-Modus in neuem Tab öffnen */
 export async function openPreview(path = '/'): Promise<void> {
   // Fenster sofort öffnen (sonst blockiert der Browser das Popup nach dem Warten)
   const w = window.open('', '_blank');

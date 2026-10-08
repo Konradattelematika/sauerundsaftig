@@ -107,7 +107,7 @@ export function targetPicker(value: string, onChange: (href: string) => void, op
             ),
         );
         if (parsed.page && !doc.pages.some((p) => p.id === parsed.page))
-          sel.append(h('option', { value: parsed.page, selected: true }, `„${parsed.page}" (gibt es nicht mehr)`));
+          sel.append(h('option', { value: parsed.page, selected: true }, `„${parsed.page}“ (gibt es nicht mehr)`));
         sel.addEventListener('change', () => {
           parsed.page = sel.value;
           emit();

@@ -3,13 +3,13 @@
  * Vorschau, Veröffentlichen, Entwurf verwerfen), Hash-Router und Start. Bereiche: src/admin/views/*.
  */
 import { ApiError } from './api';
-import { h, icon, setChildren, type ICONS } from './dom';
+import { add, h, icon, setChildren, type ICONS } from './dom';
 import { refreshErrors } from './fields';
 import { discardDraft, openPreview, openPublishDialog } from './publish';
 import { store } from './state';
 import { alertDialog, btn, iconBtn, openDialog, toast } from './ui';
 import { formatDateTime, relativeTime } from './util';
-import { go, parseHash, type Route, type View } from './view';
+import { parseHash, type Route, type View } from './view';
 import { describePath } from './where';
 import { renderOverview } from './views/overview';
 import { renderPages, renderPageSettings } from './views/pages';
@@ -158,7 +158,8 @@ function buildShell(): void {
     }),
     titleEl,
     statusEl,
-    h('div', { class: 'ad-top__actions' }, issuesBtn, previewBtn, store.can('cms.publish') ? publishBtn : null, more),
+    h('div', { class: 'ad-top__actions' }, issuesBtn, previewBtn, store.can('cms.publish') ? publishBtn : null),
+    more,
   );
   top.children[0].classList.add('ad-top__menu');
   top.children[1].classList.add('ad-top__rail');
@@ -262,7 +263,7 @@ function openIssues(): void {
           ),
         )
       : null;
-  d.body.append(
+  add(d.body, 
     h('p', { class: 'ad-help' }, 'Fehler verhindern das Veröffentlichen. Hinweise sind Empfehlungen (z. B. für Google). Klick auf eine Stelle springt dorthin.'),
     list(`Fehler (${errors.length})`, errors, 'error'),
     list(`Hinweise (${warns.length})`, warns, 'warn'),
@@ -398,4 +399,3 @@ async function start(): Promise<void> {
 }
 
 void start();
-void go;

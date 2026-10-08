@@ -2,7 +2,7 @@
 import type { SiteDoc } from '../cms/types';
 import { COLLECTION_DEFS, FOOTER_DEFS, HEADER_DEFS, NAV_DEFS, SETTINGS_GROUPS, STICKY_DEF, sectionDef, type AdminFieldDef } from './defs';
 import { COLLECTION_ROUTES } from './scan';
-import { isPlainObject, parsePath, type PathSeg } from './util';
+import { isPlainObject, labelOf, parsePath, type PathSeg } from './util';
 
 const PAGE_KEYS: Record<string, string> = {
   title: 'Seitentitel',
@@ -43,7 +43,8 @@ function fieldLabels(defs: AdminFieldDef[] | undefined, rest: PathSeg[], value: 
     if (def.kind === 'list' && typeof rest[i + 1] === 'number') {
       const idx = rest[i + 1] as number;
       const item = Array.isArray(next) ? next[idx] : undefined;
-      const name = def.itemLabel && isPlainObject(item) && item[def.itemLabel] ? `„${String(item[def.itemLabel])}"` : `Nr. ${idx + 1}`;
+      const lbl = def.itemLabel && isPlainObject(item) ? labelOf(item[def.itemLabel]) : '';
+      const name = lbl ? `„${lbl}“` : `Nr. ${idx + 1}`;
       label = `${def.label} ${name}`;
     }
     out.push(label);
@@ -64,7 +65,7 @@ export function describePath(doc: SiteDoc, path: string | PathSeg[]): Where {
   if (a === 'pages' && typeof b === 'number') {
     const page = doc.pages[b];
     if (!page) return { label: 'Seiten', route: '#/seiten' };
-    const base = `Seite „${page.title}"`;
+    const base = `Seite „${page.title}“`;
     if (c === 'sections' && typeof d === 'number') {
       const s = page.sections[d];
       const def = s ? sectionDef(s.type) : undefined;
@@ -72,7 +73,7 @@ export function describePath(doc: SiteDoc, path: string | PathSeg[]): Where {
       const labels = s ? fieldLabels(def?.fields, rest, s.fields) : [];
       const fieldPath = rest.join('.');
       return {
-        label: [base, `Sektion „${def?.label ?? s?.type ?? d}"`, ...labels].join(' › '),
+        label: [base, `Sektion „${def?.label ?? s?.type ?? d}“`, ...labels].join(' › '),
         route: `#/seiten/${page.id}?sektion=${encodeURIComponent(s?.id ?? '')}${fieldPath ? `&feld=${encodeURIComponent(fieldPath)}` : ''}`,
       };
     }

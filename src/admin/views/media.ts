@@ -1,7 +1,7 @@
 /** Medienbibliothek: Raster, Upload (Datei/Drag & Drop), Alt-Text, Ersetzen, Löschen mit Verwendungsnachweis. */
 import type { MediaItem } from '../../cms/types';
 import { api, ApiError, mediaUrl } from '../api';
-import { h, domId } from '../dom';
+import { add, h, domId } from '../dom';
 import { dropZone, kindLabel, mediaVersion, thumb, uploadFiles, ACCEPT } from '../mediafield';
 import { mediaUsageMap, type Loc } from '../scan';
 import { store } from '../state';
@@ -128,7 +128,7 @@ export function renderMedia(root: HTMLElement, route: Route): () => void {
           ),
           h('h3', { class: 'ad-h3' }, `Wo verwendet (${usage.length})`),
           usageList(usage, () => d.close()),
-          m.kind === 'placeholder' && !m.replacedBy ? notice('warn', h('p', null, 'Das ist ein Platzhalterbild. Mit „Ersetzen" lädst du ein echtes Foto hoch — es erscheint dann an allen Stellen.')) : null,
+          m.kind === 'placeholder' && !m.replacedBy ? notice('warn', h('p', null, 'Das ist ein Platzhalterbild. Mit „Ersetzen“ lädst du ein echtes Foto hoch — es erscheint dann an allen Stellen.')) : null,
           progress,
           replaceInput,
         ),
@@ -167,7 +167,7 @@ export function renderMedia(root: HTMLElement, route: Route): () => void {
             },
           })
         : null;
-    d.footer.append(
+    add(d.footer, 
       del ?? h('span'),
       canManage ? btn(m.kind === 'upload' ? 'Datei ersetzen' : 'Durch eigenes Foto ersetzen', { kind: 'secondary', icon: 'upload', onClick: () => replaceInput.click() }) : null,
       btn('Fertig', { kind: 'primary', onClick: () => d.close() }),

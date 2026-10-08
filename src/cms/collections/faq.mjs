@@ -1,4 +1,4 @@
-/** Sammlung „FAQ" (collections.faq) — Konvention s. menu.mjs. */
+/** Sammlung „FAQ“ (collections.faq) — Konvention s. menu.mjs. */
 export default {
   name: 'faq',
   label: 'FAQ',

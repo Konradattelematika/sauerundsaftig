@@ -6,6 +6,7 @@ import { checkHref, collectLinks, describeHref, knownPaths, type LinkUse } from 
 import { store } from '../state';
 import { badge, btn, emptyState, pageHeader } from '../ui';
 import { truncate } from '../util';
+import { fillTokens } from '../rich';
 import type { Route } from '../view';
 
 export function renderLinks(root: HTMLElement, route: Route): () => void {
@@ -75,14 +76,14 @@ export function renderLinks(root: HTMLElement, route: Route): () => void {
         return h(
           'div',
           { class: `ad-row${check?.level === 'error' ? ' is-error' : ''}`, role: 'row' },
-          h('div', { class: 'ad-cell ad-cell--main', role: 'cell' }, h('span', { class: 'ad-row__title' }, l.label ? truncate(l.label, 50) : '(ohne Text)'), l.kind === 'rich' ? h('span', { class: 'ad-row__sub' }, 'Link im Fließtext') : null),
+          h('div', { class: 'ad-cell ad-cell--main', role: 'cell' }, h('span', { class: 'ad-row__title' }, l.label ? truncate(fillTokens(l.label, store.doc.settings), 50) : '(ohne Text)'), l.kind === 'rich' ? h('span', { class: 'ad-row__sub' }, 'Link im Fließtext') : null),
           h(
             'div',
             { class: 'ad-cell', role: 'cell' },
             h('span', null, describeHref(l.href, store.doc)),
             check ? h('span', { class: 'ad-row__sub' }, badge(check.level === 'error' ? 'Fehler' : 'Hinweis', check.level === 'error' ? 'error' : 'warn'), ` ${check.message}`) : null,
           ),
-          h('div', { class: 'ad-cell', role: 'cell' }, h('a', { href: l.loc.route, class: 'ad-row__sub' }, l.loc.label)),
+          h('div', { class: 'ad-cell', role: 'cell' }, h('a', { href: l.loc.route, class: 'ad-row__where' }, l.loc.label)),
           h('div', { class: 'ad-cell ad-cell--actions', role: 'cell' }, editBtn),
           editor,
         );
@@ -96,7 +97,7 @@ export function renderLinks(root: HTMLElement, route: Route): () => void {
     h(
       'div',
       { class: 'ad-viewpad' },
-      pageHeader('Buttons & Links', 'Alle Buttons, Menüpunkte und Links der Website. Ziele, die ins Leere zeigen, sind rot markiert. „Ändern" bearbeitet Text und Ziel direkt hier.'),
+      pageHeader('Buttons & Links', 'Alle Buttons, Menüpunkte und Links der Website. Ziele, die ins Leere zeigen, sind rot markiert. „Ändern“ bearbeitet Text und Ziel direkt hier.'),
       h('div', { class: 'ad-toolbar' }, h('label', { class: 'ad-check', for: probId }, prob, ' Nur Probleme zeigen'), search),
       summary,
       table,

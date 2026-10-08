@@ -17,6 +17,8 @@ export interface AdminFieldDef extends FieldDef {
   width?: 'half' | 'third';
   /** list: Einträge brauchen eine eindeutige `id` (wird beim Hinzufügen erzeugt) */
   itemIds?: boolean;
+  /** list: Beschriftung des Hinzufügen-Knopfs (Standard „Eintrag hinzufügen“) */
+  addLabel?: string;
 }
 
 export interface AdminSectionDefinition extends SectionDefinition {
@@ -93,7 +95,7 @@ export function emptyItem(defs: AdminFieldDef[] | undefined): Record<string, unk
   for (const d of defs ?? []) {
     const v = emptyValue(d);
     if (v !== undefined) o[d.key] = v;
-    if (d.kind === 'select' && d.options?.length) o[d.key] = d.options[0].value;
+    if (d.kind === 'select' && d.required && d.options?.length) o[d.key] = d.options[0].value;
   }
   return o;
 }
@@ -103,8 +105,8 @@ export function emptyItem(defs: AdminFieldDef[] | undefined): Record<string, unk
 const navItemFields = (withChildren: boolean): AdminFieldDef[] => [
   { key: 'label', label: 'Beschriftung', kind: 'text', required: true, maxLength: 60 },
   { key: 'href', label: 'Ziel', kind: 'href', required: true },
-  { key: 'newTab', label: 'In neuem Tab öffnen', kind: 'boolean' },
   { key: 'visible', label: 'Sichtbar', kind: 'boolean' },
+  { key: 'newTab', label: 'In neuem Tab öffnen', kind: 'boolean' },
   ...(withChildren
     ? [
         {
@@ -113,6 +115,7 @@ const navItemFields = (withChildren: boolean): AdminFieldDef[] => [
           kind: 'list',
           itemLabel: 'label',
           itemIds: true,
+          addLabel: 'Unterpunkt hinzufügen',
           max: 12,
           help: 'Optional: Einträge, die beim Darüberfahren bzw. Antippen aufklappen.',
           of: navItemFields(false),
@@ -125,22 +128,22 @@ export const NAV_DEFS: { key: 'main' | 'footer' | 'legal' | 'social'; def: Admin
   {
     key: 'main',
     intro: 'Die Menüpunkte oben im Kopf der Website (am Handy im aufklappbaren Menü). Einträge können ein Untermenü haben.',
-    def: { key: 'main', label: 'Hauptnavigation', kind: 'list', itemLabel: 'label', itemIds: true, max: 9, of: navItemFields(true) },
+    def: { key: 'main', label: 'Hauptnavigation', kind: 'list', itemLabel: 'label', itemIds: true, addLabel: 'Menüpunkt hinzufügen', max: 9, of: navItemFields(true) },
   },
   {
     key: 'footer',
-    intro: 'Die Liste „Mehr" im Fuß der Website.',
-    def: { key: 'footer', label: 'Footer-Links', kind: 'list', itemLabel: 'label', itemIds: true, max: 16, of: navItemFields(false) },
+    intro: 'Die Liste „Mehr“ im Fuß der Website.',
+    def: { key: 'footer', label: 'Footer-Links', kind: 'list', itemLabel: 'label', itemIds: true, addLabel: 'Link hinzufügen', max: 16, of: navItemFields(false) },
   },
   {
     key: 'legal',
     intro: 'Impressum, Datenschutz und andere Pflichtangaben ganz unten.',
-    def: { key: 'legal', label: 'Rechtliches', kind: 'list', itemLabel: 'label', itemIds: true, max: 6, of: navItemFields(false) },
+    def: { key: 'legal', label: 'Rechtliches', kind: 'list', itemLabel: 'label', itemIds: true, addLabel: 'Link hinzufügen', max: 6, of: navItemFields(false) },
   },
   {
     key: 'social',
     intro: 'Links zu Instagram & Co.',
-    def: { key: 'social', label: 'Social Media', kind: 'list', itemLabel: 'label', itemIds: true, max: 6, of: navItemFields(false) },
+    def: { key: 'social', label: 'Social Media', kind: 'list', itemLabel: 'label', itemIds: true, addLabel: 'Profil hinzufügen', max: 6, of: navItemFields(false) },
   },
 ];
 
@@ -152,16 +155,16 @@ export const NAV_CTA_DEF: AdminFieldDef = {
 };
 
 export const HEADER_DEFS: AdminFieldDef[] = [
-  { key: 'logo', label: 'Logo', kind: 'media', help: 'Leer lassen = Standard-Wortmarke „sauer & saftig".' },
-  { key: 'showOpeningStatus', label: 'Öffnungsstatus im Kopf anzeigen („Jetzt geöffnet …")', kind: 'boolean' },
+  { key: 'logo', label: 'Logo', kind: 'media', help: 'Leer lassen = Standard-Wortmarke „sauer & saftig“.' },
+  { key: 'showOpeningStatus', label: 'Öffnungsstatus im Kopf anzeigen („Jetzt geöffnet …“)', kind: 'boolean' },
 ];
 
 export const FOOTER_DEFS: AdminFieldDef[] = [
-  { key: 'claim', label: 'Leitsatz', kind: 'text', maxLength: 80, help: 'Leer = Leitsatz aus den Einstellungen.' },
-  { key: 'text', label: 'Kurztext', kind: 'textarea', maxLength: 300, help: 'Leer = Standardtext.' },
-  { key: 'navHeading', label: 'Überschrift der Linkliste', kind: 'text', maxLength: 40 },
-  { key: 'hoursHeading', label: 'Überschrift der Öffnungszeiten', kind: 'text', maxLength: 40 },
-  { key: 'copyright', label: 'Copyright-Zeile', kind: 'text', maxLength: 160, help: '{jahr} wird durch das aktuelle Jahr ersetzt, {stadt} durch den Ort.' },
+  { key: 'claim', label: 'Leitsatz', kind: 'text', maxLength: 80, help: 'Groß unter dem Logo. Leer = wird nicht angezeigt.' },
+  { key: 'text', label: 'Kurztext', kind: 'textarea', maxLength: 300, help: 'Leer = wird nicht angezeigt.' },
+  { key: 'navHeading', label: 'Überschrift der Linkliste', kind: 'text', maxLength: 40, help: 'Leer = keine Überschrift.' },
+  { key: 'hoursHeading', label: 'Überschrift der Öffnungszeiten', kind: 'text', maxLength: 40, help: 'Leer = keine Überschrift.' },
+  { key: 'copyright', label: 'Copyright-Zeile', kind: 'text', maxLength: 160, help: '{jahr} = aktuelles Jahr, {stadt} = Ort aus den Einstellungen.' },
 ];
 
 export const STICKY_DEF: AdminFieldDef = {
@@ -170,6 +173,7 @@ export const STICKY_DEF: AdminFieldDef = {
   kind: 'list',
   itemLabel: 'label',
   itemIds: true,
+  addLabel: 'Schnellzugriff hinzufügen',
   max: 4,
   help: 'Die Schnellzugriffe am unteren Bildschirmrand auf dem Handy — höchstens 4.',
   of: [
@@ -177,6 +181,7 @@ export const STICKY_DEF: AdminFieldDef = {
       key: 'icon',
       label: 'Symbol',
       kind: 'select',
+      required: true,
       options: [
         { value: 'menu', label: 'Karte (Buch)' },
         { value: 'phone', label: 'Telefon' },
@@ -186,6 +191,16 @@ export const STICKY_DEF: AdminFieldDef = {
     },
     { key: 'label', label: 'Beschriftung', kind: 'text', required: true, maxLength: 20 },
     { key: 'href', label: 'Ziel', kind: 'href', required: true },
+    {
+      key: 'variant',
+      label: 'Hervorhebung',
+      kind: 'select',
+      options: [
+        { value: 'accent', label: 'Hervorgehoben (Sanddorn-Hintergrund)' },
+      ],
+      placeholder: 'Normal',
+      help: 'Höchstens einen Eintrag hervorheben (z. B. Vorbestellen).',
+    },
     { key: 'newTab', label: 'In neuem Tab öffnen', kind: 'boolean' },
     { key: 'visible', label: 'Sichtbar', kind: 'boolean' },
   ],
@@ -200,7 +215,7 @@ export const SETTINGS_GROUPS: { title: string; intro?: string; path: string[]; f
       { key: 'shortName', label: 'Kurzname', kind: 'text', maxLength: 30, help: 'Für knappe Stellen (z. B. App-Symbol).' },
       { key: 'claim', label: 'Leitsatz', kind: 'text', maxLength: 80 },
       { key: 'subline', label: 'Unterzeile', kind: 'textarea', maxLength: 200 },
-      { key: 'type', label: 'Art des Betriebs', kind: 'text', maxLength: 60, help: 'z. B. „Café mit eigener Backstube".' },
+      { key: 'type', label: 'Art des Betriebs', kind: 'text', maxLength: 60, help: 'z. B. „Café mit eigener Backstube“.' },
     ],
   },
   {
@@ -229,8 +244,8 @@ export const SETTINGS_GROUPS: { title: string; intro?: string; path: string[]; f
     path: [],
     fields: [
       { key: 'breakfastUntil', label: 'Frühstück bis (Uhrzeit)', kind: 'text', input: 'time', width: 'third' },
-      { key: 'payment', label: 'Bezahlung', kind: 'text', maxLength: 60, help: 'z. B. „bar oder Karte".' },
-      { key: 'dogs', label: 'Hunde', kind: 'text', maxLength: 60, help: 'z. B. „an der Leine erlaubt".' },
+      { key: 'payment', label: 'Bezahlung', kind: 'text', maxLength: 60, help: 'z. B. „bar oder Karte“.' },
+      { key: 'dogs', label: 'Hunde', kind: 'text', maxLength: 60, help: 'z. B. „an der Leine erlaubt“.' },
       { key: 'accessible', label: 'Barrierefrei zugänglich', kind: 'boolean' },
       { key: 'priceRange', label: 'Preisniveau', kind: 'select', options: [{ value: '€', label: '€ (günstig)' }, { value: '€€', label: '€€ (mittel)' }, { value: '€€€', label: '€€€ (gehoben)' }] },
     ],

@@ -3,8 +3,14 @@ import { COLLECTION_DEFS, type AdminFieldDef } from '../defs';
 import { h } from '../dom';
 import { renderField, renderFields, refreshErrors } from '../fields';
 import { store } from '../state';
-import { btn, card, editable, emptyState, notice, pageHeader, toast } from '../ui';
+import { btn, card, editable, emptyState, pageHeader, toast } from '../ui';
 import type { Route } from '../view';
+
+const ADD_LABELS: Record<string, string> = {
+  menu: 'Kategorie hinzufügen',
+  faq: 'Frage hinzufügen',
+  testimonials: 'Gästestimme hinzufügen',
+};
 
 const PAGE_FOR: Record<string, string[]> = {
   menu: ['karte', 'karte-kategorie'],
@@ -40,6 +46,7 @@ export function renderCollection(root: HTMLElement, _route: Route, name: string)
     const listDef: AdminFieldDef = {
       key: name,
       label: name === 'menu' ? 'Kategorien' : 'Einträge',
+      addLabel: ADD_LABELS[name],
       kind: 'list',
       itemLabel: def.itemLabel,
       itemIds: name !== 'menu',
@@ -82,7 +89,6 @@ export function renderCollection(root: HTMLElement, _route: Route, name: string)
       { class: 'ad-viewpad ad-viewpad--narrow' },
       pageHeader(def.label, def.description),
       whereShown(name),
-      name === 'menu' ? notice('info', h('p', null, 'Jede Kategorie bekommt automatisch eine eigene Seite unter /karte/<adresse>. Reihenfolge der Kategorien = Reihenfolge auf der Website.')) : null,
       editable(ro, card(body)),
     ),
   );

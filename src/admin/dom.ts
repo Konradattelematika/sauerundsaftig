@@ -38,6 +38,11 @@ export function setChildren(el: Element, ...children: Child[]): void {
   append(el, children);
 }
 
+/** Kinder anhängen (null/false werden übersprungen) */
+export function add(el: Node, ...children: Child[]): void {
+  append(el, children);
+}
+
 export function append(el: Node, children: Child[]): void {
   for (const c of children) {
     if (c === null || c === undefined || c === false) continue;

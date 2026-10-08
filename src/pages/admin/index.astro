@@ -1,0 +1,38 @@
+---
+/**
+ * Admin-Dashboard /admin (docs/CMS-PLAN.md §8) — Single-Page-App in Vanilla-TS (src/admin/**), Hash-Routen.
+ * Der Server liefert diese Seite nur mit gültiger Session und Recht cms.view aus (dist/admin/index.html).
+ * Design: Variante A „Krume" (Tokens aus a.css), eigene Komponenten-Klassen in src/admin/admin.css.
+ */
+import '../../styles/a.css';
+import '../../admin/admin.css';
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Inhalte · Sauer & Saftig</title>
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#FDF9F0" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/brand/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/favicon-180.png" />
+  </head>
+  <body class="ad-body">
+    <a class="skip-link" href="#ad-view">Zum Inhalt springen</a>
+    <div id="ad-app" class="ad-app">
+      <div class="ad-boot" role="status">
+        <img src="/brand/logo-lockup-ink-640.png" alt="Sauer & Saftig" width="120" height="87" />
+        <p><span class="ad-spinner" aria-hidden="true"></span> Lade die Inhaltsverwaltung …</p>
+      </div>
+    </div>
+    <noscript>
+      <p class="ad-boot">Die Inhaltsverwaltung braucht JavaScript. Bitte aktiviere es in deinem Browser.</p>
+    </noscript>
+    <script>
+      import '../../admin/main';
+    </script>
+  </body>
+</html>

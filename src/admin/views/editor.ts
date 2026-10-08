@@ -9,7 +9,7 @@
 import type { PageDoc, Section } from '../../cms/types';
 import { previewUrl } from '../api';
 import { allowedSectionTypes, sectionDef } from '../defs';
-import { h, icon, domId } from '../dom';
+import { add, h, icon, domId } from '../dom';
 import { focusFieldPath, refreshErrors, renderFields } from '../fields';
 import { store, type LiveMsg } from '../state';
 import { badge, btn, confirmDialog, emptyState, iconBtn, linkBtn, notice, openDialog, toast } from '../ui';
@@ -24,7 +24,23 @@ const DEVICES = [
 ];
 const LAZY_PREVIEW_MS = 15_000;
 
-/** Vorschaupfad, falls die Route eine Seite betrifft (für „Vorschau ansehen" in der Kopfleiste) */
+/**
+ * Adressen, unter denen eine Seite in einem fertigen Build liegt (ungefähr: Stand beim Laden bzw. beim
+ * letzten erfolgreichen Vorschau-Build). Neue oder umbenannte Seiten zeigt das iframe erst nach dem
+ * nächsten Vorschau-Build — vorher käme nur die 404-Seite.
+ */
+const builtSlugs = new Map<string, string>();
+const rememberBuilt = () => {
+  builtSlugs.clear();
+  for (const p of store.doc.pages) if (p.status === 'published') builtSlugs.set(p.id, p.slug);
+};
+store.addEventListener('doc', rememberBuilt);
+store.addEventListener('build', (e) => {
+  const prev = (e as CustomEvent<{ prevPreview?: { state: string } | null }>).detail?.prevPreview;
+  if (prev && (prev.state === 'queued' || prev.state === 'running') && store.preview?.state === 'ok') rememberBuilt();
+});
+
+/** Vorschaupfad, falls die Route eine Seite betrifft (für „Vorschau ansehen“ in der Kopfleiste) */
 export function editorPreviewPath(route: Route): string | null {
   if (route.segs[0] !== 'seiten' || !route.segs[1]) return null;
   const p = store.doc.pages.find((x) => x.id === route.segs[1]);
@@ -113,7 +129,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
         const sel = s.id === selectedId;
         const main = h(
           'button',
-          { type: 'button', class: 'ad-sec__main', 'aria-current': sel ? 'true' : undefined },
+          { type: 'button', class: 'ad-sec__main', 'aria-current': sel ? 'true' : undefined, title: `${def?.label ?? s.type}${sectionSummary(s) ? `: ${sectionSummary(s)}` : ''}` },
           h('span', { class: 'ad-sec__type' }, def?.label ?? s.type),
           h('span', { class: 'ad-sec__sum' }, sectionSummary(s) || (def ? def.description : 'Unbekannter Typ')),
         );
@@ -227,7 +243,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     const def = sectionDef(s.type);
     const ok = await confirmDialog({
       title: 'Sektion löschen?',
-      message: `„${def?.label ?? s.type}${sectionSummary(s) ? `: ${sectionSummary(s)}` : ''}" wird von der Seite entfernt. Tipp: Mit dem Auge kannst du eine Sektion auch nur ausblenden.`,
+      message: `„${def?.label ?? s.type}${sectionSummary(s) ? `: ${sectionSummary(s)}` : ''}“ wird von der Seite entfernt. Tipp: Mit dem Auge kannst du eine Sektion auch nur ausblenden.`,
       confirm: 'Löschen',
       danger: true,
     });
@@ -242,7 +258,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     const types = allowedSectionTypes(page);
     const d = openDialog({ title: 'Sektion hinzufügen', size: 'lg' });
     if (!types.length) {
-      d.body.append(notice('info', h('p', null, 'Für diese Seite gibt es keine weiteren Sektionstypen.')));
+      add(d.body, notice('info', h('p', null, 'Für diese Seite gibt es keine weiteren Sektionstypen.')));
       d.footer.append(btn('Schließen', { kind: 'primary', onClick: () => d.close() }));
       return;
     }
@@ -250,13 +266,13 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     const posName = `pos-${domId()}`;
     const after = h('input', { type: 'radio', name: posName, value: 'after', checked: idx >= 0 && idx < page.sections.length - 1 });
     const end = h('input', { type: 'radio', name: posName, value: 'end', checked: !(idx >= 0 && idx < page.sections.length - 1) });
-    d.body.append(
+    add(d.body,
       idx >= 0 && idx < page.sections.length - 1
         ? h(
             'fieldset',
             { class: 'ad-field' },
             h('legend', { class: 'ad-label' }, 'Wo einfügen?'),
-            h('div', { class: 'ad-checks' }, h('label', { class: 'ad-check' }, after, ` Nach „${sectionDef(page.sections[idx].type)?.label ?? page.sections[idx].type}"`), h('label', { class: 'ad-check' }, end, ' Am Ende der Seite')),
+            h('div', { class: 'ad-checks' }, h('label', { class: 'ad-check' }, after, ` Nach „${sectionDef(page.sections[idx].type)?.label ?? page.sections[idx].type}“`), h('label', { class: 'ad-check' }, end, ' Am Ende der Seite')),
           )
         : null,
       h(
@@ -274,10 +290,10 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
                 page.sections.splice(at, 0, s);
                 selectedId = s.id;
                 d.close();
-                structural(`Sektion „${def.label}" hinzugefügt.`);
+                structural(`Sektion „${def.label}“ hinzugefügt.`);
                 renderForm();
                 showPane(2);
-                toast(`„${def.label}" hinzugefügt — die Vorschau aktualisiert sich gleich.`, 'ok');
+                toast(`„${def.label}“ hinzugefügt — die Vorschau aktualisiert sich gleich.`, 'ok');
               },
             },
             h('strong', null, def.label),
@@ -325,7 +341,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
         s.visible === false ? notice('info', h('p', null, 'Diese Sektion ist ausgeblendet und erscheint nicht auf der Website (und nicht in der Vorschau).')) : null,
         def
           ? h('fieldset', { class: 'ad-editable', disabled: ro }, renderFields(def.fields, s.fields as Record<string, unknown>, { path: ['pages', pi(), 'sections', si, 'fields'], live: { section: s.id, prefix: '' } }))
-          : notice('warn', h('p', null, `Für den Sektionstyp „${s.type}" gibt es noch kein Formular. Inhalt bleibt unverändert erhalten.`)),
+          : notice('warn', h('p', null, `Für den Sektionstyp „${s.type}“ gibt es noch kein Formular. Inhalt bleibt unverändert erhalten.`)),
       ),
     );
     refreshErrors(formPane);
@@ -335,7 +351,8 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
   const iframe = h('iframe', { class: 'ad-frame', title: `Live-Vorschau: ${page.title}`, src: 'about:blank' });
   const scaler = h('div', { class: 'ad-frame-scale' }, iframe);
   const overlay = h('div', { class: 'ad-frame-overlay', hidden: true });
-  const wrap = h('div', { class: 'ad-frame-wrap' }, scaler, overlay);
+  const blocker = h('div', { class: 'ad-frame-blocker', hidden: true, role: 'status' });
+  const wrap = h('div', { class: 'ad-frame-wrap' }, scaler, overlay, blocker);
   const previewPane = h('section', { class: 'ad-editor__preview ad-pane', 'aria-label': 'Live-Vorschau' }, wrap);
   let ready = false;
   let pendingScroll: number | null = null;
@@ -363,9 +380,31 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     iframe.contentWindow.postMessage(msg, location.origin);
   };
 
+  let frameLoaded = false;
+  const frameState = (): 'ok' | 'disabled' | 'pending' => {
+    if (page.status !== 'published' && !page.system) return 'disabled';
+    if (!page.system && page.template !== 'menu-category' && builtSlugs.get(page.id) !== page.slug && !store.previewCurrent) return 'pending';
+    return 'ok';
+  };
   const loadFrame = () => {
     ready = false;
+    frameLoaded = true;
     iframe.src = previewUrl(pagePreviewPath(page), true);
+  };
+  /** iframe laden — oder erklären, warum es (noch) nichts zu sehen gibt */
+  const syncFrame = () => {
+    const st = frameState();
+    scaler.hidden = st !== 'ok';
+    blocker.hidden = st === 'ok';
+    if (st === 'disabled')
+      blocker.replaceChildren(
+        h('p', null, h('strong', null, 'Diese Seite ist deaktiviert.')),
+        h('p', null, 'Deaktivierte Seiten werden nicht gebaut, deshalb kann die Vorschau sie nicht zeigen. Du kannst trotzdem alles bearbeiten.'),
+        linkBtn('Seite aktivieren …', `#/seiten/${page.id}/einstellungen`, { small: true, icon: 'settings' }),
+      );
+    else if (st === 'pending')
+      blocker.replaceChildren(h('span', { class: 'ad-spinner', 'aria-hidden': 'true' }), h('p', null, 'Die Vorschau dieser Seite wird gerade erstellt — das dauert meist 10 bis 60 Sekunden.'));
+    else if (!frameLoaded) loadFrame();
   };
   const reloadFrame = (manual = false) => {
     try {
@@ -440,7 +479,7 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     }
     previewState.className = `ad-pstate ad-pstate--${tone}`;
     previewState.replaceChildren(h('span', { class: 'ad-dot', 'aria-hidden': 'true' }), text);
-    overlay.hidden = !(busy() && store.previewReloadWanted);
+    overlay.hidden = !(busy() && store.previewReloadWanted) || !blocker.hidden;
     overlay.replaceChildren(h('span', { class: 'ad-spinner', 'aria-hidden': 'true' }), 'Vorschau wird neu gebaut …');
   };
   const requestPreview = async () => {
@@ -462,14 +501,17 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
     const p = store.preview;
     const wasBusy = prev && (prev.state === 'queued' || prev.state === 'running');
     if (wasBusy && p && p.state === 'ok') {
-      if (store.previewReloadWanted) {
+      if (!frameLoaded) {
+        store.previewReloadWanted = false;
+        syncFrame();
+      } else if (store.previewReloadWanted) {
         store.previewReloadWanted = false;
         liveSince.clear();
         reloadFrame();
       }
     } else if (wasBusy && p?.state === 'failed') {
       store.previewReloadWanted = false;
-      toast('Die Vorschau konnte nicht neu gebaut werden. Deine Änderungen sind gespeichert; Details unter „Übersicht".', 'error', 9000);
+      toast('Die Vorschau konnte nicht neu gebaut werden. Deine Änderungen sind gespeichert; Details unter „Übersicht“.', 'error', 9000);
     }
     renderPreviewState();
   });
@@ -501,13 +543,13 @@ export function renderEditor(root: HTMLElement, route: Route): () => void {
   renderSections();
   renderForm();
   layoutFrame();
-  loadFrame();
 
   // Vorschau-Build des Entwurfs sicherstellen (Seite neu, Struktur geändert oder noch nie gebaut)
   if (!store.previewCurrent) {
     store.previewReloadWanted = true;
     void requestPreview();
   }
+  syncFrame();
   renderPreviewState();
 
   const field = route.query.get('feld');

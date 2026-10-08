@@ -64,7 +64,7 @@ export function canonicalPath(root: unknown, path: string | PathSeg[]): string {
 
 const UMLAUT: Record<string, string> = { ä: 'ae', ö: 'oe', ü: 'ue', ß: 'ss', Ä: 'ae', Ö: 'oe', Ü: 'ue' };
 
-/** „Über uns & Team" → „ueber-uns-team" */
+/** „Über uns & Team“ → „ueber-uns-team“ */
 export function slugify(text: string, max = 60): string {
   return String(text ?? '')
     .replace(/[äöüßÄÖÜ]/g, (c) => UMLAUT[c] ?? c)
@@ -118,7 +118,7 @@ const fmtDateTime = new Intl.DateTimeFormat('de-DE', { timeZone: TZ, dateStyle: 
 const fmtDate = new Intl.DateTimeFormat('de-DE', { timeZone: TZ, dateStyle: 'medium' });
 const fmtTime = new Intl.DateTimeFormat('de-DE', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
 
-/** Zeitpunkt (ISO) in Berliner Zeit, z. B. „8. Okt. 2026, 14:05" */
+/** Zeitpunkt (ISO) in Berliner Zeit, z. B. „8. Okt. 2026, 14:05“ */
 export function formatDateTime(iso: string | undefined | null): string {
   if (!iso) return '–';
   const d = new Date(iso);
@@ -135,7 +135,7 @@ export function formatTime(iso: string | number | Date): string {
   return fmtTime.format(new Date(iso));
 }
 
-/** „vor 3 Minuten" (grob, für Status-Anzeigen) */
+/** „vor 3 Minuten“ (grob, für Status-Anzeigen) */
 export function relativeTime(iso: string | undefined | null, now = Date.now()): string {
   if (!iso) return '';
   const t = new Date(iso).getTime();
@@ -170,6 +170,22 @@ export function plural(n: number, one: string, many: string): string {
 export function truncate(s: string, max = 60): string {
   const t = String(s ?? '').replace(/\s+/g, ' ').trim();
   return t.length > max ? `${t.slice(0, max - 1).trimEnd()}…` : t;
+}
+
+/**
+ * Beschriftung eines Listeneintrags aus seinem itemLabel-Wert: Text direkt, Link-Objekt → label,
+ * Bild-Verweis → Medien-ID (z. B. itemLabel: 'link' bei Button-Listen).
+ */
+export function labelOf(v: unknown): string {
+  if (typeof v === 'string') return v.trim();
+  if (typeof v === 'number') return String(v);
+  if (v && typeof v === 'object' && !Array.isArray(v)) {
+    const o = v as Record<string, unknown>;
+    if (typeof o.label === 'string') return o.label.trim();
+    if (typeof o.title === 'string') return o.title.trim();
+    if (typeof o.media === 'string') return o.media;
+  }
+  return '';
 }
 
 export function isPlainObject(v: unknown): v is Record<string, unknown> {

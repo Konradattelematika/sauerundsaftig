@@ -1,4 +1,4 @@
-/** Sammlung „Gästestimmen" (collections.testimonials) — Konvention s. menu.mjs. */
+/** Sammlung „Gästestimmen“ (collections.testimonials) — Konvention s. menu.mjs. */
 export default {
   name: 'testimonials',
   label: 'Gästestimmen',
@@ -7,7 +7,7 @@ export default {
   itemLabel: 'author',
   fields: [
     { key: 'quote', label: 'Zitat', kind: 'textarea', required: true, maxLength: 400, help: 'Ohne Anführungszeichen — die setzt die Website selbst.' },
-    { key: 'author', label: 'Name und Zusatz', kind: 'text', required: true, maxLength: 80, help: 'z. B. „Anna, August 2026 auf Google".' },
+    { key: 'author', label: 'Name und Zusatz', kind: 'text', required: true, maxLength: 80, help: 'z. B. „Anna, August 2026 auf Google“.' },
     {
       key: 'isPlaceholder',
       label: 'Platzhalter (noch kein echtes Zitat)',

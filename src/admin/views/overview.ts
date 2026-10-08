@@ -49,7 +49,7 @@ export function renderOverview(root: HTMLElement): () => void {
         unpublished
           ? notice(
               'warn',
-              h('p', null, h('strong', null, 'Es gibt Änderungen, die noch nicht online sind.'), ' Sieh sie dir mit „Vorschau ansehen" an und veröffentliche sie, wenn alles passt.'),
+              h('p', null, h('strong', null, 'Es gibt Änderungen, die noch nicht online sind.'), ' Sieh sie dir mit „Vorschau ansehen“ an und veröffentliche sie, wenn alles passt.'),
               store.can('cms.publish') ? h('p', null, btn('Jetzt veröffentlichen …', { kind: 'accent', small: true, icon: 'send', onClick: () => void openPublishDialog() })) : null,
             )
           : notice('ok', h('p', null, 'Alles veröffentlicht — die Website zeigt den aktuellen Stand.')),
@@ -95,9 +95,9 @@ export function renderOverview(root: HTMLElement): () => void {
                 const w = describePath(doc, i.path);
                 return h('li', null, h('a', { href: w.route }, w.label), h('span', null, i.message));
               }),
-              errors.length > 6 ? h('li', null, `… und ${errors.length - 6} weitere (Knopf „Prüfhinweise" oben)`) : null,
+              errors.length > 6 ? h('li', null, `… und ${errors.length - 6} weitere (Knopf „Prüfhinweise“ oben)`) : null,
             )
-          : notice('ok', h('p', null, `Keine Fehler.${warns.length ? ` ${plural(warns.length, 'Hinweis', 'Hinweise')} — siehe „Prüfhinweise" oben.` : ''}`)),
+          : notice('ok', h('p', null, `Keine Fehler.${warns.length ? ` ${plural(warns.length, 'Hinweis', 'Hinweise')} — siehe „Prüfhinweise“ oben.` : ''}`)),
         todo.length ? h('div', null, h('h3', { class: 'ad-h3' }, 'Noch zu erledigen'), h('ul', { class: 'ad-todo' }, ...todo)) : null,
       ),
     );
@@ -110,7 +110,7 @@ export function renderOverview(root: HTMLElement): () => void {
     h(
       'div',
       { class: 'ad-viewpad' },
-      pageHeader(`Hallo${name ? ` ${name}` : ''}!`, 'Hier pflegst du die Inhalte von sauerundsaftig.de. Änderungen werden automatisch als Entwurf gespeichert und gehen erst mit „Veröffentlichen" online.'),
+      pageHeader(`Hallo${name ? ` ${name}` : ''}!`, 'Hier pflegst du die Inhalte von sauerundsaftig.de. Änderungen werden automatisch als Entwurf gespeichert und gehen erst mit „Veröffentlichen“ online.'),
       h('div', { class: 'ad-grid2' }, statusBox, checks),
       card(
         cardTitle('Schnellzugriff'),

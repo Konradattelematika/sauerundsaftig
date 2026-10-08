@@ -59,9 +59,9 @@ export function slugProblem(slug: string, doc: SiteDoc, ownId?: string): string 
   if (slug === '') return doc.pages.some((p) => p.slug === '' && p.id !== ownId) ? 'Es gibt schon eine Startseite.' : null;
   if (!SLUG_RE.test(slug)) return 'Nur Kleinbuchstaben (a–z), Ziffern, Bindestriche und / sind erlaubt — keine Umlaute oder Leerzeichen.';
   const first = slug.split('/')[0];
-  if (RESERVED_SLUGS.has(first) || RESERVED_SLUGS.has(slug)) return `„/${slug}" ist für die Technik reserviert.`;
+  if (RESERVED_SLUGS.has(first) || RESERVED_SLUGS.has(slug)) return `„/${slug}“ ist für die Technik reserviert.`;
   const other = doc.pages.find((p) => p.slug === slug && p.id !== ownId);
-  if (other) return `Diese Adresse hat schon die Seite „${other.title}".`;
+  if (other) return `Diese Adresse hat schon die Seite „${other.title}“.`;
   const tpl = doc.pages.find((p) => p.template === 'menu-category' && p.id !== ownId);
   if (tpl) {
     const parent = tpl.slug.replace(/\/\*$/, '');
@@ -94,6 +94,11 @@ export function clientIssues(doc: SiteDoc): Issue[] {
     if (def.required && def.kind !== 'boolean' && isEmpty(value)) add(p, 'Bitte ausfüllen.');
     if (def.maxLength && typeof value === 'string' && value.length > def.maxLength)
       add(p, `Zu lang: ${value.length} von höchstens ${def.maxLength} Zeichen.`);
+    if (def.kind === 'number' && typeof value === 'number') {
+      if (Number.isNaN(value)) add(p, 'Bitte eine Zahl eingeben.');
+      else if (def.min !== undefined && value < def.min) add(p, `Mindestens ${String(def.min).replace('.', ',')}.`);
+      else if (def.max !== undefined && value > def.max) add(p, `Höchstens ${String(def.max).replace('.', ',')}.`);
+    }
     if (def.kind === 'list' && Array.isArray(value)) {
       if (def.min !== undefined && value.length < def.min) add(p, `Mindestens ${def.min} Einträge nötig.`);
       if (def.max !== undefined && value.length > def.max) add(p, `Höchstens ${def.max} Einträge möglich.`);
@@ -164,7 +169,7 @@ export function clientIssues(doc: SiteDoc): Issue[] {
     for (const [day, spans] of Object.entries(hours.week)) {
       (spans ?? []).forEach((sp, i) => {
         if (!/^\d\d:\d\d$/.test(sp[0] ?? '') || !/^\d\d:\d\d$/.test(sp[1] ?? '')) add(['settings', 'openingHours', 'week', day, i], 'Bitte Uhrzeiten angeben.');
-        else if (sp[0] >= sp[1]) add(['settings', 'openingHours', 'week', day, i], '„Bis" muss nach „von" liegen.');
+        else if (sp[0] >= sp[1]) add(['settings', 'openingHours', 'week', day, i], '„Bis“ muss nach „von“ liegen.');
       });
     }
     (hours.exceptions ?? []).forEach((ex, i) => {

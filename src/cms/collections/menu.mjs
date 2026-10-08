@@ -1,5 +1,5 @@
 /**
- * Sammlung „Karte" (collections.menu): Kategorien mit ihren Einträgen.
+ * Sammlung „Karte“ (collections.menu): Kategorien mit ihren Einträgen.
  *
  * Konvention für Sammlungs-Definitionen (src/cms/collections/*.mjs, genutzt von Admin und Validierung):
  *   shape: 'list'   → Der Sammlungswert ist ein Array; `fields` beschreibt EINEN Eintrag,
@@ -31,12 +31,12 @@ const itemFields = [
   { key: 'name', label: 'Name', kind: 'text', required: true, maxLength: 80 },
   { key: 'description', label: 'Beschreibung', kind: 'textarea', maxLength: 400, help: 'Was gehört dazu? Ein bis zwei Sätze.' },
   { key: 'price', label: 'Preis in Euro', kind: 'number', help: 'z. B. 4,80 — leer lassen, wenn es keinen festen Preis gibt.' },
-  { key: 'priceSuffix', label: 'Zusatz zum Preis', kind: 'text', maxLength: 30, help: 'z. B. „pro Stück" oder „pro Laib".' },
+  { key: 'priceSuffix', label: 'Zusatz zum Preis', kind: 'text', maxLength: 30, help: 'z. B. „pro Stück“ oder „pro Laib“.' },
   { key: 'priceIsPlaceholder', label: 'Preis ist noch vorläufig', kind: 'boolean', help: 'Wird auf der Website als vorläufig gekennzeichnet.' },
   { key: 'veggie', label: 'Vegetarisch', kind: 'boolean' },
   { key: 'vegan', label: 'Vegan', kind: 'boolean' },
   { key: 'highlight', label: 'Empfehlung (hervorheben)', kind: 'boolean' },
-  { key: 'seasonal', label: 'Hinweis zur Verfügbarkeit', kind: 'text', maxLength: 40, help: 'z. B. „nach Jahreszeit" oder „nur samstags".' },
+  { key: 'seasonal', label: 'Hinweis zur Verfügbarkeit', kind: 'text', maxLength: 40, help: 'z. B. „nach Jahreszeit“ oder „nur samstags“.' },
   {
     key: 'allergens',
     label: 'Allergene',
@@ -50,7 +50,7 @@ const itemFields = [
 export default {
   name: 'menu',
   label: 'Karte',
-  description: 'Speisen und Getränke, nach Kategorien geordnet. Jede Kategorie hat eine eigene Seite unter /karte/….',
+  description: 'Speisen und Getränke, nach Kategorien geordnet. Jede Kategorie bekommt automatisch eine eigene Seite unter /karte/<adresse>; die Reihenfolge hier ist die Reihenfolge auf der Website.',
   shape: 'list',
   itemLabel: 'title',
   fields: [
@@ -66,6 +66,6 @@ export default {
     { key: 'intro', label: 'Einleitung', kind: 'textarea', maxLength: 400 },
     { key: 'note', label: 'Hinweis unter der Liste', kind: 'textarea', maxLength: 800, help: 'z. B. Beilagen oder Kennzeichnungen.' },
     { key: 'order', label: 'Reihenfolge (Zahl)', kind: 'number', help: 'Wird beim Sortieren der Kategorien automatisch gesetzt (10, 20, 30 …).' },
-    { key: 'items', label: 'Einträge', kind: 'list', itemLabel: 'name', of: itemFields },
+    { key: 'items', label: 'Einträge', kind: 'list', itemLabel: 'name', addLabel: 'Gericht/Getränk hinzufügen', of: itemFields },
   ],
 };

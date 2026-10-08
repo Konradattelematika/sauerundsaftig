@@ -131,7 +131,7 @@ export function renderUsers(root: HTMLElement): void {
         'div',
         { class: 'ad-field' },
         h('label', { class: 'ad-label', for: pwId }, u ? 'Neues Passwort (optional)' : 'Passwort'),
-        h('p', { class: 'ad-help' }, `Mindestens 10 Zeichen. ${u ? 'Leer lassen = Passwort bleibt.' : ''} Gib es der Person persönlich weiter — sie kann es danach unter „Passwort ändern" selbst ändern.`),
+        h('p', { class: 'ad-help' }, `Mindestens 10 Zeichen. ${u ? 'Leer lassen = Passwort bleibt.' : ''} Gib es der Person persönlich weiter — sie kann es danach unter „Passwort ändern“ selbst ändern.`),
         pw.wrap,
       ),
       err,

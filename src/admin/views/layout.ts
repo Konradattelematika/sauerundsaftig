@@ -12,7 +12,7 @@ export function renderLayout(root: HTMLElement): void {
     h(
       'div',
       { class: 'ad-viewpad ad-viewpad--narrow' },
-      pageHeader('Header & Footer', 'Was auf jeder Seite oben (Kopf), unten (Fuß) und am Handy in der Leiste am unteren Rand steht. Die Menüpunkte selbst pflegst du unter „Navigation".'),
+      pageHeader('Header & Footer', 'Was auf jeder Seite oben (Kopf), unten (Fuß) und am Handy in der Leiste am unteren Rand steht. Die Menüpunkte selbst pflegst du unter „Navigation“.'),
       editable(
         ro,
         card(cardTitle('Kopf der Website (Header)'), renderFields(HEADER_DEFS, layout.header as unknown as Record<string, unknown>, { path: ['layout', 'header'] }), h('p', { class: 'ad-help' }, h('a', { href: '#/navigation' }, 'Menüpunkte und Button im Kopf bearbeiten →'))),

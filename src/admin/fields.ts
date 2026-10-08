@@ -15,7 +15,7 @@ import { mediaById, mediaVersion, pickMedia, thumb } from './mediafield';
 import { fillTokens, renderRich, resolveHref } from './rich';
 import { store, type ChangeInfo, type LiveMsg } from './state';
 import { btn, confirmDialog, iconBtn, openDialog } from './ui';
-import { clone, formatNumber, isPlainObject, moveItem, parseNumber, truncate, uniqueId, type PathSeg } from './util';
+import { clone, formatNumber, isPlainObject, labelOf, moveItem, parseNumber, slugify, truncate, uniqueId, type PathSeg } from './util';
 
 export interface FieldCtx {
   /** absoluter Pfad des Objekts, in dem die Felder liegen */
@@ -238,6 +238,8 @@ function numberField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
   const id = domId();
   const input = h('input', { id, class: 'ad-input ad-input--num', type: 'text', inputmode: 'decimal', autocomplete: 'off', value: formatNumber(obj[def.key]) });
   const local = h('p', { class: 'ad-errors', 'aria-live': 'polite' });
+  const range = def.min !== undefined || def.max !== undefined ? `${def.min !== undefined ? `ab ${formatNumber(def.min)}` : ''}${def.min !== undefined && def.max !== undefined ? ' ' : ''}${def.max !== undefined ? `bis ${formatNumber(def.max)}` : ''}` : '';
+  if (range) input.setAttribute('placeholder', range);
   input.addEventListener('input', () => {
     const n = parseNumber(input.value);
     if (Number.isNaN(n)) {
@@ -283,7 +285,7 @@ function selectField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx, options: { val
   const sel = h(
     'select',
     { id, class: 'ad-input' },
-    allowEmpty ? h('option', { value: '' }, '– keine Auswahl –') : null,
+    allowEmpty && !options.some((o) => o.value === '') ? h('option', { value: '' }, def.placeholder ?? '– keine Auswahl –') : null,
     ...options.map((o) => h('option', { value: o.value, selected: o.value === cur }, o.label)),
   );
   if (cur && !options.some((o) => o.value === cur)) sel.append(h('option', { value: cur, selected: true }, `${cur} (aktueller Wert)`));
@@ -321,7 +323,10 @@ function linkField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
   const send = (structural = false) => {
     notify(ctx, {
       structural,
-      live: field && !structural ? { field, kind: 'link', value: link.label, href: resolveHref(link.href, store.doc), visible: link.visible !== false, newTab: Boolean(link.newTab) } : undefined,
+      live:
+        field && !structural
+          ? { field, kind: 'link', value: fillTokens(link.label ?? '', store.doc.settings), href: resolveHref(link.href, store.doc), visible: link.visible !== false && Boolean(link.label), newTab: Boolean(link.newTab) }
+          : undefined,
     });
   };
   const label = h('input', { id: labelId, class: 'ad-input', type: 'text', value: link.label ?? '', autocomplete: 'off' });
@@ -351,10 +356,13 @@ function linkField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
     const sel = h(
       'select',
       { id: vid, class: 'ad-input' },
-      ...def.variants.map((v) => h('option', { value: v, selected: (link.variant ?? def.variants?.[0]) === v }, VARIANT_LABELS[v] ?? v)),
+      h('option', { value: '', selected: !link.variant }, 'Standard (wie vorgesehen)'),
+      ...def.variants.map((v) => h('option', { value: v, selected: link.variant === v }, VARIANT_LABELS[v] ?? v)),
     );
+    if (link.variant && !def.variants.includes(link.variant)) sel.append(h('option', { value: link.variant, selected: true }, VARIANT_LABELS[link.variant] ?? link.variant));
     sel.addEventListener('change', () => {
-      link.variant = sel.value as LinkValue['variant'];
+      if (sel.value) link.variant = sel.value as LinkValue['variant'];
+      else delete link.variant;
       send(true);
     });
     variant = h('div', { class: 'ad-sub' }, h('label', { class: 'ad-sublabel', for: vid }, 'Aussehen'), sel);
@@ -437,7 +445,7 @@ function mediaField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
         h(
           'div',
           { class: 'ad-mediafield__info' },
-          id ? h('p', { class: 'ad-mediafield__name' }, m ? truncate(m.alt || id, 90) : `„${id}" fehlt in der Bibliothek`) : h('p', { class: 'ad-help' }, 'Kein Bild gewählt.'),
+          id ? h('p', { class: 'ad-mediafield__name' }, m ? truncate(m.alt || id, 90) : `„${id}“ fehlt in der Bibliothek`) : h('p', { class: 'ad-help' }, 'Kein Bild gewählt.'),
           m?.kind === 'placeholder' && !m.replacedBy ? h('span', { class: 'ad-badge ad-badge--warn' }, 'Platzhalter') : null,
           h('div', { class: 'ad-mediafield__actions' }, choose, remove),
         ),
@@ -450,7 +458,7 @@ function mediaField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
         class: 'ad-input',
         type: 'text',
         value: ref?.alt ?? '',
-        placeholder: m?.alt ? `leer = „${truncate(m.alt, 70)}"` : 'Bildbeschreibung',
+        placeholder: m?.alt ? `leer = „${truncate(m.alt, 70)}“` : 'Bildbeschreibung',
         autocomplete: 'off',
       });
       alt.addEventListener('input', () => {
@@ -508,7 +516,7 @@ function stringListField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLEleme
   const render = () =>
     chips.replaceChildren(
       ...arr.map((v, i) =>
-        h('span', { class: 'ad-chip' }, v, iconBtn('close', `„${v}" entfernen`, () => {
+        h('span', { class: 'ad-chip' }, v, iconBtn('close', `„${v}“ entfernen`, () => {
           arr.splice(i, 1);
           render();
           notify(ctx, { structural: true });
@@ -532,8 +540,8 @@ function stringListField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLEleme
 
 function itemTitle(def: AdminFieldDef, item: unknown, i: number): string {
   if (isPlainObject(item) && def.itemLabel) {
-    const v = item[def.itemLabel];
-    if (typeof v === 'string' && v.trim()) return truncate(v, 70);
+    const v = labelOf(item[def.itemLabel]);
+    if (v) return truncate(fillTokens(v, store.doc.settings), 70);
   }
   return `Eintrag ${i + 1}`;
 }
@@ -547,6 +555,17 @@ export function openItem(item: Element): void {
 }
 
 const openState = new WeakMap<object, Set<unknown>>();
+/** In dieser Sitzung neu angelegte Einträge: ihre ID folgt der Beschriftung (z. B. „gibt-es-parkplaetze“) */
+const autoIds = new WeakSet<object>();
+const ID_BASES: Record<string, string> = {
+  main: 'menuepunkt',
+  children: 'unterpunkt',
+  footer: 'link',
+  legal: 'link',
+  social: 'profil',
+  faq: 'frage',
+  testimonials: 'stimme',
+};
 
 function listField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
   if (!def.of) return stringListField(def, obj, ctx);
@@ -557,7 +576,7 @@ function listField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
   const open = openState.get(arr)!;
   const items = h('div', { class: 'ad-list__items' });
   const sr = h('p', { class: 'sr-only', 'aria-live': 'polite' });
-  const addBtn = btn(`${def.label}: Eintrag hinzufügen`, { kind: 'ghost', small: true, icon: 'plus' });
+  const addBtn = btn(def.addLabel ?? 'Eintrag hinzufügen', { kind: 'ghost', small: true, icon: 'plus', attrs: { 'aria-label': `${def.label}: ${def.addLabel ?? 'Eintrag hinzufügen'}` } });
   const countEl = h('span', { class: 'ad-counter' });
   const needsIds = () => def.itemIds || arr.some((x) => isPlainObject(x) && typeof x.id === 'string');
   const listPath = [...ctx.path, def.key];
@@ -590,7 +609,12 @@ function listField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
           path: [...listPath, i],
           live: ctx.live ? { section: ctx.live.section, prefix: `${ctx.live.prefix}${def.key}.${i}.` } : undefined,
           onChange: (info) => {
-            titleEl.textContent = itemTitle(def, item, i);
+            relabel();
+            if (autoIds.has(item) && def.itemLabel) {
+              const lbl = labelOf(item[def.itemLabel]);
+              const others = arr.filter((x) => x !== item).map((x) => String(x.id ?? ''));
+              if (lbl) item.id = uniqueId(slugify(lbl, 40) || ID_BASES[def.key] || 'eintrag', others);
+            }
             ctx.onChange?.(info);
           },
         };
@@ -622,27 +646,27 @@ function listField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
             h(
               'div',
               { class: 'ad-item__tools' },
-              iconBtn('up', `„${itemTitle(def, item, i)}" nach oben`, () => {
+              iconBtn('up', `„${itemTitle(def, item, i)}“ nach oben`, () => {
                 moveItem(arr, i, i - 1);
                 changed(`Nach oben verschoben, jetzt Position ${i}.`);
                 focusTool(i - 1, 0);
               }, { disabled: i === 0 }),
-              iconBtn('down', `„${itemTitle(def, item, i)}" nach unten`, () => {
+              iconBtn('down', `„${itemTitle(def, item, i)}“ nach unten`, () => {
                 moveItem(arr, i, i + 1);
                 changed(`Nach unten verschoben, jetzt Position ${i + 2}.`);
                 focusTool(i + 1, 1);
               }, { disabled: i === arr.length - 1 }),
-              iconBtn('copy', `„${itemTitle(def, item, i)}" duplizieren`, () => {
+              iconBtn('copy', `„${itemTitle(def, item, i)}“ duplizieren`, () => {
                 const copy = clone(item);
-                if (needsIds() && isPlainObject(copy)) copy.id = uniqueId(String(copy.id ?? def.key), arr.map((x) => String(x.id ?? '')));
+                if (needsIds() && isPlainObject(copy)) copy.id = uniqueId(String(copy.id || ID_BASES[def.key] || 'eintrag'), arr.map((x) => String(x.id ?? '')));
                 arr.splice(i + 1, 0, copy);
                 open.add(copy);
                 changed('Eintrag dupliziert.');
               }, { disabled: def.max !== undefined && arr.length >= def.max }),
-              iconBtn('trash', `„${itemTitle(def, item, i)}" löschen`, async () => {
+              iconBtn('trash', `„${itemTitle(def, item, i)}“ löschen`, async () => {
                 const ok = await confirmDialog({
                   title: 'Eintrag löschen?',
-                  message: `„${itemTitle(def, item, i)}" wird aus „${def.label}" entfernt. Bis zum Veröffentlichen kannst du das mit „Entwurf verwerfen" rückgängig machen.`,
+                  message: `„${itemTitle(def, item, i)}“ wird aus „${def.label}“ entfernt. Bis zum Veröffentlichen kannst du das mit „Entwurf verwerfen“ rückgängig machen.`,
                   confirm: 'Löschen',
                   danger: true,
                 });
@@ -655,6 +679,16 @@ function listField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
           ),
           body,
         );
+        /** Beschriftung + Werkzeug-Labels nachziehen, wenn sich der benennende Text ändert */
+        function relabel(): void {
+          const t = itemTitle(def, item, i);
+          titleEl.textContent = t;
+          const verbs = ['nach oben', 'nach unten', 'duplizieren', 'löschen'];
+          el.querySelectorAll(':scope > .ad-item__head > .ad-item__tools > button').forEach((b, k) => {
+            b.setAttribute('aria-label', `„${t}“ ${verbs[k]}`);
+            b.setAttribute('title', `„${t}“ ${verbs[k]}`);
+          });
+        }
         // Drag & Drop nur über den Griff (Texteingaben bleiben markierbar)
         grip.addEventListener('mousedown', () => el.setAttribute('draggable', 'true'));
         grip.addEventListener('touchstart', () => el.setAttribute('draggable', 'true'), { passive: true });
@@ -710,7 +744,10 @@ function listField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLElement {
 
   addBtn.addEventListener('click', () => {
     const item = emptyItem(def.of);
-    if (needsIds()) item.id = uniqueId(def.key === 'children' ? 'unterpunkt' : def.key, arr.map((x) => String(x.id ?? '')));
+    if (needsIds()) {
+      item.id = uniqueId(ID_BASES[def.key] ?? 'eintrag', arr.map((x) => String(x.id ?? '')));
+      autoIds.add(item);
+    }
     arr.push(item);
     open.add(item);
     changed('Eintrag hinzugefügt.');
@@ -760,7 +797,7 @@ export function renderField(def: AdminFieldDef, obj: Obj, ctx: FieldCtx): HTMLEl
     case 'list':
       return listField(def, obj, ctx);
     default:
-      return h('p', { class: 'ad-help' }, `Feldart „${String((def as AdminFieldDef).kind)}" wird noch nicht unterstützt.`);
+      return h('p', { class: 'ad-help' }, `Feldart „${String((def as AdminFieldDef).kind)}“ wird noch nicht unterstützt.`);
   }
 }
 

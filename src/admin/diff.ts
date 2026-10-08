@@ -11,13 +11,13 @@ export interface ChangeGroup {
 
 const secName = (s: { type: string; fields?: Record<string, unknown> }) => {
   const def = sectionDef(s.type);
-  const title = isPlainObject(s.fields) && typeof s.fields.title === 'string' && s.fields.title ? ` „${truncate(s.fields.title, 40)}"` : '';
+  const title = isPlainObject(s.fields) && typeof s.fields.title === 'string' && s.fields.title ? ` „${truncate(s.fields.title, 40)}“` : '';
   return `${def?.label ?? s.type}${title}`;
 };
 
 function pageChanges(a: PageDoc, b: PageDoc): string[] {
   const out: string[] = [];
-  if (a.title !== b.title) out.push(`Titel: „${a.title}" → „${b.title}"`);
+  if (a.title !== b.title) out.push(`Titel: „${a.title}“ → „${b.title}“`);
   if (a.slug !== b.slug) out.push(`Adresse: /${a.slug} → /${b.slug} (Weiterleitung wird angelegt)`);
   if (a.status !== b.status) out.push(b.status === 'published' ? 'wird aktiviert' : 'wird deaktiviert (offline)');
   if (!deepEqual(a.seo, b.seo)) out.push('SEO-Angaben geändert');
@@ -67,13 +67,13 @@ export function diffDocs(pub: SiteDoc, draft: SiteDoc): ChangeGroup[] {
   const pages: string[] = [];
   for (const p of draft.pages) {
     const old = pub.pages.find((x) => x.id === p.id);
-    if (!old) pages.push(`Neue Seite „${p.title}" (/${p.slug})`);
+    if (!old) pages.push(`Neue Seite „${p.title}“ (/${p.slug})`);
     else {
       const ch = pageChanges(old, p);
-      if (ch.length) push(`Seite „${p.title}"`, `#/seiten/${p.id}`, ch);
+      if (ch.length) push(`Seite „${p.title}“`, `#/seiten/${p.id}`, ch);
     }
   }
-  for (const p of pub.pages) if (!draft.pages.some((x) => x.id === p.id)) pages.push(`Seite gelöscht: „${p.title}" (/${p.slug})`);
+  for (const p of pub.pages) if (!draft.pages.some((x) => x.id === p.id)) pages.push(`Seite gelöscht: „${p.title}“ (/${p.slug})`);
   if (!deepEqual(pub.pages.map((p) => p.id).filter((id) => draft.pages.some((x) => x.id === id)), draft.pages.map((p) => p.id).filter((id) => pub.pages.some((x) => x.id === id))))
     pages.push('Reihenfolge der Seiten geändert');
   if (pages.length) groups.unshift({ area: 'Seiten', route: '#/seiten', items: pages });
@@ -83,7 +83,7 @@ export function diffDocs(pub: SiteDoc, draft: SiteDoc): ChangeGroup[] {
   for (const n of NAV_DEFS) {
     const a = (pub.navigation?.[n.key] ?? []) as { id: string; label: string }[];
     const b = (draft.navigation?.[n.key] ?? []) as { id: string; label: string }[];
-    const d = listDiff(a, b, (x) => x.id, (x) => `„${x.label}"`);
+    const d = listDiff(a, b, (x) => x.id, (x) => `„${x.label}“`);
     if (d.length) nav.push(`${n.def.label}: ${d.join(', ')}`);
   }
   if (!deepEqual(pub.navigation?.cta, draft.navigation?.cta)) nav.push('Button im Kopf geändert');
@@ -113,14 +113,14 @@ export function diffDocs(pub: SiteDoc, draft: SiteDoc): ChangeGroup[] {
   // Sammlungen
   const menuA = pub.collections?.menu ?? [];
   const menuB = draft.collections?.menu ?? [];
-  const menu: string[] = listDiff(menuA, menuB, (c) => c.slug, (c) => `Kategorie „${c.title}"`);
+  const menu: string[] = listDiff(menuA, menuB, (c) => c.slug, (c) => `Kategorie „${c.title}“`);
   push('Karte', '#/karte', menu);
-  push('FAQ', '#/faq', listDiff(pub.collections?.faq ?? [], draft.collections?.faq ?? [], (f) => f.id, (f) => `„${truncate(f.question, 50)}"`));
-  push('Gästestimmen', '#/stimmen', listDiff(pub.collections?.testimonials ?? [], draft.collections?.testimonials ?? [], (t) => t.id, (t) => `„${truncate(t.author, 40)}"`));
-  if (!deepEqual(pub.collections?.heuteFrisch, draft.collections?.heuteFrisch)) push(COLLECTION_DEFS.heuteFrisch?.label ?? 'Heute frisch', '#/backstube', ['Tafel „Heute frisch" geändert']);
+  push('FAQ', '#/faq', listDiff(pub.collections?.faq ?? [], draft.collections?.faq ?? [], (f) => f.id, (f) => `„${truncate(f.question, 50)}“`));
+  push('Gästestimmen', '#/stimmen', listDiff(pub.collections?.testimonials ?? [], draft.collections?.testimonials ?? [], (t) => t.id, (t) => `„${truncate(t.author, 40)}“`));
+  if (!deepEqual(pub.collections?.heuteFrisch, draft.collections?.heuteFrisch)) push(COLLECTION_DEFS.heuteFrisch?.label ?? 'Heute frisch', '#/backstube', ['Tafel „Heute frisch“ geändert']);
 
   // Medien
-  const media = listDiff(pub.media ?? [], draft.media ?? [], (m) => m.id, (m) => `„${truncate(m.alt || m.id, 50)}"`);
+  const media = listDiff(pub.media ?? [], draft.media ?? [], (m) => m.id, (m) => `„${truncate(m.alt || m.id, 50)}“`);
   push('Medien', '#/medien', media);
 
   return groups;

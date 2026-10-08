@@ -1,4 +1,4 @@
-/** Versionen: veröffentlichte Stände, „Als Entwurf wiederherstellen" mit Rückfrage. */
+/** Versionen: veröffentlichte Stände, „Als Entwurf wiederherstellen“ mit Rückfrage. */
 import { api, ApiError, type VersionInfo } from '../api';
 import { h } from '../dom';
 import { store } from '../state';
@@ -48,7 +48,7 @@ export function renderVersions(root: HTMLElement): void {
                         'div',
                         null,
                         h('p', null, `Der Entwurf wird durch den Stand vom ${formatDateTime(v.publishedAt)} ersetzt. Deine aktuellen, nicht veröffentlichten Änderungen gehen dabei verloren.`),
-                        h('p', null, 'Online ändert sich erst etwas, wenn du danach „Veröffentlichen" klickst.'),
+                        h('p', null, 'Online ändert sich erst etwas, wenn du danach „Veröffentlichen“ klickst.'),
                       ),
                       confirm: 'Wiederherstellen',
                       danger: true,
