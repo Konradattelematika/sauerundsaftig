@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 /** Repo- bzw. App-Wurzel (Elternordner von server/) — im Container /app. */
 export const APP_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
-export const DEFAULT_GO_LIVE_AT = '2026-10-10T16:00:00+02:00';
+export const DEFAULT_GO_LIVE_AT = '2026-10-19T16:00:00+02:00';
 export const DEFAULT_LIVE_HOSTS = ['sauerundsaftig.de'];
 export const DEFAULT_WWW_HOSTS = ['www.sauerundsaftig.de'];
 export const DEFAULT_TOOL_HOSTS = {

@@ -71,7 +71,7 @@
     {
       "id": "go-live-probelauf",
       "title": "Probelauf für den Go-Live",
-      "description": "Vorab testen, dass sich sauerundsaftig.de am 10.10. um 16:00 Uhr von selbst öffnet: Der Countdown wechselt auf die Website, die dann ohne Login erreichbar und für Suchmaschinen freigegeben ist. Checkliste, Modul-Seite und die alte Vorschau bleiben weiter hinter dem Login.",
+      "description": "Vorab testen, dass sich sauerundsaftig.de am 19.10. um 16:00 Uhr von selbst öffnet: Der Countdown wechselt auf die Website, die dann ohne Login erreichbar und für Suchmaschinen freigegeben ist. Checkliste, Modul-Seite und die alte Vorschau bleiben weiter hinter dem Login.",
       "phase": "vor",
       "owner": "team",
       "assignee": "Konrad",
@@ -393,7 +393,7 @@
     {
       "id": "live-check-nach-start",
       "title": "Live-Check direkt nach dem Start",
-      "description": "Am 10.10. kurz nach 16:00 Uhr: sauerundsaftig.de ohne Login öffnen, Startseite, Karte, Besuch und Impressum ansehen, Suchmaschinen-Freigabe prüfen (robots.txt) und testen, dass www weiterleitet.",
+      "description": "Am 19.10. kurz nach 16:00 Uhr: sauerundsaftig.de ohne Login öffnen, Startseite, Karte, Besuch und Impressum ansehen, Suchmaschinen-Freigabe prüfen (robots.txt) und testen, dass www weiterleitet.",
       "phase": "nach",
       "owner": "team",
       "assignee": "Konrad",

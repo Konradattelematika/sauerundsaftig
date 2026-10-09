@@ -59,7 +59,7 @@ describe('Grundfunktionen', () => {
     srv.clock.set(BEFORE_GO_LIVE);
     const res = await get(LIVE, '/api/golive');
     expect(res.status).toBe(200);
-    expect(res.json).toEqual({ goLiveAt: '2026-10-10T14:00:00.000Z', live: false, now: BEFORE_GO_LIVE.toISOString() });
+    expect(res.json).toEqual({ goLiveAt: '2026-10-19T14:00:00.000Z', live: false, now: BEFORE_GO_LIVE.toISOString() });
     srv.clock.set(AFTER_GO_LIVE);
     expect((await get(CHECK, '/api/golive')).json.live).toBe(true);
     srv.clock.set(BEFORE_GO_LIVE);
@@ -518,7 +518,7 @@ describe('API', () => {
     expect(wrong.status).toBe(401);
     const bearer = await request(port, { host: CHECK, path: '/api/export', headers: { Authorization: `Bearer ${EXPORT_TOKEN}` } });
     expect(bearer.status).toBe(200);
-    expect(bearer.json).toMatchObject({ goLiveAt: '2026-10-10T14:00:00.000Z', live: false });
+    expect(bearer.json).toMatchObject({ goLiveAt: '2026-10-19T14:00:00.000Z', live: false });
     expect(bearer.json.checklist.items.length).toBeGreaterThanOrEqual(3);
     expect(bearer.json.module.votes).toHaveLength(2);
     expect((await api('GET', '/api/export')).status).toBe(200);

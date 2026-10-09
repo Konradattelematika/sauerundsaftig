@@ -3,8 +3,8 @@ import { loadConfig } from '../../server/lib/config.mjs';
 import { classifyHost, isGoLive, normalizeHost, normalizePath, robotsTxt, route } from '../../server/lib/host-policy.mjs';
 
 const config = loadConfig({ SUS_SESSION_SECRET: 'x'.repeat(40), SUS_USERS: '[]' });
-const before = new Date('2026-10-10T13:59:59Z');
-const after = new Date('2026-10-10T14:00:00Z');
+const before = new Date('2026-10-19T13:59:59Z');
+const after = new Date('2026-10-19T14:00:00Z');
 const r = (host, rawPath, now = before, extra = {}) => route({ method: 'GET', host, rawPath, search: '', ...extra }, config, now);
 
 describe('normalizeHost', () => {
@@ -43,8 +43,8 @@ describe('classifyHost', () => {
 });
 
 describe('Go-Live', () => {
-  it('Default 10.10.2026 16:00 Berlin = 14:00 UTC', () => {
-    expect(config.goLiveAt.toISOString()).toBe('2026-10-10T14:00:00.000Z');
+  it('Default 19.10.2026 16:00 Berlin = 14:00 UTC', () => {
+    expect(config.goLiveAt.toISOString()).toBe('2026-10-19T14:00:00.000Z');
     expect(isGoLive(config, before)).toBe(false);
     expect(isGoLive(config, after)).toBe(true);
   });

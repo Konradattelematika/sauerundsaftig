@@ -79,7 +79,7 @@ Impressum und Datenschutz sind standardmäßig auf „nicht indexieren".
 
 ## Was bewusst nicht im Dashboard liegt
 
-Login- und Passwortseiten, die Countdown-Bühne bis zum 10.10.2026, die internen Werkzeuge (Checkliste,
+Login- und Passwortseiten, die Countdown-Bühne bis zum 19.10.2026, die internen Werkzeuge (Checkliste,
 Modul-Board), die alten Design-Varianten B–D und die Fehler-/Hinweistexte innerhalb der Formulare
 (Vorbestellung, Gutschein). Diese ändern sich im Code.
 

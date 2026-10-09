@@ -32,7 +32,7 @@ Auswirkungen (bewusst in Kauf genommen):
 - Kurzzeitig erhöhter RAM/CPU-Bedarf beim Build (begrenzt: ein Build gleichzeitig, `VIPS_CONCURRENCY=1`, Heap-Limit).
 - Neuer Code (Deploy) baut beim Start einmal mit dem veröffentlichten Inhalt nach; bis dahin läuft der vorige Build weiter.
 
-Nicht im CMS (bewusst, dokumentiert): Login-/Passwort-Systemseiten, Countdown-Bühne (läuft nur bis 10.10.), interne Tools
+Nicht im CMS (bewusst, dokumentiert): Login-/Passwort-Systemseiten, Countdown-Bühne (läuft nur bis 19.10.), interne Tools
 (Checkliste, Modul-Board), Altvarianten B/C/D, Validierungs-Mikrotexte in den Formular-Inseln.
 
 ## 3. Datenmodell
@@ -184,7 +184,7 @@ Kern (`src/cms/{types.ts,store.mjs,rich.mjs,index.ts,SectionList.astro,sections/
 `lib/images.ts`, Layout/SeoHead/SectionIntro) gehört dem Orchestrator — Änderungswünsche als „Bitte an Orchestrator".
 
 ## 11. Go-Live-Sicherheit
-Die Website geht am 10.10.2026 16:00 automatisch öffentlich (Überraschungs-Übergabe). Das CMS wird auf Branch `cms`
+Die Website geht am 19.10.2026 16:00 automatisch öffentlich (verschoben vom 10.10., damit Josie nach der Übergabe Feedback geben kann). Das CMS wird auf Branch `cms`
 entwickelt und erst nach vollständiger Prüfung und Freigabe durch Konrad auf Produktion gebracht.
 
 ## 12. Umsetzungsstand (08.10.2026, Branch `cms`)

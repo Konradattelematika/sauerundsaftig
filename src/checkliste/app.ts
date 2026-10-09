@@ -869,7 +869,7 @@ function fatal(message: string): void {
 
 async function init(): Promise<void> {
   const buildGoLive = mainEl.dataset.golive;
-  goLiveAt = isValidDate(buildGoLive) ? buildGoLive : '2026-10-10T16:00:00+02:00';
+  goLiveAt = isValidDate(buildGoLive) ? buildGoLive : '2026-10-19T16:00:00+02:00';
   renderCountdown();
   void api.getGoLive().then((iso) => {
     if (isValidDate(iso)) {
