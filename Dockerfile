@@ -21,10 +21,12 @@ ENV PORT=3000 NODE_ENV=production SUS_DIST_DIR=/app/dist SUS_DATA_DIR=/data SUS_
 COPY --from=build /app /app
 COPY deploy/entrypoint.sh /usr/local/bin/sus-entrypoint
 # Schreibrechte für Builds zur Laufzeit (Benutzer node): Medien-Sync nach src/assets/media,
-# Vite-Abhängigkeits-Cache (node_modules/.vite), .astro für generierte Typen. Der Rest bleibt root-eigen.
+# Vite-Abhängigkeits-Cache (node_modules/.vite), .astro für generierte Typen. /app selbst gehört node
+# (nicht rekursiv), weil Astro .astro beim Bauen löscht und neu anlegt (rmdir braucht Schreibrecht auf
+# den Elternordner). Alle übrigen Dateien bleiben root-eigen.
 RUN chmod 0755 /usr/local/bin/sus-entrypoint \
  && mkdir -p /data /app/src/assets/media /app/.astro /app/node_modules/.vite \
- && chown node:node /data \
+ && chown node:node /data /app \
  && chown -R node:node /app/src/assets/media /app/.astro /app/node_modules/.vite
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
