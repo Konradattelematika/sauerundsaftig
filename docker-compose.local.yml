@@ -1,0 +1,6 @@
+# Nur für lokales Testen: veröffentlicht den App-Port ausschließlich auf 127.0.0.1 (nie auf allen Schnittstellen).
+# Start: SUS_USERS='[…]' SUS_SESSION_SECRET=… docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+services:
+  web:
+    ports:
+      - "127.0.0.1:${SUS_LOCAL_PORT:-3000}:3000"

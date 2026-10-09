@@ -1,11 +1,14 @@
-# Lokal bzw. als Doku — Coolify nutzt den Dockerfile-Buildpack (Port 3000, Persistent Storage /data).
-# Start: SUS_USERS='[…]' SUS_SESSION_SECRET=… docker compose up --build
+# Doku/Vorlage — Coolify nutzt den Dockerfile-Buildpack (Port 3000, Persistent Storage /data).
+# Port 3000 ist bewusst NUR intern freigegeben (expose): Der Server vertraut der Proxy-Topologie
+# (Traefik hängt die Client-IP rechts an X-Forwarded-For an, s. server/lib/auth.mjs → clientIp) und darf
+# nie direkt aus dem Netz erreichbar sein, sonst ließe sich z. B. das Login-Rate-Limit umgehen.
+# Lokal testen (nur über 127.0.0.1): docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 services:
   web:
     build: .
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
       PORT: "3000"
       SUS_DATA_DIR: /data
