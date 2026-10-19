@@ -16,7 +16,7 @@ import type {
   StatusFilter,
 } from './types';
 
-export const DEFAULT_GO_LIVE = '2026-10-19T16:00:00+02:00';
+export const DEFAULT_GO_LIVE = '2026-11-01T16:00:00+01:00';
 const TZ = 'Europe/Berlin';
 
 // ---------- Beschriftungen ----------
@@ -177,13 +177,13 @@ export function formatShort(iso: string, now: Date = new Date()): string {
   return `${p.day}.${p.month}.${sameYear ? '' : p.year}, ${p.hour}:${p.minute}`;
 }
 
-/** „19.10.2026, 16:00 Uhr" */
+/** „01.11.2026, 16:00 Uhr" */
 export function formatDateTime(iso: string): string {
   const p = berlin(new Date(iso));
   return `${p.day}.${p.month}.${p.year}, ${p.hour}:${p.minute} Uhr`;
 }
 
-/** „Montag, 19.10.2026 · 16:00 Uhr" */
+/** „Sonntag, 01.11.2026 · 16:00 Uhr" */
 export function formatGoLive(iso: string): string {
   const p = berlin(new Date(iso));
   return `${p.weekday}, ${p.day}.${p.month}.${p.year} · ${p.hour}:${p.minute} Uhr`;
