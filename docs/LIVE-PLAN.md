@@ -10,7 +10,7 @@ bleibt alles hinter Login + noindex. Nichts darf Josie vorher erreichen (keine M
 
 | Host | Inhalt | Zugang |
 |---|---|---|
-| `sauerundsaftig.de` | **nur Variante A „Krume"**, im Wurzelpfad (`/karte`, `/besuch`, …) | bis Go-Live nur mit Login; ab **01.11.2026 16:00 Europe/Berlin** (= `2026-11-01T15:00:00Z`, MEZ; verschoben vom 10.10. und 19.10.) automatisch öffentlich + indexierbar |
+| `sauerundsaftig.de` | **nur Variante A „Krume"**, im Wurzelpfad (`/karte`, `/besuch`, …) | bis Go-Live nur mit Login; ab **19.10.2026 22:30 Europe/Berlin** (= `2026-10-19T20:30:00Z`; vorher geplant 10.10., 19.10. 16:00 und 01.11.) automatisch öffentlich + indexierbar |
 | `www.sauerundsaftig.de` | 301 → `https://sauerundsaftig.de` (DNS zeigt noch auf All-Inkl → Checklisten-Punkt) | — |
 | `checkliste.sauerundsaftig.de` | To-do-Liste vor/nach Go-Live für Team (Konrad, Lukas, Nicole) und Josie, mit Feedback je Punkt | immer Login |
 | `module.sauerundsaftig.de` | Entscheidungs-Board: je Grundlage/Komponente/Block die Live-Version + 3 Alternativen, bewerten/kommentieren/entscheiden | immer Login |
@@ -76,7 +76,7 @@ ihrem Präfix (`/module/…`, `/checkliste`), API-Aufrufe mit `/api/…`.
 
 ### 2.4 Go-Live
 
-- Env `SUS_GO_LIVE_AT` (Default `2026-11-01T16:00:00+01:00`, vorher 10.10. und 19.10.), `SUS_FORCE_PRIVATE=1` hält die Schranke auch danach zu.
+- Env `SUS_GO_LIVE_AT` (Default `2026-10-19T22:30:00+02:00`, vorher geplant 10.10., 19.10. 16:00 und 01.11.), `SUS_FORCE_PRIVATE=1` hält die Schranke auch danach zu.
 - `GET /api/golive` (auf allen Hosts, ohne Auth) → `{ "goLiveAt": "<ISO>", "live": bool, "now": "<ISO>" }`.
 - `src/data/site.json` → `goLiveAt` ist derselbe Zeitpunkt für den Countdown im Build (Fallback, wenn die API fehlt).
 

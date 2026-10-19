@@ -24,7 +24,7 @@ export async function testUsers() {
 }
 
 export const BEFORE_GO_LIVE = new Date('2026-10-08T10:00:00Z');
-export const AFTER_GO_LIVE = new Date('2026-11-01T15:00:00Z');
+export const AFTER_GO_LIVE = new Date('2026-10-19T20:30:00Z');
 export const EXPORT_TOKEN = 'export-token-fuer-tests-0123456789';
 
 export async function makeConfig(extraEnv = {}) {

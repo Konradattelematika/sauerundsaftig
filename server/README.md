@@ -40,7 +40,7 @@ src/cms/definitions.mjs       Sektions-/Sammlungs-Definitionen per Dateisystem l
 | `SUS_USERS_B64` | — | Dasselbe JSON als kanonisches Base64url; hat Vorrang vor `SUS_USERS` und umgeht `$`-Interpolation durch Deployment-Plattformen |
 | `SUS_SESSION_SECRET` | zufällig | HMAC-Schlüssel für Cookies (≥ 32 Zeichen). Fehlt er, gelten Sessions nur bis zum Neustart |
 | `SUS_EXPORT_TOKEN` | — | Bearer-Token für `/api/export(.md)` ohne Login (≥ 24 Zeichen) |
-| `SUS_GO_LIVE_AT` | `2026-11-01T16:00:00+01:00` | Ab dann ist der Live-Host öffentlich. Ungültig → bleibt privat |
+| `SUS_GO_LIVE_AT` | `2026-10-19T22:30:00+02:00` | Ab dann ist der Live-Host öffentlich. Ungültig → bleibt privat |
 | `SUS_FORCE_PRIVATE` | `0` | `1` hält den Live-Host auch nach Go-Live hinter Login |
 | `SUS_LIVE_HOSTS` | `sauerundsaftig.de` | Kommaliste |
 | `SUS_WWW_HOSTS` | `www.sauerundsaftig.de` | 301 → `https://<erster Live-Host>` |
