@@ -5,27 +5,36 @@
     "order": 10,
     "heroMotif": "fruehstueck",
     "intro": "Bis 12 Uhr. Immer mit Brötchen oder Sauerteigbrot nach Wahl — und 0,1 l Orangensaft dazu.",
-    "note": "Dazu wählbar: Marmeladenteller 1,90 · Schokocreme oder Honig 1,90 · Wurstplatte 4,90 · Käseplatte 4,90 · Frühstückslachs 6,90 · gekochtes Ei 1,90 · Brezel mit Butter 4,90 · Croissant mit Butter 3,90. Halbe belegte Brötchen oder Stulle ab 3,00 — belegt nach deinem Geschmack. * Kennzeichnung siehe Aushang im Café.",
+    "note": "* Kennzeichnung siehe Aushang im Café.",
     "items": [
       {
         "name": "Bäckerinfrühstück",
         "description": "2 Brötchen oder Sauerteigbrot nach Wahl, Butter, Schinken*, Salami*, Schnittkäse.",
         "price": 10.9,
-        "priceIsPlaceholder": false
+        "priceIsPlaceholder": false,
+        "allergens": [
+          "Gluten"
+        ]
       },
       {
         "name": "Käsefrühstück",
         "description": "2 Brötchen oder Sauerteigbrot, Schnittkäse, Frischkäse, Camembert, Butter.",
         "price": 10.9,
         "priceIsPlaceholder": false,
-        "veggie": true
+        "veggie": true,
+        "allergens": [
+          "Gluten"
+        ]
       },
       {
         "name": "Süßes Frühstück",
         "description": "1 Brötchen oder Sauerteigbrot, 1 Croissant, Erdbeer- und Aprikosenmarmelade, Honig, Butter.",
         "price": 9.9,
         "priceIsPlaceholder": false,
-        "veggie": true
+        "veggie": true,
+        "allergens": [
+          "Gluten"
+        ]
       },
       {
         "name": "Rührei-Frühstück",
@@ -34,6 +43,7 @@
         "priceIsPlaceholder": false,
         "veggie": true,
         "allergens": [
+          "Gluten",
           "Ei"
         ]
       },
@@ -43,15 +53,19 @@
         "price": 13.9,
         "priceIsPlaceholder": false,
         "allergens": [
-          "Fisch",
-          "Ei"
+          "Gluten",
+          "Ei",
+          "Fisch"
         ]
       },
       {
         "name": "Süß & Salzig",
         "description": "2 Brötchen oder Sauerteigbrot, Schinken*, Salami*, Käse, Marmelade, Honig, Butter.",
         "price": 12.5,
-        "priceIsPlaceholder": false
+        "priceIsPlaceholder": false,
+        "allergens": [
+          "Gluten"
+        ]
       },
       {
         "name": "Gegrilltes Sauerteig-Käsesandwich",
@@ -61,8 +75,8 @@
         "veggie": true,
         "allergens": [
           "Gluten",
-          "Milch",
-          "Ei"
+          "Ei",
+          "Milch"
         ],
         "highlight": true
       },
@@ -72,14 +86,21 @@
         "price": 34.9,
         "priceIsPlaceholder": false,
         "motif": "fruehstueck",
-        "highlight": true
+        "highlight": true,
+        "allergens": [
+          "Gluten"
+        ]
       },
       {
         "name": "Veggie-Frühstück für Zwei",
         "description": "4 Brötchen oder Sauerteigbrot, Croissant, Butter, Marmeladen, Honig, Käse, Camembert, Frischkäse, Schokocreme, Joghurt, Rühreier.",
         "price": 34.9,
         "priceIsPlaceholder": false,
-        "veggie": true
+        "veggie": true,
+        "allergens": [
+          "Gluten",
+          "Milch"
+        ]
       },
       {
         "name": "Joghurt-Bowl",
@@ -99,91 +120,87 @@
     "slug": "kuchen",
     "order": 20,
     "heroMotif": "kaesekuchen",
-    "intro": "Käsekuchen, Obsttorte, ein paar feste Größen dazwischen. Stückweise, solange der Vorrat reicht.",
+    "intro": "Quarkkuchen, Cheesecake und ein paar feste Größen dazwischen — jedes Stück 4,50 €, solange der Vorrat reicht.",
     "items": [
       {
-        "name": "Käsekuchen",
-        "description": "Auch hier arbeitet unser Sauerteig mit. Cremig oben, würzig unten — zuletzt mit Himbeer- oder Maracujaspiegel.",
-        "price": 4.8,
-        "priceIsPlaceholder": true,
+        "name": "Quarkkuchen",
+        "description": "Der beliebte Klassiker ist bei uns jeden Tag in der Auslage — ob Zitrone, Mandarine, Stachelbeere, Mandel-Amaretto, Rum-Rosine oder all die anderen leckeren Sorten: Hier kommt jeder auf seinen Geschmack.",
+        "price": 4.5,
+        "priceIsPlaceholder": false,
         "priceSuffix": "pro Stück",
         "veggie": true,
         "vegan": false,
         "allergens": [
           "Gluten",
-          "Milch",
-          "Ei"
+          "Ei",
+          "Milch"
         ],
-        "motif": "kaesekuchen",
         "highlight": true
       },
       {
-        "name": "Lotus-Käsekuchen",
-        "description": "Karamellspiegel, Lotus-Keks obendrauf — der Bruder unserer Lotus-Schnecke.",
-        "price": 4.9,
-        "priceIsPlaceholder": true,
-        "priceSuffix": "pro Stück",
-        "veggie": true,
-        "vegan": false,
-        "allergens": [
-          "Gluten",
-          "Milch",
-          "Ei"
-        ],
-        "motif": "kaesekuchen-lotus"
-      },
-      {
-        "name": "Obsttorte der Saison",
-        "description": "Was der Markt gerade hergibt, kommt obendrauf — zuletzt: Erdbeeren, dicht an dicht.",
-        "price": 5.2,
-        "priceIsPlaceholder": true,
-        "priceSuffix": "pro Stück",
-        "veggie": true,
-        "vegan": false,
-        "allergens": [
-          "Gluten",
-          "Milch",
-          "Ei"
-        ],
-        "seasonal": "nach Jahreszeit",
-        "motif": "obsttorte"
-      },
-      {
-        "name": "Schokoladenkuchen",
-        "description": "Dunkel, dicht, ohne Chichi.",
+        "name": "Cheesecake",
+        "description": "Unsere cremige Versuchung: mit Lotuscreme, Himbeerspiegel, Maracujacreme oder als Nougat-Kirsch — wir versuchen, für jeden die richtige Sorte zu kreieren.",
         "price": 4.5,
-        "priceIsPlaceholder": true,
+        "priceIsPlaceholder": false,
+        "priceSuffix": "pro Stück",
+        "veggie": true,
+        "vegan": false,
+        "allergens": [
+          "Gluten",
+          "Ei",
+          "Milch"
+        ],
+        "motif": "kaesekuchen"
+      },
+      {
+        "name": "Streuselkuchen",
+        "description": "80 % Streusel, 20 % Kuchen — mit Obst der Saison.",
+        "price": 4.5,
+        "priceIsPlaceholder": false,
+        "priceSuffix": "pro Stück",
+        "veggie": true,
+        "vegan": false,
+        "allergens": [
+          "Gluten",
+          "Milch"
+        ]
+      },
+      {
+        "name": "Butter-Mandel",
+        "description": "Ein klassischer, weicher Butterkuchen, getoppt mit karamellisierten Mandeln — am liebsten warm aus dem Ofen mit geschlagener Sahne.",
+        "price": 4.5,
+        "priceIsPlaceholder": false,
         "priceSuffix": "pro Stück",
         "veggie": true,
         "vegan": false,
         "allergens": [
           "Gluten",
           "Milch",
-          "Ei"
+          "Nüsse"
         ]
       },
       {
-        "name": "Zitronenkuchen",
-        "description": "Saftig, mit Zitronenglasur, die beim ersten Bissen aufreißt.",
-        "price": 4.6,
-        "priceIsPlaceholder": true,
+        "name": "Karotte-Walnuss-Zitrone",
+        "description": "Unser saftiger Kastenkuchen mit einer Menge Nüssen, abgerundet mit einer Prise Zimt.",
+        "price": 4.5,
+        "priceIsPlaceholder": false,
         "priceSuffix": "pro Stück",
         "veggie": true,
         "vegan": false,
         "allergens": [
           "Gluten",
-          "Milch",
-          "Ei"
+          "Nüsse"
         ]
       },
       {
-        "name": "Torten auf Bestellung",
-        "description": "Geburtstag, Taufe, einfach so: gestaltete Cremetorten nach deinem Wunsch — 5 Tage Vorlauf, Anfrage telefonisch.",
+        "name": "Kuchen und Torten auf Bestellung",
+        "description": "Geburtstag, Taufe, einfach so: ganze Kuchen und gestaltete Torten nach deinem Wunsch, ab 35 € — rund 5 Tage Vorlauf, Anfrage telefonisch.",
+        "priceIsPlaceholder": false,
         "veggie": true,
         "allergens": [
           "Gluten",
-          "Milch",
-          "Ei"
+          "Ei",
+          "Milch"
         ],
         "motif": "torte-rosa"
       }
@@ -193,10 +210,36 @@
     "title": "Brot & Gebäck",
     "slug": "brot",
     "order": 30,
-    "heroMotif": "brot-anschnitt",
-    "intro": "Sauerteigbrote aus der eigenen Backstube — lange geführt, dunkel ausgebacken.",
-    "note": "Solange der Vorrat reicht — sichere dir deinen Laib über die Vorbestellung.",
+    "heroMotif": "brot-laib",
+    "intro": "Sauerteigbrote aus der eigenen Backstube, 24 bis 72 Stunden gereift und dunkel ausgebacken — immer donnerstags und freitags.",
+    "note": "Brot gibt es donnerstags und freitags, solange der Vorrat reicht.",
     "items": [
+      {
+        "name": "Bauernbrot",
+        "description": "Unser Hausbrot: kräftige Kruste, offene Krume, reiner Sauerteig.",
+        "price": 7,
+        "priceIsPlaceholder": false,
+        "priceSuffix": "pro Laib (ca. 700 g)",
+        "veggie": true,
+        "vegan": true,
+        "allergens": [
+          "Gluten"
+        ],
+        "motif": "brot-laib",
+        "highlight": true
+      },
+      {
+        "name": "Roggenbrot",
+        "description": "Dunkel, dicht und würzig — unser Vollkornbrot hält sich gut eine Woche.",
+        "price": 7,
+        "priceIsPlaceholder": false,
+        "priceSuffix": "pro Laib (ca. 700 g)",
+        "veggie": true,
+        "vegan": true,
+        "allergens": [
+          "Gluten"
+        ]
+      },
       {
         "name": "Dinkelvollkorn mit Saaten",
         "description": "Unser Neuer: Dinkelvollkorn, dicht an Saaten, saftige Krume.",
@@ -209,96 +252,118 @@
         "allergens": [
           "Gluten"
         ],
-        "motif": "brotregal",
-        "highlight": true
-      },
-      {
-        "name": "Bauernbrot",
-        "description": "Der Klassiker: kräftige Kruste, offene Krume, reiner Sauerteig.",
-        "price": 7,
-        "priceIsPlaceholder": false,
-        "priceSuffix": "pro Laib",
-        "veggie": true,
-        "vegan": true,
-        "allergens": [
-          "Gluten"
-        ],
-        "motif": "brot-laib"
-      },
-      {
-        "name": "Roggenvollkorn",
-        "description": "Dunkel, dicht und würzig — im Kasten gebacken, hält tagelang.",
-        "price": 7,
-        "priceIsPlaceholder": false,
-        "priceSuffix": "pro Laib",
-        "veggie": true,
-        "vegan": true,
-        "allergens": [
-          "Gluten"
-        ]
+        "motif": "brotregal"
       },
       {
         "name": "Brötchen & Laugenbrezeln",
-        "description": "Täglich im Korb auf der Theke — auch als halbe belegte Brötchen oder Stulle ab 3,00.",
+        "description": "Täglich frische Brötchen — auch außer Haus, für euer Frühstück zuhause.",
+        "priceIsPlaceholder": false,
         "veggie": true,
         "allergens": [
           "Gluten"
         ],
         "motif": "theke"
+      },
+      {
+        "name": "Belegte Stullen",
+        "description": "Auf unserem Sauerteigbrot, frisch belegt — ab 2,90 €.",
+        "priceIsPlaceholder": false,
+        "allergens": [
+          "Gluten"
+        ]
+      },
+      {
+        "name": "Stullenplatten",
+        "description": "Gerne bereiten wir für dich und deinen Anlass individuelle Stullenplatten mit unserem Hausbrot zu. Du entscheidest: klassisch, vegetarisch, vegan oder etwas ausgefallen — frag einfach bei uns nach!",
+        "priceIsPlaceholder": false,
+        "allergens": [
+          "Gluten"
+        ]
       }
     ]
   },
   {
-    "title": "Sauerteigschnecken",
+    "title": "Süßes Sauerteiggebäck",
     "slug": "schnecken",
     "order": 40,
-    "intro": "Unsere Signature: Sauerteig statt Hefeteig, dreimal gefüllt, jeden Morgen frisch gedreht.",
-    "note": "Ofenfrisch am Vormittag — solange der Vorrat reicht.",
+    "intro": "Unsere Signature: süßes Gebäck aus Sauerteig statt Hefeteig.",
+    "note": "Ofenfrisch am Vormittag, solange der Vorrat reicht. Was es heute gibt und die Preise siehst du an der Theke.",
     "items": [
       {
-        "name": "Pistazie",
-        "description": "Pistaziencreme, satt eingerollt, mit gehackten Kernen bestreut.",
-        "price": 4.5,
-        "priceIsPlaceholder": true,
+        "name": "Lotus",
+        "description": "Unser Klassiker: karamellisierte Lotuscreme, mit Keks obendrauf.",
+        "priceIsPlaceholder": false,
         "veggie": true,
         "vegan": false,
         "allergens": [
           "Gluten",
-          "Milch",
-          "Nüsse",
-          "Ei"
+          "Ei",
+          "Milch"
         ],
-        "motif": "schnecke-pistazie",
+        "motif": "schnecke-lotus",
         "highlight": true
       },
       {
-        "name": "Lotus",
-        "description": "Karamellisierte Lotuscreme, die beim ersten Biss noch warm zieht.",
-        "price": 4.3,
-        "priceIsPlaceholder": true,
+        "name": "Zimtschnecke",
+        "description": "Die Nummer zwei nach dem Klassiker: mit Zimt und Zucker eingerollt.",
+        "priceIsPlaceholder": false,
         "veggie": true,
         "vegan": false,
         "allergens": [
           "Gluten",
-          "Milch",
-          "Ei"
+          "Milch"
         ],
-        "motif": "schnecke-lotus"
+        "motif": "hero-krume"
+      },
+      {
+        "name": "Franzbrötchen",
+        "priceIsPlaceholder": false,
+        "veggie": true,
+        "vegan": false,
+        "seasonal": "saisonal",
+        "allergens": [
+          "Gluten",
+          "Milch"
+        ]
+      },
+      {
+        "name": "Erdbeerknoten",
+        "description": "Mit Sahne und frischen Erdbeeren.",
+        "priceIsPlaceholder": false,
+        "veggie": true,
+        "vegan": false,
+        "seasonal": "saisonal",
+        "allergens": [
+          "Gluten",
+          "Milch"
+        ],
+        "motif": "schnecke-saison"
       },
       {
         "name": "Haselnuss",
         "description": "Geröstete Haselnusscreme, dicht gerollt, außen leicht knusprig.",
-        "price": 4.3,
-        "priceIsPlaceholder": true,
+        "priceIsPlaceholder": false,
         "veggie": true,
         "vegan": false,
+        "seasonal": "saisonal",
         "allergens": [
           "Gluten",
+          "Ei",
           "Milch",
-          "Nüsse",
-          "Ei"
-        ],
-        "motif": "schnecke-haselnuss"
+          "Nüsse"
+        ]
+      },
+      {
+        "name": "Cruffins",
+        "description": "Halb Croissant, halb Muffin.",
+        "priceIsPlaceholder": false,
+        "veggie": true,
+        "vegan": false,
+        "seasonal": "saisonal",
+        "allergens": [
+          "Gluten",
+          "Milch"
+        ]
       }
     ]
   },
@@ -306,9 +371,9 @@
     "title": "Kaffee & Getränke",
     "slug": "kaffee",
     "order": 50,
-    "heroMotif": "kaffee",
+    "heroMotif": "theke",
     "intro": "Espresso aus der Siebträgermaschine, Matcha in zwei Varianten, Kaltes für den Strandtag.",
-    "note": "Preise von der Tafel im Café — die zweiten Größen tragen wir noch nach.",
+    "note": "° Circa-Preise — maßgeblich ist die Tafel im Café. Dort findest du auch weitere Größen und saisonale Specials.",
     "items": [
       {
         "name": "Espresso",
@@ -367,7 +432,7 @@
       },
       {
         "name": "Matcha Frucht",
-        "description": "Saisonal auch als Special — zuletzt mit Erdbeerwolkenschaum.",
+        "description": "Erdbeer, Mango, Maracuja, Himbeer und Saisonales.",
         "price": 5.9,
         "priceIsPlaceholder": true,
         "veggie": true

@@ -7,10 +7,12 @@
   "kind": "builtin",
   "breadcrumb": "FAQ",
   "showBreadcrumbs": true,
-  "structuredData": ["faq"],
+  "structuredData": [
+    "faq"
+  ],
   "seo": {
     "title": "Häufige Fragen — Sauer & Saftig",
-    "description": "Antworten auf häufige Fragen: Öffnungszeiten, Reservierung, Zahlungsmittel, Hunde, Vorbestellung und mehr."
+    "description": "Antworten auf häufige Fragen: Öffnungszeiten, Reservierung, Zahlungsmittel, Hunde, Brot, Torten auf Bestellung und mehr."
   },
   "sections": [
     {

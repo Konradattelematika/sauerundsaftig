@@ -244,7 +244,6 @@ const LIVE_ROUTES = [
   '/sauerteig',
   '/ueber-uns',
   '/ueber-mich',
-  '/vorbestellen',
   '/shop',
   '/gastgeber',
   '/besuch',
@@ -311,6 +310,7 @@ function buildRemovedRoutes() {
   return [
     '/journal',
     '/workshops',
+    '/vorbestellen',
     ...readSlugs('journal').map((s) => `/journal/${s}`),
     ...readSlugs('workshops').map((s) => `/workshops/${s}`),
   ];
@@ -320,7 +320,7 @@ function buildRemovedRoutes() {
 // Crawl: BFS ab allen Pflichtrouten (damit auch Links, die nur von Pflichtseiten aus
 // erreichbar sind, entdeckt werden — nicht nur von der Startseite aus).
 // ---------------------------------------------------------------------------
-const FORBIDDEN_LIVE_LINK_RE = /^\/(a|journal|workshops)(\/|$)/;
+const FORBIDDEN_LIVE_LINK_RE = /^\/(a|journal|workshops|vorbestellen)(\/|$)/;
 
 async function crawl(baseUrl, seedRoutes) {
   const visited = new Set();

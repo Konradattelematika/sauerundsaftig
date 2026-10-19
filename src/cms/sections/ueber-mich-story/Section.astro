@@ -31,7 +31,8 @@ const f = section.fields;
           <Fragment set:html={rich(f.body, { blocks: true, linkClass: 'link-ul text-ink', pClass: 'prose-measure text-lg text-ink-soft' })} />
         )}
 
-        <!-- Redaktionelle Lücken — sichtbar, nicht erfunden -->
+        <!-- Redaktionelle Lücken — sichtbar, nicht erfunden; ohne offene Fragen kein Kasten -->
+        {f.offeneFragen.length > 0 && (
         <div class="mt-10 rounded-card border border-dashed border-ink/30 bg-bg p-6 md:p-8">
           <p class="font-mono text-[11px] uppercase tracking-widest text-ink-soft" {...editAttrs(section, 'placeholderLabel')}>{f.placeholderLabel}</p>
           <ul class="mt-4 flex flex-col gap-3 text-ink-soft">
@@ -43,6 +44,7 @@ const f = section.fields;
             ))}
           </ul>
         </div>
+        )}
       </div>
     </div>
   </div>

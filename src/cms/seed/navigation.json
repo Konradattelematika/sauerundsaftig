@@ -22,8 +22,8 @@
     }
   ],
   "cta": {
-    "label": "Vorbestellen",
-    "href": "page:vorbestellen"
+    "label": "Tisch reservieren",
+    "href": "{{tel}}"
   },
   "footer": [
     {

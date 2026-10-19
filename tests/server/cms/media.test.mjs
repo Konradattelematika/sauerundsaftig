@@ -122,7 +122,10 @@ describe('DELETE /api/cms/media/:id', () => {
   it('verwendetes Bild → 409 mit Verwendungsnachweis', async () => {
     const res = await cmsApi(srv.port, cookie, 'DELETE', '/media/kaesekuchen');
     expect(res.status).toBe(409);
-    expect(res.json.usages).toEqual([{ path: 'collections.menu.1.items.0.motif', label: 'Karte › Kategorie „Kuchen“ › „Käsekuchen“ › Bild' }]);
+    expect(res.json.usages).toEqual([
+      { path: 'collections.heuteFrisch.items.2.motif', label: 'Aus der Backstube › „Cheesecake“ › Bild' },
+      { path: 'collections.menu.1.items.1.motif', label: 'Karte › Kategorie „Kuchen“ › „Cheesecake“ › Bild' },
+    ]);
   });
 
   it('Grundbestand nicht löschbar; unbenutzter Upload wird gelöscht, Datei später aufgeräumt', async () => {

@@ -7,7 +7,9 @@
   "kind": "builtin",
   "breadcrumb": "Start",
   "showBreadcrumbs": false,
-  "structuredData": ["localBusiness"],
+  "structuredData": [
+    "localBusiness"
+  ],
   "seo": {
     "title": "Sauer & Saftig — Café und Backstube in Ostseebad Rerik",
     "description": "Fast alles bei uns beginnt mit Sauerteig. Auch der Käsekuchen. Café und Backstube in der Dünenstraße 1, Ostseebad Rerik."
@@ -23,10 +25,26 @@
         "subline": "Café und Backstube in der Dünenstraße 1, Ostseebad Rerik.",
         "showOpeningStatus": true,
         "buttons": [
-          { "link": { "label": "Karte ansehen", "href": "page:karte", "variant": "accent" }, "icon": "arrow" },
-          { "link": { "label": "Route", "href": "{{route}}", "variant": "secondary" }, "icon": "" }
+          {
+            "link": {
+              "label": "Karte ansehen",
+              "href": "page:karte",
+              "variant": "accent"
+            },
+            "icon": "arrow"
+          },
+          {
+            "link": {
+              "label": "Route",
+              "href": "{{route}}",
+              "variant": "secondary"
+            },
+            "icon": ""
+          }
         ],
-        "image": { "media": "theke" },
+        "image": {
+          "media": "theke"
+        },
         "caption": "",
         "captionAside": "Dünenstraße 1",
         "band": true
@@ -39,7 +57,7 @@
       "fields": {
         "eyebrow": "Aus der Backstube",
         "title": "Eine Auswahl aus unserem Ofen",
-        "dateLine": "Stand {datum}",
+        "dateLine": "",
         "soldOutLabel": "Vergriffen",
         "background": "bg-alt"
       }
@@ -53,9 +71,16 @@
         "title": "",
         "intro": "",
         "category": "schnecken",
-        "link": { "label": "Zur Signature-Seite", "href": "page:karte-schnecken" },
-        "image": { "media": "schnecke-pistazie-hoch" },
-        "image2": { "media": "schnecke-blech" },
+        "link": {
+          "label": "Zur Signature-Seite",
+          "href": "page:karte-schnecken"
+        },
+        "image": {
+          "media": "schnecke-lotus"
+        },
+        "image2": {
+          "media": "schnecke-blech"
+        },
         "background": "bg"
       }
     },
@@ -64,12 +89,17 @@
       "type": "vorstellung",
       "visible": true,
       "fields": {
-        "image": { "media": "josie-portrait" },
+        "image": {
+          "media": "josie-portrait"
+        },
         "placeholderNote": "Platzhalter — das Porträt folgt",
         "eyebrow": "Wer hier bäckt",
         "title": "Moin, ich bin Josie.",
         "text": "Ich habe in Rerik ein Café übernommen, das viele schon lange kannten — und eine Backstube hineingestellt, in der fast alles mit Sauerteig beginnt. Warum, wie und was die Urkunde damit zu tun hat, steht auf meiner Seite.",
-        "link": { "label": "Mehr über mich und das Café", "href": "page:ueber-mich" },
+        "link": {
+          "label": "Mehr über mich und das Café",
+          "href": "page:ueber-mich"
+        },
         "background": "bg-alt"
       }
     },
@@ -98,9 +128,18 @@
         "title": "Wann du uns findest",
         "showOpeningStatus": true,
         "text": "Reserviere deinen Tisch per Telefon.",
-        "phone": { "label": "{{phoneDisplay}}", "href": "{{tel}}" },
-        "info": { "label": "Alle Infos zum Besuch", "href": "page:besuch" },
-        "route": { "label": "Route", "href": "{{route}}" },
+        "phone": {
+          "label": "{{phoneDisplay}}",
+          "href": "{{tel}}"
+        },
+        "info": {
+          "label": "Alle Infos zum Besuch",
+          "href": "page:besuch"
+        },
+        "route": {
+          "label": "Route",
+          "href": "{{route}}"
+        },
         "background": "bg-alt"
       }
     },
@@ -117,7 +156,7 @@
     {
       "id": "brotbrief",
       "type": "newsletter",
-      "visible": true,
+      "visible": false,
       "fields": {
         "eyebrow": "Der Brotbrief",
         "title": "Einmal im Monat Post aus der Backstube",

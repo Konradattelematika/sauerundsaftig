@@ -43,12 +43,12 @@
         "eyebrow": "Die Menschen dahinter",
         "title": "Wer hier bäckt und serviert",
         "image1": {
-          "media": "team-1"
+          "media": "theke"
         },
         "image2": {
-          "media": "team-2"
+          "media": "brotregal"
         },
-        "text": "Hinter der Theke und in der Backstube steht ein kleines Team. Wer das im Einzelnen ist, stellen wir dir hier vor, sobald Fotos und Namen final abgestimmt sind — bis dahin bleiben die Bilder Platzhalter. Wer hier bäckt, steht schon fest: [Moin, ich bin Josie.](page:ueber-mich)"
+        "text": "Hinter der Theke und in der Backstube steht ein kleines Team, das mit den Jahreszeiten wächst und wechselt — deshalb stellen wir hier niemanden einzeln vor. Wer hier bäckt, steht fest: [Moin, ich bin Josie.](page:ueber-mich)"
       }
     },
     {
@@ -57,7 +57,7 @@
       "visible": true,
       "fields": {
         "image": {
-          "media": "fassade"
+          "media": "gastraum-abend"
         },
         "imagePosition": "right",
         "eyebrow": "Der Ort",
@@ -82,9 +82,9 @@
           {
             "number": "01",
             "title": "Handwerk & Zeit",
-            "text": "Sauerteig statt Hefe, überall, wo es geht — 18 Stunden für einen Laib, kein Schritt wird abgekürzt.",
+            "text": "Sauerteig statt Hefe, überall, wo es geht — 24 bis 72 Stunden Gärzeit für einen Laib, kein Schritt wird abgekürzt.",
             "link": {
-              "label": "Der 18-Stunden-Prozess",
+              "label": "Vom Teig zum Laib",
               "href": "page:sauerteig",
               "visible": true
             }
@@ -92,7 +92,7 @@
           {
             "number": "02",
             "title": "Ehrlichkeit",
-            "text": "Preise und offene Fragen markieren wir dort, wo wir selbst noch nicht alles final haben — lieber ehrlich mit einem ° oder einem Platzhalter-Hinweis als glattgebügelt."
+            "text": "Wir sagen dir, was es gibt und was nicht: Saisonales kennzeichnen wir als saisonal, und wenn etwas aus ist, ist es aus — lieber ehrlich als glattgebügelt."
           }
         ]
       }

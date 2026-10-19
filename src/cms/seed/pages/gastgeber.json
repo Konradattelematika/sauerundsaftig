@@ -31,7 +31,7 @@
         "items": [
           {
             "title": "Willkommensbrot-Paket",
-            "text": "Ein Laib Sauerteigbrot für deine Gäste am Anreisetag, fertig verpackt zur Abholung."
+            "text": "Ein Laib Sauerteigbrot für deine Gäste, fertig verpackt zur Abholung — Brot gibt es donnerstags und freitags."
           },
           {
             "title": "Frühstückskorb zur Anreise",
@@ -43,7 +43,7 @@
           },
           {
             "title": "Kartenständer mit QR-Code",
-            "text": "Ein kostenloser Ständer für deine Rezeption. Der QR-Code führt direkt zu unserer Karte und zur Vorbestellung."
+            "text": "Ein kostenloser Ständer für deine Rezeption. Der QR-Code führt direkt zu unserer Karte."
           }
         ],
         "note": "Preise gibt es auf Anfrage — Mengen, Rhythmus und Zustellung stimmen wir individuell mit dir ab. Rechnung ist möglich.",
@@ -69,7 +69,7 @@
       "fields": {
         "eyebrow": "Anfrage",
         "title": "Ruf uns an, wir sprechen alles Weitere direkt durch",
-        "text": "Ein Anfrageformular ist hier noch nicht angeschlossen — am schnellsten geht es telefonisch.",
+        "text": "Am schnellsten geht es telefonisch.",
         "buttons": [
           {
             "label": "{{phoneDisplay}}",

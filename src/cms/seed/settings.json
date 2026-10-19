@@ -20,7 +20,7 @@
   "phoneDisplay": "038296 769924",
   "instagram": "sauerundsaftig",
   "rating": {
-    "value": 4.6,
+    "value": 4.7,
     "count": 152,
     "source": "Google"
   },
@@ -38,7 +38,12 @@
           "16:00"
         ]
       ],
-      "tue": [],
+      "tue": [
+        [
+          "08:00",
+          "16:00"
+        ]
+      ],
       "wed": [],
       "thu": [
         [
@@ -75,6 +80,16 @@
         "date": "2026-12-25",
         "hours": [],
         "label": "1. Weihnachtstag"
+      },
+      {
+        "date": "2026-12-26",
+        "hours": [],
+        "label": "2. Weihnachtstag"
+      },
+      {
+        "date": "2027-03-28",
+        "hours": [],
+        "label": "Ostersonntag"
       }
     ]
   },

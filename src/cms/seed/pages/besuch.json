@@ -7,7 +7,9 @@
   "kind": "builtin",
   "breadcrumb": "Besuch",
   "showBreadcrumbs": true,
-  "structuredData": ["localBusiness"],
+  "structuredData": [
+    "localBusiness"
+  ],
   "seo": {
     "title": "Besuch — Öffnungszeiten, Anfahrt, Telefon | Sauer & Saftig",
     "description": "Öffnungszeiten, Adresse und Anreise nach Rerik, Dünenstraße 1. Reservierung nur telefonisch."
@@ -21,7 +23,12 @@
         "eyebrow": "Besuch",
         "title": "Dünenstraße 1, Ostseebad Rerik",
         "intro": "Reserviere deinen Tisch per Telefon.",
-        "phoneLink": { "label": "{{phoneDisplay}}", "href": "{{tel}}", "newTab": false, "visible": true }
+        "phoneLink": {
+          "label": "{{phoneDisplay}}",
+          "href": "{{tel}}",
+          "newTab": false,
+          "visible": true
+        }
       }
     },
     {
@@ -30,7 +37,7 @@
       "visible": true,
       "fields": {
         "eyebrow": "Öffnungszeiten",
-        "note": "An Heiligabend und am 1. Weihnachtstag haben wir geschlossen. Verlässlich ist immer der Stand hier auf der Website, nicht unbedingt Google oder Instagram."
+        "note": "Geschlossen haben wir am Ostersonntag sowie am 24., 25. und 26. Dezember. Kurzfristige Änderungen findest du auf jeden Fall bei Instagram oder Google Maps."
       }
     },
     {
@@ -41,7 +48,12 @@
         "eyebrow": "Anfahrt",
         "text1": "Rerik liegt an der Ostseeküste zwischen Wismar und Kühlungsborn. Aus Richtung Kühlungsborn kommst du aus östlicher Richtung, aus Richtung Bad Doberan aus südlicher Richtung, aus Richtung Wismar aus westlicher Richtung — die Dünenstraße liegt nah an der Küste.",
         "text2": "Am sichersten: kurz anrufen, wenn du dir bei der Anfahrt unsicher bist.",
-        "link": { "label": "Route in Maps starten", "href": "{{route}}", "newTab": true, "visible": true }
+        "link": {
+          "label": "Route in Maps starten",
+          "href": "{{route}}",
+          "newTab": true,
+          "visible": true
+        }
       }
     },
     {
@@ -53,15 +65,24 @@
         "items": [
           {
             "heading": "Parken",
-            "text": "Parkmöglichkeiten in der Nähe haben wir noch nicht abschließend bestätigt. Ruf uns kurz an unter [{{phoneDisplay}}]({{tel}}), dann sagen wir dir, wo du am besten stehst."
+            "text": "Parken kannst du auf unseren Parkplätzen hinter dem Fischrestaurant „Fischer sin Fru“, gleich neben dem Café."
           },
-          { "heading": "Barrierefreiheit", "text": "Das Café ist nicht barrierefrei." },
-          { "heading": "Hunde", "text": "Hunde sind an der Leine erlaubt." },
+          {
+            "heading": "Barrierefreiheit",
+            "text": "Auf Anfrage sind wir barrierefrei: Wir haben Auslegeschienen für Rollstühle, und die barrierefreie Toilette im Restaurant „Fischer sin Fru“ nebenan darfst du mitbenutzen (außer montags, da hat das Restaurant geschlossen). Sag uns am besten vorher kurz Bescheid unter [{{phoneDisplay}}]({{tel}})."
+          },
+          {
+            "heading": "Hunde",
+            "text": "Hunde sind an der Leine erlaubt."
+          },
           {
             "heading": "Reservierung",
             "text": "Reservierungen laufen ausschließlich telefonisch — ruf uns unter [{{phoneDisplay}}]({{tel}}) an und frag nach einem Tisch für deinen Termin."
           },
-          { "heading": "Zahlungsmittel", "text": "Du kannst bar oder mit Karte bezahlen." }
+          {
+            "heading": "Zahlungsmittel",
+            "text": "Du kannst bar oder mit Karte bezahlen."
+          }
         ]
       }
     }

@@ -2,14 +2,14 @@
   "id": "karte-schnecken",
   "order": 12,
   "slug": "karte/schnecken",
-  "title": "Karte: Schnecken (Signature)",
+  "title": "Karte: Süßes Sauerteiggebäck (Signature)",
   "status": "published",
   "kind": "builtin",
-  "breadcrumb": "Schnecken",
+  "breadcrumb": "Süßes Sauerteiggebäck",
   "showBreadcrumbs": true,
   "seo": {
-    "title": "Sauerteigschnecken — die Signature von Sauer & Saftig",
-    "description": "Sauerteig statt Hefeteig, 18 Stunden Reifezeit, dreimal gefüllt: Pistazie, Lotus, Haselnuss. Ofenfrisch am Vormittag, solange der Vorrat reicht."
+    "title": "Süßes Sauerteiggebäck — die Signature von Sauer & Saftig",
+    "description": "Süßes Gebäck aus Sauerteig statt Hefeteig: Lotus-Klassiker, Zimtschnecke und saisonale Sorten. Ofenfrisch am Vormittag, solange der Vorrat reicht."
   },
   "sections": [
     {
@@ -28,34 +28,29 @@
         "items": [
           {
             "media": {
-              "media": "schnecke-pistazie-hoch"
-            },
-            "name": "Pistazie",
-            "description": "Pistaziencreme, satt eingerollt, mit gehackten Kernen bestreut.",
-            "price": 4.5,
-            "priceIsPlaceholder": true
-          },
-          {
-            "media": {
               "media": "schnecke-lotus"
             },
             "name": "Lotus",
-            "description": "Karamellisierte Lotuscreme, die beim ersten Biss noch warm zieht.",
-            "price": 4.3,
-            "priceIsPlaceholder": true
+            "description": "Unser Klassiker: karamellisierte Lotuscreme, mit Keks obendrauf."
           },
           {
             "media": {
-              "media": "schnecke-haselnuss"
+              "media": "hero-krume",
+              "alt": "Zimtschnecken aus Sauerteig, dicht an dicht"
             },
-            "name": "Haselnuss",
-            "description": "Geröstete Haselnusscreme, dicht gerollt, außen leicht knusprig.",
-            "price": 4.3,
-            "priceIsPlaceholder": true
+            "name": "Zimtschnecke",
+            "description": "Die Nummer zwei nach dem Klassiker: mit Zimt und Zucker eingerollt."
+          },
+          {
+            "media": {
+              "media": "schnecke-saison"
+            },
+            "name": "Saisonales",
+            "description": "Franzbrötchen, Erdbeerknoten, Haselnuss oder Cruffins — nicht jeden Tag, aber immer wieder. Was es gerade gibt, siehst du an der Theke oder auf Instagram."
           }
         ],
-        "textAfterFirst": "Sauerteig statt Hefe: Der Grundteig reift rund 18 Stunden, bevor er ausgerollt, gefüllt und aufgerollt wird. Was er dadurch verliert, ist Eile — was er gewinnt, ist Struktur und Säure, die die süße Füllung ausbalanciert.",
-        "textAfterSecond": "Jeden Morgen von Hand gedreht: Creme verteilen, aufrollen, schneiden — dann geht das Blech in den Ofen, bis die Ränder karamellisieren."
+        "textAfterFirst": "Sauerteig statt Hefe: Der Teig bekommt Zeit, bevor er ausgerollt, gefüllt und aufgerollt wird. Was er dadurch verliert, ist Eile — was er gewinnt, ist Struktur und eine feine Säure, die die süße Füllung ausbalanciert.",
+        "textAfterSecond": "Von Hand gemacht: Creme verteilen, aufrollen, schneiden — dann geht das Blech in den Ofen, bis die Ränder karamellisieren."
       }
     },
     {
@@ -72,18 +67,18 @@
       "visible": true,
       "fields": {
         "media": {
-          "media": "schnecke-querschnitt"
+          "media": "schnecke-blech"
         },
-        "eyebrow": "Im Querschnitt",
-        "title": "Schicht für Schicht sichtbar",
-        "text": "Eng gerollt, damit die Creme in jeder Windung sitzt — sichtbar wird das erst beim Anschnitt.",
+        "eyebrow": "Aus der Nähe",
+        "title": "Schicht für Schicht",
+        "text": "Eng gerollt, damit die Füllung in jeder Windung sitzt — und die Ränder im Ofen karamellisieren.",
         "link": {
-          "label": "Vorbestellen",
-          "href": "page:vorbestellen",
+          "label": "Die ganze Karte",
+          "href": "page:karte",
           "newTab": false,
           "visible": true
         },
-        "note": "° Beispielpreise — finale Preise folgen."
+        "note": ""
       }
     }
   ],
