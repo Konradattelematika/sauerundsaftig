@@ -3,6 +3,8 @@ import { normalizeHost } from './host-policy.mjs';
 
 export const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
+  // Ohne includeSubDomains: www.sauerundsaftig.de hat (noch) kein gültiges Zertifikat. Über HTTP ignorieren Browser den Header.
+  'Strict-Transport-Security': 'max-age=31536000',
   // Modul-Board bettet /module/vorschau/* per iframe vom selben Host ein → SAMEORIGIN passt.
   'X-Frame-Options': 'SAMEORIGIN',
   'Referrer-Policy': 'strict-origin-when-cross-origin',

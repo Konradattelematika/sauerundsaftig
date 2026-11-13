@@ -32,7 +32,7 @@ const img = media(f.image);
         <p class="prose-measure mt-6 font-mono text-sm text-ink-soft" {...editAttrs(section, 'note')}>{f.note}</p>
       </div>
       <div class="md:col-span-5" data-reveal style="--reveal-delay:100ms" {...editAttrs(section, 'image', 'media')}>
-        {img && <Figure motif={img.id} alt={img.alt} aspect="aspect-[4/5]" sizes="(min-width: 768px) 35vw, 100vw" mat="flat" hover />}
+        {img && <Figure motif={img.id} alt={img.alt} aspect="aspect-[4/5]" sizes="(min-width: 768px) 35vw, 100vw" mat="flat" hover loading="eager" />}
       </div>
     </div>
   </div>

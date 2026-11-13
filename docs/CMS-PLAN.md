@@ -209,3 +209,12 @@ entwickelt und erst nach vollständiger Prüfung und Freigabe durch Konrad auf P
 - **Betrieb:** Dockerfile-Runtime enthält App + node_modules (Builds zur Laufzeit), `.code-version` aus
   `server/code-version.mjs`; Schreibpfade `src/assets/media`, `.astro`, `node_modules/.vite`; Caches unter
   `/data/astro-cache` (Astro + Vite). Docker-Build ist auf dem VPS nicht möglich → erst Staging in Coolify.
+
+## SEO-Stellen (Stand 13.11.2026)
+- Titel/Description je Seite: `seo.title`/`seo.description` in der PageDoc (Seed `src/cms/seed/pages/*.json`; live gilt der
+  veröffentlichte Stand unter `/data/cms/published.json` — Seed-Änderungen wirken NICHT auf eine laufende Instanz, Titel
+  live im Admin-Dashboard anpassen). Richtwert 30–60 Zeichen Titel.
+- Meta/OG/Canonical/JSON-LD: `src/components/shared/SeoHead.astro`, Builder `src/lib/schema-org.ts` (Bakery/CafeOrCoffeeShop, Menu).
+- Sitemap: `@astrojs/sitemap` in `astro.config.mjs` (Filter `SITEMAP_EXCLUDE` + CMS-Ausschlüsse).
+- Header (HSTS ohne includeSubDomains, nosniff …): `server/lib/http.mjs` `SECURITY_HEADERS`.
+- Erstes sichtbares Bild einer Seite: `loading="eager"` im jeweiligen Sektions-`Figure` (LCP, nicht lazy).
